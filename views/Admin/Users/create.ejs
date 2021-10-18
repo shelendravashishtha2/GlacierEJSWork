@@ -1,0 +1,131 @@
+<%- contentFor('HeaderCss') %>
+<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<%- contentFor('breadcrumb') %>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Add User</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/users">User</a></li>
+                    <li class="breadcrumb-item active">Add User</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="/admin/api/user-add" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fullname<span class="required">*</span></label>
+                                <input type="text" name="full_name" class="form-control" id="defaultconfig" placeholder="Enter Fullname" autofocus maxlength="200">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Position<span class="required">*</span></label>
+                                <select class="form-control" name="position_id">
+                                    <option value="">Select Position</option>
+                                    <option value="2">Operation Team</option>
+                                    <option value="3">Auditor</option>
+                                    <option value="4">Manager</option>
+                                    <option value="5">Supervisor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Email<span class="required">*</span></label>
+                                <input type="text" name="email" class="form-control" id="defaultconfig" placeholder="Enter Email" maxlength="150">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Property Name<span class="required">*</span></label>
+                                <select name="property_id" class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="Choose Property Name...">
+                                    <option value="AK">Alaska</option>
+                                    <option value="HI">Hawaii</option>
+                                    <option value="CT">Connecticut</option>
+                                    <option value="DE">Delaware</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="GA">Georgia</option>
+                                    <option value="IN">Indiana</option>
+                                    <option value="ME">Maine</option>
+                                    <option value="MD">Maryland</option>
+                                    <option value="MA">Massachusetts</option>
+                                    <option value="MI">Michigan</option>
+                                    <option value="NH">New Hampshire</option>
+                                    <option value="NJ">New Jersey</option>
+                                    <option value="NY">New York</option>
+                                    <option value="NC">North Carolina</option>
+                                    <option value="OH">Ohio</option>
+                                    <option value="PA">Pennsylvania</option>
+                                    <option value="RI">Rhode Island</option>
+                                    <option value="SC">South Carolina</option>
+                                    <option value="VT">Vermont</option>
+                                    <option value="VA">Virginia</option>
+                                    <option value="WV">West Virginia</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Mobile No<span class="required">*</span></label>
+                                <input type="text" name="mobile_no" class="form-control" id="defaultconfig" placeholder="Enter Mobile No" maxlength="15">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Img<span class="required">*</span></label>
+                                <input type="file" name="profile_image" class="form-control" maxlength="200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Address<span class="required">*</span></label>
+                                <textarea type="text" name="address" class="form-control" id="defaultconfig" placeholder="Enter Address Here..." maxlength="300"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Password<span class="required">*</span></label>
+                                <input type="text" name="password" class="form-control" id="defaultconfig" placeholder="Enter Password" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5"></div>
+                            <div class="col-md-6">
+                            <button type="submit" class="btn btn-warning waves-effect waves-light"><i class="bx bx-check-double label-icon"></i> Save</button>
+                            <a href="/create-users"><button type="button" class="btn btn-danger waves-effect waves-light"><i class="bx bx-block label-icon"></i> Reset</button></a>
+                            <a href="/users"><button type="button" class="btn btn-danger waves-effect waves-light"><i class="bx bx-block label-icon"></i> Cancel</button></a></div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<%- contentFor('FooterJs') %>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<!-- Add Property & Wing init -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
+<%- contentFor('BottomJs') %>

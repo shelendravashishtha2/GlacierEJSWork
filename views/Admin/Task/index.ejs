@@ -1,0 +1,65 @@
+<%- contentFor('HeaderCss') %>
+<!-- DataTables -->
+<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Responsive datatable examples -->
+<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<%- contentFor('breadcrumb') %>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Task</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Task</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Task Record <a href="/create-propertys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> <b>ASSIGN TASK</b></button></a></h4>
+                <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center;">Sr.No</th>
+                        <th>Property Name</th>
+                        <th style="width: 10%;text-align: center;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <% for (i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td style="width: 5%;text-align: center;"><%=i+1%></td>
+                            <td><%= data[i].property_name %></td>
+                            <td style="width: 10%;text-align: center;"><a href="/edit-propertys"> <button class="btn btn-outline-primary">Edit</button></a>
+                                <a href="/view-propertys/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<!-- Datatable init js -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/datatables.init.js"></script>
+<%- contentFor('BottomJs') %>
