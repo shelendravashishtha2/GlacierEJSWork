@@ -55,7 +55,12 @@ module.exports = function (app) {
     app.get('/ppm', isUserAllowed,PpmController.PpmList);
 
     // SOP
-    app.get('/sop', isUserAllowed,SopController.sopList);
+    app.get('/sop', isUserAllowed, SopController.sopList);
+    app.get('/create-sop', isUserAllowed, SopController.createSop);
+    app.post('/store-sop', isUserAllowed, SopController.storeSop);
+    // app.get('/edit-sop', isUserAllowed, SopController.sopList);
+    // app.get('/update-sop', isUserAllowed, SopController.sopList);
+    // app.get('/delete-sop', isUserAllowed, SopController.sopList);
 
     // History 
     app.get('/history', isUserAllowed,HistoryController.historyList);

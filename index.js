@@ -29,11 +29,11 @@ app.use(session({
 	cookie: {
 	  expires: 1200000
 	}
-  }));
+}));
   
-  app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
-  app.use(flash());
-  var sessionFlash = function(req, res, next) {
+app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
+app.use(flash());
+var sessionFlash = function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash('error');
     res.locals.success = req.flash('success');
@@ -41,34 +41,34 @@ app.use(session({
 }
 app.use(sessionFlash);
 
-  app.use(i18n({
+app.use(i18n({
 	translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
 	siteLangs: ["es", "en", "de", "ru", "it"],
 	textsVarName: 'translation'
-  }));
+}));
   
-  app.use('/public', express.static('public'));
-  
-  app.get('/layouts/', function (req, res) {
+app.use('/public', express.static('public'));
+
+app.get('/layouts/', function (req, res) {
 	res.render('view');
-  });
+});
   
-  // apply controller
-  AuthController(app);
-  
-  //For set layouts of html view
-  var expressLayouts = require('express-ejs-layouts');
-  app.set('views', path.join(__dirname, 'views'));
-  app.set('view engine', 'ejs');
-  app.use(expressLayouts);
-  
-  // Define All Route 
-  pageRouter(app);
+// apply controller
+AuthController(app);
+
+//For set layouts of html view
+var expressLayouts = require('express-ejs-layouts');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(expressLayouts); 
 
 app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/public', express.static('./public'));
+
+// Define All Route
+pageRouter(app);
 
 app.use(process.env.BASE_URL+'api', apiRouter);
 app.use(process.env.BASE_URL+'admin/api', adminRouter);

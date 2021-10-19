@@ -4,6 +4,7 @@ const auth = require("../middleware/auth");
 const AuthController = require("../controllers/admin/AuthController");
 const UserController = require("../controllers/admin/UserController");
 const PropertyController = require("../controllers/admin/PropertyController");
+const SopController = require("../controllers/admin/SopController");
 
 router.post("/register", AuthController.registerValidation, AuthController.register); // user registration
 router.post("/login", AuthController.login); // user login
