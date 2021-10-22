@@ -23,8 +23,8 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Edit Check List</h4>
-                <form action="/store-category-checklist" method="POST">
-					<input type="hidden" name="category_id" value="<%= category_id %>">
+                <form action="/update-checklist-details" method="POST">
+					<input type="hidden" name="_id" value="<%= data._id %>">
                     <div class="row">
                         <div class="col-xl-4">
                             <div class="mb-3">
@@ -90,7 +90,8 @@
                     <div class="row" style="margin-bottom:20px;">
                         <div class="col-xl-2"></div>
                         <div class="col-xl-6">
-                            <button type="submit" class="btn btn-warning waves-effect waves-light"><b><i class="bx bx-check-double label-icon"></i> Submit</b></button>
+                            <button type="submit" class="btn btn-warning waves-effect waves-light"><b><i class="bx bx-check-double label-icon"></i> Edit</b></button>
+                            <a href="/edit-checklist-form/<%= data._id %>"> <button class="btn btn-outline-warning">Edit Form</button></a>
                         </div>  
                     </div>
                 </form>

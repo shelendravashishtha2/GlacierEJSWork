@@ -48,7 +48,7 @@ exports.supervisorAdd = async (req, res) => {
 
         if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users';
+			let uploadPath = __basedir + '/public/images/users/';
 			let fileName;
 
 			if (profile_image) {
@@ -64,7 +64,7 @@ exports.supervisorAdd = async (req, res) => {
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				req.body.profile_image = '/public/images/users' + fileName;
+				req.body.profile_image = '/public/images/users/' + fileName;
 			}
 		}
 
@@ -126,7 +126,7 @@ exports.userAdd = async (req, res) => {
 
         if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users';
+			let uploadPath = __basedir + '/public/images/users/';
 			let fileName;
 
 			if (profile_image) {
@@ -142,7 +142,7 @@ exports.userAdd = async (req, res) => {
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				req.body.profile_image = '/public/images/users' + fileName;
+				req.body.profile_image = '/public/images/users/' + fileName;
 			}
 		}
 		let propertyIdNameArray = [];
@@ -347,7 +347,7 @@ exports.profileImageUpload = async (req, res) => {
 	try {
 		if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users';
+			let uploadPath = __basedir + '/public/images/users/';
 
 			const extensionName = path.extname(profile_image.name);
 			const allowedExtension = ['.png','.jpg','.jpeg'];
@@ -367,7 +367,7 @@ exports.profileImageUpload = async (req, res) => {
 					return res.send(response.error(400, 'Image uploading failed', []));
 				}
 			});
-			fileName = '/public/images/users' + fileName;
+			fileName = '/public/images/users/' + fileName;
 			const _id = req.user._id;
 			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new : true, runValidators: true} );
 			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": userData.profile_image} ));

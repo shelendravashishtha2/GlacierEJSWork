@@ -94,7 +94,7 @@
 															<input type="text" name="sub_category_name[<%=i%>]" value="<%= element.sub_category_name %>" class="form-control" placeholder="Enter Sub Category Name">
 														</div>
 														<div class="col-md-5 col-5" style="padding-right: 10px;">
-															<input type="file" name="sub_category_files[<%=i%>]" multiple="" class="form-control" required>
+															<input type="file" name="sub_category_files[<%=i%>][]" multiple="" class="form-control">
 														</div>
 														<div class="col-md-2 col-2 input-group-append">
 															<button id="removeRow" type="button" class="btn btn-danger"><i class='bx bx-x-circle bx-xs'></i></button>
@@ -133,42 +133,6 @@
 <%- contentFor('FooterJs') %>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        var x = 1; //Initial field counter is 1
-
-        $('.add_button').click(function(){ //Once add button is clicked
-            if(x < 15){ //Check maximum number of input fields
-                
-				var fieldHTML = '';
-				fieldHTML += '<div style="display:flex;margin:5px;">';
-				fieldHTML += '<div class="col-md-5 col-5">';
-				fieldHTML += '<input type="text" name="sub_category_name['+x+']" class="form-control" placeholder="Enter Category Name" autofocus maxlength="200">';
-				fieldHTML += '</div>';
-				fieldHTML += '<div class="col-md-5 col-5">';
-				fieldHTML += '<input type="file" name="sub_category_files['+x+']" multiple="" class="form-control">';
-				fieldHTML += '</div>';
-				fieldHTML += '<a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a>';
-				fieldHTML += '</div>';
-				
-				$('.input_field_wrapper').append(fieldHTML); // Add field html
-				x++; //Increment field counter
-				$('#sub_category_count').val(x);
-            }
-        });
-
-        $('.input_field_wrapper').on('click', '.remove_button', function(e){ //Once remove button is clicked
-            e.preventDefault();
-            $(this).parent('div').remove(); //Remove field html
-            x--; //Decrement field counter
-			$('#sub_category_count').val(x);
-        });
-
-		// remove row
-		$(document).on('click', '#removeRow', function () {
-        $(this).closest('#inputFormRow').remove();
-    });
-    });
-
 	$(document).ready(function(){
 		let i = 1;
 		// add row
@@ -180,7 +144,7 @@
 			html += '<input type="text" name="sub_category_name['+i+']" class="form-control" placeholder="Enter Sub Category Name">'
 			html += '</div>'
 			html += '<div class="col-md-5 col-5" style="padding-right: 10px;">'
-			html += '<input type="file" name="sub_category_files['+i+']" multiple="" class="form-control" required>'
+			html += '<input type="file" name="sub_category_files['+i+'][]" multiple="" class="form-control" required>'
 			html += '</div>'
 			html += '<div class="input-group-append">'
 			html += '<button id="removeRow" type="button" class="btn btn-danger"><i class="bx bx bx-x-circle bx-xs"></i></button>'

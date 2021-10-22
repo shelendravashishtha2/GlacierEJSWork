@@ -45,11 +45,11 @@ module.exports = function (app) {
 	app.get('/edit-category-checklist/:id', CategoriesController.checkList); //edit category page with view category check list page
     app.post('/update-categories', CategoriesController.updateCategory); //update category
 	app.get('/edit-checklist-details/:id', CategoriesController.editChecklistDetails); //edit checklist details page
-	// app.post('/update-checklist-details', CategoriesController.updateChecklistDetails); //update checklist details
-    // app.get('/create-checklist-form', CategoriesController.categoryView); //create checklist multi form page
-    // app.get('/store-checklist-form', CategoriesController.categoryView); //store checklist multi form
-    // app.get('/edit-checklist-form', CategoriesController.categoryView); //edit checklist page
-    // app.get('/update-checklist-form', CategoriesController.categoryView); //update checklist multiform page
+	app.post('/update-checklist-details', CategoriesController.updateChecklistDetails); //update checklist details
+    app.get('/create-checklist-form/:id', CategoriesController.createChecklistForm); //create checklist multi form page
+    // app.get('/store-checklist-form', CategoriesController.storeChecklistForm); //store checklist multi form
+    // app.get('/edit-checklist-form', CategoriesController.editChecklistForm); //edit checklist page
+    // app.get('/update-checklist-form', CategoriesController.updateChecklistForm); //update checklist multiform page
 
     // Users Module
     app.get('/users', UserController.userList);
@@ -67,7 +67,7 @@ module.exports = function (app) {
     app.get('/ppm', PpmController.PpmList);
 
     // SOP
-    app.get('/sop', SopController.sopList);
+    app.get('/sop',SopController.sopList);
     app.get('/create-sop', SopController.createSop);
     app.post('/store-sop', SopController.storeSop);
     app.get('/edit-sop/:id', SopController.editSop);

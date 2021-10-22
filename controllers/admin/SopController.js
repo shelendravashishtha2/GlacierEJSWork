@@ -131,76 +131,96 @@ exports.editSop = async (req,res) => {
 //update SOP
 exports.updateSop = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Manage Rating', session:req.session};
 
-		let single_category_files_array = [];
-		let sub_category_array = [];
+		// var arrayFields = ["sub_category_name"];
+		// var regexString = `^(${arrayFields.join("|")})\\[\\d+\\]`;
+		// var regex = new RegExp(regexString);
+		// var newObj = Object.keys(req.body)
+		// 	.filter(aKey => regex.test(aKey))
+		// 	.reduce((combinedObj, aKey) => {
+		// 		var keyName = aKey.match(regex)[1];
+		// 		if (!combinedObj[keyName]) {
+		// 		combinedObj[keyName] = [];
+		// 		}
+		// 		combinedObj[keyName].push(req.body[aKey]);
+		// 		return combinedObj;
+		// 	}, {});
+		// console.log(newObj);
+		// console.log(newObj.sub_category_name.length);
 
-		if (req.files) {
-			let uploadPath = __basedir + '/public/images/sop_files/';
+		// // console.log(req.files);
+
+		// return res.send(req.body);
+		// return res.send([[req.body],[req.files]]);
+		// if(!req.session.user){ return res.redirect('/login'); }
+		// res.locals = { title: 'SOP', session:req.session};
+
+		// let single_category_files_array = [];
+		// let sub_category_array = [];
+		// const uploadPath = __basedir + '/public/images/sop_files/';
+
+		// if (req.files) {
 			
-			if (req.files.single_category_files && req.body.category_level == 1) {
-				let single_category_files = req.files.single_category_files;
-				single_category_files = Array.isArray(single_category_files) ? single_category_files : [single_category_files];
-				if (Array.isArray(single_category_files)) {
-					single_category_files.forEach(single_category_file => {
-						if (single_category_file.mimetype !== "application/pdf"){
-							return res.send(response.error(400, 'File format should be PDF', []));
-						}
-					});
-					single_category_files.forEach(single_category_file => {
-						fileName = single_category_file.name;
-						single_category_file.mv(uploadPath + fileName, function(err) {
-							if (err){
-								return res.send(response.error(400, 'Image uploading failed', []));
-							}
-						});
-						single_category_files_array.push(fileName);
-					});
-				}
-			}
+		// 	if (req.body.category_level == 1 && req.files.single_category_files) {
+		// 		let single_category_files = req.files.single_category_files;
+		// 		single_category_files = Array.isArray(single_category_files) ? single_category_files : [single_category_files];
+		// 		if (Array.isArray(single_category_files)) {
+		// 			single_category_files.forEach(single_category_file => {
+		// 				if (single_category_file.mimetype !== "application/pdf"){
+		// 					return res.send(response.error(400, 'File format should be PDF', []));
+		// 				}
+		// 			});
+		// 			single_category_files.forEach(single_category_file => {
+		// 				fileName = single_category_file.name;
+		// 				single_category_file.mv(uploadPath + fileName, function(err) {
+		// 					if (err){
+		// 						return res.send(response.error(400, 'Image uploading failed', []));
+		// 					}
+		// 				});
+		// 				single_category_files_array.push(fileName);
+		// 			});
+		// 		}
+		// 	}
 			
-			if (req.files['sub_category_files[0]'] && req.body.category_level == 2) {
-				if (req.body.category_level == 2) {
-					for (let i = 0; i < req.body.sub_category_count; i++) {
-						let sub_category_files_array = [];
-						let sub_category_files = req.files['sub_category_files['+i+']'];
-						sub_category_files = Array.isArray(sub_category_files) ? sub_category_files : [sub_category_files];
-						if (Array.isArray(sub_category_files)) {
-							sub_category_files.forEach(sub_category_file => {
-								if (sub_category_file.mimetype !== "application/pdf"){
-									return res.send(response.error(400, 'File format should be PDF', []));
-								}
-							});
-							sub_category_files.forEach(sub_category_file => {
-								fileName = sub_category_file.name;
-								sub_category_file.mv(uploadPath + fileName, function(err) {
-									if (err){
-										return res.send(response.error(400, 'Image uploading failed', []));
-									}
-								});
-								sub_category_files_array.push(fileName);
-							});
-						}
-						let sub_category_name = req.body['sub_category_name['+i+']'];
-						if (sub_category_name != null && sub_category_files_array != null && sub_category_name != '' && sub_category_files_array != '') {
-							sub_category_array.push({sub_category_name: sub_category_name, sub_category_files: sub_category_files_array});
-						}
-					}
-				}
-			}
-		}
+		// 	if (req.body.category_level == 2 && req.files['sub_category_files[0]']) {
 
-		let SOPData = await SOP.findOne({_id: req.params.id});
-		SOPData.category_name = req.body.category_name;
-		SOPData.level = req.body.category_level;
-		SOPData.single_category_files = single_category_files_array;
-		SOPData.sub_category = sub_category_array;
-		// await SOPData.save();
+		// 		for (let i = 0; i < req.body.sub_category_count; i++) {
+		// 			let sub_category_files_array = [];
+		// 			let sub_category_files = req.files['sub_category_files['+i+']'];
+		// 			sub_category_files = Array.isArray(sub_category_files) ? sub_category_files : [sub_category_files];
+		// 			if (Array.isArray(sub_category_files)) {
+		// 				sub_category_files.forEach(sub_category_file => {
+		// 					if (sub_category_file.mimetype !== "application/pdf"){
+		// 						return res.send(response.error(400, 'File format should be PDF', []));
+		// 					}
+		// 				});
+		// 				sub_category_files.forEach(sub_category_file => {
+		// 					fileName = sub_category_file.name;
+		// 					sub_category_file.mv(uploadPath + fileName, function(err) {
+		// 						if (err){
+		// 							return res.send(response.error(400, 'Image uploading failed', []));
+		// 						}
+		// 					});
+		// 					sub_category_files_array.push(fileName);
+		// 				});
+		// 			}
+		// 			let sub_category_name = req.body['sub_category_name['+i+']'];
+		// 			if (sub_category_name != null && sub_category_files_array != null && sub_category_name != '' && sub_category_files_array != '') {
+		// 				sub_category_array.push({sub_category_name: sub_category_name, sub_category_files: sub_category_files_array});
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		return res.send(response.success(200, 'success', [SOPData]));
-		return res.redirect('/sop');
+		// let SOPData = await SOP.findOne({_id: req.params.id});
+		// SOPData.category_name = req.body.category_name;
+		// SOPData.level = req.body.category_level;
+		// SOPData.single_category_files = single_category_files_array;
+		// SOPData.sub_category = sub_category_array;
+		// // await SOPData.save();
+
+		// return res.send(response.success(200, 'success', [SOPData]));
+		// return res.redirect('/sop');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

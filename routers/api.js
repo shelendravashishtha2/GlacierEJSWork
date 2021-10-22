@@ -4,6 +4,7 @@ const auth = require("../middleware/auth");
 const AuthController = require("../controllers/api/AuthController");
 const UserController = require("../controllers/api/UserController");
 const PropertyController = require("../controllers/api/PropertyController");
+const SopController = require('../controllers/api/SopController');
 
 router.post("/register", AuthController.registerValidation, AuthController.register); // user registration
 router.post("/login", AuthController.login); // user login
@@ -20,5 +21,8 @@ router.post("/supervisor-list", auth, UserController.supervisorList); // supervi
 
 // Property
 router.post("/property-list", auth, PropertyController.propertyList); // property list
+
+// SOP
+router.post("/sop-category-list", auth, SopController.sopCategoryList); // property list
 
 module.exports = router;

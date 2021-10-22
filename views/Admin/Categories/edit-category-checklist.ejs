@@ -48,8 +48,15 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">List Of Check List <a href="/create-category-checklist/<%= CategoryData._id %> "><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><b><i class="fa fa-plus"></i> ADD CHECKLIST</button></b></a></h4>
-                <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                <h4 class="card-title">
+					List Of Check List
+					<a href="/create-category-checklist/<%= CategoryData._id %> ">
+						<button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;">
+							<b><i class="fa fa-plus"></i> ADD CHECKLIST </b>
+						</button>
+					</a>
+				</h4>
+                <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                     <thead>
                     <tr>
                         <th style="text-align: center;">No.</th>
@@ -61,7 +68,7 @@
                         <th style="text-align: center;">Date</th>
                         <th style="text-align: center;">Status</th>
                         <th style="width: 10%;text-align: center;">Action</th>
-                    </tr>u
+                    </tr>
                     </thead>
                     <tbody>
                         <% for (i = 0; i < data.length; i++) { %>
@@ -77,7 +84,7 @@
                             <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
                         <td style="width: 10%;text-align: center;">
                             <a href="/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit</button></a>
-                            <a href="/edit-check-list-from/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit Form</button></a>
+                            <a href="/edit-checklist-form/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit Form</button></a>
                         </td>
                     </tr>
                     <% } %>

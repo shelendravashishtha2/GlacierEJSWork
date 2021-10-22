@@ -27,7 +27,4 @@ router.post("/property-list", PropertyController.propertyList); // property list
 router.post("/property-add", PropertyController.propertyAddValidation, PropertyController.propertyAdd); // property add
 router.post('/property-update', PropertyController.propertyUpdate); // property add
 
-// Category name add
-// router.post("/category-add", CategoriesController.categoryAddValidation, CategoriesController.categoryAdd); // category add
-
 module.exports = router;

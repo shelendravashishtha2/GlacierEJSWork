@@ -27,7 +27,7 @@ exports.categoryAdd = async (req, res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Category Add' ,session: req.session};
-		
+
 		const existsUser = await Category.findOne({ category_name: req.body.category_name });
 		if(existsUser) {
 			return res.send(response.error(400, 'Category name already exists', [] ));
@@ -38,7 +38,7 @@ exports.categoryAdd = async (req, res) => {
 		});
 		const CategoryData = await obj.save();
 		
-		return res.redirect('categories');
+		return res.redirect('create-category-checklist/'+CategoryData._id);
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
@@ -133,7 +133,7 @@ exports.storeChecklist = async (req,res) => {
 		});
 		await CategoryCheckListData.save();
 
-		return res.redirect('edit-category-checklist/'+req.body.category_id);
+		return res.redirect('create-checklist-form/'+CategoryCheckListData._id);
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
@@ -145,7 +145,7 @@ exports.storeChecklist = async (req,res) => {
 	}
 }
 
-// Category Update Page
+// Category CheckList Page 
 exports.checkList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
@@ -182,7 +182,7 @@ exports.editChecklistDetails = async (req,res) => {
 		let CategoryCheckListData = await CategoryCheckList.findOne({_id: req.params.id});
 		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		return res.render('Admin/Categories/edit-check-list',{ data: CategoryCheckListData, months: monthsList, category_id: req.params.id });
+		return res.render('Admin/Categories/edit-check-list',{ data: CategoryCheckListData, months: monthsList });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -190,13 +190,34 @@ exports.editChecklistDetails = async (req,res) => {
 }
 
 // Update Category store
-// exports.updateChecklistDetails = async (req,res) => {
-// 	try {
-// 		let CategoryData = await Category.updateOne({_id: req.body.category_id}, {category_name: req.body.category_name});
+exports.updateChecklistDetails = async (req,res) => {
+	try {
+		let CategoryCheckListData = await CategoryCheckList.findOneAndUpdate({_id: req.body._id}, {
+			checklist_name: req.body.checklist_name,
+			type: req.body.type,
+			frequency: req.body.frequency,
+			month: req.body.month,
+			date: req.body.date,
+		},{ new: true });
 
-// 		return res.redirect('edit-category-checklist/'+req.body.category_id);
-// 	} catch (error) {
-// 		errorLog(__filename, req.originalUrl, error);
-// 		return res.send(response.error(500, 'Something want wrong', []));
-// 	}
-// }
+		return res.redirect('edit-category-checklist/'+CategoryCheckListData.category_id);
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+// Edit Checklist page
+exports.createChecklistForm = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Update Category',session: req.session};
+
+		let CategoryCheckListData = await CategoryCheckList.findOne({_id: req.params.id});
+
+		return res.render('Admin/Categories/edit-checklist-multi-form',{ data: CategoryCheckListData });
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
