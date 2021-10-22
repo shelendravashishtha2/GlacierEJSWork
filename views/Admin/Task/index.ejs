@@ -25,7 +25,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Task Record <a href="/create-propertys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> <b>ASSIGN TASK</b></button></a></h4>
+                <h4 class="card-title">Task Record <a href="/create-properties"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> <b>ASSIGN TASK</b></button></a></h4>
                 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                     <thead>
                     <tr>
@@ -39,8 +39,8 @@
                         <tr>
                             <td style="width: 5%;text-align: center;"><%=i+1%></td>
                             <td><%= data[i].property_name %></td>
-                            <td style="width: 10%;text-align: center;"><a href="/edit-propertys"> <button class="btn btn-outline-primary">Edit</button></a>
-                                <a href="/view-propertys/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
+                            <td style="width: 10%;text-align: center;"><a href="/edit-properties"> <button class="btn btn-outline-primary">Edit</button></a>
+                                <a href="/view-properties/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
                         </tr>
                         <% } %>
                     </tbody>

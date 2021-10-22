@@ -12,10 +12,11 @@ const SOP = require('../../models/SOP');
 // SOP List Page
 exports.sopList = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session:req.session};
 
 		let sopData = await SOP.find({});
-		return res.render('Admin/SOP/index',{'data': sopData});
+		return res.render('Admin/SOP/index',{data: sopData});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -25,7 +26,8 @@ exports.sopList = async (req,res) => {
 //Create SOP Page
 exports.createSop = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session:req.session};
 		let sopData = await SOP.find({});
 		// return res.render('Admin/SOP/create',{'data':PropertyResource(sopData)});
 		return res.render('Admin/SOP/create');
@@ -38,24 +40,6 @@ exports.createSop = async (req,res) => {
 //store SOP
 exports.storeSop = async (req,res) => {
 	try {
-		if (req.body.test) {
-			// req.checkBody('name','Name field is required').notEmpty();
-			// req.checkBody('email','Email field is required').notEmpty();
-			// req.checkBody('email','Email is not valid').isEmail();
-			// req.checkBody('username','Username field is required').notEmpty();
-			// req.checkBody('password','Password field is required').notEmpty();
-			// req.checkBody('password2','Passwords do not match').equals(req.body.password);
-
-			// errors = validationResult(req);
-			// if(errors){
-			// 	console.log("errors: " + errors);
-			// 	// res.render('register', {errors: errors});
-			// } else{
-			// 	console.log('No Errors');
-			// 	// res.render("/");
-			// }
-		}
-
 		let single_category_files_array = [];
 		let sub_category_array = [];
 
@@ -133,10 +117,11 @@ exports.storeSop = async (req,res) => {
 //edit SOP
 exports.editSop = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session:req.session};
 		let sopData = await SOP.findOne({_id: req.params.id});
 		
-		return res.render('Admin/SOP/edit', { 'data': sopData });
+		return res.render('Admin/SOP/edit', { data: sopData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -146,17 +131,8 @@ exports.editSop = async (req,res) => {
 //update SOP
 exports.updateSop = async (req,res) => {
 	try {
-		res.locals = { title: 'SOP'};
-
-		const schema = Joi.object({
-			category_name: Joi.string().required().trim(true).label('category name'),
-			category_level: Joi.string().required().trim(true).label('category level'),
-		});
-		const validation = schema.validate(req.body, __joiOptions);
-		// if (validation.error) return res.send(response.error(400, validation.error, [] ));
-		if (validation.error) return res.render('Admin/SOP/edit', { 'data': [], 'error': validation.error });
-
-		return res.send(req.body);
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session:req.session};
 
 		let single_category_files_array = [];
 		let sub_category_array = [];

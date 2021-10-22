@@ -13,7 +13,8 @@ const Joi = require("joi");
 // History List Page
 exports.historyList = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session: req.session};
 		let propertyData = await Property.find({});
 		return res.render('Admin/History/index',{'data':PropertyResource(propertyData)});
 

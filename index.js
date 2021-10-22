@@ -15,6 +15,8 @@ const {errorLog} = require('./helper/consoleLog');
 var flash = require('connect-flash');
 var session = require('express-session');
 var i18n = require("i18n-express");
+var toastr = require('express-toastr');
+var cookieParser = require('cookie-parser')
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
@@ -27,32 +29,30 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
-	  expires: 1200000
+		expires: 1200000
 	}
 }));
-  
+
+app.use(cookieParser('nodedemo'));
 app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
 app.use(flash());
-var sessionFlash = function(req, res, next) {
-    res.locals.currentUser = req.user;
-    res.locals.error = req.flash('error');
-    res.locals.success = req.flash('success');
-    next();
-}
-app.use(sessionFlash);
-
 app.use(i18n({
 	translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
 	siteLangs: ["es", "en", "de", "ru", "it"],
 	textsVarName: 'translation'
 }));
-  
-app.use('/public', express.static('public'));
+
+app.use(toastr());
+
+app.use(function (req, res, next) {
+    res.locals.toasts = req.toastr.render()
+    next()
+});
 
 app.get('/layouts/', function (req, res) {
 	res.render('view');
 });
-  
+
 // apply controller
 AuthController(app);
 
@@ -60,7 +60,7 @@ AuthController(app);
 var expressLayouts = require('express-ejs-layouts');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(expressLayouts); 
+app.use(expressLayouts);
 
 app.use(fileUpload());
 app.use(express.json());
@@ -69,9 +69,8 @@ app.use('/public', express.static('./public'));
 
 // Define All Route
 pageRouter(app);
-
-app.use(process.env.BASE_URL+'api', apiRouter);
-app.use(process.env.BASE_URL+'admin/api', adminRouter);
+app.use('/api', apiRouter);
+app.use('/admin/api', adminRouter);
 
 app.all('/api/*', (req,res) => {
 	return res.send(response.error(404, 'API Request not found!', [] ));

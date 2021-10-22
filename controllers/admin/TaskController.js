@@ -13,7 +13,8 @@ const Joi = require("joi");
 // Task List Page
 exports.taskList = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating', session:req.session};
 		let propertyData = await Property.find({});
 		return res.render('Admin/Task/index',{'data':PropertyResource(propertyData)});
 

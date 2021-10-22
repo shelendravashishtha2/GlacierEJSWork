@@ -13,7 +13,8 @@ const Joi = require("joi");
 // Manage Rating List Page
 exports.manageRatingList = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Manage Rating',session: req.session};
 		let propertyData = await Property.find({});
 		return res.render('Admin/Manage-Rating/index',{'data':PropertyResource(propertyData)});
 

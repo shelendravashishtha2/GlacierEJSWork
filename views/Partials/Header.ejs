@@ -140,18 +140,21 @@
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg"
-                        alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1" key="t-henry">Henry</span>
+                    <% if(session) { %>
+                    <% if(session.user.profile_image && session.user.profile_image!= '') { %>
+                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%><%- session.user.profile_image %>" alt="Header Avatar">
+                    <% }else { %>
+                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                    <% } %>
+                    <% } %>
+                    <% if(session) { %>
+                    <span class="d-none d-xl-inline-block ms-1" key="t-henry"><%- session.user.full_name %></span>
+                    <% } %>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile"><%=translation.Profile%></span></a>
-                    <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet"><%=translation.My_Wallet%></span></a>
-                    <a class="dropdown-item d-block" href="#"><span class="badge bg-success float-end">11</span><i class="bx bx-wrench font-size-16 align-middle me-1"></i> <span key="t-settings"><%=translation.Settings%></span></a>
-                    <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen"><%=translation.Lock_screen%></span></a>
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item text-danger" href="/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout"><%=translation.Logout%></span></a>
                 </div>
             </div>

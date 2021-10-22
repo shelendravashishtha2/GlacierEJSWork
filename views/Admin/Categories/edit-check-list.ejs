@@ -1,0 +1,105 @@
+<%- contentFor('HeaderCss') %>
+<%- contentFor('breadcrumb') %>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Edit Check List</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
+                    <li class="breadcrumb-item">Category Name</li>
+                    <li class="breadcrumb-item active">Edit Check List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit Check List</h4>
+                <form action="/store-category-checklist" method="POST">
+					<input type="hidden" name="category_id" value="<%= category_id %>">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="mb-3">
+                                <label class="form-label">Checklist Id<span class="required">*</span></label>
+                                <input type="text" name="checklist_id" value="<%= data.checklist_id %>" class="form-control" placeholder="Enter Checklist Id" maxlength="200" readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div class="mb-3">
+                                <label class="form-label">Checklist Name<span class="required">*</span></label>
+                                <input type="text" name="checklist_name" value="<%= data.checklist_name %>" class="form-control" placeholder="Enter Checklist Name" autofocus maxlength="200">
+                            </div>
+                        </div>
+                        <div class="col-xl-2">
+                            <div class="mb-3">
+                                <label class="form-label">Type<span class="required">*</span></label>
+                                <select class="form-control" name="type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="1" <% if (data.type == 1) { %> selected <% } %> >Form</option>
+                                    <option value="2" <% if (data.type == 2) { %> selected <% } %> >Register</option>
+                                    <option value="3" <% if (data.type == 3) { %> selected <% } %> >Checklist</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-2">
+                            <div class="mb-3">
+                                <label class="form-label">Frequency<span class="required">*</span></label>
+                                <select class="form-control" name="frequency" required>
+                                    <option value="">Select Frequency</option>
+                                    <option value="1" <% if (data.frequency == 1) { %> selected <% } %> >Weekly</option>
+                                    <option value="2" <% if (data.frequency == 2) { %> selected <% } %> >Monthly</option>
+                                    <option value="3" <% if (data.frequency == 3) { %> selected <% } %> >Quarterly</option>
+                                    <option value="4" <% if (data.frequency == 4) { %> selected <% } %> >Annually</option>
+                                    <option value="5" <% if (data.frequency == 5) { %> selected <% } %> >Bi-Annually</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-2">
+                            <div class="mb-3">
+                                <label class="form-label">Month<span class="required">*</span></label>
+                                <select class="form-control" name="month">
+                                    <option value="">Select Month</option>
+                                    <% for(m = 0; m < months.length; m++) { %>
+                                    <option value="<%= months[m] %>" <% if (data.month == months[m]) { %> selected <% } %> ><%= months[m] %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-2">
+                            <div class="mb-3">
+                                <label class="form-label">Date<span class="required">*</span></label>
+                                <select class="form-control" name="date">
+                                    <option value="">Select Date</option>
+                                    <% for (i = 1; i < 32; i++) { %>
+                                    <option value="<%=i%>" <% if (data.date == i) { %> selected <% } %> ><%=i%></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom:20px;">
+                        <div class="col-xl-2"></div>
+                        <div class="col-xl-6">
+                            <button type="submit" class="btn btn-warning waves-effect waves-light"><b><i class="bx bx-check-double label-icon"></i> Submit</b></button>
+                        </div>  
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<%- contentFor('FooterJs') %>
+<!-- Add Category init -->
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
+<%- contentFor('BottomJs') %>

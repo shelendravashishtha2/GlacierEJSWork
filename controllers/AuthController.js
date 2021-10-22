@@ -11,7 +11,7 @@ var MockAdapter = require("axios-mock-adapter");
 var mock = new MockAdapter(axios);
 
 let users = [
-  { id: 1, username: 'admin', password: '123456', email: 'admin@themesbrand.com' }
+  { id: 1,full_name:"admin", username: 'admin', password: '123456', email: 'admin@themesbrand.com',"profile_image" : "/public/assets/images/logo-img.png" }
 ];
 
 // Mock GET request to /users when param `searchText` is 'John'

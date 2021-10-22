@@ -196,7 +196,8 @@ exports.userAdd = async (req, res) => {
 // Users list
 exports.pageNotFound = async (req,res) => {
 	try {
-		res.locals = { title: 'Users'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Users', session:req.session};
 		let UserData = await User.find({position: 5});
 		return res.render('Pages/pages-404',{'data':UserResource(UserData)});
 	} catch (error) {
@@ -208,7 +209,8 @@ exports.pageNotFound = async (req,res) => {
 // Supervisor list
 exports.supervisorList = async (req,res) => {
 	try {
-		res.locals = { title: 'Users'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Users', session:req.session};
 		let UserData = await User.find({position: 5});
 		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
 	} catch (error) {
@@ -220,7 +222,8 @@ exports.supervisorList = async (req,res) => {
 // Users list
 exports.userList = async (req,res) => {
 	try {
-		res.locals = { title: 'Users'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Users', session: req.session};
 		let UserData = await User.find();
 		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
 	} catch (error) {
@@ -232,7 +235,8 @@ exports.userList = async (req,res) => {
 // User Create Page
 exports.userCreate = async (req,res) => {
 	try {
-		res.locals = { title: 'Create User'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Create User', session:req.session};
 		let UserData = await User.find({position: 5});
 		return res.render('Admin/Users/create',{'data':UserResource(UserData)});
 
@@ -245,7 +249,8 @@ exports.userCreate = async (req,res) => {
 // User Update Page
 exports.userUpdate = async (req,res) => {
 	try {
-		res.locals = { title: 'Update User'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Update User', session:req.session};
 		let UserData = await User.find({_id:req.params.id});
 		console.log(UserData);			
 		return res.render('Admin/Users/edit',{'data':UserResource(UserData)});
@@ -259,7 +264,8 @@ exports.userUpdate = async (req,res) => {
 // User View Page
 exports.userView = async (req,res) => {
 	try {
-		res.locals = { title: 'View User'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'View User', session:req.session};
 		let UserData = await User.find({position: 5});
 		return res.render('Admin/Users/view',{'data':UserResource(UserData)});
 

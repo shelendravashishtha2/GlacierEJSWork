@@ -1,26 +1,21 @@
 <%- contentFor('HeaderCss') %>
-
 <!-- DataTables -->
 <link href="public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
 <!-- Responsive datatable examples -->
 <link href="public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Properties</h4>
-
+            <h4 class="mb-sm-0 font-size-18">Categories</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Properties</li>
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Categories</li>
                 </ol>
             </div>
-
         </div>
     </div>
 </div>
@@ -30,28 +25,30 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Properties Record</h4>
+                <h4 class="card-title">Categories Record <a href="/create-categories"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> Add Category</button></a></h4>
                 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Action</th>
+                        <th style="text-align: center;">Sr.No</th>
+                        <th>Category Name</th>
+                        <th style="text-align: center;">Create Date</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="width: 10%;text-align: center;">Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td><button class="btn btn-outline-primary">Edit</button>
-                            <button class="btn btn-outline-secondary">View</button></td>
-                    </tr>
+                        <% for (i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td style="width: 5%;text-align: center;"><%=i+1%></td>
+                            <td><%= data[i].category_name %></td>
+                            <td style="width: 10%;text-align: center;">30-09-2021</td>
+                            <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
+                                <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
+                            <td style="width: 10%;text-align: center;">
+                                <a href="/edit-category-checklist/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit</button></a>
+                            </td>
+                        </tr>
+                        <% } %>
                     </tbody>
                 </table>
             </div>
@@ -63,12 +60,12 @@
 <script src="public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <!-- Buttons examples -->
+<script src="public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
 
 <!-- Responsive examples -->
 <script src="public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
 <!-- Datatable init js -->
 <script src="public/assets/js/pages/datatables.init.js"></script>
-
 <%- contentFor('BottomJs') %>

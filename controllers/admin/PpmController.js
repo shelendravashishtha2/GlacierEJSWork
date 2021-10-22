@@ -14,7 +14,8 @@ const Joi = require("joi");
 // PPM List Page
 exports.PpmList = async (req,res) => {
 	try {
-		res.locals = { title: 'PPM'};
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'PPM',session: req.session};
 		let propertyData = await Property.find({});
 		return res.render('Admin/PPM/index',{'data':PropertyResource(propertyData)});
 

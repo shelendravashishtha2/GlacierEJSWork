@@ -19,6 +19,10 @@ const propertySchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
+	propertyLatLong: {
+        type: [Number],
+        index: '2d'
+    },
 	property_images: {
 		type: [String],
 		trim: true,

@@ -1,7 +1,4 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var urlencodeParser = bodyParser.urlencoded({ extended: false });
-var validator = require('express-validator');
+const validator = require('express-validator');
 const PropertyController = require("../controllers/admin/PropertyController");
 const UserController = require("../controllers/admin/UserController");
 const ManageRatingController = require("../controllers/admin/ManageRatingController");
@@ -9,6 +6,7 @@ const PpmController = require("../controllers/admin/PpmController");
 const TaskController = require("../controllers/admin/TaskController");
 const SopController = require("../controllers/admin/SopController");
 const HistoryController = require("../controllers/admin/HistoryController");
+const CategoriesController = require("../controllers/admin/CategoriesController");
 
 module.exports = function (app) {
 
@@ -23,21 +21,35 @@ module.exports = function (app) {
     app.get('/page-not-found',UserController.pageNotFound);
 
     app.get('/', function (req, res) {
-    res.locals = { title: 'Dashboard' };
-    res.render('Dashboard/index');
+        if(req.session.user){
+            res.locals = { title: 'Dashboard' ,session:req.session};
+            res.render('Dashboard/index');
+        }else{
+            res.redirect('/login');
+        }
     });
 
-    // Propertys Module
-    app.get('/propertys', PropertyController.propertyList);
-    app.get('/create-propertys', PropertyController.propertyCreate);
-    app.get('/edit-propertys', PropertyController.propertyUpdate);
-    app.get('/view-propertys/:id', PropertyController.propertyView);
+    // Properties Module
+    app.get('/properties', PropertyController.propertyList);
+    app.get('/create-properties', PropertyController.propertyCreate);
+    app.get('/edit-properties', PropertyController.propertyUpdate);
+    app.get('/view-properties/:id', PropertyController.propertyView);
+    app.get('/edit-properties/:id', PropertyController.propertyEdit);
 
-    // Categorys Module
-    app.get('/categorys', PropertyController.propertyList);
-    app.get('/create-categorys', PropertyController.propertyCreate);
-    app.get('/edit-categorys', PropertyController.propertyUpdate);
-    app.get('/view-categorys', PropertyController.propertyView);
+	// Categories Module
+    app.get('/categories', CategoriesController.categoryList); //category list
+    app.get('/create-categories', CategoriesController.categoryCreate); //create category
+	app.post("/category-store", CategoriesController.categoryAddValidation, CategoriesController.categoryAdd); // store category
+	app.get('/create-category-checklist/:id', CategoriesController.createCheckList); //create category vise checklist add 
+	app.post('/store-category-checklist', CategoriesController.storeChecklist); //store checklist
+	app.get('/edit-category-checklist/:id', CategoriesController.checkList); //edit category page with view category check list page
+    app.post('/update-categories', CategoriesController.updateCategory); //update category
+	app.get('/edit-checklist-details/:id', CategoriesController.editChecklistDetails); //edit checklist details page
+	// app.post('/update-checklist-details', CategoriesController.updateChecklistDetails); //update checklist details
+    // app.get('/create-checklist-form', CategoriesController.categoryView); //create checklist multi form page
+    // app.get('/store-checklist-form', CategoriesController.categoryView); //store checklist multi form
+    // app.get('/edit-checklist-form', CategoriesController.categoryView); //edit checklist page
+    // app.get('/update-checklist-form', CategoriesController.categoryView); //update checklist multiform page
 
     // Users Module
     app.get('/users', UserController.userList);
