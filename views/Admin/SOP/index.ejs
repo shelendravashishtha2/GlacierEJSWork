@@ -42,14 +42,40 @@
                         <% for (i = 0; i < data.length; i++) { %>
                         <tr>
                             <td style="width: 5%;text-align: center;"><%=i+1%></td>
-                            <td><%= data[i].property_name %></td>
-                            <td><%= data[i].address %></td>
-                            <td style="width: 10%;text-align: center;">pdf_file.pdf</td>
-                            <td style="width: 10%;text-align: center;">Leavel 1</td>
-                            <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
-                                <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
-                            <td style="width: 10%;text-align: center;"><a href="/edit-propertys"> <button class="btn btn-outline-primary">Edit</button></a>
-                                <a href="/view-propertys/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
+                            <td><%= data[i].category_name %></td>
+							<td>
+								<% if (data[i].level == 1) { %>
+									--
+								<% } else if (data[i].level == 2) { %>
+									<% data[i].sub_category.forEach(element => { %>
+										<% if (element.sub_category_name) { %>
+											<%= element.sub_category_name %> <br>
+										<% } else { %>
+											--
+										<% } %> 
+									<% }); %>
+								<% } %>
+							</td>
+							<td>
+								<% if (data[i].level == 1) { %>
+									<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= data[i].single_category_files %>" target="_blank"><%= data[i].single_category_files %></a><br>
+								<% } else if (data[i].level == 2) { %>
+									<% data[i].sub_category.forEach(element => { %>
+										<% if (element.sub_category_name) { %>
+											<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= element.sub_category_files %>" target="_blank"><%= element.sub_category_files %></a><br>
+										<% } else { %>
+											--
+										<% } %> 
+									<% }); %>
+								<% } %>
+							</td>
+                            <td style="width: 10%;text-align: center;"><%= data[i].level %></td>
+                            <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" <% if(data[i].status == 1) {%> checked <% } %> />
+                                <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label>
+							</td>
+                            <td style="width: 10%;text-align: center;"><a href="/edit-sop/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit</button></a>
+                                <a href="/view-sop/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a>
+							</td>
                         </tr>
                         <% } %>
                     </tbody>

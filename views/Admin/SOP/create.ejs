@@ -32,11 +32,11 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Add Property & Wing</h4>
+            <h4 class="mb-sm-0 font-size-18">Add SOP</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/propertys">Propertys</a></li>
-                    <li class="breadcrumb-item active">Add Property & Wing</li>
+                    <li class="breadcrumb-item"><a href="/sop">SOP</a></li>
+                    <li class="breadcrumb-item active">Add SOP</li>
                 </ol>
             </div>
         </div>
@@ -49,12 +49,12 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Add SOP</h4>
-                <form action="/store-sop" method="POST" enctype="multipart/form-data">
+                <form action="/store-sop" method="POST" enctype="multipart/form-data" class="custom-validation">
                     <div class="row">
                         <div class="col-xl-6">
                             <div class="mb-3">
                                 <label class="form-label">Category Name<span class="required">*</span></label>
-                                <input type="text" name="category_name" class="form-control" id="defaultconfig" placeholder="Enter Property Name" autofocus maxlength="200">
+                                <input type="text" name="category_name" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Level</label>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="mb-3" id="single_pdf_input">
                                 <label class="form-label">Upload PDF</label>
-                                <input type="file" name="single_category_files" multiple="" class="form-control">
+                                <input type="file" name="single_category_files" multiple="" class="form-control" required>
                             </div>
                             <div class="card" id="sub_category">
                                 <div class="card-body">
@@ -74,14 +74,14 @@
 									</h4>
                                     <div class="mb-3 row">
 										<div class="col-md-5 col-5">
-											<input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Sub Category Name" autofocus maxlength="200">
+											<input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Sub Category Name" autofocus maxlength="200" required>
 										</div>
 										<div class="col-md-5 col-5">
-											<input type="file" name="sub_category_files[0]" multiple="" class="form-control">
+											<input type="file" name="sub_category_files[0]" multiple="" class="form-control" required>
 										</div>
                                     </div>
 									<div class="input_field_wrapper"></div>
-									<input type="hidden" name="sub_category_count" id="sub_category_count" value="1">
+									<input type="hidden" name="sub_category_count" id="sub_category_count" value="1" required>
                                 </div>
                             </div>
                         </div>
@@ -100,26 +100,19 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
-<!-- Add Property & Wing init -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/parsleyjs/parsley.min.js"></script>
+<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-validation.init.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
         var maxFieldLimit = 30; //Input fields increment limitation
         var add_more_button = $('.add_button'); //Add button selector
         var Fieldwrapper = $('.input_field_wrapper'); //Input field wrapper
-        // var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Property Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files[0]" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>'; //New input field html 
+        // var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files[0]" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>'; //New input field html 
         var x = 1; //Initial field counter is 1
         $(add_more_button).click(function(){ //Once add button is clicked
             if(x < maxFieldLimit){ //Check maximum number of input fields
-				var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name['+x+']" class="form-control" id="defaultconfig" placeholder="Enter Property Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files['+x+']" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>';
+				var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name['+x+']" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files['+x+']" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>';
                 $(Fieldwrapper).append(fieldHTML); // Add field html
 				x++; //Increment field counter
 				$('#sub_category_count').val(x);

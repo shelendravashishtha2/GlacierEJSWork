@@ -34,7 +34,6 @@ const SOPSchema = new mongoose.Schema({
 	status: {
 		type: Number, //0=Inactive, 1=Active
 		default: 1,
-		select: false
 	},
 	created_by: {
 		// type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true

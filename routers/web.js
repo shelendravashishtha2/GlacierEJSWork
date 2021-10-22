@@ -22,47 +22,48 @@ module.exports = function (app) {
 
     app.get('/page-not-found',UserController.pageNotFound);
 
-    app.get('/', isUserAllowed, function (req, res) {
+    app.get('/', function (req, res) {
     res.locals = { title: 'Dashboard' };
     res.render('Dashboard/index');
     });
 
     // Propertys Module
-    app.get('/propertys', isUserAllowed,PropertyController.propertyList);
-    app.get('/create-propertys', isUserAllowed,PropertyController.propertyCreate);
-    app.get('/edit-propertys', isUserAllowed,PropertyController.propertyUpdate);
-    app.get('/view-propertys/:id', isUserAllowed,PropertyController.propertyView);
+    app.get('/propertys', PropertyController.propertyList);
+    app.get('/create-propertys', PropertyController.propertyCreate);
+    app.get('/edit-propertys', PropertyController.propertyUpdate);
+    app.get('/view-propertys/:id', PropertyController.propertyView);
 
     // Categorys Module
-    app.get('/categorys', isUserAllowed,PropertyController.propertyList);
-    app.get('/create-categorys', isUserAllowed,PropertyController.propertyCreate);
-    app.get('/edit-categorys', isUserAllowed,PropertyController.propertyUpdate);
-    app.get('/view-categorys', isUserAllowed,PropertyController.propertyView);
+    app.get('/categorys', PropertyController.propertyList);
+    app.get('/create-categorys', PropertyController.propertyCreate);
+    app.get('/edit-categorys', PropertyController.propertyUpdate);
+    app.get('/view-categorys', PropertyController.propertyView);
 
     // Users Module
-    app.get('/users', isUserAllowed,UserController.userList);
-    app.get('/create-users', isUserAllowed,UserController.userCreate);
-    app.get('/edit-users/:id', isUserAllowed,UserController.userUpdate);
-    app.get('/view-users/:id', isUserAllowed,UserController.userView);
+    app.get('/users', UserController.userList);
+    app.get('/create-users', UserController.userCreate);
+    app.get('/edit-users/:id', UserController.userUpdate);
+    app.get('/view-users/:id', UserController.userView);
 
     // Task
-    app.get('/task', isUserAllowed,TaskController.taskList);
+    app.get('/task', TaskController.taskList);
 
     // Manage Rating
-    app.get('/manage-rating', isUserAllowed,ManageRatingController.manageRatingList);
+    app.get('/manage-rating', ManageRatingController.manageRatingList);
 
     // PPM Master
-    app.get('/ppm', isUserAllowed,PpmController.PpmList);
+    app.get('/ppm', PpmController.PpmList);
 
     // SOP
-    app.get('/sop', isUserAllowed, SopController.sopList);
-    app.get('/create-sop', isUserAllowed, SopController.createSop);
-    app.post('/store-sop', isUserAllowed, SopController.storeSop);
-    // app.get('/edit-sop', isUserAllowed, SopController.sopList);
-    // app.get('/update-sop', isUserAllowed, SopController.sopList);
-    // app.get('/delete-sop', isUserAllowed, SopController.sopList);
+    app.get('/sop', SopController.sopList);
+    app.get('/create-sop', SopController.createSop);
+    app.post('/store-sop', SopController.storeSop);
+    app.get('/edit-sop/:id', SopController.editSop);
+    app.post('/update-sop', SopController.updateSop);
+    // app.post('/delete-sop/:id', SopController.deleteSop);
+    // app.get('/view-sop/:id', SopController.viewSop);
 
     // History 
-    app.get('/history', isUserAllowed,HistoryController.historyList);
+    app.get('/history', HistoryController.historyList);
 
 }
