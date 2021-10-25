@@ -17,8 +17,14 @@
 </div>
 <!-- end page title -->
 <%- contentFor('body') %>
+
 <div class="row">
     <div class="col-xl-12">
+		<% if(locals.error){ %>
+			<!-- <div class="alert alert-danger" role="alert">
+				<strong><%#= error.message %>!</strong>
+			</div> -->
+		<% } %>
         <div class="card">
             <div class="card-body">
                 <form action="/update-user" method="POST" enctype="multipart/form-data">
@@ -28,9 +34,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Full Name<span class="required">*</span></label>
                                 <input type="text" name="full_name" class="form-control" value="<%= data[0].full_name %>" id="defaultconfig" placeholder="Enter Fullname" autofocus maxlength="200">
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'full_name') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -43,9 +46,6 @@
                                     <option value="4" <% if(data[0].position_id == 4) {%> selected <% } %> >Manager</option>
                                     <option value="5" <% if(data[0].position_id == 5) {%> selected <% } %> >Supervisor</option>
                                 </select>
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'position_id') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -55,9 +55,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Email<span class="required">*</span></label>
                                 <input type="text" name="email" class="form-control" id="defaultconfig" value="<%= data[0].email %>" placeholder="Enter Email" maxlength="150">
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'email') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -68,9 +65,6 @@
 										<option value="<%= propertyData[i]._id %>"><%= propertyData[i].property_name %> </option>
 									<% } %>
                                 </select>
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'property_id') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -80,18 +74,12 @@
                             <div class="mb-3">
                                 <label class="form-label">Mobile No<span class="required">*</span></label>
                                 <input type="text" name="mobile_no" class="form-control" value="<%= data[0].mobile_no %>" id="defaultconfig" placeholder="Enter Mobile No" maxlength="15">
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'mobile_no') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Upload Img<span class="required">*</span></label>
                                 <input type="file" name="profile_image" class="form-control" maxlength="200">
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'profile_image') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -101,10 +89,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Address<span class="required">*</span></label>
                                 <textarea type="text" name="address" class="form-control" id="defaultconfig" placeholder="Enter Address Here..." maxlength="300"><%= data[0].address %></textarea>
-								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'address') { %>
-									<p style="color: red;"><%= errorMsg.message %> </p>
-								<% } } %>
-							</div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">

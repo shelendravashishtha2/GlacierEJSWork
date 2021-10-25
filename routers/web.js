@@ -55,7 +55,7 @@ module.exports = function (app) {
     app.get('/create-users', UserController.userCreate); //create user page
     app.get('/edit-users/:id', isUserAllowed, UserController.userEdit); //edit user page
     app.post('/update-user', isUserAllowed, UserController.userUpdate); //update user
-    app.get('/view-users/:id', UserController.userView); //view user details
+    app.get('/view-users/:id', isUserAllowed, UserController.userView); //view user details
 
     // Task
     app.get('/task', TaskController.taskList);

@@ -250,9 +250,10 @@ exports.userCreate = async (req,res) => {
 // User edit Page
 exports.userEdit = async (req,res) => {
 	try {
-		res.locals = { title: 'Update User', session:req.session};
-		res.locals.error = req.session.error || '';
-
+		res.locals = { title: 'Update User', session: req.session };
+		req.flash('error', req.session.error);
+		res.locals.error = req.session.error ? req.flash() : '';
+		
 		let UserData = await User.findOne({_id: req.params.id});
 		let propertyData = await Property.find();
 
@@ -281,7 +282,7 @@ exports.userUpdate = async (req,res) => {
 		}).options({ abortEarly: false });
 		const validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			req.session.error = validation.error.details;
+			req.session.error = validation.error.details[0];
 			return res.redirect('back');
 		}
 
@@ -359,11 +360,12 @@ exports.userUpdate = async (req,res) => {
 // User View Page
 exports.userView = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'View User', session:req.session};
-		let UserData = await User.find({position: 5});
-		return res.render('Admin/Users/view',{'data':UserResource(UserData)});
+		res.locals = { title: 'View User', session: req.session};
 
+		let UserData = await User.findOne({ _id: req.params.id, position: 5});
+		let UserPropertyData = await UserProperty.find({ userId: req.params.id}).populate({path: 'propertyId'}).lean();
+
+		return res.render('Admin/Users/view',{ data: UserResource(UserData), UserPropertyData: UserPropertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const UserPropertySchema = new mongoose.Schema({
 	userId: {
 		type:  mongoose.Schema.Types.ObjectId,
+		ref: 'User',
 		required: true,
 		trim: true
 	},
 	propertyId: {
 		type:  mongoose.Schema.Types.ObjectId,
+		ref: 'Property',
 		required: true,
 		trim: true
 	},
