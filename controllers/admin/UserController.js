@@ -8,6 +8,8 @@ const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
 const UserResource = require('../resources/UserResource');
 const Joi = require("joi");
+const Property = require('../../models/Property');
+const UserProperty = require('../../models/UserProperty');
 
 exports.changePasswordValidation = async (req, res, next) => {
 	const schema = Joi.object({
@@ -94,10 +96,7 @@ exports.supervisorAdd = async (req, res) => {
 
 // User add Form Validatation --Admin
 exports.userAddValidation = async (req, res, next) => {
-	console.log(req.body);
-	if (!Array.isArray(req.body.property_id)) {
-
-	}
+	req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
 
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),
@@ -145,17 +144,7 @@ exports.userAdd = async (req, res) => {
 				req.body.profile_image = '/public/images/users/' + fileName;
 			}
 		}
-		let propertyIdNameArray = [];
-		if (req.body.property_id) {
-			let property_id = req.body.property_id;
-			if (Array.isArray(property_id)) {
-				property_id.forEach(property => {
-					propertyIdNameArray.push(property);
-				});
-			}
-		}else{
-			return res.send(response.error(400, 'Property is required', []));
-		}
+
 		let positionType = '';
 		if(req.body.position_id == 2){
 			positionType = "Operation Team";
@@ -169,18 +158,28 @@ exports.userAdd = async (req, res) => {
 			positionType = "";
 		}
 
-		const registerUser = new User({
+		let registerUser = new User({
 			full_name: req.body.full_name,
 			email: req.body.email,
 			mobile_no: req.body.mobile_no,
-			address:req.body.address,
+			address: req.body.address,
             password: req.body.password,
-			profile_image:req.body.profile_image,
-			property_id:propertyIdNameArray, // User Property list
+			profile_image: req.body.profile_image,
+			property_id: req.body.property_id, // Property list
 			position_id: req.body.position_id, // user type id
 			position_type: positionType, // user type
 		});
-		const registeredData = await registerUser.save();
+		await registerUser.save();
+
+		for (let i = 0; i < req.body.property_id.length; i++) {
+			const property_id = req.body.property_id[i];
+			let UserPropertyData = new UserProperty({
+				userId: registerUser._id,
+				propertyId: property_id,
+			});
+			await UserPropertyData.save();
+		}
+
 		res.redirect('/users');
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -237,24 +236,120 @@ exports.userCreate = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Create User', session:req.session};
-		let UserData = await User.find({position: 5});
-		return res.render('Admin/Users/create',{'data':UserResource(UserData)});
 
+		let UserData = await User.find({position: 5});
+		let propertyData = await Property.find();
+
+		return res.render('Admin/Users/create',{ data: UserResource(UserData), propertyData: propertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-// User Update Page
+// User edit Page
+exports.userEdit = async (req,res) => {
+	try {
+		res.locals = { title: 'Update User', session:req.session};
+		res.locals.error = req.session.error || '';
+
+		let UserData = await User.findOne({_id: req.params.id});
+		let propertyData = await Property.find();
+
+		return res.render('Admin/Users/edit',{'data': UserResource(UserData), propertyData: propertyData});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+// User update
 exports.userUpdate = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Update User', session:req.session};
-		let UserData = await User.find({_id:req.params.id});
-		console.log(UserData);			
-		return res.render('Admin/Users/edit',{'data':UserResource(UserData)});
+		res.locals = { title: 'Update123 User', session: req.session};
 
+		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
+
+		const schema = Joi.object({
+			_id: Joi.string().required(),
+			full_name: Joi.string().min(3).max(150).required().label('Full name'),
+			email: Joi.string().min(6).max(100).required().email(),
+			mobile_no: Joi.string().min(6).max(12).required(),
+			position_id: Joi.string().required(),
+			property_id: Joi.array().items(Joi.string().allow('',null).trim(true)),
+			address: Joi.string().min(3).max(250).required()
+		}).options({ abortEarly: false });
+		const validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			req.session.error = validation.error.details;
+			return res.redirect('back');
+		}
+
+		let UserEmail = await User.findOne({_id: req.body._id});
+		if (UserEmail.email != req.body.email) {
+			const existsUser = await User.findOne({ email: req.body.email });
+			if(existsUser) {
+				return res.send(response.error(400, 'email id already exists', [] ));
+			}
+		}
+
+        if (req.files) {
+			let profile_image = req.files.profile_image;
+			let uploadPath = __basedir + '/public/images/users/';
+			let fileName;
+
+			if (profile_image) {
+				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
+					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+				}
+				if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
+					return res.send(response.error(400, 'Image must be less then 5MB', []));
+				}
+				fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
+				profile_image.mv(uploadPath + fileName, function(err) {
+					if (err){
+						return res.send(response.error(400, 'Image uploading failed', []));
+					}
+				});
+				req.body.profile_image = '/public/images/users/' + fileName;
+			}
+		}
+
+		let positionType = '';
+		if(req.body.position_id == 2){
+			positionType = "Operation Team";
+		}else if(req.body.position_id == 3){
+			positionType = "Auditor";
+		}else if(req.body.position_id == 4){
+			positionType = "Manager";
+		}else if(req.body.position_id == 5){
+			positionType = "Supervisor";
+		}else{
+			positionType = "";
+		}
+
+		let UserData = await User.findOne({_id: req.body._id});
+		UserData.full_name = req.body.full_name;
+		UserData.email = req.body.email;
+		UserData.mobile_no = req.body.mobile_no;
+		UserData.address = req.body.address;
+		UserData.position_id = req.body.position_id;
+		UserData.position_type = positionType; // user type
+		UserData.property_id = req.body.property_id;
+		UserData.profile_image = req.body.profile_image;
+		await UserData.save();
+
+		let deleteOldUserProperty = await UserProperty.deleteMany({ userId: UserData._id });
+		for (let i = 0; i < req.body.property_id.length; i++) {
+			const property_id = req.body.property_id[i];
+			let UserPropertyData = new UserProperty({
+				userId: UserData._id,
+				propertyId: property_id,
+			});
+			await UserPropertyData.save();
+		}
+
+		return res.redirect('/users');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

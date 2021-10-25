@@ -13,7 +13,7 @@ const SOP = require('../../models/SOP');
 exports.sopList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Manage Rating', session:req.session};
+		res.locals = { title: 'Sop List', session:req.session};
 
 		let sopData = await SOP.find({});
 		return res.render('Admin/SOP/index',{data: sopData});
@@ -27,9 +27,7 @@ exports.sopList = async (req,res) => {
 exports.createSop = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Manage Rating', session:req.session};
-		let sopData = await SOP.find({});
-		// return res.render('Admin/SOP/create',{'data':PropertyResource(sopData)});
+		res.locals = { title: 'Create Sop', session:req.session};
 		return res.render('Admin/SOP/create');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -118,7 +116,7 @@ exports.storeSop = async (req,res) => {
 exports.editSop = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Manage Rating', session:req.session};
+		res.locals = { title: 'Edit Sop', session:req.session};
 		let sopData = await SOP.findOne({_id: req.params.id});
 		
 		return res.render('Admin/SOP/edit', { data: sopData });
@@ -131,6 +129,8 @@ exports.editSop = async (req,res) => {
 //update SOP
 exports.updateSop = async (req,res) => {
 	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Update Sop', session:req.session};
 
 		// var arrayFields = ["sub_category_name"];
 		// var regexString = `^(${arrayFields.join("|")})\\[\\d+\\]`;

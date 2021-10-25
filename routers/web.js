@@ -11,9 +11,8 @@ const CategoriesController = require("../controllers/admin/CategoriesController"
 module.exports = function (app) {
 
     function isUserAllowed(req, res, next) {
-        sess = req.session;
-        if (sess.user) {
-                return next();
+        if (req.session.user) {
+            return next();
         }
         else { res.redirect('/login'); }
     }
@@ -22,7 +21,7 @@ module.exports = function (app) {
 
     app.get('/', function (req, res) {
         if(req.session.user){
-            res.locals = { title: 'Dashboard' ,session:req.session};
+            res.locals = { title: 'Dashboard', session: req.session};
             res.render('Dashboard/index');
         }else{
             res.redirect('/login');
@@ -52,10 +51,11 @@ module.exports = function (app) {
     // app.get('/update-checklist-form', CategoriesController.updateChecklistForm); //update checklist multiform page
 
     // Users Module
-    app.get('/users', UserController.userList);
-    app.get('/create-users', UserController.userCreate);
-    app.get('/edit-users/:id', UserController.userUpdate);
-    app.get('/view-users/:id', UserController.userView);
+    app.get('/users', isUserAllowed, UserController.userList); //user list
+    app.get('/create-users', UserController.userCreate); //create user page
+    app.get('/edit-users/:id', isUserAllowed, UserController.userEdit); //edit user page
+    app.post('/update-user', isUserAllowed, UserController.userUpdate); //update user
+    app.get('/view-users/:id', UserController.userView); //view user details
 
     // Task
     app.get('/task', TaskController.taskList);
@@ -65,6 +65,18 @@ module.exports = function (app) {
 
     // PPM Master
     app.get('/ppm', PpmController.PpmList);
+    app.get('/view-ppm', PpmController.viewPpmList);
+    app.get('/assign-ppm', PpmController.assignPpmList);
+    app.get('/edit-ppm/:id', PpmController.editPpm);
+    app.post('/create-ppm', PpmController.createPpm);
+    app.post('/update-ppm-status', PpmController.updatePpmStatus);
+    app.post('/update-ppm-name', PpmController.updatePpmName);
+    app.post('/update-ppm-task', PpmController.updatePpmTask);
+    app.post('/update-ppm-task-status', PpmController.updatePpmTaskStatus);
+    app.get('/properties-wise-view-ppm/:id', PpmController.propertiesWisePpmList);
+    app.get('/ppm-details', PpmController.ppmDetails);
+    app.get('/edit-wing-category', PpmController.editWingCategory);
+
 
     // SOP
     app.get('/sop',SopController.sopList);

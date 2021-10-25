@@ -3,19 +3,18 @@ const mongoose = require("mongoose");
 const SubCategorySchema = new mongoose.Schema({ 
 	sub_category_name: {
 		type: String,
-		trim: true,
-		required: true
+		trim: true
 	},
 	sub_category_files: {
 		type: [String],
-		trim: true,
-		required: true
+		trim: true
 	}, 
 });
 
 const SOPSchema = new mongoose.Schema({
 	category_name: {
 		type: String,
+		required:true,
 		trim: true,
 		required: true
 	},
@@ -26,13 +25,14 @@ const SOPSchema = new mongoose.Schema({
 	},
 	single_category_files: {
 		type: [String],
-		trim: true,
-		required: true
+		trim: true
 	},
 	sub_category: [SubCategorySchema],
 
 	status: {
 		type: Number, //0=Inactive, 1=Active
+		min: [0,'invalid status'],
+    	max: [1,'invalid status'],
 		default: 1,
 	},
 	created_by: {
@@ -41,19 +41,10 @@ const SOPSchema = new mongoose.Schema({
 	},
 	updated_by: {
 		type: mongoose.Schema.Types.ObjectId, ref: 'User'
-	},
-	created_at: { 
-		type: Date
-	},
-	updated_at: {
-		type: Date
 	}
 },{
-	versionKey: false,
-	timestamps: {
-		createdAt: 'created_at',
-		updatedAt: 'updated_at'
-	}
+	timestamps: true,
+	versionKey: false
 });
 
 // const SOPData = new SOP({

@@ -5,14 +5,23 @@ const jwt = require("jsonwebtoken");
 const {errorLog} = require("../helper/consoleLog");
 const Joi = require("joi");
 
+const wingsSchema = new mongoose.Schema({ 
+	wings_name: {
+		type: String,
+		trim: true,
+	}
+});
+
 const propertySchema = new mongoose.Schema({
 	property_name: {
 		type: String,
+		required:true,
 		trim: true,
 		unique: true
 	},
 	address: {
 		type: String,
+		required:true,
 		trim: true,
 	},
 	location: {
@@ -21,6 +30,7 @@ const propertySchema = new mongoose.Schema({
 	},
 	propertyLatLong: {
         type: [Number],
+        required:true,
         index: '2d'
     },
 	property_images: {
@@ -39,10 +49,7 @@ const propertySchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
-	wings: {
-		type: [String],
-		trim: true,
-	},
+	wings:[wingsSchema],
 	status: {
 		type: Number, // 1=active, 0=Inactive
 		min: [0,'invalid status'],

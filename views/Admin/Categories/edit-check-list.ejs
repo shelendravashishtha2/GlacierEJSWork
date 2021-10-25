@@ -56,11 +56,11 @@
                                 <label class="form-label">Frequency<span class="required">*</span></label>
                                 <select class="form-control" name="frequency" required>
                                     <option value="">Select Frequency</option>
-                                    <option value="1" <% if (data.frequency == 1) { %> selected <% } %> >Weekly</option>
-                                    <option value="2" <% if (data.frequency == 2) { %> selected <% } %> >Monthly</option>
-                                    <option value="3" <% if (data.frequency == 3) { %> selected <% } %> >Quarterly</option>
-                                    <option value="4" <% if (data.frequency == 4) { %> selected <% } %> >Annually</option>
-                                    <option value="5" <% if (data.frequency == 5) { %> selected <% } %> >Bi-Annually</option>
+                                    <option value="weekly" <% if (data.frequency == "weekly") { %> selected <% } %> >Weekly</option>
+                                    <option value="monthly" <% if (data.frequency == "monthly") { %> selected <% } %> >Monthly</option>
+                                    <option value="quarterly" <% if (data.frequency == "quarterly") { %> selected <% } %> >Quarterly</option>
+                                    <option value="annually" <% if (data.frequency == "annually") { %> selected <% } %> >Annually</option>
+                                    <option value="bi-annually" <% if (data.frequency == "bi-annually") { %> selected <% } %> >Bi-Annually</option>
                                 </select>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                                 <select class="form-control" name="month">
                                     <option value="">Select Month</option>
                                     <% for(m = 0; m < months.length; m++) { %>
-                                    <option value="<%= months[m] %>" <% if (data.month == months[m]) { %> selected <% } %> ><%= months[m] %></option>
+                                    <option value="<%= m+1 %>" <% if (data.month == months[m]) { %> selected <% } %> ><%= months[m] %></option>
                                     <% } %>
                                 </select>
                             </div>

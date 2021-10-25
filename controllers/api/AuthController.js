@@ -42,7 +42,7 @@ exports.register = async (req, res) => {
 		});
 		const registeredData = await registerUser.save();
 
-		const token = await registerUser.generatingAuthToken(); // generate token
+		const token = await registerUser.generatingAuthToken(req,res); // generate token
 		const userDataJson = JSON.parse(JSON.stringify(registeredData));
 		userDataJson.token = token; // added token in user document
 		delete userDataJson.password;

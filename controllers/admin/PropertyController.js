@@ -13,18 +13,18 @@ const Joi = require("joi");
 // Property add form validatation
 exports.propertyAddValidation = async (req, res, next) => {
 	
-	req.body.wings = Array.isArray(req.body.wings) ? req.body.wings : [req.body.wings];
+	req.body.wings_name = Array.isArray(req.body.wings_name) ? req.body.wings_name : [req.body.wings_name];
 
 	const schema = Joi.object({
 		latitude: Joi.required(),
 		longitude: Joi.required(),
-		property_name: Joi.string().min(8).max(300).required(),
-		address: Joi.string().min(15).max(300).required(),
+		property_name: Joi.string().min(4).max(300).required(),
+		address: Joi.string().min(8).max(300).required(),
 		location: Joi.string().min(6).max(200).required(),
 		name_of_owner: Joi.string().min(6).max(200).required(),
 		area_name: Joi.string().min(6).max(300).required(),
 		square_feet: Joi.string().min(6).max(200).required(),
-		wings: Joi.array().items(Joi.string().allow('',null).trim(true)),
+		wings_name: Joi.array().items(Joi.string().allow('',null).trim(true)),
 		property_images: Joi.array().items(Joi.string().allow('',null).trim(true)),
 	});
 	const validation = schema.validate(req.body, __joiOptions);
@@ -32,8 +32,8 @@ exports.propertyAddValidation = async (req, res, next) => {
 		res.locals = { title: 'Dashboard' ,session: req.session};
 		//req.toastr.error('Invalid credentials.');
 		//req.toastr.error(validation.error.details[0].message, title = validation.error.details[0].message, options = {})
-		//res.render('Admin/Properties/create', { 'message': req.flash('message'), 'error': req.flash('error') });
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
+		res.render('Admin/Properties/create', { 'message': req.flash('message'), 'error': req.flash('error') });
+		//return res.send(response.error(400, validation.error.details[0].message, [] ));
 	} else {
 		next();
 	}
@@ -82,13 +82,13 @@ exports.propertyAdd = async (req, res) => {
 			return res.send(response.error(400, 'File is required', []));
 		}
 		
-		if (req.body.wings) {
-			let wings = req.body.wings;
+		if (req.body.wings_name) {
+			let wings_name = req.body.wings_name;
 
-			wings = Array.isArray(wings) ? wings : [wings];
-			if (Array.isArray(wings)) {
-				wings.forEach(wing => {
-					wingsNameArray.push(wing);
+			wings_name = Array.isArray(wings_name) ? wings_name : [wings_name];
+			if (Array.isArray(wings_name)) {
+				wings_name.forEach(wing => {
+					wingsNameArray.push({'wings_name':wing});
 				});
 			}
 		}else{
@@ -216,8 +216,10 @@ exports.propertyCreate = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Create Property',session: req.session};
+
+		req.toastr.error('Invalid credentials.');
 		let propertyData = await Property.find({});
-		return res.render('Admin/Properties/create',{'data':PropertyResource(propertyData)});
+		return res.render('Admin/Properties/create',{'data':PropertyResource(propertyData),req: req});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

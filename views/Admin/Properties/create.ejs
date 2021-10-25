@@ -1,25 +1,6 @@
 <%- contentFor('HeaderCss') %>
 <style type="text/css">
-.image_container {
-    height: 120px;
-    width: 200px;
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 10px;
-}
-.image_container img {
-    height: 100%;
-    width: 100%;
-    /* object-fit: cover; */
-}
-.image_container span {
-    top: -6px;
-    right: 8px;
-    color: red;
-    font-size: 28px;
-    font-weight: normal;
-    cursor: pointer;
-}
+.image_container { height: 120px; width: 200px; border-radius: 6px; overflow: hidden; margin: 10px; } .image_container img { height: 100%; width: 100%; /* object-fit: cover; */ } .image_container span { top: -6px; right: 8px; color: red; font-size: 28px; font-weight: normal; cursor: pointer; }
 </style>
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
@@ -94,7 +75,7 @@
                                     <div class="mb-3 row">
                                         <div class="col-md-11 col-8">
                                             <div class="input_field_wrapper">
-                                                <input type="text" class="form-control" name="wings" value="" placeholder="Enter Wing Name" style="margin-bottom: 15px;" required/>
+                                                <input type="text" class="form-control" name="wings_name" value="" placeholder="Enter Wing Name" style="margin-bottom: 15px;" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -117,15 +98,10 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/parsleyjs/parsley.min.js"></script>
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-validation.init.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
 <script>
     $(document).ready(function(){
         var input = document.getElementById('address');
@@ -144,7 +120,7 @@
         var maxFieldLimit = 30; //Input fields increment limitation
         var add_more_button = $('.add_button'); //Add button selector
         var Fieldwrapper = $('.input_field_wrapper'); //Input field wrapper
-        var fieldHTML = '<div style="display:flex;margin-bottom:10px;"><input type="text" name="wings" class="form-control" value="" placeholder="Enter Wing Name"/><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>'; //New input field html 
+        var fieldHTML = '<div style="display:flex;margin-bottom:10px;"><input type="text" name="wings_name" class="form-control" value="" placeholder="Enter Wing Name"/><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>'; //New input field html 
         var x = 1; //Initial field counter is 1
         $(add_more_button).click(function(){ //Once add button is clicked
             if(x < maxFieldLimit){ //Check maximum number of input fields

@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 		unique: true,
+		required:true,
 		validate(value){
 			if (!validator.isEmail(value)) {
 				throw new Error("Invalid Email")
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema({
 	},
 	full_name: {
 		type: String,
+		required:true,
 		trim: true,
 	},
 	mobile_no: {
@@ -33,9 +35,9 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 	},
 	position_id: {
-		type: Number, // 1 = Admin, 2 = Operation Team, 3 = Auditor 4 = Manager 5 = Supervisor.
-		min: [1,'invalid user'],
-    	max: [8,'invalid user'],
+		type: Number, // 1=Admin, 2=Operation Team, 3=Auditor 4=Manager 5=Supervisor.
+		min: [1,'invalid user type'],
+    	max: [8,'invalid user type'],
 		trim: true,
 	},
 	position_type: {
@@ -43,7 +45,8 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 	},
 	property_id: {
-		type: [String],
+		type: [mongoose.Schema.Types.ObjectId],
+		default:[],
 		trim: true,
 	},
 	gender: {
@@ -109,7 +112,7 @@ userSchema.statics.userValidate = function (userData) {
 }
 
 // generating tokens
-userSchema.methods.generatingAuthToken = async function () {
+userSchema.methods.generatingAuthToken = async function (req,res) {
 	try {
 		const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY, {algorithm: 'HS384'} );
 		return token;

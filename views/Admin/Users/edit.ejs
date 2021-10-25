@@ -21,12 +21,16 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <form action="/admin/api/user-add" method="POST" enctype="multipart/form-data">
+                <form action="/update-user" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="_id" value="<%= data[0]._id %>">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Fullname<span class="required">*</span></label>
+                                <label class="form-label">Full Name<span class="required">*</span></label>
                                 <input type="text" name="full_name" class="form-control" value="<%= data[0].full_name %>" id="defaultconfig" placeholder="Enter Fullname" autofocus maxlength="200">
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'full_name') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -34,11 +38,14 @@
                                 <label class="form-label">Position<span class="required">*</span></label>
                                 <select class="form-control" name="position_id">
                                     <option value="">Select Position</option>
-                                    <option value="2">Operation Team</option>
-                                    <option value="3">Auditor</option>
-                                    <option value="4">Manager</option>
-                                    <option value="5">Supervisor</option>
+                                    <option value="2" <% if(data[0].position_id == 2) {%> selected <% } %> >Operation Team</option>
+                                    <option value="3" <% if(data[0].position_id == 3) {%> selected <% } %> >Auditor</option>
+                                    <option value="4" <% if(data[0].position_id == 4) {%> selected <% } %> >Manager</option>
+                                    <option value="5" <% if(data[0].position_id == 5) {%> selected <% } %> >Supervisor</option>
                                 </select>
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'position_id') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -48,35 +55,22 @@
                             <div class="mb-3">
                                 <label class="form-label">Email<span class="required">*</span></label>
                                 <input type="text" name="email" class="form-control" id="defaultconfig" value="<%= data[0].email %>" placeholder="Enter Email" maxlength="150">
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'email') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Property Name<span class="required">*</span></label>
                                 <select name="property_id" class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="Choose Property Name...">
-                                    <option value="AK">Alaska</option>
-                                    <option value="HI">Hawaii</option>
-                                    <option value="CT">Connecticut</option>
-                                    <option value="DE">Delaware</option>
-                                    <option value="FL">Florida</option>
-                                    <option value="GA">Georgia</option>
-                                    <option value="IN">Indiana</option>
-                                    <option value="ME">Maine</option>
-                                    <option value="MD">Maryland</option>
-                                    <option value="MA">Massachusetts</option>
-                                    <option value="MI">Michigan</option>
-                                    <option value="NH">New Hampshire</option>
-                                    <option value="NJ">New Jersey</option>
-                                    <option value="NY">New York</option>
-                                    <option value="NC">North Carolina</option>
-                                    <option value="OH">Ohio</option>
-                                    <option value="PA">Pennsylvania</option>
-                                    <option value="RI">Rhode Island</option>
-                                    <option value="SC">South Carolina</option>
-                                    <option value="VT">Vermont</option>
-                                    <option value="VA">Virginia</option>
-                                    <option value="WV">West Virginia</option>
+                                    <% for( let i = 0; i < propertyData.length; i++ ) { %>
+										<option value="<%= propertyData[i]._id %>"><%= propertyData[i].property_name %> </option>
+									<% } %>
                                 </select>
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'property_id') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -86,12 +80,18 @@
                             <div class="mb-3">
                                 <label class="form-label">Mobile No<span class="required">*</span></label>
                                 <input type="text" name="mobile_no" class="form-control" value="<%= data[0].mobile_no %>" id="defaultconfig" placeholder="Enter Mobile No" maxlength="15">
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'mobile_no') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Upload Img<span class="required">*</span></label>
                                 <input type="file" name="profile_image" class="form-control" maxlength="200">
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'profile_image') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
                             </div>
                         </div>
                     </div>
@@ -101,13 +101,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Address<span class="required">*</span></label>
                                 <textarea type="text" name="address" class="form-control" id="defaultconfig" placeholder="Enter Address Here..." maxlength="300"><%= data[0].address %></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Password<span class="required">*</span></label>
-                                <input type="text" name="password" class="form-control" id="defaultconfig" placeholder="Enter Password" maxlength="15">
-                            </div>
+								<% for(const errorMsg of error) { if (errorMsg.path[0] == 'address') { %>
+									<p style="color: red;"><%= errorMsg.message %> </p>
+								<% } } %>
+							</div>
                         </div>
                     </div>
                     <div class="row">
