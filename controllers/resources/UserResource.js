@@ -12,7 +12,7 @@ const UserResource = (res) => {
 				"email": resData.email ? resData.email : "",
 				"mobile_no": resData.mobile_no ? resData.mobile_no : "",
 				"address": resData.address ? resData.address : "",
-				"position_id": resData.position_id ? resData.position_id.toString() : "",
+				"position_id": resData.position_id ? resData.position_id : "",
 				"position_type": resData.position_type ? resData.position_type.toString() : "",
 				"profile_image": resData.profile_image ? resData.profile_image : "",
 				"reg_status": resData.registration_status ? resData.registration_status.toString() : "0",

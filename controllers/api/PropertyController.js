@@ -6,7 +6,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
+const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
 
 exports.propertyList = async (req,res) => {

@@ -47,32 +47,5 @@ const SOPSchema = new mongoose.Schema({
 	versionKey: false
 });
 
-// const SOPData = new SOP({
-// 	category_name: "asdfasdasd",
-// 	level: "1",
-// 	single_category_files: [
-// 		"fun.png",
-// 		"humore.png"
-// 	],
-// 	sub_category: [
-// 		{
-// 			sub_category_name: "test",
-// 			sub_category_files: [
-// 				"fun.png",
-// 				"humore.png"
-// 			],
-// 		},
-// 		{
-// 			sub_category_name: "test2",
-// 			sub_category_files: [
-// 				"fun.png",
-// 				"humore.png"
-// 			],
-// 		}
-// 	],
-// 	// created_by: req.user._id
-// });
-// await SOPData.save();
-
 const SOP = new mongoose.model("sop", SOPSchema);
 module.exports = SOP;

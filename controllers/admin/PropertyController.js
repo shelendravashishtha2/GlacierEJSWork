@@ -14,7 +14,7 @@ const Joi = require("joi");
 exports.propertyAddValidation = async (req, res, next) => {
 	
 	req.body.wings_name = Array.isArray(req.body.wings_name) ? req.body.wings_name : [req.body.wings_name];
-
+	console.log(req.body);
 	const schema = Joi.object({
 		latitude: Joi.required(),
 		longitude: Joi.required(),
@@ -30,6 +30,7 @@ exports.propertyAddValidation = async (req, res, next) => {
 	const validation = schema.validate(req.body, __joiOptions);
 	if (validation.error) {
 		res.locals = { title: 'Dashboard' ,session: req.session};
+		console.log(validation.error);
 		//req.toastr.error('Invalid credentials.');
 		//req.toastr.error(validation.error.details[0].message, title = validation.error.details[0].message, options = {})
 		res.render('Admin/Properties/create', { 'message': req.flash('message'), 'error': req.flash('error') });
@@ -94,7 +95,6 @@ exports.propertyAdd = async (req, res) => {
 		}else{
 			return res.send(response.error(400, 'Wing is required', []));
 		}
-
 		const obj = new Property({
 			property_name: req.body.property_name,
 			address: req.body.address,

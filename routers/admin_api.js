@@ -19,9 +19,6 @@ router.post("/profile-image-upload", auth, UserController.profileImageUpload); /
 // Supervisor list
 router.post("/supervisor-add", auth, UserController.supervisorAddValidation, UserController.supervisorAdd); // user registration
 
-// Supervisor list
-router.post("/user-add", UserController.userAddValidation, UserController.userAdd); // user registration
-
 // Property Name
 router.post("/property-list", PropertyController.propertyList); // property list
 router.post("/property-add", PropertyController.propertyAddValidation, PropertyController.propertyAdd); // property add

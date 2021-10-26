@@ -105,6 +105,40 @@ exports.updatePpmTaskStatus = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+exports.updatePropertyWingStatus = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			propertyId: Joi.required(),
+			wingId: Joi.required()
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		let propertyDetail = await Property.findOne({_id:req.body.propertyId});
+		let index = propertyDetail.wings.findIndex((x)=> String(x._id) == String(req.body.wingId));
+		if(index == -1){
+			return res.redirect('/assign-ppm');
+		}else{
+			if(propertyDetail.wings[index].status == 0){
+				propertyDetail.wings[index].status = 1;	
+			}else{
+				propertyDetail.wings[index].status = 0
+			}
+			propertyDetail.markModified("wings");
+			propertyDetail.save();
+		}
+		return res.status(200).send({
+		    "status": true,
+		    "status_code": "200",
+		    "message": "Status update"
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
 
 exports.createPpm = async (req,res) => {
 	try {
@@ -328,12 +362,13 @@ exports.assignPpmList = async (req,res) => {
 // Property Wise PPM List
 exports.propertiesWisePpmList = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
+		//if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Assign PPM List',session: req.session};
-		let propertyData = await Property.findOne({_id:req.body.propert});
-		return res.render('Admin/PPM/property-wise-ppm-list',{'data':PropertyResource(propertyData)});
+		let propertyData = await Property.findOne({_id:req.params.id});
+		return res.render('Admin/PPM/property-wise-ppm-list',{'data':propertyData});
 
 	} catch (error) {
+		console.log(error)
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}

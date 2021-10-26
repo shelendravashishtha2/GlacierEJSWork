@@ -38,9 +38,9 @@ module.exports = function (app) {
 	// Categories Module
     app.get('/categories', CategoriesController.categoryList); //category list
     app.get('/create-categories', CategoriesController.categoryCreate); //create category
-	app.post("/category-store", CategoriesController.categoryAddValidation, CategoriesController.categoryAdd); // store category
+	app.post("/category-store", CategoriesController.categoryAddValidationForm, CategoriesController.categoryAdd); // store category
 	app.get('/create-category-checklist/:id', CategoriesController.createCheckList); //create category vise checklist add 
-	app.post('/store-category-checklist', CategoriesController.storeChecklist); //store checklist
+	app.post('/store-category-checklist', CategoriesController.checkListAddValidationForm ,CategoriesController.storeChecklist); //store checklist
 	app.get('/edit-category-checklist/:id', CategoriesController.checkList); //edit category page with view category check list page
     app.post('/update-categories', CategoriesController.updateCategory); //update category
 	app.get('/edit-checklist-details/:id', CategoriesController.editChecklistDetails); //edit checklist details page
@@ -53,8 +53,9 @@ module.exports = function (app) {
     // Users Module
     app.get('/users', isUserAllowed, UserController.userList); //user list
     app.get('/create-users', UserController.userCreate); //create user page
+	app.post("/user-add", UserController.userAddValidation, UserController.userAdd); // user registration
     app.get('/edit-users/:id', isUserAllowed, UserController.userEdit); //edit user page
-    app.post('/update-user', isUserAllowed, UserController.userUpdate); //update user
+    app.post('/update-user', isUserAllowed, UserController.userUpdateValidation, UserController.userUpdate); //update user
     app.get('/view-users/:id', isUserAllowed, UserController.userView); //view user details
 
     // Task
@@ -72,6 +73,7 @@ module.exports = function (app) {
     app.post('/update-ppm-status', PpmController.updatePpmStatus);
     app.post('/update-ppm-name', PpmController.updatePpmName);
     app.post('/update-ppm-task', PpmController.updatePpmTask);
+    app.post('/update-property-wing-status', PpmController.updatePropertyWingStatus);
     app.post('/update-ppm-task-status', PpmController.updatePpmTaskStatus);
     app.get('/properties-wise-view-ppm/:id', PpmController.propertiesWisePpmList);
     app.get('/ppm-details', PpmController.ppmDetails);

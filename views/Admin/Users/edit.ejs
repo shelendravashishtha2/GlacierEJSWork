@@ -20,11 +20,6 @@
 
 <div class="row">
     <div class="col-xl-12">
-		<% if(locals.error){ %>
-			<!-- <div class="alert alert-danger" role="alert">
-				<strong><%#= error.message %>!</strong>
-			</div> -->
-		<% } %>
         <div class="card">
             <div class="card-body">
                 <form action="/update-user" method="POST" enctype="multipart/form-data">
@@ -33,19 +28,28 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Full Name<span class="required">*</span></label>
-                                <input type="text" name="full_name" class="form-control" value="<%= data[0].full_name %>" id="defaultconfig" placeholder="Enter Fullname" autofocus maxlength="200">
-                            </div>
+                                <input type="text" name="full_name" class="form-control" value="<%= typeof error.inputData != 'undefined' ? error.inputData.full_name : data[0].full_name %>" placeholder="Enter Full Name" autofocus maxlength="200">
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.full_name != 'undefined' ) ? error.errMsg.full_name.msg: ''%></p>
+							</div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Position<span class="required">*</span></label>
                                 <select class="form-control" name="position_id">
                                     <option value="">Select Position</option>
-                                    <option value="2" <% if(data[0].position_id == 2) {%> selected <% } %> >Operation Team</option>
-                                    <option value="3" <% if(data[0].position_id == 3) {%> selected <% } %> >Auditor</option>
-                                    <option value="4" <% if(data[0].position_id == 4) {%> selected <% } %> >Manager</option>
-                                    <option value="5" <% if(data[0].position_id == 5) {%> selected <% } %> >Supervisor</option>
+									<% if (typeof error.inputData != 'undefined' && typeof error.inputData.position_id != 'undefined') { %>
+										<option value="2" <% if(error.inputData.position_id == 2) {%> selected <% } %> >Operation Team</option>
+										<option value="3" <% if(error.inputData.position_id == 3) {%> selected <% } %> >Auditor</option>
+										<option value="4" <% if(error.inputData.position_id == 4) {%> selected <% } %> >Manager</option>
+										<option value="5" <% if(error.inputData.position_id == 5) {%> selected <% } %> >Supervisor</option>
+									<% } else { %>
+										<option value="2" <% if(data[0].position_id == 2) {%> selected <% } %> >Operation Team</option>
+										<option value="3" <% if(data[0].position_id == 3) {%> selected <% } %> >Auditor</option>
+										<option value="4" <% if(data[0].position_id == 4) {%> selected <% } %> >Manager</option>
+										<option value="5" <% if(data[0].position_id == 5) {%> selected <% } %> >Supervisor</option>
+									<% } %>
                                 </select>
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.position_id != 'undefined' ) ? error.errMsg.position_id.msg: ''%></p>
                             </div>
                         </div>
                     </div>
@@ -54,17 +58,25 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Email<span class="required">*</span></label>
-                                <input type="text" name="email" class="form-control" id="defaultconfig" value="<%= data[0].email %>" placeholder="Enter Email" maxlength="150">
-                            </div>
+                                <input type="text" name="email" class="form-control" value="<%= typeof error.inputData != 'undefined' ? error.inputData.email : data[0].email %>" placeholder="Enter Email" maxlength="150">
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.email != 'undefined' ) ? error.errMsg.email.msg: ''%></p>
+							</div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Property Name<span class="required">*</span></label>
                                 <select name="property_id" class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="Choose Property Name...">
                                     <% for( let i = 0; i < propertyData.length; i++ ) { %>
-										<option value="<%= propertyData[i]._id %>"><%= propertyData[i].property_name %> </option>
+										<% for( let j = 0; j < UserPropertyData.length; j++ ) { %>
+											<% if (propertyData[i]._id == UserPropertyData[j].propertyId) { %>
+												<option value="<%= propertyData[i]._id %>" selected><%= propertyData[i].property_name %></option>
+											<% } else { %>
+												<option value="<%= propertyData[i]._id %>"><%= propertyData[i].property_name %></option>
+											<% } %>
+										<% } %>
 									<% } %>
                                 </select>
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.property_id != 'undefined' ) ? error.errMsg.property_id.msg: ''%></p>
                             </div>
                         </div>
                     </div>
@@ -73,13 +85,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Mobile No<span class="required">*</span></label>
-                                <input type="text" name="mobile_no" class="form-control" value="<%= data[0].mobile_no %>" id="defaultconfig" placeholder="Enter Mobile No" maxlength="15">
+                                <input type="text" name="mobile_no" class="form-control" value="<%= typeof error.inputData != 'undefined' ? error.inputData.mobile_no : data[0].mobile_no %>" placeholder="Enter Mobile No" maxlength="15">
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.mobile_no != 'undefined' ) ? error.errMsg.mobile_no.msg: ''%></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Upload Img<span class="required">*</span></label>
                                 <input type="file" name="profile_image" class="form-control" maxlength="200">
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.profile_image != 'undefined' ) ? error.errMsg.profile_image.msg: ''%></p>
                             </div>
                         </div>
                     </div>
@@ -88,7 +102,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Address<span class="required">*</span></label>
-                                <textarea type="text" name="address" class="form-control" id="defaultconfig" placeholder="Enter Address Here..." maxlength="300"><%= data[0].address %></textarea>
+                                <textarea type="text" name="address" class="form-control" placeholder="Enter Address Here..." maxlength="300"><%= typeof error.inputData != 'undefined' ? error.inputData.address : data[0].address %></textarea>
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.address != 'undefined' ) ? error.errMsg.address.msg: ''%></p>
                             </div>
                         </div>
                     </div>

@@ -29,10 +29,10 @@
                         <div class="mb-2 row">
                             <label for="example-text-input" class="col-md-3 col-form-label">Select Property Name :-</label>
                             <div class="col-md-4">
-                                <select class="form-select">
+                                <select class="form-select" onchange="getWingList()" name="propertyId" id="propertyId" >
                                     <option>Select Property Name</option>
                                     <% for (i = 0; i < data.length; i++) { %>
-                                    <option><%= data[i].property_name %></option>
+                                        <option value="<%= data[i]._id %>"><%= data[i].property_name %></option>
                                     <% } %>
                                 </select>
                             </div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="text-sm-end">
-                            <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">Select Wing</button>
+                            <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal" onclick="selectWing()" >Select Wing</button>
                             <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".ppmname">PPM Name</button>
                         </div>
                     </div>
@@ -57,28 +57,16 @@
                             <tr>
                                 <th class="text-center">Sr.No</th>
                                 <th>Wing Name</th>
-                                <th class="text-center">Status</th>
+                                <!--<th class="text-center">Status</th>-->
                                 <th class="text-center">Field</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <% for (i = 0; i < 5; i++) { %>
-                            <tr>
-                                <td class="text-center" style="width: 5%;"><%=i+1%></td>
-                                <td>Wing A<%=i+1%></td>
-                                <td class="text-center" style="width: 7%;">
-                                    <input type="checkbox" id="switch4" switch="success" checked="">
-                                    <label for="switch4" data-on-label="Yes" data-off-label="No"></label>
-                                </td>
-                                <td class="text-center" style="width: 7%;">
-                                    <a href="/edit-wing-category" class="btn btn-success waves-effect waves-light">Edit</a>
-                                </td>
-                            </tr>
-                            <% } %>
+                        <tbody id="wingList">
+                            
                         </tbody>
                     </table>
                 </div>
-                <ul class="pagination pagination-rounded justify-content-end mb-2">
+                <!--<ul class="pagination pagination-rounded justify-content-end mb-2">
                     <li class="page-item disabled">
                         <a class="page-link" href="javascript: void(0);" aria-label="Previous"> <i class="mdi mdi-chevron-left"></i>
                         </a>
@@ -90,7 +78,7 @@
                     <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
                     <li class="page-item"><a class="page-link" href="javascript: void(0);" aria-label="Next"> <i class="mdi mdi-chevron-right"></i></a>
                     </li>
-                </ul>
+                </ul>-->
             </div>
         </div>
     </div>
@@ -107,17 +95,8 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xl-4 col-sm-6">
-                        <div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="formCheck1">
-                                <label class="form-check-label" for="formCheck1">All Wing</label>
-                            </div>
-                            <% for (i = 0; i < 5; i++) { %>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="formCheck2" checked="">
-                                <label class="form-check-label" for="formCheck2">Wing A</label>
-                            </div>
-                            <% } %>
+                        <div id="checkList">
+                            
                         </div>
                     </div>
                 </div>
@@ -161,6 +140,74 @@
         </div>
     </div>
 </div>
+<script>
+    let properties = <%-JSON.stringify(data)%>;
+    function selectWing(){
+        let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
+        let checkString = "";
+        /*checkString = `<div class="form-check mb-2">
+                                <input class="form-check-input" name="wings" type="checkbox" id="formCheck">
+                                <label class="form-check-label" for="formCheck">All Wing</label>
+                            </div>`;*/
+        if(properties[propertyIndex]){
+            for(let i=0;i < properties[propertyIndex].wings.length; i++){
+                checkString = checkString+`<div class="form-check mb-2">
+                                <input class="form-check-input" checked name="wings" type="checkbox" id="formCheck`+i+`">
+                                <label class="form-check-label" for="formCheck1">`+properties[propertyIndex].wings[i].wings_name+`</label>
+                            </div>`;
+            }
+            $("#checkList").html(checkString);
+        }
+    }
+    function wingChange(propertyId,wingId){
+        
+        $.post("/update-property-wing-status",
+          {
+            propertyId: propertyId,
+            wingId: wingId
+          },
+          function(data, status){
+                let propertyIndex = properties.findIndex((x)=> x._id == propertyId);
+                console.log(propertyIndex);
+                if(properties[propertyIndex].status){
+                    let wingIndex = properties[propertyIndex].wings.findIndex((x)=> x._id == wingId);
+                    console.log(wingIndex);
+                    if(properties[propertyIndex].wings[wingIndex]){
+                        if(properties[propertyIndex].wings[wingIndex].status == 0){
+                            properties[propertyIndex].wings[wingIndex].status = 1;
+                        }else{
+                            properties[propertyIndex].wings[wingIndex].status = 0;
+                        }
+                    }
+                }
+          });
+    }
+    function getWingList(){
+        let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
+        let wingString = "";
+        if(properties[propertyIndex]){
+            for(let i=0;i < properties[propertyIndex].wings.length; i++){
+                let selected = "";
+                
+                if(properties[propertyIndex].wings[i].status){
+                    selected = "checked";
+                }
+                wingString = wingString + ` <tr>
+                                <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
+                                <td>`+properties[propertyIndex].wings[i].wings_name+`</td>
+                                <!--<td class="text-center" style="width: 7%;">
+                                    <input type="checkbox" onchange="wingChange('`+properties[propertyIndex]._id+`','`+properties[propertyIndex].wings[i]._id+`')" id="switch`+i+`" switch="success" `+selected+`>
+                                    <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
+                                </td>-->
+                                <td class="text-center" style="width: 7%;">
+                                    <a href="/edit-wing-category" class="btn btn-success waves-effect waves-light">Edit</a>
+                                </td>
+                            </tr>`
+            }
+        }
+            $("#wingList").html(wingString);
+    }
+</script>
 <!-- end modal -->
 <%- contentFor( 'FooterJs') %>
 <%- contentFor( 'BottomJs') %>

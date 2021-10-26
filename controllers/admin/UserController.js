@@ -10,6 +10,7 @@ const UserResource = require('../resources/UserResource');
 const Joi = require("joi");
 const Property = require('../../models/Property');
 const UserProperty = require('../../models/UserProperty');
+const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 
 exports.changePasswordValidation = async (req, res, next) => {
 	const schema = Joi.object({
@@ -94,55 +95,87 @@ exports.supervisorAdd = async (req, res) => {
 	}
 }
 
-// User add Form Validatation --Admin
-exports.userAddValidation = async (req, res, next) => {
-	req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
+// User Create Page
+exports.userCreate = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Create User', session:req.session};
+		res.locals.error = req.session.error ? req.session.error : '';
 
-	const schema = Joi.object({
-		full_name: Joi.string().min(3).max(150).required(),
-		email: Joi.string().min(6).max(100).required().email(),
-		mobile_no: Joi.string().min(6).max(12).required(),
-		position_id: Joi.string().required(),
-		property_id: Joi.array().items(Joi.string().allow('',null).trim(true)),
-		address: Joi.string().min(3).max(250).required(),
-		password: Joi.string().min(6).max(30).required(),
-	});
-	const validation = schema.validate(req.body, __joiOptions);
-	if (validation.error) {
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
-	} else {
-		next();
+		let UserData = await User.find({position: 5});
+		let propertyData = await Property.find();
+
+		return res.render('Admin/Users/create',{ data: UserResource(UserData), propertyData: propertyData });
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-// Admin add user api 
+// User create Form Validatation
+exports.userAddValidation = [
+	check('full_name').trim().notEmpty().withMessage('full name is required'),
+	check('mobile_no').trim().notEmpty().withMessage('mobile no is required'),
+	check('position_id').trim().notEmpty().withMessage('position is required'),
+	check('property_id').trim().notEmpty().withMessage('property id is required'),
+	check('address').trim().notEmpty().withMessage('address is required'),
+	check('password').trim().notEmpty().withMessage('password is required'),
+	check('email').trim().notEmpty().withMessage('email is required')
+		.normalizeEmail().isEmail().withMessage('must be a valid email')
+		.custom(value => {
+			return User.findOne({email: value}).then((user) => { if (user) {return Promise.reject('E-mail already exists')} })
+		}),
+];
+
+// create user 
 exports.userAdd = async (req, res) => {
 	try {
-		const existsUser = await User.findOne({ email: req.body.email });
-		if(existsUser) {
-			return res.send(response.error(400, 'email id already exists', [] ));
-        }
+		const errors= validationResult(req);
+        if(!errors.isEmpty()){
+			let errMsg = errors.mapped();
+			let inputData = matchedData(req);
+			req.session.error = {errMsg: errMsg, inputData: inputData};
+			return res.redirect('back');
+        // } else if(req.body.email) {
+		// 	const existsUser = await User.findOne({ email: req.body.email });
+		// 	if(existsUser) {
+		// 		let errMsg= errors.mapped();
+		// 		let inputData = matchedData(req);
+		// 		req.session.error = {errMsg: errMsg, inputData: inputData};
+		// 		return res.redirect('back');
+		// 	}
+		} else {
+			req.session.error = '';
+		}
 
-        if (req.files) {
+        if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
 			let uploadPath = __basedir + '/public/images/users/';
 			let fileName;
 
-			if (profile_image) {
-				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
-					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-				}
-				if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-					return res.send(response.error(400, 'Image must be less then 5MB', []));
-				}
-				fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
-				profile_image.mv(uploadPath + fileName, function(err) {
-					if (err){
-						return res.send(response.error(400, 'Image uploading failed', []));
-					}
-				});
-				req.body.profile_image = '/public/images/users/' + fileName;
+			if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
+				let errMsg = { profile_image: { msg: 'profile image File format should be PNG,JPG,JPEG' } };
+				req.session.error = {errMsg: errMsg, inputData: req.body};
+				return res.redirect('back');
 			}
+			if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
+				let errMsg = { profile_image: { msg: 'profile image must be less then 5MB' } };
+				req.session.error = {errMsg: errMsg, inputData: req.body};
+				return res.redirect('back');
+			}
+			fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
+			profile_image.mv(uploadPath + fileName, function(err) {
+				if (err){
+					let errMsg = { profile_image: { msg: 'profile image uploading failed' } };
+					req.session.error = {errMsg: errMsg, inputData: req.body};
+					return res.redirect('back');
+				}
+			});
+			req.body.profile_image = '/public/images/users/' + fileName;
+		} else {
+			let errMsg = { profile_image: { msg: 'profile image is required' } };
+			req.session.error = {errMsg: errMsg, inputData: req.body};
+			return res.redirect('back');
 		}
 
 		let positionType = '';
@@ -171,6 +204,7 @@ exports.userAdd = async (req, res) => {
 		});
 		await registerUser.save();
 
+		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
 		for (let i = 0; i < req.body.property_id.length; i++) {
 			const property_id = req.body.property_id[i];
 			let UserPropertyData = new UserProperty({
@@ -231,67 +265,56 @@ exports.userList = async (req,res) => {
 	}
 }
 
-// User Create Page
-exports.userCreate = async (req,res) => {
-	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Create User', session:req.session};
-
-		let UserData = await User.find({position: 5});
-		let propertyData = await Property.find();
-
-		return res.render('Admin/Users/create',{ data: UserResource(UserData), propertyData: propertyData });
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
 // User edit Page
 exports.userEdit = async (req,res) => {
 	try {
 		res.locals = { title: 'Update User', session: req.session };
-		req.flash('error', req.session.error);
-		res.locals.error = req.session.error ? req.flash() : '';
+		res.locals.error = req.session.error ? req.session.error : '';
 		
 		let UserData = await User.findOne({_id: req.params.id});
+		let UserPropertyData = await UserProperty.find({userId: req.params.id});
 		let propertyData = await Property.find();
-
-		return res.render('Admin/Users/edit',{'data': UserResource(UserData), propertyData: propertyData});
+		return res.render('Admin/Users/edit',{ data: UserResource(UserData), propertyData: propertyData, UserPropertyData: UserPropertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
+exports.userUpdateValidation = [
+	check('_id').trim().notEmpty().withMessage('User Id required'),
+	check('full_name').trim().notEmpty().withMessage('full name is required'),
+	check('email').trim().notEmpty().withMessage('email is required').normalizeEmail().isEmail().withMessage('must be a valid email'),
+	check('mobile_no').trim().notEmpty().withMessage('mobile no is required'),
+	check('position_id').trim().notEmpty().withMessage('position is required'),
+	check('property_id').trim().notEmpty().withMessage('property id is required'),
+	check('address').trim().notEmpty().withMessage('address is required'),
+];
+
 // User update
 exports.userUpdate = async (req,res) => {
 	try {
-		res.locals = { title: 'Update123 User', session: req.session};
-
+		res.locals = { title: 'Update User', session: req.session};
 		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
 
-		const schema = Joi.object({
-			_id: Joi.string().required(),
-			full_name: Joi.string().min(3).max(150).required().label('Full name'),
-			email: Joi.string().min(6).max(100).required().email(),
-			mobile_no: Joi.string().min(6).max(12).required(),
-			position_id: Joi.string().required(),
-			property_id: Joi.array().items(Joi.string().allow('',null).trim(true)),
-			address: Joi.string().min(3).max(250).required()
-		}).options({ abortEarly: false });
-		const validation = schema.validate(req.body, __joiOptions);
-		if (validation.error) {
-			req.session.error = validation.error.details[0];
+		let oldUserData = await User.findOne({_id: req.body._id});
+		
+		const errors= validationResult(req);
+        if(!errors.isEmpty()){
+			let errMsg= errors.mapped();
+			let inputData = matchedData(req);
+			req.session.error = {errMsg: errMsg, inputData: inputData};
 			return res.redirect('back');
-		}
-
-		let UserEmail = await User.findOne({_id: req.body._id});
-		if (UserEmail.email != req.body.email) {
+        } else if(oldUserData.email != req.body.email) {
 			const existsUser = await User.findOne({ email: req.body.email });
 			if(existsUser) {
-				return res.send(response.error(400, 'email id already exists', [] ));
+				let errMsg= errors.mapped();
+				let inputData = matchedData(req);
+				req.session.error = {errMsg: errMsg, inputData: inputData};
+				return res.redirect('back');
 			}
+		} else {
+			req.session.error = '';
 		}
 
         if (req.files) {

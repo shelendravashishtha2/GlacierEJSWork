@@ -26,17 +26,17 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <form action="/update-categories" method="POST">
-					<input type="hidden" name="category_id" value="<%= CategoryData._id %>" readonly required>
+                <form action="/update-categories" method="POST" class="custom-validation">
+					<input type="hidden" name="category_id" value="<%= CategoryData._id %>" required>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Category Name<span class="required">*</span></label>
-                                <input type="text" name="category_name" value="<%= CategoryData.category_name %>" class="form-control" placeholder="Enter Category Name">
+                                <input type="text" name="category_name" value="<%= CategoryData.category_name %>" class="form-control" placeholder="Enter Category Name" required>
                             </div>
                         </div>
                         <div class="col-md-6" style="margin-top: 25px;">
-                            <button type="submit" class="btn btn-warning waves-effect waves-light"><i class="bx bx-check-double label-icon"></i> Update</button>
+                            <button type="submit" class="btn btn-warning waves-effect waves-light">Update</button>
                         </div>
                     </div>
                 </form>

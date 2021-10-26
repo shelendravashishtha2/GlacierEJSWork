@@ -6,21 +6,25 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
 const CategoryResource = require('../resources/CategoryResource');
+const { check,sanitizeBody,validationResult,matchedData } = require('express-validator');
 const Joi = require("joi");
 
-// Category add form validatation
-exports.categoryAddValidation = async (req, res, next) => {
-	
-	const schema = Joi.object({
-		category_name: Joi.string().min(6).max(200).required(),
-	});
-	const validation = schema.validate(req.body, __joiOptions);
-	if (validation.error) {
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
-	} else {
-		next();
-	}
-}
+exports.categoryAddValidationForm=[
+	// Category name validation
+	check('category_name').trim().notEmpty().withMessage('Category name required').isLength({ min: 3 })
+	.withMessage('must be at least 5 chars long'),
+];
+
+exports.checkListAddValidationForm=[
+	// Category name validation
+	check('checklist_name').trim().notEmpty().withMessage('Checklist Id required').isLength({ min: 3 })
+	.withMessage('must be at least 5 chars long'),
+	// Type
+	check('type').trim().notEmpty().withMessage('Type is required'),
+	check('frequency').trim().notEmpty().withMessage('Frequency is required'),
+	check('month').trim().notEmpty().withMessage('Month is required'),
+	check('date').trim().notEmpty().withMessage('Date is required')
+];
 
 // Category add api
 exports.categoryAdd = async (req, res) => {
@@ -29,24 +33,35 @@ exports.categoryAdd = async (req, res) => {
 		res.locals = { title: 'Category Add' ,session: req.session};
 
 		const existsUser = await Category.findOne({ category_name: req.body.category_name });
-		if(existsUser) {
-			return res.send(response.error(400, 'Category name already exists', [] ));
-        }
-
-		const obj = new Category({
-			category_name: req.body.category_name,
-		});
-		const CategoryData = await obj.save();
-		
-		return res.redirect('create-category-checklist/'+CategoryData._id);
+		const errors= validationResult(req);
+        if(!errors.isEmpty()){
+			var errMsg= errors.mapped();
+			var inputData = matchedData(req);
+			res.render('Admin/Categories/create-category', {errors:errMsg, inputData:inputData});
+         }else{
+			if(existsUser) {
+				var errMsg= errors.mapped();
+				var inputData = matchedData(req);
+				res.render('Admin/Categories/create-category', {errors:errMsg, inputData:inputData});
+			}else{
+				var inputData = matchedData(req); 
+				const obj = new Category({
+					category_name: req.body.category_name,
+				});
+				const CategoryData = await obj.save();
+				return res.redirect('create-category-checklist/'+CategoryData._id);
+			}
+		 }
 	} catch (error) {
 		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			return res.send(response.error(400, errorMessage.message, [] ));
+			// validatation error
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', [] ));
 		}
+		const errors= validationResult(req);
+		var errMsg= errors.mapped();
+		var inputData = matchedData(req);
+		res.render('Admin/Categories/create-category', {errors:errMsg, inputData:inputData});
 	}
 }
 // Category Add CheckList
@@ -122,26 +137,43 @@ exports.createCheckList = async (req,res) => {
 // Category store Checklist
 exports.storeChecklist = async (req,res) => {
 	try {
-		const CategoryCheckListData = new CategoryCheckList({
-			category_id: req.body.category_id,
-			checklist_id: req.body.checklist_id,
-			checklist_name: req.body.checklist_name,
-			type: req.body.type,
-			frequency: req.body.frequency,
-			month: req.body.month,
-			date: req.body.date,
-		});
-		await CategoryCheckListData.save();
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Add Check List Category',session: req.session};
+		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		return res.redirect('create-checklist-form/'+CategoryCheckListData._id);
+		const errors= validationResult(req);
+        if(!errors.isEmpty()){
+			var errMsg= errors.mapped();
+			var inputData = matchedData(req);
+			return res.render('Admin/Categories/create-check-list',{'months':monthsList, category_id: req.body.category_id,errors:errMsg, inputData:inputData});
+         }else{
+			var inputData = matchedData(req); 
+			const CategoryCheckListData = new CategoryCheckList({
+				category_id: req.body.category_id,
+				checklist_id: req.body.checklist_id,
+				checklist_name: req.body.checklist_name,
+				type: req.body.type,
+				frequency: req.body.frequency,
+				month: req.body.month,
+				date: req.body.date,
+			});
+			await CategoryCheckListData.save();
+			return res.redirect('create-checklist-form/'+CategoryCheckListData._id);
+		 }
+		
 	} catch (error) {
+		res.locals = { title: 'Add Check List Category',session: req.session};
+		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			return res.send(response.error(400, errorMessage.message, [] ));
+			
+			errorLog(__filename, req.originalUrl, error);
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', [] ));
 		}
+		const errors= validationResult(req);
+		var errMsg= errors.mapped();
+		var inputData = matchedData(req);
+		return res.render('Admin/Categories/create-check-list',{'months':monthsList, category_id: req.body.category_id,errors:errMsg, inputData:inputData});
 	}
 }
 

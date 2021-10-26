@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Add Check List</h4>
-                <form action="/store-category-checklist" method="POST">
+                <form action="/store-category-checklist" method="POST" class="custom-validation">
 					<input type="hidden" name="category_id" value="<%= category_id %>">
                     <div class="row">
                         <div class="col-xl-4">
@@ -37,24 +37,26 @@
                         <div class="col-xl-4">
                             <div class="mb-3">
                                 <label class="form-label">Checklist Name<span class="required">*</span></label>
-                                <input type="text" name="checklist_name" class="form-control" id="defaultconfig" placeholder="Enter Checklist Name" autofocus maxlength="200">
+                                <input type="text" name="checklist_name" class="form-control" id="defaultconfig" placeholder="Enter Checklist Name" value="<%=(typeof inputData!='undefined')? inputData.checklist_name:''%>" autofocus maxlength="200">
+                                <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.checklist_name!='undefined' )? errors.checklist_name.msg:''%></p>
                             </div>
                         </div>
                         <div class="col-xl-2">
                             <div class="mb-3">
                                 <label class="form-label">Type<span class="required">*</span></label>
-                                <select class="form-control" name="type" required>
+                                <select class="form-control" name="type">
                                     <option value="">Select Type</option>
-                                    <option value="1">Form</option>
-                                    <option value="2">Register</option>
-                                    <option value="3">Checklist</option>
+                                    <option value="form">Form</option>
+                                    <option value="register">Register</option>
+                                    <option value="check_list">Checklist</option>
                                 </select>
+                                <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.type!='undefined' )? errors.type.msg:''%></p>
                             </div>
                         </div>
                         <div class="col-xl-2">
                             <div class="mb-3">
                                 <label class="form-label">Frequency<span class="required">*</span></label>
-                                <select class="form-control" name="frequency" required>
+                                <select class="form-control" name="frequency">
                                     <option value="">Select Frequency</option>
                                     <option value="weekly">Weekly</option>
                                     <option value="monthly">Monthly</option>
@@ -62,6 +64,7 @@
                                     <option value="annually">Annually</option>
                                     <option value="weekly">Bi-Annually</option>
                                 </select>
+                                <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.frequency!='undefined' )? errors.frequency.msg:''%></p>
                             </div>
                         </div>
                         <div class="col-xl-2">
@@ -73,6 +76,7 @@
                                     <option value="<%= i+1 %> "><%=months[m]%></option>
                                     <% } %>
                                 </select>
+                                <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.month!='undefined' )? errors.month.msg:''%></p>
                             </div>
                         </div>
                         <div class="col-xl-2">
@@ -84,6 +88,7 @@
                                     <option value="<%=i%>"><%=i%></option>
                                     <% } %>
                                 </select>
+                                <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.date!='undefined' )? errors.date.msg:''%></p>
                             </div>
                         </div>
                     </div>
