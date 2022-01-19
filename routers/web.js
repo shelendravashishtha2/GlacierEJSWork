@@ -86,6 +86,7 @@ module.exports = function (app) {
     app.get('/ppm', PpmController.PpmList);
     app.get('/view-ppm', PpmController.viewPpmList);
     app.get('/assign-ppm', PpmController.assignPpmList);
+    app.get('/assign-ppm-equipment-asset-list/:pid/:id', PpmController.assignPpmEquipmentAssetList);
     app.get('/edit-ppm/:id', PpmController.editPpm);
     app.post('/create-ppm', PpmController.createPpm);
     app.post('/update-ppm-status', PpmController.updatePpmStatus);

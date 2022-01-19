@@ -1,0 +1,372 @@
+<%- contentFor('HeaderCss') %>
+<%- contentFor('breadcrumb') %>
+<style>
+    .text-center{text-align: center;}
+</style>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Edit Equipment (<%= data.ppmEquipmentId.ppmEquipmentName %>)</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
+                    <li class="breadcrumb-item active">Edit Equipment</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-8">
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="text-sm-end">
+                            <button type="button" onclick="detailTask(-1)" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".orderDetailsModal"><i class="mdi mdi-plus me-1"></i> <b>ADD ASSET NAME</b> </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-check">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">Sr.No</th>
+                                <th>Asset Name</th>
+                                <th>Frequency</th>
+                                <th>Vendor Name</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Month</th>
+                                <th class="text-center">Day</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(taskData.length ==0) { %>
+                                <tr><td colspan="6" class="text-center">No data found</td></tr>
+                            <% } %>
+                            <% for(let i = 0;i<taskData.length;i++){ %>
+                            <tr>
+                                <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
+                                <td><%= taskData[i].assetName %></td>
+                                <td><%= taskData[i].frequency %></td>
+                                <td><%= taskData[i].vendorName %></td>
+                                <td class="text-center"><%= taskData[i].date ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].month ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].day ?? '--' %></td>
+                                <td class="text-center" style="width: 7%;">
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i].taskId %>,<%= data.ppmEquipmentId._id %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
+                                    <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
+                                </td>
+                                <td class="text-center" style="width: 7%;">
+                                    <a href="javascript: void(0);" >
+                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".orderDetailsModal"><b>Edit</b></button>
+                                    </a>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <ul class="pagination pagination-rounded justify-content-end mb-2">
+                    <% if(page > 1){ %>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="/edit-ppm/<%=data.ppmEquipmentId._id%>?page=<%=i-1%>" aria-label="Previous">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% for (i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item  active"><a class="page-link" href="/edit-ppm/<%=data.ppmEquipmentId._id%>?page=<%=i%>"><%=i%></a></li>
+                    <% } %>
+                    <% if(page < totalPage){ %>
+                    <li class="page-item">
+                        <a class="page-link" href="/edit-ppm/<%=data.ppmEquipmentId._id%>?page=<%=i+1%>" aria-label="Next">
+                            <i class="mdi mdi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+<!-- Add Task Modal -->
+<div class="modal fade orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Add Equipment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3 row">
+                            <input type="hidden" name="taskId" id="taskId" value="">
+                            <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmEquipmentId._id %>">
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" value="" id="assetName" name="assetName" required placeholder="Enter Asset Name">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Vendor Name<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" value="" name="vendorName" required id="vendorName" placeholder="Enter Vendor Name">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="frequency" onchange="changeFrequency()" id="frequency" required>
+                                   
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row" id="dayLabel">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
+                            <div class="col-md-8" id="daySelectDiv">
+                                <select class="form-select" id="day" name="day">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row" id="monthLabel">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
+                            <div class="col-md-8" id="monthSelectDiv">
+                                <select class="form-select" id="month" name="month">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row" id="dateLabel">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
+                            <div class="col-md-8" id="dateSelectDiv">
+                                <select class="form-select" name="date" id="date">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning waves-effect waves-light" >submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- end modal -->
+
+<script>
+    let taskData = <%- JSON.stringify(taskData) %>;
+	
+    let dayArray = [{
+        id:'',
+        string:""
+    },{
+        id:'monday',
+        string:"Monday"
+    },{
+        id:'tuesday',
+        string:"Tuesday"
+    },{
+        id:'wednesday',
+        string:"Wednesday"
+    },{
+        id:'thursday',
+        string:"Thursday"
+    },{
+        id:'friday',
+        string:"Friday"
+    },{
+        id:'saturday',
+        string:"Saturday"
+    },{
+        id:'sunday',
+        string:"Sunday"
+    }];
+    let frequencyArray = [{
+        id:'Weekly',
+        string:"Weekly"
+    },{
+        id:'Fortnightly',
+        string:"Fortnightly"
+    },{
+        id:'Monthly',
+        string:"Monthly"
+    },{
+        id:'Quarterly',
+        string:"Quarterly"
+    },{
+        id:'Annually',
+        string:"Annually"
+    },{
+        id:'Bi-Annually',
+        string:"Bi-Annually"
+    }]
+    let monthsList = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    function changeFrequency() {
+        $('#dayLabel').hide();
+        $('#monthLabel').hide();
+        $('#dateLabel').hide();
+		$('#day').attr('required',false).val('');
+		$('#month').attr('required',false).val('');
+		$('#date').attr('required',false).val('');
+
+        let optionValue = $("#frequency").val();
+        if(optionValue == 'Weekly'){
+            $('#dayLabel').show();
+            $('#day').attr('required',true);
+        } else if(optionValue == 'Fortnightly') {
+            $('#dateLabel').show();
+            $('#date').attr('required',true);
+        } else if(optionValue == 'Monthly') {
+            $('#dateLabel').show();
+            $('#date').attr('required',true);
+        }  else if(optionValue == 'Quarterly') {
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
+        }  else if(optionValue == 'Annually') {
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
+        }  else if(optionValue == 'Bi-Annually') {
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
+        }
+    }
+    function detailTask(taskIndex){
+        let detail;
+        let monthString = "";
+        let frequencyString = "";
+        let dayString = "";
+        let dateString = "";
+        if(taskIndex == -1){
+            detail = {
+                frequency:1,
+                month:1,
+                date:1,
+                taskId:"",
+            }
+            $("#orderDetailsModalLabel").html("Add Task");
+        }else{
+            detail = taskData[taskIndex];
+            $("#orderDetailsModalLabel").html("Edit Task");
+        }
+            frequencyArray.forEach(function(frequency){
+                if(frequency.id == detail.frequency){
+                    frequencyString = frequencyString + '<option value="'+frequency.id+'" selected>'+frequency.string+'</option>';
+                }else{
+                    frequencyString = frequencyString + '<option value="'+frequency.id+'" >'+frequency.string+'</option>';
+                }
+            })
+            monthsList.forEach(function(month,index){
+                if((index+1) == detail.month){
+                    monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
+                }else{
+                    monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
+                }
+            })
+            dayArray.forEach(function(day,index){
+                if(day._id == detail.day){
+                    dayString = dayString + '<option value="'+day.id+'" selected>'+day.string+'</option>';
+                }else{
+                    dayString = dayString + '<option value="'+day.id+'" >'+day.string+'</option>';
+                }
+            })
+            for (i = 1; i < 32; i++) {
+                if(i == detail.date){
+                    dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
+                }else{
+                    dateString = dateString + '<option value="'+i+'">'+i+'</option>';
+                }
+            }
+            $("#frequency").val(detail.frequency)
+
+            $("#frequency").html(frequencyString);
+            $("#month").html(monthString);
+            $("#day").html(dayString);
+            $("#date").html(dateString);
+            $("#taskId").val(detail.taskId);
+            $("#vendorName").val(detail.vendorName);
+            $("#assetName").val(detail.assetName);
+        changeFrequency()
+    }
+    function ppmEquipmentNameChange(){
+        if($("#ppmEquipmentName").val().trim() != ""){
+          $.post("/update-ppm-name",
+          {
+            ppmId: '<%= data.ppmEquipmentId._id %>',
+            ppmEquipmentName: $("#ppmEquipmentName").val().trim()
+          },
+          function(data, status){
+            if(data.status){
+                toastr.success(data.message);
+            }else{
+                toastr.error(data.message);
+            }
+          });
+        }
+    }
+
+</script>
+
+
+<%- contentFor('FooterJs') %>
+<script>
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    var ids = $(this).val().split(','); 
+    var taskId = ids[0];
+    var ppmId = ids[1];
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("/update-ppm-task-status", {
+            ppmId: ppmId,
+            taskId: taskId
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
+<%- contentFor('BottomJs') %>

@@ -297,6 +297,113 @@ exports.updatePpmTask = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
+// exports.assignPpmEquipmentAssetList = async (req,res) => {
+// 	try {
+// 		if(!req.session.user){ return res.redirect('/login'); }
+// 		let schema = Joi.object({
+// 			pid: Joi.required(),
+// 			id: Joi.required()
+// 		});
+// 		let validation = schema.validate(req.params, __joiOptions);
+// 		if (validation.error) {
+// 			return res.send(response.error(400, validation.error.details[0].message, [] ));
+// 		}
+// 		res.locals = { title: 'Edit PPM',session: req.session};
+		
+// 		let page = 1;
+// 		if(req.query.page != undefined){
+// 			page = req.query.page;
+// 		}
+// 		let limit = { $limit : 10};
+// 		let skip = { $skip : (page - 1) * 10};
+// 		let project = {
+// 			$project:{
+// 				taskId: "$assets._id",
+// 				assetName: "$assets.assetName",
+// 				frequency: "$assets.frequency",
+// 				month: "$assets.month",
+// 				date: "$assets.date",
+// 				day: "$assets.day",
+// 				status: "$assets.status",
+// 				vendorName: "$assets.vendorName"
+// 			}
+// 		}
+// 		let aggregateQuery = {
+//             $match: {
+//                 _id: require('mongoose').Types.ObjectId(req.params.id)
+//             }
+//         };
+//         let unwind = {
+//         	$unwind: "$assets"
+//         }
+//         let group = {
+//                 $group: {
+//                     _id: null,
+//                     ppmId: {$first : "$_id"},
+//                     status: {$first : "$status"},
+//                     ppmEquipmentName: {$first : "$ppmEquipmentName"},
+//                     total: { $sum: 1 }
+//                 }
+//             };
+// 		let ppmData = await PpmEquipment.aggregate([aggregateQuery,unwind,group]);
+// 		if(ppmData.length == 0){
+// 			return res.redirect('/ppm');
+// 		}else{
+// 			ppmData = ppmData[0];
+// 		}
+// 		let totalPage = Math.ceil(ppmData.total/10);
+// 		// let taskData = await PpmEquipment.aggregate([aggregateQuery,unwind,skip,limit,project]);
+
+// 		let taskData = await assignPpmEquipmentAsset.find({propertyId: req.params.pid, ppmEquipmentId: req.params.id});
+
+// 		return res.render('Admin/PPM/assign-ppm-asset-list',{
+// 			data: ppmData,
+// 			page: page,
+// 			totalPage: totalPage,
+// 			taskData: taskData,
+// 			search: req.query.search ? req.query.search:"",
+// 			message: req.flash('message'),
+// 			error: req.flash('error')
+// 		});
+// 	} catch (error) {
+// 		errorLog(__filename, req.originalUrl, error);
+// 		return res.send(response.error(500, 'Something want wrong', []));
+// 	}
+// }
+
+exports.assignPpmEquipmentAssetList = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			pid: Joi.required(),
+			id: Joi.required()
+		});
+		let validation = schema.validate(req.params, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		res.locals = { title: 'Edit PPM',session: req.session};
+		
+		let ppmData = await assignPpmEquipment.findOne({propertyId: req.params.pid, ppmEquipmentId: req.params.id}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
+
+		let taskData = await assignPpmEquipmentAsset.find({propertyId: req.params.pid, ppmEquipmentId: req.params.id});
+
+		return res.render('Admin/PPM/assign-ppm-asset-list',{
+			data: ppmData,
+			page: 1,
+			totalPage: 1,
+			taskData: taskData,
+			search: req.query.search ? req.query.search:"",
+			message: req.flash('message'),
+			error: req.flash('error')
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
 exports.editPpm = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
@@ -367,6 +474,7 @@ exports.editPpm = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 // View PPM List
 exports.viewPpmList = async (req,res) => {
 	try {

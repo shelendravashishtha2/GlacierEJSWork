@@ -57,6 +57,7 @@
                             <tr>
                                 <th class="text-center">Sr.No</th>
                                 <th>Equipments Name</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -193,15 +194,16 @@
 					wingString = wingString + ` <tr>
                                     <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
                                     <td>`+ assignPpmData[i].ppmEquipmentId.ppmEquipmentName +`</td>
-                                    <!--<td class="text-center" style="width: 7%;">
+                                    <td class="text-center" style="width: 15%;">
                                         <input type="checkbox" onchange="EquipmentStatusChange('`+ properties[propertyIndex]._id +`','`+ assignPpmData[i].ppmEquipmentId._id +`')" id="switch`+i+`" switch="success" `+ selected +`>
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
-                                    </td>-->
+                                    </td>
                                     <td class="text-center" style="width: 7%;">
-                                        <a href="/edit-wing-category/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i].ppmEquipmentId._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
+										<a href="/assign-ppm-equipment-asset-list/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i].ppmEquipmentId._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
                                     </td>
                                 </tr>`
                 }
+				// <a href="/edit-wing-category/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i].ppmEquipmentId._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
                 $("#wingList").html(wingString);
 
 				// set data in select box
