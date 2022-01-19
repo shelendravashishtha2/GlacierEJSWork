@@ -21,8 +21,8 @@ exports.ppmTaskDetail = async (req, res) => {
 			return res.send(response.error(400, 'PPM Not Found', []));
 		}
 		let index;
-		for(let i=0;i<ppmTaskList.tasks.length;i++){
-			if(String(ppmTaskList.tasks[i]._id) == String(req.body.taskId)){
+		for(let i=0;i<ppmTaskList.assets.length;i++){
+			if(String(ppmTaskList.assets[i]._id) == String(req.body.taskId)){
 				index = i;
 			}
 		}
@@ -37,12 +37,12 @@ exports.ppmTaskDetail = async (req, res) => {
 		    	_id:ppmTaskList._id,
 		    	ppmEquipmentName:ppmTaskList.ppmEquipmentName,
 		    	task:[{
-		    		taskName: ppmTaskList.tasks[index].taskName,
-		    		vendorName: ppmTaskList.tasks[index].vendorName,
-		    		frequency: ppmTaskList.tasks[index].frequency,
-					day: ppmTaskList.tasks[index].day,
-					date: ppmTaskList.tasks[index].date,
-					month: ppmTaskList.tasks[index].month,
+		    		assetName: ppmTaskList.assets[index].assetName,
+		    		vendorName: ppmTaskList.assets[index].vendorName,
+		    		frequency: ppmTaskList.assets[index].frequency,
+					day: ppmTaskList.assets[index].day,
+					date: ppmTaskList.assets[index].date,
+					month: ppmTaskList.assets[index].month,
 		    	}],
 		    }]
 		});
@@ -63,20 +63,20 @@ exports.ppmTaskList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 		let condition = {"$match": {_id: ObjectId(req.body.ppmId),status:1}};
-		let condition1 = {"$match": {"tasks.status":1}};
+		let condition1 = {"$match": {"assets.status":1}};
 		let group = {
 			$group:{
 				_id:"$_id",
 				ppmEquipmentName:{$first:"$ppmEquipmentName"},
-				tasks:{
+				assets:{
 					$push:{
-                        _id:"$tasks._id",
-						taskName: "$tasks.taskName",
-						frequency: "$tasks.frequency",
-						day: "$tasks.day",
-						date: "$tasks.date",
-						vendorName: "$tasks.vendorName",
-						month: "$tasks.month",
+                        _id:"$assets._id",
+						assetName: "$assets.assetName",
+						frequency: "$assets.frequency",
+						day: "$assets.day",
+						date: "$assets.date",
+						vendorName: "$assets.vendorName",
+						month: "$assets.month",
 						status:"t"
 					}
 				}
@@ -84,7 +84,7 @@ exports.ppmTaskList = async (req, res) => {
 		}
 		let unwind = {
             $unwind: {
-                path: "$tasks",
+                path: "$assets",
                 preserveNullAndEmptyArrays: true
             }
         }
@@ -217,7 +217,7 @@ exports.createNewPPM = async (req,res) => {
 			ppmEquipmentName: Joi.required(),
 			month: Joi.optional(),
 			date: Joi.optional(),
-			taskName: Joi.required(),
+			assetName: Joi.required(),
 			vendorName: Joi.required(),
 			frequency: Joi.required()
 		});
@@ -234,9 +234,9 @@ exports.createNewPPM = async (req,res) => {
 		let obj = new PPM({
 			ppmEquipmentName: req.body.ppmEquipmentName,
 			status: 1,
-			tasks:[
+			assets:[
 			{
-				taskName: req.body.taskName,
+				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
             	month: req.body.month,
@@ -264,7 +264,7 @@ exports.updatePpmTask = async (req,res) => {
 			month: Joi.optional(),
 			date: Joi.optional(),
 			day: Joi.optional(),
-			taskName: Joi.required(),
+			assetName: Joi.required(),
 			vendorName: Joi.required(),
 			frequency: Joi.required()
 		});
@@ -276,13 +276,13 @@ exports.updatePpmTask = async (req,res) => {
 		if(!ppm){
 			return res.send(response.error(500, 'ppmId not valid', []));
 		}
-		let alreadyIndex = ppm.tasks.findIndex((x)=> String(x.taskName) == req.body.taskName && String(x._id) != req.body.taskId );
+		let alreadyIndex = ppm.assets.findIndex((x)=> String(x.assetName) == req.body.assetName && String(x._id) != req.body.taskId );
 		if(alreadyIndex != -1){
-			return res.send(response.error(500, 'Task name already exist', []));
+			return res.send(response.error(500, 'Asset name already exist', []));
 		}
 		let message = "";
 		let obj = {
-			taskName: req.body.taskName,
+			assetName: req.body.assetName,
 			vendorName: req.body.vendorName,
 			frequency: req.body.frequency,
 			day: req.body.day,
@@ -290,15 +290,15 @@ exports.updatePpmTask = async (req,res) => {
 			date: req.body.date
 		}
 		if(req.body.taskId){
-			let index = ppm.tasks.findIndex((x)=> String(x._id) == req.body.taskId);
+			let index = ppm.assets.findIndex((x)=> String(x._id) == req.body.taskId);
 			obj._id = req.body.taskId;
-			ppm.tasks[index] = obj;
+			ppm.assets[index] = obj;
 			message = "Task updated successfully";
 		}else{
-			ppm.tasks.push(obj);
+			ppm.assets.push(obj);
 			message = "Task added successfully";
 		}
-		ppm.markModified('tasks');
+		ppm.markModified('assets');
 		console.log(obj);
 		ppm.save(function(err){
 			console.log(err);

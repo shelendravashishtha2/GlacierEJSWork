@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({ 
-	taskName: {
+	assetName: {
 		type: String,
 		required:true,
 		trim: true,

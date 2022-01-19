@@ -1,9 +1,18 @@
 const mongoose = require("mongoose");
 
-const assetSchema = new mongoose.Schema({ 
+const assignPpmEquipmentAssetSchema = new mongoose.Schema({
+	propertyId: {
+		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
+		required:true
+	},
+	ppmEquipmentId: {
+		type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
+		required:true,
+	},
+
 	assetName: {
 		type: String,
-		required:true,
+		required: true,
 		trim: true,
 	},
 	vendorName: {
@@ -35,25 +44,6 @@ const assetSchema = new mongoose.Schema({
 		trim: true,
 		default: '',
 	},
-	
-	status: {
-		type: Number, //0=Inactive, 1=active
-		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
-	},
-	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false },
-	updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false },
-	createdAt: {type: Date, default: Date.now, select: false},
-	updatedAt: {type: Date, default: Date.now, select: false}
-});
-
-const ppmEquipmentSchema = new mongoose.Schema({
-	ppmEquipmentName: {
-		type: String,
-		required:true,
-		trim: true,
-		unique: true
-	},
-	assets: [assetSchema],
 
 	status: {
 		type: Number, //0=Inactive, 1=active
@@ -62,11 +52,11 @@ const ppmEquipmentSchema = new mongoose.Schema({
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false },
 	updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false },
 	createdAt: {type: Date, select: false},
-	updatedAt: {type: Date, select: false}
+	updatedAt: {type: Date, select: false},
 },{
 	timestamps: true,
 	versionKey: false
 });
 
-const ppmEquipment = new mongoose.model("ppm_Equipment", ppmEquipmentSchema);
-module.exports = ppmEquipment;
+const assignPpmEquipmentAsset = new mongoose.model("assign_Ppm_Equipment_Asset", assignPpmEquipmentAssetSchema);
+module.exports = assignPpmEquipmentAsset;

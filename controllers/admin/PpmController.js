@@ -1,7 +1,9 @@
 const User = require("../../models/User");
-const PPM = require("../../models/PPM");
+// const PPM = require("../../models/PPM");
 const PpmEquipment = require("../../models/ppmEquipment");
 const PpmEquipmentAsset = require("../../models/ppmEquipmentAsset");
+const assignPpmEquipment = require("../../models/assignPpmEquipment");
+const assignPpmEquipmentAsset = require("../../models/assignPpmEquipmentAsset");
 const Property = require("../../models/Property");
 const wingPPMS = require("../../models/wingPPMS");
 const fs = require('fs')
@@ -53,7 +55,7 @@ exports.updateppmEquipmentName = async (req,res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let ppmDetail = await PpmEquipment.findOne({_id:req.body.ppmId});
+		let ppmDetail = await PpmEquipment.findOne({_id: req.body.ppmId});
 		if(!ppmDetail){
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
@@ -63,10 +65,11 @@ exports.updateppmEquipmentName = async (req,res) => {
 		}
 		ppmDetail.ppmEquipmentName = req.body.ppmEquipmentName.trim();
 		ppmDetail.save();
+
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
-		    "message": "Equipment is updated!"
+		    "message": "Equipment is updated!",
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -85,16 +88,16 @@ exports.updatePpmTaskStatus = async (req,res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 		let ppmDetail = await PpmEquipment.findOne({_id:req.body.ppmId});
-		let index = ppmDetail.tasks.findIndex((x)=> String(x._id) == String(req.body.taskId));
+		let index = ppmDetail.assets.findIndex((x)=> String(x._id) == String(req.body.taskId));
 		if(index == -1){
 			return res.redirect('/edit-ppm/'+req.body.ppmId);
-		}else{
-			if(ppmDetail.tasks[index].status == 0){
-				ppmDetail.tasks[index].status = 1;	
+		} else {
+			if(ppmDetail.assets[index].status == 0){
+				ppmDetail.assets[index].status = 1;	
 			}else{
-				ppmDetail.tasks[index].status = 0
+				ppmDetail.assets[index].status = 0
 			}
-			ppmDetail.markModified("tasks");
+			ppmDetail.markModified("assets");
 			ppmDetail.save();
 		}
 		return res.status(200).send({
@@ -149,7 +152,7 @@ exports.createPpm = async (req,res) => {
 			month: Joi.optional(),
 			date: Joi.optional(),
 			day: Joi.optional(),
-			taskName: Joi.required(),
+			assetName: Joi.required(),
 			vendorName: Joi.required(),
 			frequency: Joi.required()
 		});
@@ -166,9 +169,9 @@ exports.createPpm = async (req,res) => {
 		let obj = new PpmEquipment({
 			ppmEquipmentName: req.body.ppmEquipmentName,
 			status: 1,
-			tasks:[
+			assets:[
 			{
-				taskName: req.body.taskName,
+				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
             	month: req.body.month,
@@ -242,7 +245,7 @@ exports.updatePpmTask = async (req,res) => {
 			month: Joi.optional(),
 			date: Joi.optional(),
 			day: Joi.optional(),
-			taskName: Joi.required(),
+			assetName: Joi.required(),
 			vendorName: Joi.required(),
 			frequency: Joi.required()
 		});
@@ -254,18 +257,19 @@ exports.updatePpmTask = async (req,res) => {
 		if(!ppm){
 			return res.redirect('/ppm');
 		}
-		let alreadyIndex = PpmEquipment.tasks.findIndex((x)=> String(x.taskName) == req.body.taskName && String(x._id) != req.body.taskId );
+		let alreadyIndex = ppm.assets.findIndex((x)=> String(x.assetName) == req.body.assetName && String(x._id) != req.body.taskId );
 		if(alreadyIndex != -1){
 			req.flash('error', 'Equipment name is already exist!');
 			return res.redirect('/edit-ppm/'+req.body.ppmId);	
 		}
 		let message = "";
 
+		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		if (!['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].includes(req.body.day)) {
 			req.body.day = '';
 		  }
 		let obj = {
-			taskName: req.body.taskName,
+			assetName: req.body.assetName,
 			vendorName: req.body.vendorName,
 			frequency: req.body.frequency,
 			day: req.body.day,
@@ -273,19 +277,20 @@ exports.updatePpmTask = async (req,res) => {
 			date: req.body.date
 		}
 		if(req.body.taskId){
-			let index = PpmEquipment.tasks.findIndex((x)=> String(x._id) == req.body.taskId);
+			let index = ppm.assets.findIndex((x)=> String(x._id) == req.body.taskId);
 			obj._id = req.body.taskId;
-			PpmEquipment.tasks[index] = obj;
+			ppm.assets[index] = obj;
 			message = "Equipment name is updated!";
 			req.flash('message', message);
 		}else{
-			PpmEquipment.tasks.push(obj);
+			ppm.assets.push(obj);
 			message = "Equipment name is added!";
 			req.flash('message', message);
 		}
-		PpmEquipment.markModified('tasks');
-		PpmEquipment.save(function(err){
+		ppm.markModified('assets');
+		ppm.save(function(err){
 		});
+
 		return res.redirect('/edit-ppm/'+req.body.ppmId);	
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -312,14 +317,14 @@ exports.editPpm = async (req,res) => {
 		let skip = { $skip : (page - 1) * 10};
 		let project = {
 			$project:{
-				taskId:"$tasks._id",
-				taskName:"$tasks.taskName",
-				frequency:"$tasks.frequency",
-				month:"$tasks.month",
-				date:"$tasks.date",
-				day:"$tasks.day",
-				status:"$tasks.status",
-				vendorName:"$tasks.vendorName"
+				taskId:"$assets._id",
+				assetName:"$assets.assetName",
+				frequency:"$assets.frequency",
+				month:"$assets.month",
+				date:"$assets.date",
+				day:"$assets.day",
+				status:"$assets.status",
+				vendorName:"$assets.vendorName"
 			}
 		}
 		let aggregateQuery = {
@@ -328,7 +333,7 @@ exports.editPpm = async (req,res) => {
             }
         };
         let unwind = {
-        	$unwind: "$tasks"
+        	$unwind: "$assets"
         }
         let group = {
                 $group: {
@@ -347,8 +352,16 @@ exports.editPpm = async (req,res) => {
 		}
 		let totalPage = Math.ceil(ppmData.total/10);
 		let taskData = await PpmEquipment.aggregate([aggregateQuery,unwind,skip,limit,project]);
-		return res.render('Admin/PPM/edit-ppm',{'data':ppmData,page:page,totalPage:totalPage,taskData:taskData,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
 
+		return res.render('Admin/PPM/edit-ppm',{
+			data: ppmData,
+			page: page,
+			totalPage: totalPage,
+			taskData: taskData,
+			search: req.query.search ? req.query.search:"",
+			message: req.flash('message'),
+			error: req.flash('error')
+		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -398,17 +411,43 @@ exports.viewPpmList = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-// Assign PPM List 
+
+// Assign Ppm Equipment 
 exports.addPropertyWing = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
-		for(let i=0;i< req.body.wings.length;i++){
-			let wingPPm = await wingPPMS.create({
-				wingId: req.body.wings[i],
-				propertyId: req.body.propertyId,
-				ppmIds: req.body.ppmIds
-			})
+
+		// delete data
+		await assignPpmEquipment.deleteMany({propertyId: req.body.propertyId, ppmEquipmentId: { "$nin": req.body.ppmIds }});
+
+		for(let i=0;i< req.body.ppmIds.length; i++){
+			let existsData = await assignPpmEquipment.findOne({propertyId: req.body.propertyId, ppmEquipmentId: req.body.ppmIds[i]});
+			if (!existsData) {
+				// store Ppm Equipment
+				let assignPpmEquipmentData = await assignPpmEquipment.create({
+					propertyId: req.body.propertyId,
+					ppmEquipmentId: req.body.ppmIds[i]
+				})
+
+				// store Ppm Equipment Asset
+				let ppmEquipmentAssetData = await PpmEquipment.findOne({_id: req.body.ppmIds[i]});
+				for (let j = 0; j < ppmEquipmentAssetData.assets.length; j++) {
+					const element = ppmEquipmentAssetData.assets[j];
+					
+					let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.create({
+						propertyId: req.body.propertyId,
+						ppmEquipmentId: req.body.ppmIds[i],
+						assetName: element.assetName,
+						vendorName: element.vendorName,
+						frequency: element.frequency,
+						month: element.month,
+						date: element.date,
+						day: element.day,
+					})
+				}
+			}
 		}
+
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
@@ -448,10 +487,13 @@ exports.editPropertyWing = async (req,res) => {
 exports.propertyWingList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
+
 		let wingPpmList = await wingPPMS.find({propertyId:req.query.propertyId});
 		let wingList = [];
-		let wingsData = await Property.findOne({_id:req.query.propertyId,status:1},{wings:1,status:1});
-		let ppmData = await PpmEquipment.find({},{ppmEquipmentName:1});
+		let wingsData = await Property.findOne({_id: req.query.propertyId,status:1},{wings:1,status:1});
+		let ppmData = await PpmEquipment.find({}, {ppmEquipmentName:1});
+		let assignPpmData = await assignPpmEquipment.find({propertyId: req.query.propertyId}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
+
 		wingsData = JSON.parse(JSON.stringify(wingsData));
 		for(let i=0;i< wingsData.wings.length;i++){
 			if(wingsData.wings[i].status == 1){
@@ -465,11 +507,13 @@ exports.propertyWingList = async (req,res) => {
 			}
 			
 		}
+		
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
 		    "wings": wingList,
-		    "ppm": ppmData
+		    "ppm": ppmData,
+			assignPpmData: assignPpmData
 		});
 
 	} catch (error) {
@@ -553,13 +597,13 @@ exports.propertiesWisePpmList = async (req,res) => {
 		let skip = { $skip : (page - 1) * 10};
 		let project = {
 			$project:{
-				taskId:"$tasks._id",
-				taskName:"$tasks.taskName",
-				frequency:"$tasks.frequency",
-				month:"$tasks.month",
-				date:"$tasks.date",
-				status:"$tasks.status",
-				vendorName:"$tasks.vendorName"
+				taskId:"$assets._id",
+				assetName:"$assets.assetName",
+				frequency:"$assets.frequency",
+				month:"$assets.month",
+				date:"$assets.date",
+				status:"$assets.status",
+				vendorName:"$assets.vendorName"
 			}
 		}
 		let aggregateQuery = {
@@ -568,7 +612,7 @@ exports.propertiesWisePpmList = async (req,res) => {
             }
         };
         let unwind = {
-        	$unwind: "$tasks"
+        	$unwind: "$assets"
         }
         let group = {
                 $group: {

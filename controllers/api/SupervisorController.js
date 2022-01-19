@@ -109,7 +109,7 @@ exports.ppmTaskList = async (req, res) => {
 				ppmEquipmentName:{$first:"$ppmEquipmentName"},
 				tasks:{
 					$push:{
-						taskName: "$tasks.taskName",
+						assetName: "$tasks.assetName",
 						frequency: "$tasks.frequency",
 						day: "$tasks.day",
 						date: "$tasks.date",
@@ -191,7 +191,7 @@ exports.ppmTaskDetail = async (req, res) => {
 		    	_id:ppmTaskList._id,
 		    	ppmEquipmentName:ppmTaskList.ppmEquipmentName,
 		    	task:{
-		    		taskName: ppmTaskList.tasks[index].taskName,
+		    		assetName: ppmTaskList.tasks[index].assetName,
 		    		vendorName: ppmTaskList.tasks[index].vendorName,
 		    		frequency: ppmTaskList.tasks[index].frequency,
 					day: ppmTaskList.tasks[index].day,

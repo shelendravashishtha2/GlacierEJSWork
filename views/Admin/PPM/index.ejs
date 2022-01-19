@@ -118,7 +118,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3 row">
-                        <label for="example-text-input" class="col-md-4 col-form-label">Equipment Name<span class="required">*</span></label>
+                        <label class="col-md-4 col-form-label">Equipment Name<span class="required">*</span></label>
                         <div class="col-md-8" style="margin-left: -5%;">
                             <input class="form-control" type="text" name="ppmEquipmentName" id="ppmEquipmentName" placeholder="Enter Equipment Name" required>
                         </div>
@@ -144,28 +144,30 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <label for="example-text-input" style="text-align:center" class="col-md-12 col-form-label">Equipment Name : <span id="ppmEquipmentNameLabel"></span></label>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-12">
+							<div class="mb-3 row">
+								<label style="text-align:right" class="col-md-4 col-form-label">Equipment Name :</label>
+								<div class="col-md-8">
+									<label style="text-align:left" class="col-md-4 col-form-label" id="ppmEquipmentNameLabel">Equipment Name :</label>
+									<!-- <span id="ppmEquipmentNameLabel"></span> -->
+								</div>
+							</div>
+							<br>
                             <div class="mb-3 row">
-                                <label for="example-text-input" style="text-align:right" class="col-md-3 col-form-label">Task Name<span class="required">*</span></label>
+                                <label style="text-align:right" class="col-md-4 col-form-label">Asset Name<span class="required">*</span></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" name="taskName" type="text" value="" id="taskName" placeholder="Enter Task Name" required>
+                                    <input class="form-control" name="assetName" type="text" value="" id="assetName" placeholder="Enter Asset Name" required>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label for="example-text-input" style="text-align:right"  class="col-md-3 col-form-label">Vendor Name<span class="required">*</span></label>
+                                <label style="text-align:right"  class="col-md-4 col-form-label">Vendor Name<span class="required">*</span></label>
                                 <div class="col-md-8">
                                     <input class="form-control" name="vendorName" type="text" value="" id="vendorName" placeholder="Enter Vendor Name" required>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-md-3 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
+                                <label class="col-md-4 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
                                 <div class="col-md-8">
                                     <select class="form-select" name="frequency" required onchange="changeFrequency()" id="frequency">
                                         <option value="Weekly" selected>Weekly</option>
@@ -179,7 +181,7 @@
                             </div>
 
                             <div class="mb-3 row" id="dayLable">
-                                <label class="col-md-3 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
+                                <label class="col-md-4 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
                                 <div class="col-md-8" id="daySelect">
                                     <select class="form-select" id="day" name="day">
                                         <option value="">Select Day</option>
@@ -194,7 +196,7 @@
                                 </div>
                             </div>
                             <div class="mb-3 row" id="monthLable" style="display: none;">
-                                <label class="col-md-3 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
+                                <label class="col-md-4 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
                                 <div class="col-md-8" id="monthSelect">
                                     <select class="form-select" id="month" name="month">
                                         <option value="">Select Month</option>
@@ -205,7 +207,7 @@
                                 </div>
                             </div>
                             <div class="mb-3 row" id="dateLable" style="display: none;">
-                                <label class="col-md-3 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
+                                <label class="col-md-4 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
                                 <div class="col-md-8" id="dateSelect">
                                     <select class="form-select" name="date" id="date">
                                         <option value="">Select Date</option>

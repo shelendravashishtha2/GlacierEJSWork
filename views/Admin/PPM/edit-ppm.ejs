@@ -28,8 +28,7 @@
                 <div class="row mb-2">
                     <div class="col-sm-8">
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-2 col-form-label">Equipment Name
-                                :-</label>
+                            <label for="example-text-input" class="col-md-2 col-form-label">Equipment Name:-</label>
                             <div class="col-md-3">
                                 <input class="form-control" type="text" id="ppmEquipmentName"
                                     placeholder="Compliance" value="<%= data.ppmEquipmentName %>">
@@ -42,7 +41,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="text-sm-end">
-                            <button type="button" onclick="detailTask(-1)" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".orderdetailsModal"><i class="mdi mdi-plus me-1"></i> <b>ADD EQUIPMENT NAME</b> </button>
+                            <button type="button" onclick="detailTask(-1)" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".orderDetailsModal"><i class="mdi mdi-plus me-1"></i> <b>ADD ASSET NAME</b> </button>
                         </div>
                     </div>
                 </div>
@@ -52,12 +51,12 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">Sr.No</th>
-                                <th>Equipment Name</th>
+                                <th>Asset Name</th>
                                 <th>Frequency</th>
                                 <th>Vendor Name</th>
                                 <th class="text-center">Date</th>
                                 <th class="text-center">Month</th>
-                                <th class="text-center">Days</th>
+                                <th class="text-center">Day</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -69,19 +68,19 @@
                             <% for(let i = 0;i<taskData.length;i++){ %>
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
-                                <td><%= taskData[i].taskName %></td>
+                                <td><%= taskData[i].assetName %></td>
                                 <td><%= taskData[i].frequency %></td>
                                 <td><%= taskData[i].vendorName %></td>
-                                <td class="text-center"><%= taskData[i].date %></td>
-                                <td class="text-center"><%= taskData[i].month %></td>
-                                <td class="text-center"><%= taskData[i].day %></td>
+                                <td class="text-center"><%= taskData[i].date ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].month ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].day ?? '--' %></td>
                                 <td class="text-center" style="width: 7%;">
                                     <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i].taskId %>,<%= data.ppmId %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
                                     <a href="javascript: void(0);" >
-                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".orderdetailsModal"><b>Edit</b></button>
+                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".orderDetailsModal"><b>Edit</b></button>
                                     </a>
                                 </td>
                             </tr>
@@ -115,11 +114,11 @@
 <!-- end row -->
 
 <!-- Add Task Modal -->
-<div class="modal fade orderdetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
+<div class="modal fade orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment</h5>
+                <h5 class="modal-title" id="orderDetailsModalLabel">Add Equipment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
@@ -129,9 +128,9 @@
                         <div class="mb-3 row">
                             <input type="hidden" name="taskId" id="taskId" value="">
                             <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmId %>">
-                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Task Name<span class="required">*</span></label>
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="" id="taskName" name="taskName" required placeholder="Enter Task Name">
+                                <input class="form-control" type="text" value="" id="assetName" name="assetName" required placeholder="Enter Asset Name">
                             </div>
                         </div>
 
@@ -151,23 +150,23 @@
                             </div>
                         </div>
 
-                        <div class="mb-3 row" id="dayLable">
+                        <div class="mb-3 row" id="dayLabel">
                             <label class="col-md-4 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
-                            <div class="col-md-8" id="daySelect">
+                            <div class="col-md-8" id="daySelectDiv">
                                 <select class="form-select" id="day" name="day">
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3 row" id="monthLable">
+                        <div class="mb-3 row" id="monthLabel">
                             <label class="col-md-4 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
-                            <div class="col-md-8" id="monthSelect">
+                            <div class="col-md-8" id="monthSelectDiv">
                                 <select class="form-select" id="month" name="month">
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3 row" id="dateLable">
+                        <div class="mb-3 row" id="dateLabel">
                             <label class="col-md-4 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
-                            <div class="col-md-8" id="dateSelect">
+                            <div class="col-md-8" id="dateSelectDiv">
                                 <select class="form-select" name="date" id="date">
                                 </select>
                             </div>
@@ -185,8 +184,12 @@
 <!-- end modal -->
 
 <script>
-    let taskData = <%-JSON.stringify(taskData)%>;
+    let taskData = <%- JSON.stringify(taskData) %>;
+	
     let dayArray = [{
+        id:'',
+        string:""
+    },{
         id:'monday',
         string:"Monday"
     },{
@@ -207,9 +210,6 @@
     },{
         id:'sunday',
         string:"Sunday"
-    },{
-        id:'blank',
-        string:""
     }];
     let frequencyArray = [{
         id:'Weekly',
@@ -230,60 +230,60 @@
         id:'Bi-Annually',
         string:"Bi-Annually"
     }]
-    let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let monthsList = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
     function changeFrequency() {
-        $('#dayLable').hide().prop('required',false);
-        $('#monthLable').hide().prop('required',false);
-        $('#dateLable').hide().prop('required',false);
-        $('#daySelect').hide().prop('required',false);
-        $('#monthSelect').hide().prop('required',false);
-        $('#dateSelect').hide().prop('required',false);
+        $('#dayLabel').hide();
+        $('#monthLabel').hide();
+        $('#dateLabel').hide();
+		$('#day').attr('required',false).val('');
+		$('#month').attr('required',false).val('');
+		$('#date').attr('required',false).val('');
 
         let optionValue = $("#frequency").val();
         if(optionValue == 'Weekly'){
-            $('#dayLable').show();
-            $('#daySelect').show();
+            $('#dayLabel').show();
+            $('#day').attr('required',true);
         } else if(optionValue == 'Fortnightly') {
-            $('#dateLable').show();
-            $('#dateSelect').show();
+            $('#dateLabel').show();
+            $('#date').attr('required',true);
         } else if(optionValue == 'Monthly') {
-            $('#dateLable').show();
-            $('#dateSelect').show();
+            $('#dateLabel').show();
+            $('#date').attr('required',true);
         }  else if(optionValue == 'Quarterly') {
-           $('#dateLable').show();
-           $('#dateSelect').show();
-           $('#monthLable').show();
-           $('#monthSelect').show();
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
         }  else if(optionValue == 'Annually') {
-           $('#dateLable').show();
-           $('#dateSelect').show();
-           $('#monthLable').show();
-           $('#monthSelect').show();
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
         }  else if(optionValue == 'Bi-Annually') {
-           $('#dateLable').show();
-           $('#dateSelect').show();
-           $('#monthLable').show();
-           $('#monthSelect').show();
+           $('#dateLabel').show();
+           $('#date').attr('required',true);
+           $('#monthLabel').show();
+           $('#month').attr('required',true);
         }
     }
-    function detailTask(taskindex){
+    function detailTask(taskIndex){
         let detail;
         let monthString = "";
         let frequencyString = "";
         let dayString = "";
         let dateString = "";
-        if(taskindex == -1){
+        if(taskIndex == -1){
             detail = {
                 frequency:1,
                 month:1,
                 date:1,
                 taskId:"",
             }
-            $("#orderdetailsModalLabel").html("Add Task");
+            $("#orderDetailsModalLabel").html("Add Task");
         }else{
-            detail = taskData[taskindex];
-            $("#orderdetailsModalLabel").html("Edit Task");
+            detail = taskData[taskIndex];
+            $("#orderDetailsModalLabel").html("Edit Task");
         }
             frequencyArray.forEach(function(frequency){
                 if(frequency.id == detail.frequency){
@@ -321,7 +321,7 @@
             $("#date").html(dateString);
             $("#taskId").val(detail.taskId);
             $("#vendorName").val(detail.vendorName);
-            $("#taskName").val(detail.taskName);
+            $("#assetName").val(detail.assetName);
         changeFrequency()
     }
     function ppmEquipmentNameChange(){
@@ -332,7 +332,7 @@
             ppmEquipmentName: $("#ppmEquipmentName").val().trim()
           },
           function(data, status){
-            if(data.sucess){
+            if(data.status){
                 toastr.success(data.message);
             }else{
                 toastr.error(data.message);

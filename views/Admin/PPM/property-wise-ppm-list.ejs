@@ -51,7 +51,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">Sr.No</th>
-                                <th>Task Name</th>
+                                <th>Asset Name</th>
                                 <th>Frequency</th>
                                 <th>Vendor Name</th>
                                 <th class="text-center">Action</th>
@@ -64,7 +64,7 @@
                             <% for(let i = 0;i<taskData.length;i++){ %>
                             <tr>
                                 <td class="text-center" style="width:7%"><%= (10*(page-1))+ 1 + i %></a></td>
-                                <td><%= taskData[i].taskName %></td>
+                                <td><%= taskData[i].assetName %></td>
                                 <td><% if(taskData[i].frequency == "monthly"){ %>
                                         Monthly
                                     <% }else if(taskData[i].frequency == "quarterly"){ %>

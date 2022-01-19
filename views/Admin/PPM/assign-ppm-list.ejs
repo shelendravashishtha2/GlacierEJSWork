@@ -29,7 +29,7 @@
                         <div class="mb-2 row">
                             <label for="example-text-input" class="col-md-3 col-form-label">Select Property Name :-</label>
                             <div class="col-md-4">
-                                <select class="form-select" onchange="getWingList()" name="propertyId" id="propertyId" >
+                                <select class="form-select" onchange="getPropertyEquipmentList()" name="propertyId" id="propertyId" >
                                     <option value="">Select Property Name</option>
                                     <% for (i = 0; i < data.length; i++) { %>
                                         <option value="<%= data[i]._id %>"><%= data[i].property_name %></option>
@@ -45,9 +45,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="text-sm-end">
-                            <button type="button" hidden class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal" id="selectWing"><b>SELECT WING</b></button>
-                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" onclick="selectWing()" ><b>SELECT EQUIPMENTS</b></button>
-                            <button type="button" hidden id="ppmEquipmentName" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".ppmEquipmentName">PPM Name</button>
+                            <button type="button" hidden class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".ppmEquipmentListModel" id="selectEquipments"><b>Equipments List</b></button>
+                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" onclick="selectEquipmentList()" ><b>SELECT EQUIPMENTS</b></button>
                         </div>
                     </div>
                 </div>
@@ -70,36 +69,13 @@
     </div>
 </div>
 <!-- end row -->
-<!-- Select Wing Modal -->
-<div class="modal fade orderdetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
+
+<!-- Equipments Name Modal -->
+<div class="modal fade ppmEquipmentListModel" tabindex="-1" role="dialog" aria-labelledby="ppmEquipmentListModelL" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="orderdetailsModalLabel">Select Equipments</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" id="wingclose" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xl-4 col-sm-6">
-                        <div id="checkList">
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning waves-effect waves-light" onclick="submitWing()">Next</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end modal -->
-<!-- PPM Name Modal -->
-<div class="modal fade ppmEquipmentName" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orderdetailsModalLabel">PPM Name</h5>
+                <h5 class="modal-title">Equipments Name</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="ppmClose" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -112,38 +88,21 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning waves-effect waves-light" onclick="submitPPM()" data-bs-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-warning waves-effect waves-light" onclick="submitPpmEquipment()" data-bs-dismiss="modal">Save</button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     let properties = <%-JSON.stringify(data)%>;
     let wings = [];
     let ppm = [];
+    let assignPpmData = [];
     let selectedWings = [];
     let selectedPPM = [];
-    function allChangeWing(){
-        let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
-        if($("#formCheck").is(":checked")){
-            for(let i=0;i < properties[propertyIndex].wings.length; i++){
-                if(properties[propertyIndex].wings[i].used == false){
-                    if(!$("#formCheck"+i).is(":checked")){
-                        $("#formCheck"+i).click();
-                    }
-                }
-            }
-        }else{
-            for(let i=0;i < properties[propertyIndex].wings.length; i++){
-                if(properties[propertyIndex].wings[i].used == false){
-                    if($("#formCheck"+i).is(":checked")){
-                        $("#formCheck"+i).click();
-                    }
-                }
-            }
-        }
-    }
-    function allPPM(){
+	
+    function allPpmEquipmentSelect(){
         if($("#ppmCheck").is(":checked")){
             for(let i=0;i < ppm.length; i++){
                 if(!$("#ppmCheck"+i).is(":checked")){
@@ -158,7 +117,8 @@
             }
         }
     }
-    function submitPPM(){
+	
+    function submitPpmEquipment(){
         selectedPPM = [];
         for(let i=0;i < ppm.length; i++){
             if($("#ppmCheck"+i).is(":checked")){
@@ -170,134 +130,100 @@
         }
         
         $.post("/add-property-wing",
-          {
+        {
             propertyId: $("#propertyId").val(),
-            wings: selectedWings,
             ppmIds: selectedPPM,
-          },
-          function(data, status){
-            if(data.status){
-                alert(data.message);
-                location.reload();
-            }
-          })
+        },
+		function(data, status){
+			if(data.status){
+				alert(data.message);
+				location.reload();
+			}
+		})
     }
-    function submitWing(){
-        selectedWings = [];
-        for(let i=0;i < wings.length; i++){
-            if($("#formCheck"+i).is(":checked")){
-                selectedWings.push($("#formCheck"+i).val());
-            }
-        }
-        if(selectedWings.length > 0){
-            $("#wingclose").click();
-            $("#ppmEquipmentName").click();
 
-        }
-    }
-    function selectWing(){
+    function selectEquipmentList(){
         if(!$("#propertyId").val()){
             toastr.error("Please first select property for assign equipments");
-        }else{
-            selectedWings = [];
-            
-            let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
-            let checkString = "";
-            let ppmString = "";
-            if(properties[propertyIndex]){
-                if(properties[propertyIndex].wings.length > 0){
-                     checkString = checkString+`<div class="form-check mb-2">
-                                        <input class="form-check-input" onchange="allChangeWing()" name="wings" type="checkbox" id="formCheck" value="">
-                                        <label class="form-check-label" for="formCheck">All Equipments</label>
-                                    </div>`;
-                    for(let i=0;i < properties[propertyIndex].wings.length; i++){
-                        if(properties[propertyIndex].wings[i].used == false){
-                                checkString = checkString+`<div class="form-check mb-2">
-                                        <input class="form-check-input" checked name="wings" type="checkbox" id="formCheck`+i+`" value="`+properties[propertyIndex].wings[i]._id+`">
-                                        <label class="form-check-label" for="formCheck`+i+`">`+properties[propertyIndex].wings[i].wings_name+`</label>
-                                    </div>`;
-                        }
-                    }
-                }else{
-
-                }
-                $("#checkList").html(checkString);
-            }
-            if(ppm.length > 0){
-                    ppmString = ppmString+`<div class="form-check mb-2">
-                                    <input class="form-check-input" onchange="allPPM()" name="wings" type="checkbox" id="ppmCheck" value="">
-                                    <label class="form-check-label" for="ppmCheck">All PPM</label>
-                                </div>`;
-                for(let i=0;i < ppm.length; i++){
-                    ppmString = ppmString + `<div class="form-check mb-2">
-                                    <input class="form-check-input" checked name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ppm[i]._id+`">
-                                    <label class="form-check-label" for="ppmCheck`+i+`">`+ppm[i].ppmEquipmentName+`</label>
-                                </div>`;
-                }
-            }
-            $("#ppmList").html(ppmString);
-            if(ppm.length > 0){
-                $("#selectWing").click();
-            }else{
-                toastr.error("Please Select property for assign wing");
-            }
+        } else {
+			$("#selectEquipments").click();
         }
     }
     
-    function wingChange(propertyId,wingId){
-        
+    function EquipmentStatusChange(propertyId, wingId) {
         $.post("/update-property-wing-status",
-          {
-            propertyId: propertyId,
-            wingId: wingId
-          },
-          function(data, status){
-                let propertyIndex = properties.findIndex((x)=> x._id == propertyId);
-                if(properties[propertyIndex].status){
-                    let wingIndex = properties[propertyIndex].wings.findIndex((x)=> x._id == wingId);
+		{
+			propertyId: propertyId,
+			wingId: wingId
+		},
+		function(data, status){
+			let propertyIndex = properties.findIndex((x)=> x._id == propertyId);
+			if(properties[propertyIndex].status){
+				let wingIndex = properties[propertyIndex].wings.findIndex((x)=> x._id == wingId);
 
-                    if(properties[propertyIndex].wings[wingIndex]){
-                        if(properties[propertyIndex].wings[wingIndex].status == 0){
-                            properties[propertyIndex].wings[wingIndex].status = 1;
-                        }else{
-                            properties[propertyIndex].wings[wingIndex].status = 0;
-                        }
-                    }
-                }
-          });
+				if(properties[propertyIndex].wings[wingIndex]){
+					if(properties[propertyIndex].wings[wingIndex].status == 0){
+						properties[propertyIndex].wings[wingIndex].status = 1;
+					}else{
+						properties[propertyIndex].wings[wingIndex].status = 0;
+					}
+				}
+			}
+		});
     }
-    function getWingList(){
+
+    function getPropertyEquipmentList(){
         let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
         let wingString = "";
         if(properties[propertyIndex]){
              $.get("/property-wing-list",
-              {
-                propertyId: $("#propertyId").val()
-              },
+			{
+				propertyId: $("#propertyId").val()
+			},
             function(data, status){
                 properties[propertyIndex].wings = data.wings;
                 ppm = data.ppm;
-
+                assignPpmData = data.assignPpmData;
                 wings = properties[propertyIndex].wings;
-                for(let i=0;i < properties[propertyIndex].wings.length; i++){
+
+				// set data in table view
+				for(let i=0;i < assignPpmData.length; i++){
                     let selected = "";
-                    
-                    if(properties[propertyIndex].wings[i].status){
-                        selected = "checked";
-                    }
-                    wingString = wingString + ` <tr>
+
+					wingString = wingString + ` <tr>
                                     <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
-                                    <td>`+properties[propertyIndex].wings[i].wings_name+`</td>
+                                    <td>`+ assignPpmData[i].ppmEquipmentId.ppmEquipmentName +`</td>
                                     <!--<td class="text-center" style="width: 7%;">
-                                        <input type="checkbox" onchange="wingChange('`+properties[propertyIndex]._id+`','`+properties[propertyIndex].wings[i]._id+`')" id="switch`+i+`" switch="success" `+selected+`>
+                                        <input type="checkbox" onchange="EquipmentStatusChange('`+ properties[propertyIndex]._id +`','`+ assignPpmData[i].ppmEquipmentId._id +`')" id="switch`+i+`" switch="success" `+ selected +`>
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
                                     </td>-->
                                     <td class="text-center" style="width: 7%;">
-                                        <a href="/edit-wing-category/`+properties[propertyIndex]._id+`/`+properties[propertyIndex].wings[i]._id+`" class="btn btn-outline-warning"><b>Edit</b></a>
+                                        <a href="/edit-wing-category/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i].ppmEquipmentId._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
                                     </td>
                                 </tr>`
                 }
                 $("#wingList").html(wingString);
+
+				// set data in select box
+				let ppmString = "";
+				if(ppm.length > 0){
+						ppmString = ppmString+`<div class="form-check mb-2">
+										<input class="form-check-input" onchange="allPpmEquipmentSelect()" name="wings" type="checkbox" id="ppmCheck" value="">
+										<label class="form-check-label" for="ppmCheck">All Equipments</label>
+									</div>`;
+					for(let i=0;i < ppm.length; i++){
+						let selected = ""
+						let assignPpmDataIndex = assignPpmData.findIndex((x)=> String(x.ppmEquipmentId._id) == String(ppm[i]._id));
+						if (assignPpmDataIndex != -1) {
+							selected = "checked"
+						}
+						ppmString = ppmString + `<div class="form-check mb-2">
+										<input class="form-check-input" name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ ppm[i]._id + `" `+ selected +`>
+										<label class="form-check-label" for="ppmCheck`+i+`">`+ ppm[i].ppmEquipmentName +` `+selected+`</label>
+									</div>`;
+					}
+				}
+				$("#ppmList").html(ppmString);
             }) 
         }else{
             $("#wingList").html(wingString);
