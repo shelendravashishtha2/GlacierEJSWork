@@ -1,72 +1,166 @@
 <%- contentFor('HeaderCss') %>
-<!-- DataTables -->
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<!-- Responsive datatable examples -->
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <%- contentFor('breadcrumb') %>
+<style>
+    .text-center{text-align: center;}
+</style>
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Properties</h4>
+            <h4 class="mb-sm-0 font-size-18">Master Property</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Properties</li>
+                    <li class="breadcrumb-item active">Master Property</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 <!-- end page title -->
+
 <%- contentFor('body') %>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Properties Record <a href="/create-properties"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><b>ADD PROPERTY</b></button></a></h4>
-                <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
-                    <thead>
-                    <tr>
-                        <th style="text-align: center;">Sr.No</th>
-                        <th>Property Name</th>
-                        <th>Address</th>
-                        <th style="text-align: center;">Create Date</th>
-                        <th style="text-align: center;">Status</th>
-                        <th style="width: 10%;text-align: center;">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <% for (i = 0; i < data.length; i++) { %>
-                        <tr>
-                            <td style="width: 5%;text-align: center;"><%=i+1%></td>
-                            <td><%= data[i].property_name %></td>
-                            <td><%= data[i].address %></td>
-                            <td style="width: 10%;text-align: center;">30-09-2021</td>
-                            <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
-                                <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
-                            <td style="width: 10%;text-align: center;"><a href="/edit-properties/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit</button></a>
-                                <a href="/view-properties/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+                <form method="GET" action="/properties" id="form">
+                <div class="row mb-2">
+                    <!-- start searching -->
+                    <div class="col-sm-3">
+                        <div class="search-box">
+                            <div class="position-relative">
+                                <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
+                                <input type="hidden" name="page" id="page" value="<%= page %>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" style="padding: 0px;">
+                        <button type="button" onclick="pagination(1)" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
+                    </div>
+                    <!-- end searching -->
+                    <% if(session) { %>
+                    <% if(session.user.position_id == 1) { %>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">
+                                <a href="/create-properties"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>ADD PROPERTY</b></button></a>
+                        </div>
+                    </div>
+                    <% } } %>
+                </div>
+                </form>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-check">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">Sr.No</th>
+                                <th>Property Name</th>
+                                <th>Address</th>
+                                <% if(session) { %>
+                                <% if(session.user.position_id == 1) { %>
+                                <th style="text-align: center;">Status</th>
+                                <% } } %>
+                                <th style="width: 10%;text-align: center;">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <% if(data.length ==0) { %>
+                                    <tr><td colspan="5" class="text-center">No data found</td></tr>
+                                <% } %>
+                                <% for (i = 0; i < data.length; i++) { %>
+                                <tr>
+                                    <td style="width: 5%;text-align: center;"><%= (10*(page-1))+ 1 + i %></td>
+                                    <td style="white-space: normal;"><%= data[i].property_name %></td>
+                                    <td style="white-space: normal;"><%= data[i].address %></td>
+                                    <% if(session) { %>
+                                        <% if(session.user.position_id == 1) { %>
+                                    <td style="width: 10%;text-align: center;">
+                                        <input type="checkbox" value="<%= data[i]._id %>"" id="switch<%=i+1%>" class="status" switch="warning" <% if(data[i].status == 1){ %> checked <% } %> />
+                                        <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
+                                        <% } } %>
+                                    <td style="width: 10%;text-align: center;">
+                                        <% if(session) { %>
+                                        <% if(session.user.position_id == 1) { %>
+                                            <a href="/edit-properties/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
+                                        <% } } %>
+                                        <a href="/view-properties/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                    </table>
+                </div>
+                <ul class="pagination pagination-rounded justify-content-end mb-2">
+                    <% if(page > 1){ %>
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="pagination(<%=(Number(page)-1)%>)" aria-label="Previous">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% for (i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item  <% if(page == i){ %> active <% } %>"><a class="page-link"  href="#" onclick="pagination(<%=i%>)"><%=i%></a></li>
+                    <% } %>
+                    <% if(page < totalPage){ %>
+                    <li class="page-item">
+                        <a class="page-link"  href="#" onclick="pagination(<%=(Number(page)+1)%>)" aria-label="Next">
+                            <i class="mdi mdi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
             </div>
         </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+    </div>
+</div>
+<!-- end row -->
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<!-- Datatable init js -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/datatables.init.js"></script>
+<script>
+    function propertyChange(id){
+        $.post("update-property-status",
+        {
+        propertyId: id
+        },
+        function(data, status){
+            toastr.success(data.message);
+        });
+    }
+</script>
+<script>   
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("update-property-status", {
+            propertyId: $(this).val()
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
+</script>
+<script>
+    function pagination(i){
+        $("#page").val(i);
+        $("#form").submit();
+    }
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>

@@ -9,23 +9,11 @@ const {errorLog} = require("../../helper/consoleLog");
 const UserResource = require('../resources/UserResource');
 const Joi = require("joi");
 const Property = require('../../models/Property');
+var toastr = require('express-toastr');
 const UserProperty = require('../../models/UserProperty');
-const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
+const { check, validationResult, matchedData } = require('express-validator');
 
-exports.changePasswordValidation = async (req, res, next) => {
-	const schema = Joi.object({
-		new_password: Joi.string().min(6).max(30).required(),
-		old_password: Joi.string().min(6).max(30).required(),
-	});
-	const validation = schema.validate(req.body, __joiOptions);
-	if (validation.error) {
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
-	} else {
-		next();
-	}
-}
-
-// Supervisor add Form Validatation
+// Supervisor add Form Validation
 exports.supervisorAddValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),
@@ -85,13 +73,16 @@ exports.supervisorAdd = async (req, res) => {
 
 		return res.send(response.success(200, 'Supervisor Added Success', UserResource(userDataJson)));
 	} catch (error) {
+		let errorMessage = '';
 		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			return res.send(response.error(400, errorMessage.message, [] ));
+			errorMessage = error.errors[Object.keys(error.errors)[0]];
+			errorMessage = errorMessage.message;
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', [] ));
+			errorMessage = "Something want wrong";
 		}
+		req.session.error = {errorMessage: errorMessage,inputData: req.body};
+		return res.redirect('back');
 	}
 }
 
@@ -104,20 +95,20 @@ exports.userCreate = async (req,res) => {
 
 		let UserData = await User.find({position: 5});
 		let propertyData = await Property.find();
-
 		return res.render('Admin/Users/create',{ data: UserResource(UserData), propertyData: propertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
-// User create Form Validatation
+// User create Form Validation
 exports.userAddValidation = [
 	check('full_name').trim().notEmpty().withMessage('full name is required'),
-	check('mobile_no').trim().notEmpty().withMessage('mobile no is required'),
+	check('mobile_no').trim().notEmpty().withMessage('mobile no is required')
+		.isNumeric().withMessage('mobile no is must be numeric'),
 	check('position_id').trim().notEmpty().withMessage('position is required'),
-	check('property_id').trim().notEmpty().withMessage('property id is required'),
 	check('address').trim().notEmpty().withMessage('address is required'),
 	check('password').trim().notEmpty().withMessage('password is required'),
 	check('email').trim().notEmpty().withMessage('email is required')
@@ -127,26 +118,19 @@ exports.userAddValidation = [
 		}),
 ];
 
-// create user 
+// create user data
 exports.userAdd = async (req, res) => {
 	try {
+		req.body.property_id = Array.isArray(req.body['property_id[]']) ? req.body['property_id[]'] : [req.body['property_id[]']];
+
 		const errors= validationResult(req);
         if(!errors.isEmpty()){
 			let errMsg = errors.mapped();
-			let inputData = matchedData(req);
-			req.session.error = {errMsg: errMsg, inputData: inputData};
+			req.session.error = {errMsg: errMsg, inputData: req.body};
 			return res.redirect('back');
-        // } else if(req.body.email) {
-		// 	const existsUser = await User.findOne({ email: req.body.email });
-		// 	if(existsUser) {
-		// 		let errMsg= errors.mapped();
-		// 		let inputData = matchedData(req);
-		// 		req.session.error = {errMsg: errMsg, inputData: inputData};
-		// 		return res.redirect('back');
-		// 	}
 		} else {
 			req.session.error = '';
-		}
+		}	
 
         if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
@@ -207,39 +191,31 @@ exports.userAdd = async (req, res) => {
 		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
 		for (let i = 0; i < req.body.property_id.length; i++) {
 			const property_id = req.body.property_id[i];
-			let UserPropertyData = new UserProperty({
-				userId: registerUser._id,
-				propertyId: property_id,
-			});
-			await UserPropertyData.save();
+			if (registerUser._id && property_id && ObjectId.isValid(property_id) == true) {
+				let UserPropertyData = new UserProperty({
+					userId: registerUser._id,
+					propertyId: property_id,
+				});
+				await UserPropertyData.save();
+			}
 		}
-
+		req.flash('message', 'User is added!');
 		res.redirect('/users');
 	} catch (error) {
+		let errorMessage = '';
 		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			return res.send(response.error(400, errorMessage.message, [] ));
+			errorMessage = error.errors[Object.keys(error.errors)[0]];
+			errorMessage = errorMessage.message;
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', [] ));
+			errorMessage = "Something want wrong";
 		}
+		req.session.error = {errorMessage: errorMessage,inputData: req.body};
+		return res.redirect('back');
 	}
 }
 
-// Users list
-exports.pageNotFound = async (req,res) => {
-	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Users', session:req.session};
-		let UserData = await User.find({position: 5});
-		return res.render('Pages/pages-404',{'data':UserResource(UserData)});
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-// Supervisor list
+// Supervisor list page
 exports.supervisorList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
@@ -248,20 +224,59 @@ exports.supervisorList = async (req,res) => {
 		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
-// Users list
+// Users list page
 exports.userList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Users', session: req.session};
-		let UserData = await User.find();
-		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
+		req.session.error =  '';
+
+		let page = 1;
+		if(req.query.page != undefined){
+			page = req.query.page;
+		}
+		let limit = { $limit : 10};
+		let skip = { $skip : (page - 1) * 10};
+		let project = {
+			$project:{
+				email:1,
+				password:1,
+				full_name:1,
+				mobile_no:1,
+				address:1,
+				position_id:1,
+				position_type:1,
+				profile_image:1,
+				status:1,
+				level:1
+			}
+		}
+
+		let query1 = {};
+		if(req.query.search){
+			query1['full_name'] = {$regex: new RegExp(req.query.search, 'i')};
+		}
+		let search = {"$match": {$or: [query1]}};
+		
+		let totalProperty = await User.count(query1);
+		totalPage = Math.ceil(totalProperty/10);
+		let sort = {
+            $sort:{
+                createdAt:-1
+            }
+        };
+		let UserData = await User.aggregate([search,sort,skip,limit,project]);
+
+		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
@@ -277,40 +292,40 @@ exports.userEdit = async (req,res) => {
 		return res.render('Admin/Users/edit',{ data: UserResource(UserData), propertyData: propertyData, UserPropertyData: UserPropertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
 exports.userUpdateValidation = [
 	check('_id').trim().notEmpty().withMessage('User Id required'),
 	check('full_name').trim().notEmpty().withMessage('full name is required'),
-	check('email').trim().notEmpty().withMessage('email is required').normalizeEmail().isEmail().withMessage('must be a valid email'),
-	check('mobile_no').trim().notEmpty().withMessage('mobile no is required'),
+	check('email').trim().notEmpty().withMessage('email is required')
+		.normalizeEmail().isEmail().withMessage('must be a valid email'),
+	check('mobile_no').trim().notEmpty().withMessage('mobile no is required')
+		.isNumeric().withMessage('mobile no is must be numeric'),
 	check('position_id').trim().notEmpty().withMessage('position is required'),
-	check('property_id').trim().notEmpty().withMessage('property id is required'),
 	check('address').trim().notEmpty().withMessage('address is required'),
 ];
 
 // User update
 exports.userUpdate = async (req,res) => {
 	try {
-		res.locals = { title: 'Update User', session: req.session};
-		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
+		req.body.property_id = Array.isArray(req.body['property_id[]']) ? req.body['property_id[]'] : [req.body['property_id[]']];
 
+		res.locals = { title: 'Update User', session: req.session};
 		let oldUserData = await User.findOne({_id: req.body._id});
 		
 		const errors= validationResult(req);
         if(!errors.isEmpty()){
 			let errMsg= errors.mapped();
-			let inputData = matchedData(req);
-			req.session.error = {errMsg: errMsg, inputData: inputData};
+			req.session.error = {errMsg: errMsg, inputData: req.body};
 			return res.redirect('back');
         } else if(oldUserData.email != req.body.email) {
 			const existsUser = await User.findOne({ email: req.body.email });
 			if(existsUser) {
 				let errMsg= errors.mapped();
-				let inputData = matchedData(req);
-				req.session.error = {errMsg: errMsg, inputData: inputData};
+				req.session.error = {errMsg: errMsg, inputData: req.body};
 				return res.redirect('back');
 			}
 		} else {
@@ -324,15 +339,18 @@ exports.userUpdate = async (req,res) => {
 
 			if (profile_image) {
 				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
-					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+					req.session.error = {errorMessage: "File format should be PNG,JPG,JPEG"};
+					return res.redirect('back');
 				}
 				if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-					return res.send(response.error(400, 'Image must be less then 5MB', []));
+					req.session.error = {errorMessage: "Image must be less then 5MB"};
+					return res.redirect('back');
 				}
 				fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
 				profile_image.mv(uploadPath + fileName, function(err) {
 					if (err){
-						return res.send(response.error(400, 'Image uploading failed', []));
+						req.session.error = {errorMessage: "Image uploading failed"};
+						return res.redirect('back');
 					}
 				});
 				req.body.profile_image = '/public/images/users/' + fileName;
@@ -363,20 +381,31 @@ exports.userUpdate = async (req,res) => {
 		UserData.profile_image = req.body.profile_image;
 		await UserData.save();
 
+		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
 		let deleteOldUserProperty = await UserProperty.deleteMany({ userId: UserData._id });
 		for (let i = 0; i < req.body.property_id.length; i++) {
 			const property_id = req.body.property_id[i];
-			let UserPropertyData = new UserProperty({
-				userId: UserData._id,
-				propertyId: property_id,
-			});
-			await UserPropertyData.save();
+			if (UserData._id && property_id && ObjectId.isValid(property_id) == true) {
+				let UserPropertyData = new UserProperty({
+					userId: UserData._id,
+					propertyId: property_id,
+				});
+				await UserPropertyData.save();
+			}
 		}
-
+		req.flash('message', 'User is updated!');
 		return res.redirect('/users');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		let errorMessage = '';
+		if (error.name == "ValidationError") {
+			errorMessage = error.errors[Object.keys(error.errors)[0]];
+			errorMessage = errorMessage.message;
+		} else {
+			errorLog(__filename, req.originalUrl, error);
+			errorMessage = "Something want wrong";
+		}
+		req.session.error = {errorMessage: errorMessage,inputData: req.body};
+		return res.redirect('back');
 	}
 }
 
@@ -391,205 +420,33 @@ exports.userView = async (req,res) => {
 		return res.render('Admin/Users/view',{ data: UserResource(UserData), UserPropertyData: UserPropertyData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
-exports.userProfile = async (req, res) => {
+exports.updateUserStatus = async (req, res) => {
 	try {
-		let UserData = await User.findOne({_id: req.user._id});
-		UserData = JSON.parse(JSON.stringify(UserData));
-		return res.send(response.success(200, 'success', UserResource(UserData)));
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-exports.updateUser = async (req, res) => {0
-	try {
-		const validation = User.userValidate(req.body); //user data validation
-		if (validation.error){ //if any error message
+		let schema = Joi.object({
+			user_id: Joi.required()
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		if (req.files) {
-			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/uploads/';
-			let fileName;
-
-			if (profile_image) {
-				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
-					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-				}
-				if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-					return res.send(response.error(400, 'Image must be less then 5MB', []));
-				}
-				fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
-				profile_image.mv(uploadPath + fileName, function(err) {
-					if (err){
-						return res.send(response.error(400, 'Image uploading failed', []));
-					}
-				});
-				req.body.profile_image = '/public/uploads/' + fileName;
-			}
-		}
-
-		// remove null or blank value key remove
-		Object.keys(req.body).forEach((key) => { if(req.body[key] == '' || req.body[key] == null || req.body[key] == 'undefined') delete req.body[key] });
-
-		req.body.registration_status = 1;
-		const updates = Object.keys(req.body);
-		const allowedUpdates = ['name', 'birth_date', 'gender', 'interest', 'about', 'city', 'hometown', 'language', 'occupation', 'height', 'children', 'edu_qualification', 'relationship_status', 'smoking','profile_image','registration_status'];
-		const isValidOperation = updates.every((update) =>  allowedUpdates.includes(update));
-		if (!isValidOperation) {
-			return res.send(response.error(400, 'Invalid update fields!', [] ));
-		}
-		const _id = req.user._id;
-
-		let updateUser = await User.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true} );
-		updateUser = JSON.parse(JSON.stringify(updateUser));
-        updateUser.token = req.user.token;
-        
-		return res.send(response.success(200, 'success', UserResource(updateUser)));
-	} catch (error) {
-		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]];
-			return res.send(response.error(400, errorMessage.message, []));
+		let userDetail = await User.findOne({_id: req.body.user_id});
+		if(userDetail.status == 0) {
+			userDetail.status = 1;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', []));
+			userDetail.status = 0;
 		}
-	}
-}
+		userDetail.save();
 
-exports.profileImageUpload = async (req, res) => {
-	try {
-		if (req.files && req.files.profile_image) {
-			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
-
-			const extensionName = path.extname(profile_image.name);
-			const allowedExtension = ['.png','.jpg','.jpeg'];
-			if(!allowedExtension.includes(extensionName)){
-				return res.send(response.error(422, 'File format should be PNG,JPG,JPEG', []));
-			}
-
-			if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
-				return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-			}
-			if (profile_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-				return res.send(response.error(400, 'Image must be less then 5MB', []));
-			}
-			let fileName = 'profile-image-' + Date.now() + path.extname(profile_image.name);
-			profile_image.mv(uploadPath + fileName, function(err) {
-				if (err){
-					return res.send(response.error(400, 'Image uploading failed', []));
-				}
-			});
-			fileName = '/public/images/users/' + fileName;
-			const _id = req.user._id;
-			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new : true, runValidators: true} );
-			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": userData.profile_image} ));
-		} else {
-			return res.send(response.error(400, 'Please select an image', [] ));
-		}
-	} catch (error) {
-		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]];
-			return res.send(response.error(400, errorMessage.message, []));
-		} else {
-			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', []));
-		}
-	}
-}
-
-exports.albumImageUpload = async (req, res) => {
-	try {
-		if (req.files && req.files.album_images) {
-			let album_images = req.files.album_images;
-			let uploadPath = __basedir + '/public/uploads/';
-			let albumImageNameArray = req.user.album_images;
-
-			if (Array.isArray(album_images)) {
-				album_images.forEach(album_image => {
-					if (album_image.mimetype !== "image/png" && album_image.mimetype !== "image/jpg" && album_image.mimetype !== "image/jpeg"){
-						return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-					}
-					if (album_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-						return res.send(response.error(400, 'Image must be less then 5MB', []));
-					}
-				});
-				album_images.forEach(album_image => {
-					let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
-					fileName = 'album-image-' + Date.now() + randomNumber + path.extname(album_image.name);
-					album_image.mv(uploadPath + fileName, function(err) {
-						if (err){
-							return res.send(response.error(400, 'Image uploading failed', []));
-						}
-					});
-					albumImageNameArray.push('/public/uploads/' + fileName);
-				});
-			} else {
-				if (album_images.mimetype !== "image/png" && album_images.mimetype !== "image/jpg" && album_images.mimetype !== "image/jpeg"){
-					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-				}
-				fileName = 'album-image-' + Date.now() + path.extname(album_images.name);
-				album_images.mv(uploadPath + fileName, function(err) {
-					if (err){
-						return res.send(response.error(400, 'Image uploading failed', []));
-					}
-				});
-				albumImageNameArray.push('/public/uploads/' + fileName);
-			}
-			await User.findByIdAndUpdate(req.user._id, {album_images: albumImageNameArray}, {new : true, runValidators: true} );
-			return res.send(response.success(200, 'uploaded album images successfully', []));
-		} else {
-			return res.send(response.error(400, 'Please select an image', [] ));
-		}
-	} catch (error) {
-		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]];
-			return res.send(response.error(400, errorMessage.message, []));
-		} else {
-			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', []));
-		}
-	}
-}
-
-exports.albumImageDelete = async (req, res) => {
-	try {
-		const userData = await User.findOne({_id: req.user._id});
-		const image_name = req.body.album_image_name;
-		const DIR = "public/uploads";
-
-		let existsAlbumImage = userData.album_images.filter(function(item) {
-			if (item) { // if album_image name exists
-				return item.toLowerCase().indexOf(image_name.toLowerCase()) >= 0;
-			}
-		});
-
-		let fileExists = fs.existsSync(DIR +'/'+ image_name);
-
-		if (existsAlbumImage.length > 0 && fileExists) {	
-			fs.unlinkSync(DIR+'/'+image_name); // delete from directory
-
-			const filteredAlbumImages = userData.album_images.filter(function(item) {
-				if (item) { // album_image array remove deleted image name value
-					return item.toLowerCase().indexOf(image_name.toLowerCase()) <= 0;
-				}
-			});
-			const updateUser = await User.findByIdAndUpdate(req.user._id, {album_images: filteredAlbumImages}, {new : true, runValidators: true} );
-			return res.send(response.success(200, 'Image Delete successfully', [] ));
-		} else {
-			return res.send(response.error(400, 'Image not exists', []));
-		}
-		
+		return res.send(response.success(200, 'Status update Successfully', userDetail.status));
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		return res.send(response.success(500, 'Something want wrong', []));
 	}
 }
 
@@ -609,13 +466,16 @@ exports.changePassword = async (req, res) => {
 			return res.send(response.error(400, 'Data Not found', []));
 		}
 	} catch (error) {
+		let errorMessage = '';
 		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]];
-			return res.send(response.error(400, errorMessage.message, []));
+			errorMessage = error.errors[Object.keys(error.errors)[0]];
+			errorMessage = errorMessage.message;
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.send(response.error(500, 'Something want wrong', []));
+			errorMessage = "Something want wrong";
 		}
+		req.session.error = {errorMessage: errorMessage,inputData: req.body};
+		return res.redirect('back');
 	}
 }
 
@@ -629,52 +489,22 @@ exports.deleteUser = async (req, res) => {
 		}
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }
 
-exports.updateLocation = async (req,res) => {
-	const updates = Object.keys(req.body);
-	const allowedUpdates = ['longitude','latitude'];
-	const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-	if (!isValidOperation) {
-		return res.send(response.error(400, 'Invalid update fields!', [] ));
-	}
+// Page Not Found
+exports.pageNotFound = async (req,res) => {
 	try {
-		const _id = req.user._id;
-		const longitude = parseFloat(req.body.longitude);
-		const latitude = parseFloat(req.body.latitude);
-		const updateUsers = await User.findByIdAndUpdate(_id, { location: { type: "Point", coordinates: [longitude, latitude] } }, {new: true, runValidators: true} );
+		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Users', session:req.session};
 
-		const userData = {};
-		userData.location = updateUsers.location;
-
-		return res.send(response.success(200, 'location update successfully', []));
+		let UserData = await User.find({position: 5});
+		return res.render('Pages/pages-404',{'data':UserResource(UserData)});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-
-exports.allUsersList = async (req,res) => {
-	try {
-		let UserData = await User.find().populate({path: 'question_answer.question_id'});
-		// db.users.updateMany({gender: "2"}, {$set: {gender: 2}}) //in mongodb compass shell query
-
-		return res.send(response.success(200, 'success', UserResource(UserData))); //UserResource(UserData)
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-exports.languageList = async (req,res) => {
-	try {
-		let ProfileLanguageData = await ProfileLanguage.find();
-		return res.send(response.success(200, 'success', ProfileLanguageData));
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', [] ));
+		req.session.error = {errorMessage: "Something want wrong"};
+		return res.redirect('back');
 	}
 }

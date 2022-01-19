@@ -36,7 +36,6 @@ const SOPSchema = new mongoose.Schema({
 		default: 1,
 	},
 	created_by: {
-		// type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
 		type: mongoose.Schema.Types.ObjectId, ref: 'User'
 	},
 	updated_by: {

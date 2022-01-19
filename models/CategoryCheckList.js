@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const categoryCheckListSchema = new mongoose.Schema({
 	category_id: {
 		type:  mongoose.Schema.Types.ObjectId,
+		ref: 'Category',
 		required:true,
 		trim: true,
 	},
@@ -16,15 +17,19 @@ const categoryCheckListSchema = new mongoose.Schema({
 		required:true,
 		trim: true,
 	},
-    type: { //1=Form, 2=Register, 3=Checklist
+    type: {
 		type: String,
-		enum:['form','register','check_list'],
+		enum: ['form','register','check_list'],
 		required:true,
 		trim: true,
 	},
-	frequency: { //1=Weekly, 2=Weekly, 3=Quarterly, 3=Annually, 3=Bi-Annually
+	form: {
+		type: Array,
+		defult: [],
+	},
+	frequency: {
 		type: String,
-		enum:['monthly','quarterly','annually','bi-annually','weekly'],
+		enum: ['none','daily','monthly','quarterly','annually','bi-annually','weekly'],
 		required:true,
 		trim: true,
 	},
@@ -40,22 +45,21 @@ const categoryCheckListSchema = new mongoose.Schema({
     	max: [31,'invalid status'],
 		trim: true,
 	},
+	day: {
+		type: String,
+		enum: ['','monday','tuesday','wednesday','thursday','friday','saturday','sunday'],
+		trim: true,
+	},
+
 	status: {
-		type: Number, // 1=active, 0=Inactive
+		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
-	},
-	created_at: {
-		type: Date,
-		default: Date.now,
-		select: false
-	},
-	updated_at: {
-		type: Date,
-		default: Date.now,
-		select: false
 	}
+},{
+	timestamps: true,
+	versionKey: false
 });
 
 const CategoryCheckList = new mongoose.model("category_check_list", categoryCheckListSchema);

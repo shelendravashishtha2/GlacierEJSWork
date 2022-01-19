@@ -7,24 +7,45 @@ const Joi = require("joi");
 
 exports.sopCategoryList = async (req,res) => {
 	try {
-		let SOPData = await SOP.find();
+		let sopList = await SOP.find({status:1},{category_name:1,level:1})
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "Sop list",
+		    data: sopList
+		});
+	} catch (error) {
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
 
-		const responseData = [];
-		for (let i = 0; i < SOPData.length; i++) {
-			const elementData = SOPData[i];
-			
-			responseData.push({
-				_id: elementData._id,
-				category_name: elementData.category_name,
-				level: elementData.level.toString(),
-				single_category_files: elementData.single_category_files,
-				sub_category: elementData.sub_category
-			});
+exports.categorySOPDetail = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			sopId: Joi.string().min(24).max(24).required()
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		return res.send(response.success(200, 'success', responseData));
+		let sopDetail = await SOP.findOne({_id:req.body.sopId},{category_name:1,level:1,single_category_files:1,sub_category:1})
+		if(!sopDetail){
+			return res.send(response.error(400, 'SOP Not Found', []));
+		}
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "Sop details",
+			"level": sopDetail.level,
+		    prePath: process.env.PUBLIC_URL+"/public/images/sop_files/",
+		    data: [sopDetail]
+		});
 	} catch (error) {
-		console.error(__filename, req.originalUrl, error);
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

@@ -50,6 +50,7 @@
             <div class="card-body">
                 <h4 class="card-title">Edit SOP</h4>
                 <form action="/update-sop" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="id" value="<%= data._id %>">
                     <div class="row">
                         <div class="col-xl-6">
                             <div class="mb-3">
@@ -57,7 +58,8 @@
                                 <input type="text" name="category_name" value="<%= data.category_name %>" class="form-control" placeholder="Enter Category Name" maxlength="200">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Level</label>
+                                <label class="form-label">Level<span class="required">*</span></label>
+								<input type="hidden" name="category_level" value="<%= data.level %>">
                                 <select class="form-control" name="category_level" id="category_level" required disabled>
                                     <option value="1" <% if (data.level == 1) {%> selected <% } %> >Level 1</option>
                                     <option value="2" <% if (data.level == 2) {%> selected <% } %> >Level 2</option>
@@ -65,13 +67,13 @@
                             </div>
 							<% if (data.level == 1) {%> 
 								<div class="mb-3" id="single_pdf_input">
-									<label class="form-label">Upload PDF</label>
-									<input type="file" name="single_category_files" multiple="" class="form-control">
+									<label class="form-label">Upload PDF<span class="required">*</span></label>
+									<input type="file" id="fileName" onchange="validateFileType()" name="single_category_files" multiple="" class="form-control" accept="application/pdf">
 									<br>
-									<% data.single_category_files.forEach(element => { %>
-										<span style="border:1px; border-style:solid; border-radius: 10px; padding: 5px; margin-right: 5px;">
+									<% data.single_category_files.forEach((element,index1) => { %>
+										<span id="ee<%=index1%>" style="border:1px; border-style:solid; border-radius: 10px; padding: 5px; margin-right: 5px;">
 											<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= element %>" target="_blank" style="color: inherit;"><%= element %></a> 
-											<i class='bx bx-x-circle text-danger' style="font-size: 18px; margin-left: 3px;"></i>
+											<i class='bx bx-x-circle text-danger' onclick="removeFile('<%= data._id %>','<%=element%>','','ee<%=index1%>')" style="font-size: 18px; margin-left: 3px;"></i>
 										</span>
 									<% }); %>
 								</div>
@@ -91,19 +93,22 @@
 												<div id="inputFormRow">
 													<div class="input-group mb-4">
 														<div class="col-md-5 col-5" style="padding-right: 10px;">
-															<input type="text" name="sub_category_name[<%=i%>]" value="<%= element.sub_category_name %>" class="form-control" placeholder="Enter Sub Category Name">
+															<input type="text" name="sub_category_name[<%=i%>]" value="<%= element.sub_category_name %>" class="form-control" placeholder="Enter Sub Category Name" required>
 														</div>
 														<div class="col-md-5 col-5" style="padding-right: 10px;">
-															<input type="file" name="sub_category_files[<%=i%>][]" multiple="" class="form-control">
+															<input type="file" name="sub_category_files[<%=i%>]" multiple="" class="form-control" accept="application/pdf">
 														</div>
-														<div class="col-md-2 col-2 input-group-append">
-															<button id="removeRow" type="button" class="btn btn-danger"><i class='bx bx-x-circle bx-xs'></i></button>
-														</div>
+														<% if (i > 0) { %>
+															<div class="col-md-2 col-2 input-group-append">
+																<button id="removeRow" type="button" class="btn btn-danger"><i class='bx bx-x-circle bx-xs'></i></button>
+															</div>
+														<% } %>
+														
 														<div class="col-md-12 col-12 mt-2">
-															<% element.sub_category_files.forEach(element2 => { %>
-																<span style="border:1px; border-style:solid; border-radius: 8px; padding: 5px; margin-right: 5px;">
+															<% element.sub_category_files.forEach((element2,index) => { %>
+																<span id="e<%=index%>" style="border:1px; border-style:solid; border-radius: 8px; padding: 5px; margin-right: 5px;">
 																	<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= element2 %>" target="_blank" style="color: inherit;"><%= element2 %></a> 
-																	<i class='bx bx-x-circle text-danger' style="font-size: 18px; margin-left: 3px;"></i>
+																	<i class='bx bx-x-circle text-danger' onclick="removeFile('<%= data._id %>','<%=element2%>','<%=element._id%>','e<%=index%>')" style="font-size: 18px; margin-left: 3px;"></i>
 																</span>
 															<% }); %>
 														</div>
@@ -131,8 +136,33 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-
 <script type="text/javascript">
+    function validateFileType(){
+        var fileName = document.getElementById("fileName").value;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+        if (extFile=="pdf"){
+            //TO DO
+        }else{
+            toastr.error("Only jpg/jpeg and png files are allowed!");
+            document.getElementById("fileName").value = null;
+        }   
+    }
+</script>
+<script type="text/javascript">
+	function removeFile(sopId,file,subId,index){
+		
+		$.post("/delete-sop-image",
+        {
+        	sopId: sopId,
+        	subId: subId,
+        	file: file
+        },
+        function(data, status){
+        	$("#"+index).hide();
+			$("#"+index).remove();
+        });
+	}
 	$(document).ready(function(){
 		let i = 1;
 		// add row
@@ -141,10 +171,10 @@
 			html += '<div id="inputFormRow">'
 			html += '<div class="input-group mb-3">'
 			html += '<div class="col-md-5 col-5" style="padding-right: 10px;">'
-			html += '<input type="text" name="sub_category_name['+i+']" class="form-control" placeholder="Enter Sub Category Name">'
+			html += '<input type="text" name="sub_category_name['+i+']" class="form-control" placeholder="Enter Sub Category Name" required>'
 			html += '</div>'
 			html += '<div class="col-md-5 col-5" style="padding-right: 10px;">'
-			html += '<input type="file" name="sub_category_files['+i+'][]" multiple="" class="form-control" required>'
+			html += '<input type="file" name="sub_category_files['+i+']" multiple="" class="form-control" required accept="application/pdf">'
 			html += '</div>'
 			html += '<div class="input-group-append">'
 			html += '<button id="removeRow" type="button" class="btn btn-danger"><i class="bx bx bx-x-circle bx-xs"></i></button>'

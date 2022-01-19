@@ -7,12 +7,12 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Edit PPM (<%= data.ppmName %>)</h4>
+            <h4 class="mb-sm-0 font-size-18">Edit Equipment (<%= data.ppmEquipmentName %>)</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
-                    <li class="breadcrumb-item active"><b>Edit PPM</b></li>
+                    <li class="breadcrumb-item active">Edit Equipment</li>
                 </ol>
             </div>
         </div>
@@ -28,71 +28,60 @@
                 <div class="row mb-2">
                     <div class="col-sm-8">
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-2 col-form-label">PPM Name
+                            <label for="example-text-input" class="col-md-2 col-form-label">Equipment Name
                                 :-</label>
                             <div class="col-md-3">
-                                <input class="form-control" type="text" id="ppmName"
-                                    placeholder="Compliance" value="<%= data.ppmName %>">
+                                <input class="form-control" type="text" id="ppmEquipmentName"
+                                    placeholder="Compliance" value="<%= data.ppmEquipmentName %>">
                             </div>
                             <div class="col-md-3">
-                                <button type="button" onclick="ppmNameChange()"
-                                    class="btn btn-primary waves-effect waves-light">Edit</button>
+                                <button type="button" onclick="ppmEquipmentNameChange()"
+                                    class="btn btn-warning btn-rounded waves-effect waves-light">Edit</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="text-sm-end">
-                            <button type="button" onclick="detailTask(-1)"
-                                class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"
-                                data-bs-toggle="modal" data-bs-target=".orderdetailsModal"><i
-                                    class="mdi mdi-plus me-1"></i> Add Task </button>
+                            <button type="button" onclick="detailTask(-1)" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".orderdetailsModal"><i class="mdi mdi-plus me-1"></i> <b>ADD EQUIPMENT NAME</b> </button>
                         </div>
-                    </div><!-- end col-->
+                    </div>
                 </div>
 
                 <div class="table-responsive">
                     <table class="table align-middle table-nowrap table-check">
                         <thead class="table-light">
                             <tr>
-                                <th class="align-middle">Sr.No</th>
-                                <th class="align-middle">Task Name</th>
-                                <th class="align-middle">Frequency</th>
-                                <th class="align-middle">Vendor Name</th>
-                                <th class="align-middle">Status</th>
-                                <th class="align-middle">Filde</th>
+                                <th class="text-center">Sr.No</th>
+                                <th>Equipment Name</th>
+                                <th>Frequency</th>
+                                <th>Vendor Name</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Month</th>
+                                <th class="text-center">Days</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if(taskData.length ==0) { %>
-                                <tr><td colspan="4" class="text-center">No data found</td></tr>
+                                <tr><td colspan="6" class="text-center">No data found</td></tr>
                             <% } %>
                             <% for(let i = 0;i<taskData.length;i++){ %>
                             <tr>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold"><%= (10*(page-1))+ 1 + i %></a>
-                                </td>
+                                <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= taskData[i].taskName %></td>
-                                <td>
-                                    <% if(taskData[i].frequency == "monthly"){ %>
-                                        Monthly
-                                    <% }else if(taskData[i].frequency == "quarterly"){ %>
-                                        Quarterly
-                                    <% }else if(taskData[i].frequency == "annually"){ %>
-                                        Annually
-                                    <% }else if(taskData[i].frequency == "bi-annually"){ %>
-                                        Annually
-                                    <% }else if(taskData[i].frequency == "weekly"){ %>
-                                        Weekly
-                                    <% } %>
-                                </td>
+                                <td><%= taskData[i].frequency %></td>
                                 <td><%= taskData[i].vendorName %></td>
-                                <td>
-                                    <input type="checkbox" id="switch<%= i %>" onchange="taskChange('<%= taskData[i].taskId %>','<%= data.ppmId %>')" switch="success" <% if(taskData[i].status == 1){ %> checked <% } %>>
+                                <td class="text-center"><%= taskData[i].date %></td>
+                                <td class="text-center"><%= taskData[i].month %></td>
+                                <td class="text-center"><%= taskData[i].day %></td>
+                                <td class="text-center" style="width: 7%;">
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i].taskId %>,<%= data.ppmId %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
-                                <td>
+                                <td class="text-center" style="width: 7%;">
                                     <a href="javascript: void(0);" >
-                                        <button type="button" class="btn btn-primary waves-effect waves-light"
-                                        data-bs-toggle="modal" onclick="detailTask(<%= i %>)" data-bs-target=".orderdetailsModal">Edit</button>
+                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".orderdetailsModal"><b>Edit</b></button>
                                     </a>
                                 </td>
                             </tr>
@@ -108,7 +97,7 @@
                             </a>
                         </li>
                     <% } %>
-                    <% for (i = page; i <= totalPage; i++) { %>
+                    <% for (i = 1; i <= totalPage; i++) { %>
                         <li class="page-item  active"><a class="page-link" href="/edit-ppm/<%=data.ppmId%>?page=<%=i%>"><%=i%></a></li>
                     <% } %>
                     <% if(page < totalPage){ %>
@@ -130,61 +119,56 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="orderdetailsModalLabel">Add Task</h5>
+                <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <label for="example-text-input" class="col-md-4 col-form-label">PPM Name :- </label>
-                        <label for="example-text-input" class="col-md-3 col-form-label"><%= data.ppmName %></label>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-12">
                         <div class="mb-3 row">
                             <input type="hidden" name="taskId" id="taskId" value="">
                             <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmId %>">
-                            <label for="example-text-input" class="col-md-4 col-form-label">Task Name :-
-                            </label>
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Task Name<span class="required">*</span></label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value=""
-                                    id="taskName" name="taskName" required
-                                    placeholder="DG (200 KVA) - No Load Test (Month)">
+                                <input class="form-control" type="text" value="" id="taskName" name="taskName" required placeholder="Enter Task Name">
                             </div>
                         </div>
 
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label">Vendor Name :-
-                            </label>
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Vendor Name<span class="required">*</span></label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="" name="vendorName" required
-                                    id="vendorName" placeholder="AMC Required">
+                                <input class="form-control" type="text" value="" name="vendorName" required id="vendorName" placeholder="Enter Vendor Name">
                             </div>
                         </div>
 
                         <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Frequency :-</label>
+                            <label class="col-md-4 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
                             <div class="col-md-8">
-                                <select class="form-control" name="frequency" id="frequency" required>
+                                <select class="form-control" name="frequency" onchange="changeFrequency()" id="frequency" required>
                                    
                                 </select>
                             </div>
                         </div>
 
-                        <div class="mb-3 row">
-                            <label class="col-md-2 col-form-label">Month:-</label>
-                            <div class="col-md-4">
-                                <select class="form-select" id="month" name="month">
-                                    
+                        <div class="mb-3 row" id="dayLable">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
+                            <div class="col-md-8" id="daySelect">
+                                <select class="form-select" id="day" name="day">
                                 </select>
                             </div>
-                            <label class="col-md-2 col-form-label">Date :-</label>
-                            <div class="col-md-4">
+                        </div>
+                        <div class="mb-3 row" id="monthLable">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
+                            <div class="col-md-8" id="monthSelect">
+                                <select class="form-select" id="month" name="month">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row" id="dateLable">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
+                            <div class="col-md-8" id="dateSelect">
                                 <select class="form-select" name="date" id="date">
-                                    
                                 </select>
                             </div>
                         </div>
@@ -192,7 +176,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary waves-effect waves-light" >submit</button>
+                <button type="submit" class="btn btn-warning waves-effect waves-light" >submit</button>
             </div>
             </form>
         </div>
@@ -201,46 +185,94 @@
 <!-- end modal -->
 
 <script>
-    <% if(error){ %>
-        alert('<%=error%>');
-    <% } %>
-    <% if(message){ %>
-        alert('<%=message%>');
-    <% } %>
     let taskData = <%-JSON.stringify(taskData)%>;
+    let dayArray = [{
+        id:'monday',
+        string:"Monday"
+    },{
+        id:'tuesday',
+        string:"Tuesday"
+    },{
+        id:'wednesday',
+        string:"Wednesday"
+    },{
+        id:'thursday',
+        string:"Thursday"
+    },{
+        id:'friday',
+        string:"Friday"
+    },{
+        id:'saturday',
+        string:"Saturday"
+    },{
+        id:'sunday',
+        string:"Sunday"
+    },{
+        id:'blank',
+        string:""
+    }];
     let frequencyArray = [{
-        id:'weekly',
+        id:'Weekly',
         string:"Weekly"
     },{
-        id:'monthly',
+        id:'Fortnightly',
+        string:"Fortnightly"
+    },{
+        id:'Monthly',
         string:"Monthly"
     },{
-        id:'quarterly',
+        id:'Quarterly',
         string:"Quarterly"
     },{
-        id:'annually',
+        id:'Annually',
         string:"Annually"
     },{
-        id:'bi-annually',
+        id:'Bi-Annually',
         string:"Bi-Annually"
     }]
     let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    function taskChange(id,ppmId){
-      $.post("/update-ppm-task-status",
-      {
-        ppmId: ppmId,
-        taskId: id
-      },
-      function(data, status){
-       
-      });
-    }
+    
+    function changeFrequency() {
+        $('#dayLable').hide().prop('required',false);
+        $('#monthLable').hide().prop('required',false);
+        $('#dateLable').hide().prop('required',false);
+        $('#daySelect').hide().prop('required',false);
+        $('#monthSelect').hide().prop('required',false);
+        $('#dateSelect').hide().prop('required',false);
 
+        let optionValue = $("#frequency").val();
+        if(optionValue == 'Weekly'){
+            $('#dayLable').show();
+            $('#daySelect').show();
+        } else if(optionValue == 'Fortnightly') {
+            $('#dateLable').show();
+            $('#dateSelect').show();
+        } else if(optionValue == 'Monthly') {
+            $('#dateLable').show();
+            $('#dateSelect').show();
+        }  else if(optionValue == 'Quarterly') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }  else if(optionValue == 'Annually') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }  else if(optionValue == 'Bi-Annually') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }
+    }
     function detailTask(taskindex){
         let detail;
         let monthString = "";
         let frequencyString = "";
         let dayString = "";
+        let dateString = "";
         if(taskindex == -1){
             detail = {
                 frequency:1,
@@ -248,10 +280,11 @@
                 date:1,
                 taskId:"",
             }
+            $("#orderdetailsModalLabel").html("Add Task");
         }else{
             detail = taskData[taskindex];
+            $("#orderdetailsModalLabel").html("Edit Task");
         }
-        
             frequencyArray.forEach(function(frequency){
                 if(frequency.id == detail.frequency){
                     frequencyString = frequencyString + '<option value="'+frequency.id+'" selected>'+frequency.string+'</option>';
@@ -266,39 +299,85 @@
                     monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
                 }
             })
+            dayArray.forEach(function(day,index){
+                if(day._id == detail.day){
+                    dayString = dayString + '<option value="'+day.id+'" selected>'+day.string+'</option>';
+                }else{
+                    dayString = dayString + '<option value="'+day.id+'" >'+day.string+'</option>';
+                }
+            })
             for (i = 1; i < 32; i++) {
                 if(i == detail.date){
-                    dayString = dayString + '<option selected value="'+i+'">'+i+'</option>';
+                    dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
                 }else{
-                    dayString = dayString + '<option value="'+i+'">'+i+'</option>';
+                    dateString = dateString + '<option value="'+i+'">'+i+'</option>';
                 }
             }
+            $("#frequency").val(detail.frequency)
 
             $("#frequency").html(frequencyString);
             $("#month").html(monthString);
-            $("#date").html(dayString);
+            $("#day").html(dayString);
+            $("#date").html(dateString);
             $("#taskId").val(detail.taskId);
             $("#vendorName").val(detail.vendorName);
             $("#taskName").val(detail.taskName);
-            console.log(detail);
+        changeFrequency()
     }
-    function ppmNameChange(){
-        if($("#ppmName").val().trim() != ""){
+    function ppmEquipmentNameChange(){
+        if($("#ppmEquipmentName").val().trim() != ""){
           $.post("/update-ppm-name",
           {
             ppmId: '<%= data.ppmId %>',
-            ppmName: $("#ppmName").val().trim()
+            ppmEquipmentName: $("#ppmEquipmentName").val().trim()
           },
           function(data, status){
             if(data.sucess){
-                alert(data.message);
+                toastr.success(data.message);
             }else{
-                alert(data.message);
+                toastr.error(data.message);
             }
           });
         }
     }
 
 </script>
+
+
 <%- contentFor('FooterJs') %>
+<script>
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    var ids = $(this).val().split(','); 
+    var taskId = ids[0];
+    var ppmId = ids[1];
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("/update-ppm-task-status", {
+            ppmId: ppmId,
+            taskId: taskId
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>

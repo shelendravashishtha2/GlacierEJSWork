@@ -1,0 +1,59 @@
+<%- contentFor('HeaderCss') %>
+<%- contentFor('breadcrumb') %>
+<style>
+    .get-data{
+        display:none !important;
+    }
+    .form-wrap.form-builder .pull-right {
+        float: right;
+        display: none;
+    }
+    .form-wrap.form-builder .frmb .field-actions .btn {
+    display: none;
+    }
+    .empty{
+        display: none;
+    }
+</style>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">View FRC Form</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="/edit-category-checklist/<%= data.category_id._id %>"><%= data.category_id.category_name %> </a></li>
+					<li class="breadcrumb-item active">View FRC Form</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">View FRC Form
+                    <a href="/master-frs" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a>
+                </h4>
+                <!-- end page title -->
+                <div id="build-wrap"></div>
+                <!-- end page title -->
+            </div>
+        </div>
+    </div>
+</div>
+<%- contentFor('FooterJs') %>
+<%- contentFor('BottomJs') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+<script>
+    const fbEditor = document.getElementById('build-wrap')
+    const formData = JSON.stringify(<%- JSON.stringify(data.form) %>);
+    const formBuilder = $(fbEditor).formBuilder({ formData })
+</script>

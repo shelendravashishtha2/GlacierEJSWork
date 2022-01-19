@@ -11,9 +11,9 @@ const taskSchema = new mongoose.Schema({
 		required:true,
 		trim: true,
 	},
-	frequency: { //1=Weekly, 2=Weekly, 3=Quarterly, 3=Annually, 3=Bi-Annually
+	frequency: {
 		type: String,
-		enum:['monthly','quarterly','annually','bi-annually','weekly'],
+		enum:['Weekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
 		required:true,
 		trim: true,
 	},
@@ -30,13 +30,18 @@ const taskSchema = new mongoose.Schema({
 		trim: true,
 	},
 	status: {
-		type: Number, // 1=active, 0=Inactive
+		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
 	},
+	day: {
+		type: String,
+		enum: ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+		trim: true,
+		default: '',
+	},
 	created_by: {
-		// type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
 		type: mongoose.Schema.Types.ObjectId, ref: 'User'
 	},
 	updated_by: {
@@ -45,30 +50,28 @@ const taskSchema = new mongoose.Schema({
 	created_at: {
 		type: Date,
 		default: Date.now,
-		select: false
 	},
 	updated_at: {
 		type: Date,
 		default: Date.now,
-		select: false
 	}
 });
 
 const ppmSchema = new mongoose.Schema({
-	ppmName: {
+	ppmEquipmentName: {
 		type: String,
 		required:true,
 		trim: true,
 		unique: true
 	},
+	tasks: [taskSchema],
+
 	status: {
-		type: Number, // 1=active, 0=Inactive
+		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
 	},
-	tasks: [taskSchema],
-	
 	created_by: {
 		// type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
 		type: mongoose.Schema.Types.ObjectId, ref: 'User'
@@ -76,16 +79,9 @@ const ppmSchema = new mongoose.Schema({
 	updated_by: {
 		type: mongoose.Schema.Types.ObjectId, ref: 'User'
 	},
-	created_at: {
-		type: Date,
-		default: Date.now,
-		select: false
-	},
-	updated_at: {
-		type: Date,
-		default: Date.now,
-		select: false
-	}
+},{
+	timestamps: true,
+	versionKey: false
 });
 
 const PPM = new mongoose.model("ppm", ppmSchema);

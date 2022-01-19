@@ -13,7 +13,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/categories">Category</a></li>
+                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
                     <li class="breadcrumb-item active">Edit Category</li>
                 </ol>
             </div>
@@ -33,10 +33,11 @@
                             <div class="mb-3">
                                 <label class="form-label">Category Name<span class="required">*</span></label>
                                 <input type="text" name="category_name" value="<%= CategoryData.category_name %>" class="form-control" placeholder="Enter Category Name" required>
-                            </div>
+								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.category_name != 'undefined' ) ? error.errMsg.category_name.msg: ''%></p>
+							</div>
                         </div>
                         <div class="col-md-6" style="margin-top: 25px;">
-                            <button type="submit" class="btn btn-warning waves-effect waves-light">Update</button>
+                            <button type="submit" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>Update</b></button>
                         </div>
                     </div>
                 </form>
@@ -50,12 +51,13 @@
             <div class="card-body">
                 <h4 class="card-title">
 					List Of Check List
-					<a href="/create-category-checklist/<%= CategoryData._id %> ">
-						<button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;">
+					<!-- <a href="/create-category-checklist/<%= CategoryData._id %> ">
+						<button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" style="float: right;">
 							<b><i class="fa fa-plus"></i> ADD CHECKLIST </b>
 						</button>
-					</a>
-				</h4>
+					</a> -->
+                </h4>
+                <br>
                 <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                     <thead>
                     <tr>
@@ -63,29 +65,36 @@
                         <th>CheckList ID</th>
                         <th>CheckList Name</th>
                         <th style="text-align: center;">Type</th>
-                        <th style="text-align: center;">Frequency</th>
-                        <th style="text-align: center;">Month</th>
-                        <th style="text-align: center;">Date</th>
                         <th style="text-align: center;">Status</th>
-                        <th style="width: 10%;text-align: center;">Action</th>
+                        <!-- <th style="width: 10%;text-align: center;">Action</th> -->
                     </tr>
                     </thead>
                     <tbody>
+                            <% if(data.length ==0) { %>
+                                <tr><td colspan="9" class="text-center">No data found</td></tr>
+                            <% } %>
                         <% for (i = 0; i < data.length; i++) { %>
                     <tr>
                         <td style="width: 5%;text-align: center;"><%=i+1%></td>
                         <td style="width: 5%;text-align: center;"><%= data[i].checklist_id %></td>
                         <td><%= data[i].checklist_name %>  </td>
-                        <td style="text-align: center;"><%= data[i].checklist_name %> </td>
-                        <td style="text-align: center;"><%= data[i].type %></td>
-                        <td style="text-align: center;"><%= data[i].frequency %></td>
-                        <td style="text-align: center;"><%= data[i].month %></td>
-                        <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
-                            <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
-                        <td style="width: 10%;text-align: center;">
-                            <a href="/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit</button></a>
-                            <a href="/edit-checklist-form/<%= data[i]._id %>"> <button class="btn btn-outline-primary">Edit Form</button></a>
+                        <td style="text-align: center;">
+                            <% if(data[i].type == 'register') { %>
+                                <span>Register</span>
+                            <% } %>
+                            <% if(data[i].type == 'check_list') { %>
+                                <span>Check List</span>
+                            <% } %>
+                            <% if(data[i].type == 'form') { %>
+                                <span>Form</span>
+                            <% } %>
                         </td>
+
+                        <td style="width: 10%;text-align: center;">
+							<input type="checkbox" id="switch<%=i+1%>" switch="warning" class="status" value="<%= data[i]._id %>" <%= data[i].status == 1 ? 'checked' : '' %> />
+                            <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
+                        <!-- <td style="width: 10%;text-align: center;">
+                            <a href="/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a></td> -->
                     </tr>
                     <% } %>
                     </tbody>
@@ -108,4 +117,35 @@
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <!-- Datatable init js -->
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/datatables.init.js"></script>
+<script>   
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("<%=process.env.PUBLIC_URL%>/change-checklist-status", {
+            _id: $(this).val()
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>

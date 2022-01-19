@@ -1,14 +1,34 @@
 <%- contentFor('HeaderCss') %>
 <%- contentFor('breadcrumb') %>
+<style>
+    .get-data{
+        display:none !important;
+    }
+    .btn-danger{
+        margin-right: 15px;
+    }
+    .btn-primary{
+        color: #fff;
+        background-color: #f1b44c;
+        border-color: #f1b44c;
+    }
+    .btn-primary:hover {
+    color: #fff;
+    background-color: #cd9941;
+    border-color: #c1903d;
+}
+</style>
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Edit From</h4>
+            <h4 class="mb-sm-0 font-size-18" id="formTitle"><%= data.type %></h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Edit From</li>
+					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="/edit-category-checklist/<%= data.category_id._id %>"><%= data.category_id.category_name %> </a></li>
+					<li class="breadcrumb-item active" id="formTitle1"><%= data.type %></li>
                 </ol>
             </div>
         </div>
@@ -20,7 +40,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Edit From</h4>
+                <h4 class="card-title" id="formTitle2"><%= data.type %></h4>
                 <!-- end page title -->
                 <div id="build-wrap"></div>
                 <!-- end page title -->
@@ -35,62 +55,35 @@
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
 <script>
     const fbEditor = document.getElementById('build-wrap')
-    const formData = JSON.stringify([
-        {
-            "type": "header",
-            "subtype": "h3",
-            "label": "Diesel Generator Set - Weekly/Monthly Maintenance Checklist",
-            "access": false
-        },
-        {
-            "type": "file",
-            "required": false,
-            "label": "File Upload",
-            "className": "form-control",
-            "name": "file-1633063261373-0",
-            "access": false,
-            "subtype": "file",
-            "multiple": false
-        },
-        {
-            "type": "radio-group",
-            "required": false,
-            "label": "Select Engine",
-            "inline": false,
-            "name": "radio-group-1633063263517-0",
-            "access": false,
-            "other": false,
-            "values": [
-                {
-                    "label": "Option 1",
-                    "value": "option-1",
-                    "selected": false
-                },
-                {
-                    "label": "Option 2",
-                    "value": "option-2",
-                    "selected": false
-                },
-                {
-                    "label": "Option 3",
-                    "value": "option-3",
-                    "selected": false
-                }
-            ]
-        },
-        {
-            "type": "text",
-            "required": false,
-            "label": "Capacity",
-            "className": "form-control",
-            "name": "text-1633063263885-0",
-            "access": false
-        },
-        
-    ])
+    const formData = JSON.stringify(<%- JSON.stringify(data.form) %>);
     const formBuilder = $(fbEditor).formBuilder({ formData })
+    if(JSON.parse(formData).length > 0){
+        $("#formTitle").html("Edit Form");
+        $("#formTitle1").html("Edit Form");
+        $("#formTitle2").html("Edit Form");
+    }else{
+        $("#formTitle").html("Add Form");
+        $("#formTitle1").html("Add Form");
+        $("#formTitle2").html("Add Form");
+    }
 
-    // Can be used 2 different ways
-    formBuilder.actions.toggleAllFieldEdit() // first
-    $(fbEditor).formBuilder('toggleAllFieldEdit') // second
+    setTimeout(function(){
+
+            document.getElementsByClassName("save-template")[0].addEventListener("click", function() {
+                if(formBuilder.actions.getData().length > 0){
+                  $.post("/update-form-create",
+                  {
+                    checklistId: '<%= data._id %>',
+                    forms:formBuilder.actions.getData()
+                  },
+                  function(data, status){
+                        toastr.success(data.message);
+                        window.location.href = "<%=process.env.PUBLIC_URL%>/master-frs";
+                  });
+                  
+                }else{
+                  
+                }
+            });
+    },1500)
 </script>

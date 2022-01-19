@@ -9,7 +9,13 @@ const wingsSchema = new mongoose.Schema({
 	wings_name: {
 		type: String,
 		trim: true,
-	}
+	},
+	status: {
+		type: Number, //0=Inactive, 1=active
+		min: [0,'invalid status'],
+    	max: [1,'invalid status'],
+		default: 1,
+	},
 });
 
 const propertySchema = new mongoose.Schema({
@@ -22,10 +28,6 @@ const propertySchema = new mongoose.Schema({
 	address: {
 		type: String,
 		required:true,
-		trim: true,
-	},
-	location: {
-		type: String,
 		trim: true,
 	},
 	propertyLatLong: {
@@ -49,23 +51,25 @@ const propertySchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
+	rating: {
+		type: Number,
+		default:0
+	},
+	rate_count: {
+		type: Number,
+		default:0
+	},
 	wings:[wingsSchema],
+
 	status: {
-		type: Number, // 1=active, 0=Inactive
+		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
-	},
-	created_at: {
-		type: Date,
-		default: Date.now,
-		select: false
-	},
-	updated_at: {
-		type: Date,
-		default: Date.now,
-		select: false
 	}
+},{
+	timestamps: true,
+	versionKey: false
 });
 
 const Property = new mongoose.model("Property", propertySchema);

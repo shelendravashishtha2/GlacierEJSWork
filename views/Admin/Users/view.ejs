@@ -7,7 +7,8 @@
             <h4 class="mb-sm-0 font-size-18">Profile</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/users">Users List</a></li>
+					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/users">Master User</a></li>
                     <li class="breadcrumb-item active">Profile</li>
                 </ol>
             </div>
@@ -21,36 +22,17 @@
         <div class="card overflow-hidden">
             <div class="card-body pt-0">
                 <div class="row">
-                    <div class="col-sm-4">
-                        <div class="avatar-md profile-user-wid mb-4" style="margin-top:0px;">
-                            <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg" alt="" class="img-thumbnail rounded-circle">
+                    <div class="col-md-12" style="text-align: center;">
+                        <div class="avatar-md profile-user-wid mb-4" style="margin: 0px auto; padding-top: 13px;">
+                            <img src="<%= data[0].profile_image %>" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Profile Image" class="img-thumbnail rounded-circle" style="height: 70px; width: 100% !important;">
                         </div>
                         <h5 class="font-size-15 text-truncate"><%= data[0].full_name %></h5>
-                        <p class="text-muted mb-0 text-truncate">Supervisor</p>
-                    </div>
-
-                    <div class="col-sm-8">
-                        <div class="pt-4">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h5 class="font-size-15"><%= UserPropertyData.length %> </h5>
-                                    <p class="text-muted mb-0">Property</p>
-                                </div>
-                                <div class="col-6">
-                                    <h5 class="font-size-15">$1245</h5>
-                                    <p class="text-muted mb-0">Revenue</p>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <a href="" class="btn btn-primary waves-effect waves-light btn-sm">View Profile <i class="mdi mdi-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
+                        <p class="text-muted mb-0 text-truncate"><%= data[0].position_type %> </p>
                     </div>
                 </div>
             </div>
         </div>
         <!-- end card -->
-
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title mb-4">Personal Information</h4>
@@ -86,7 +68,7 @@
     </div>         
     
     <div class="col-xl-8">
-        <div class="row">
+        <div class="row" style="display: none;;">
             <div class="col-md-4">
                 <div class="card mini-stats-wid">
                     <div class="card-body">
@@ -142,7 +124,9 @@
 
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-4">Assign Property List</h4>
+                <h4 class="card-title mb-4">Assign Property List 
+                    <a href="/users" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a>
+                </h4>
                 <div class="table-responsive">
                     <table class="table table-nowrap table-hover mb-0">
                         <thead>
@@ -150,18 +134,19 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Property Name</th>
                                 <th scope="col">address</th>
-                                <th scope="col">name of owner</th>
                             </tr>
                         </thead>
                         <tbody>
-							<% UserPropertyData.forEach(data => { %>
+                            <% if(data.length ==0) { %>
+                                <tr><td colspan="3" class="text-center">No data found</td></tr>
+                            <% } %>
+							<% for( let i = 0; i < UserPropertyData.length; i++ ) { %>
 								<tr>
-									<th scope="row">1</th>
-									<td><%= data.propertyId.property_name %></td>
-									<td><%= data.propertyId.address %></td>
-									<td><%= data.propertyId.name_of_owner %></td>
+									<th scope="row"><%= i+1 %> </th>
+									<td><%= UserPropertyData[i].propertyId.property_name %></td>
+									<td><%= UserPropertyData[i].propertyId.address %></td>
 								</tr>
-							<% }) %>
+							<% } %>
                         </tbody>
                     </table>
                 </div>

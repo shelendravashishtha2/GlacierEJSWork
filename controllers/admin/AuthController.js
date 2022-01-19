@@ -59,28 +59,6 @@ exports.register = async (req, res) => {
 	}
 }
 
-// To verify email call back:
-exports.verifyEmailCallback = async (req, res) => {
-	try {
-		const _id = decrypt(req.params.key, req.params.id);
-		const userData = await User.findOne({ _id: _id });
-		if (userData) {
-			const updateUser = await User.findByIdAndUpdate({_id: _id}, {status: 1}, {new : true} );
-			return res.redirect('/verified-email-success');
-		} else {
-			return res.render('errors/main',{ code: 404, errorMessage: 'Data Not found'})
-		}
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', [] ));
-	}
-}
-
-// Verify email success
-exports.verifiedEmailSuccess = async (req, res) => {
-	return res.render('auth/verifyEmailSuccess');
-}
-
 // Login Api
 exports.login = async (req, res) => {
 	try {
@@ -88,7 +66,7 @@ exports.login = async (req, res) => {
 		const password = req.body.password;
 
 		let userData = await User.findOne({ email: email }).select("+password");
-		if (userData && userData.password) {
+		if (userData && userData.password && (userData.position_id == 1 || userData.position_id == 2)) {
 			const isMatch = await bcrypt.compare(password, userData.password);
 			if (isMatch) {
 				const token = await userData.generatingAuthToken(); // generate token
@@ -157,12 +135,15 @@ exports.forgotPassword = async (req, res) => {
 
 // Reset password (Website)
 exports.resetPasswordWeb = async (req, res) => {
+	res.locals = { title: 'Reset Password'};
+
 	const _id = decrypt(req.params.key, req.params.id);
 	const userData = await User.findOne({ _id: _id });
+	
 	if (userData && userData.reset_password_status == 1) {
-		return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id });
+		return res.render('Auth/resetPassword', { key: req.params.key, id: req.params.id });
 	} else {
-		return res.render('errors/main',{ code: 400, errorMessage: 'Data Not found'});
+		return res.render('Pages/pages-404',{ code: 400, errorMessage: 'Data Not found'});
 	}
 }
 
@@ -178,7 +159,7 @@ exports.resetPassword = async (req, res) => {
 			await User.findByIdAndUpdate(_id, {password: req.body.password, reset_password_status: 0}, {new : true, runValidators: true} );
 			return res.redirect('/reset-password-success');
 		} else {
-			return res.render('errors/main',{ code: 404, errorMessage: 'Data Not found'})
+			return res.render('Pages/pages-404',{ code: 404, errorMessage: 'Data Not found'})
 		}
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -186,7 +167,7 @@ exports.resetPassword = async (req, res) => {
 			return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: errorMessage.message })
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			return res.render('errors/main',{ code: 500, errorMessage: 'Something want wrong. Please try again.'})
+			return res.render('Pages/pages-404',{ code: 500, errorMessage: 'Something want wrong. Please try again.'})
 		}
 	}
 }

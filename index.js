@@ -4,6 +4,7 @@ const app = express();
 require("./config/dbConn");
 // import controller
 var AuthController = require('./controllers/AuthController');
+const { formCron } = require('./controllers/api/cronController')
 
 const apiRouter = require("./routers/api");
 const pageRouter = require("./routers/web");
@@ -17,6 +18,7 @@ var session = require('express-session');
 var i18n = require("i18n-express");
 var toastr = require('express-toastr');
 var cookieParser = require('cookie-parser')
+const cron = require('node-cron');
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
@@ -25,16 +27,19 @@ const port = process.env.PORT || 3000;
 
 app.use(session({
 	key: 'user_sid',
-	secret: 'somerandonstuffs',
-	resave: false,
-	saveUninitialized: false,
+	secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767s4d5f4sd65f4s6d5',
+	resave: false, //true
+	saveUninitialized: true, //false
 	cookie: {
-		expires: 1200000
+		// Session expires after 1 min : 60000 of in activity.
+		// expires: 14 * 24 * 3600000 //2 weeks
+		// secure: true,
+		maxAge: 1000*60*60*24*1, //1day
 	}
 }));
 
-app.use(cookieParser('nodedemo'));
-app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
+// app.use(cookieParser('nodedemo'));
+app.use(cookieParser());
 app.use(flash());
 app.use(i18n({
 	translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
@@ -71,6 +76,9 @@ app.use('/public', express.static('./public'));
 pageRouter(app);
 app.use('/api', apiRouter);
 app.use('/admin/api', adminRouter);
+cron.schedule('31 18 * * *', async () => {
+  await formCron();
+});
 
 app.all('/api/*', (req,res) => {
 	return res.send(response.error(404, 'API Request not found!', [] ));

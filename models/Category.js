@@ -7,22 +7,16 @@ const categorySchema = new mongoose.Schema({
 		trim: true,
 		unique: true
 	},
+
 	status: {
-		type: Number, // 1=active, 0=Inactive
+		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
-	},
-	created_at: {
-		type: Date,
-		default: Date.now,
-		select: false
-	},
-	updated_at: {
-		type: Date,
-		default: Date.now,
-		select: false
 	}
+},{
+	timestamps: true,
+	versionKey: false
 });
 
 const Category = new mongoose.model("Category", categorySchema);

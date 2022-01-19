@@ -142,9 +142,9 @@
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <% if(session) { %>
                     <% if(session.user.profile_image && session.user.profile_image!= '') { %>
-                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%><%- session.user.profile_image %>" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%><%- session.user.profile_image %>" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Header Avatar">
                     <% }else { %>
-                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Header Avatar">
                     <% } %>
                     <% } %>
                     <% if(session) { %>
@@ -158,13 +158,6 @@
                     <a class="dropdown-item text-danger" href="/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout"><%=translation.Logout%></span></a>
                 </div>
             </div>
-
-            <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                    <i class="bx bx-cog bx-spin"></i>
-                </button>
-            </div>
-
         </div>
     </div>
 </header>

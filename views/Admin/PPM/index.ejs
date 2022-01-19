@@ -2,6 +2,7 @@
 <%- contentFor('breadcrumb') %>
 <style>
     .text-center{text-align: center;}
+    .mb-3 {margin-bottom: 0.5rem !important;}
 </style>
 <!-- start page title -->
 <div class="row">
@@ -11,7 +12,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><b>PPM</b></li>
+                    <li class="breadcrumb-item active">PPM</li>
                 </ol>
             </div>
         </div>
@@ -23,36 +24,41 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                <form method="GET" action="/ppm" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
-                    <div class="col-sm-4">
-                        <div class="search-box me-2 mb-2 d-inline-block">
+                    <div class="col-sm-3">
+                        <div class="search-box">
                             <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="Search...">
+                                <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
+                                <input type="hidden" name="page" id="page" value="<%= page %>">
                                 <i class="bx bx-search-alt search-icon"></i>
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-3" style="padding: 0px;">
+                        <button type="button" onclick="pagination(1)" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
+                    </div>
                     <!-- end searching -->
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <a href="/view-ppm" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"> View PPM</a>
-                            <a href="/assign-ppm" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"> Assign PPM</a>
-                            <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">
-                                <i class="mdi mdi-plus me-1"></i> Add </button>
-                            <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addtopic" hidden id="addTopic"> Add Topic </button>
+                            <a href="/view-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>VIEW PPM</b></a>
+                            <a href="/assign-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>ASSIGN PPM</b></a>
+                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">
+                                <i class="mdi mdi-plus me-1"></i><b>ADD</b> </button>
+                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addtopic" hidden id="addTopic"> Add Topic </button>
                         </div>
                     </div>
                 </div>
-
+                </form>
                 <div class="table-responsive">
                     <table class="table align-middle table-nowrap table-check">
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">Sr.No</th>
-                                <th>PPM Name</th>
+                                <th>Equipments Name</th>
                                 <th class="text-center">Status</th>
-                                <th class="text-center">Field</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,13 +68,13 @@
                             <% for (i = 0; i < data.length; i++) { %>
                             <tr>
                                 <td style="width: 7%;" class="text-center"><%= (10*(page-1))+ 1 + i %></td>
-                                <td><%= data[i].ppmName %></td>
+                                <td><%= data[i].ppmEquipmentName %></td>
                                 <td style="text-align: center;width: 10%;">
-                                    <input type="checkbox" id="switch<%= i %>" onchange="ppmChange('<%= data[i]._id %>')" switch="success" <% if(data[i].status == 1){ %> checked <% } %>>
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i]._id %>" switch="warning" <% if(data[i].status == 1){ %> checked <% } %>>
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td style="text-align: center;width: 10%;">
-                                    <a href="/edit-ppm/<%= data[i]._id %>" class="btn btn-success btn-rounded waves-effect waves-light">Edit</a>
+                                    <a href="/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
                                 </td>
                             </tr>
                             <% } %>
@@ -78,18 +84,18 @@
                 <!-- start pagination -->
                 <ul class="pagination pagination-rounded justify-content-end mb-2">
                     <% if(page > 1){ %>
-                        <li class="page-item disabled">
-                            <a class="page-link" href="/ppm?page=<%=i-1%>" aria-label="Previous">
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="pagination(<%=(Number(page)-1)%>)" aria-label="Previous">
                                 <i class="mdi mdi-chevron-left"></i>
                             </a>
                         </li>
                     <% } %>
-                    <% for (i = page; i <= totalPage; i++) { %>
-                        <li class="page-item  active"><a class="page-link" href="/ppm?page=<%=i%>"><%=i%></a></li>
+                    <% for (i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item  <% if(page == i){ %> active <% } %>"><a class="page-link"  href="#" onclick="pagination(<%=i%>)"><%=i%></a></li>
                     <% } %>
                     <% if(page < totalPage){ %>
                     <li class="page-item">
-                        <a class="page-link" href="/ppm?page=<%=i+1%>" aria-label="Next">
+                        <a class="page-link"  href="#" onclick="pagination(<%=(Number(page)+1)%>)" aria-label="Next">
                             <i class="mdi mdi-chevron-right"></i>
                         </a>
                     </li>
@@ -101,25 +107,25 @@
     </div>
 </div>
 <!-- end row -->
-<!-- add ppm name Modal -->
+<!-- add Equipments Name Modal -->
 <form action="/create-ppm" method="POST" enctype="multipart/form-data" class="custom-validation">
     <div class="modal fade orderdetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="orderdetailsModalLabel">Add PPM</h5>
+                    <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3 row">
-                        <label for="example-text-input" class="col-md-3 col-form-label">PPM Name</label>
-                        <div class="col-md-8">
-                            <input class="form-control" type="text" name="ppmName" value="" id="ppmName" placeholder="PPM Name" required>
+                        <label for="example-text-input" class="col-md-4 col-form-label">Equipment Name<span class="required">*</span></label>
+                        <div class="col-md-8" style="margin-left: -5%;">
+                            <input class="form-control" type="text" name="ppmEquipmentName" id="ppmEquipmentName" placeholder="Enter Equipment Name" required>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="submitPPMName" class="btn btn-success waves-effect waves-light">Next</button>
+                <div class="modal-footer" style="margin-top: -10px;">
+                    <button type="button" id="submitppmEquipmentName" class="btn btn-warning waves-effect waves-light">Next</button>
                     <button type="button" id="ppmClose" hidden data-bs-dismiss="modal">close</button>
                 </div>
             </div>
@@ -132,58 +138,77 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="orderdetailsModalLabel">Add Topic</h5>
+                    <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment Detail</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <label for="example-text-input" class="col-md-4 col-form-label">PPM Name :- </label>
-                            <label for="example-text-input" class="col-md-3 col-form-label" id="ppmNameLabel">PPM Name</label>
+                            <label for="example-text-input" style="text-align:center" class="col-md-12 col-form-label">Equipment Name : <span id="ppmEquipmentNameLabel"></span></label>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3 row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">Task Name :-</label>
+                                <label for="example-text-input" style="text-align:right" class="col-md-3 col-form-label">Task Name<span class="required">*</span></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" name="taskName" type="text" value="" id="taskName" placeholder="DG (200 KVA) - No Load Test (Month)" required>
+                                    <input class="form-control" name="taskName" type="text" value="" id="taskName" placeholder="Enter Task Name" required>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">Vendor Name :-</label>
+                                <label for="example-text-input" style="text-align:right"  class="col-md-3 col-form-label">Vendor Name<span class="required">*</span></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" name="vendorName" type="text" value="" id="vendorName" placeholder="AMC Required" required>
+                                    <input class="form-control" name="vendorName" type="text" value="" id="vendorName" placeholder="Enter Vendor Name" required>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-md-4 col-form-label">Frequency :-</label>
+                                <label class="col-md-3 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
                                 <div class="col-md-8">
-                                    <select class="form-select" name="frequency" required>
-                                        <option value="weekly" selected>Weekly</option>
-                                        <option value="monthly" >Monthly</option>
-                                        <option value="quarterly" >Quarterly</option>
-                                        <option value="annually" >Annually</option>
-                                        <option value="bi-annually">Bi-Annually</option>
+                                    <select class="form-select" name="frequency" required onchange="changeFrequency()" id="frequency">
+                                        <option value="Weekly" selected>Weekly</option>
+                                        <option value="Fortnightly">Fortnightly</option>
+                                        <option value="Monthly" >Monthly</option>
+                                        <option value="Quarterly" >Quarterly</option>
+                                        <option value="Annually" >Annually</option>
+                                        <option value="Bi-Annually">Bi-Annually</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="mb-3 row">
-                                <label class="col-md-2 col-form-label">Month:-</label>
-                                <div class="col-md-4">
-                                    <select class="form-select" name="month">
+                            <div class="mb-3 row" id="dayLable">
+                                <label class="col-md-3 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
+                                <div class="col-md-8" id="daySelect">
+                                    <select class="form-select" id="day" name="day">
+                                        <option value="">Select Day</option>
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday" >Wednesday</option>
+                                        <option value="Thursday" >Thursday</option>
+                                        <option value="Friday" >Friday</option>
+                                        <option value="Saturday">Saturday</option>
+                                        <option value="Sunday">Sunday</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="monthLable" style="display: none;">
+                                <label class="col-md-3 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
+                                <div class="col-md-8" id="monthSelect">
+                                    <select class="form-select" id="month" name="month">
+                                        <option value="">Select Month</option>
                                         <% for(m = 0; m < months.length; m++) { %>
                                         <option value="<%= m+1 %>" <% if (m == 0) { %> selected <% } %> ><%= months[m] %></option>
                                         <% } %>
                                     </select>
                                 </div>
-                                <label class="col-md-2 col-form-label">Date :-</label>
-                                <div class="col-md-4">
-                                    <select class="form-select" name="date">
+                            </div>
+                            <div class="mb-3 row" id="dateLable" style="display: none;">
+                                <label class="col-md-3 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
+                                <div class="col-md-8" id="dateSelect">
+                                    <select class="form-select" name="date" id="date">
+                                        <option value="">Select Date</option>
                                         <% for (i = 0; i < 31; i++) { %>
                                         <option value="<%=i+1%>"><%=i+1%></option>
                                         <% } %>
@@ -194,7 +219,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary waves-effect waves-light" >Submit</button>
+                    <button type="submit" class="btn btn-warning waves-effect waves-light">Submit</button>
                 </div>
             </div>
         </div>
@@ -202,24 +227,91 @@
 </form>
 <%- contentFor('FooterJs') %>
 <script>
-    function ppmChange(id){
-      $.post("update-ppm-status",
-      {
-        ppmId: id
-      },
-      function(data, status){
-       
-      });
+    function pagination(i){
+        $("#page").val(i);
+        $("#form").submit();
     }
 
-    $("#submitPPMName").click(function(){
-        let ppmName = $("#ppmName").val();
-        if(ppmName.trim() != ""){
-            $("#ppmNameLabel").html(ppmName);
+    $("#submitppmEquipmentName").click(function(){
+        let ppmEquipmentName = $("#ppmEquipmentName").val();
+        if(ppmEquipmentName.trim() != ""){
+            $("#ppmEquipmentNameLabel").html(ppmEquipmentName);
             $("#ppmClose").click();
             $("#addTopic").click();
+        }else{
+            toastr.error("Equipments name is required");
         }
     })
+
+    function changeFrequency() {
+        $('#dayLable').hide().prop('required',false);
+        $('#monthLable').hide().prop('required',false);
+        $('#dateLable').hide().prop('required',false);
+        $('#daySelect').hide().prop('required',false);
+        $('#monthSelect').hide().prop('required',false);
+        $('#dateSelect').hide().prop('required',false);
+
+        let optionValue = $("#frequency").val();
+        if(optionValue == 'Weekly'){
+            $('#dayLable').show();
+            $('#daySelect').show();
+        } else if(optionValue == 'Fortnightly') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        } else if(optionValue == 'Monthly') {
+            $('#dateLable').show();
+            $('#dateSelect').show();
+        }  else if(optionValue == 'Quarterly') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }  else if(optionValue == 'Annually') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }  else if(optionValue == 'Bi-Annually') {
+           $('#dateLable').show();
+           $('#dateSelect').show();
+           $('#monthLable').show();
+           $('#monthSelect').show();
+        }
+    }
+</script>
+
+<script>
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("update-ppm-status", {
+            ppmId: $(this).val()
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
 </script>
 <!-- end modal -->
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>

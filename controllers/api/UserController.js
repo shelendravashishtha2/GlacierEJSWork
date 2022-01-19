@@ -1,4 +1,9 @@
 const User = require("../../models/User");
+const Property = require("../../models/Property");
+const UserProperty = require('../../models/UserProperty');
+const Task = require("../../models/propertyTask");
+const Category = require("../../models/Category");
+const CategoryCheckList = require("../../models/CategoryCheckList");
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
@@ -23,12 +28,13 @@ exports.changePasswordValidation = async (req, res, next) => {
 }
 
 // Supervisor add Form Validatation
-exports.supervisorAddValidation = async (req, res, next) => {
+exports.userAddValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),
 		email: Joi.string().min(6).max(100).required().email(),
 		mobile_no: Joi.string().min(6).max(12).required(),
-		password: Joi.string().min(6).max(30).required(),
+		position_id: Joi.string().min(1).max(1).required(),
+		property_id: Joi.string().min(24).max(24).required(),
 	});
 	const validation = schema.validate(req.body, __joiOptions);
 	if (validation.error) {
@@ -38,8 +44,8 @@ exports.supervisorAddValidation = async (req, res, next) => {
 	}
 }
 
-// Supervisor add api 
-exports.supervisorAdd = async (req, res) => {
+// Users add api 
+exports.addUsers = async (req, res) => {
 	try {
 		const existsUser = await User.findOne({ email: req.body.email });
 		if(existsUser) {
@@ -68,19 +74,44 @@ exports.supervisorAdd = async (req, res) => {
 			}
 		}
 
+		if(req.body.position_id == 4){
+			positionType = "Manager";
+		}else if(req.body.position_id == 5){
+			positionType = "Supervisor";
+		}else{
+			positionType = "";
+		}
+
+		req.body.property_id = Array.isArray(req.body['property_id']) ? req.body['property_id'] : [req.body['property_id']];
+
 		const registerUser = new User({
 			full_name: req.body.full_name,
 			email: req.body.email,
 			mobile_no: req.body.mobile_no,
-            password: req.body.password,
+            password: '123456',
             profile_image:req.body.profile_image,
-			position: 5, // supervisor type
+			position_id: req.body.position_id, // user type
+			position_type: positionType,
+			property_id: req.body.property_id, // Property list
 		});
 		const registeredData = await registerUser.save();
+
+		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
+		for (let i = 0; i < req.body.property_id.length; i++) {
+			const property_id = req.body.property_id[i];
+			if (registerUser._id && property_id && ObjectId.isValid(property_id) == true) {
+				let UserPropertyData = new UserProperty({
+					userId: registerUser._id,
+					propertyId: property_id,
+				});
+				await UserPropertyData.save();
+			}
+		}
+
 		const userDataJson = JSON.parse(JSON.stringify(registeredData));
 		delete userDataJson.password;
 
-		return res.send(response.success(200, 'Supervisor Added Success', UserResource(userDataJson)));
+		return res.send(response.success(200, 'User create success!', UserResource(userDataJson)));
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
@@ -94,9 +125,51 @@ exports.supervisorAdd = async (req, res) => {
 
 exports.supervisorList = async (req,res) => {
 	try {
-		let UserData = await User.find({position: 5});
-		return res.send(response.success(200, 'success', UserResource(UserData))); //UserResource(UserData)
+		let userData = await User.findOne({_id:req.user._id});
+		let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:5}};
+		let project = {
+			$project : {
+				"full_name" : "$full_name",
+				"profile_image" : "$profile_image",
+				"status" : "$status",
+			}
+		}
+		let supervisorList = await User.aggregate([condition,project])
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "Supervisor list",
+			urlPath: process.env.PUBLIC_URL,
+		    data: supervisorList
+		});
 	} catch (error) {
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.managerList = async (req, res) => {
+	try {
+		let userData = await User.findOne({_id:req.user._id});
+		let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:4}};
+		let project = {
+			$project : {
+				"full_name" : "$full_name",
+				"profile_image" : "$profile_image",
+				"status" : "$status",
+			}
+		}
+		let managerList = await User.aggregate([condition,project])
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "Manager list",
+			urlPath: process.env.PUBLIC_URL,
+		    data: managerList
+		});
+	} catch (error) {
+		console.log(error);
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
@@ -107,7 +180,13 @@ exports.userProfile = async (req, res) => {
 	try {
 		let UserData = await User.findOne({_id: req.user._id});
 		UserData = JSON.parse(JSON.stringify(UserData));
-		return res.send(response.success(200, 'success', UserResource(UserData)));
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "User profile details",
+		    urlPath: process.env.PUBLIC_URL,
+		    data: UserResource(UserData)
+		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -198,7 +277,7 @@ exports.profileImageUpload = async (req, res) => {
 			fileName = '/public/images/users/' + fileName;
 			const _id = req.user._id;
 			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new : true, runValidators: true} );
-			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": userData.profile_image} ));
+			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": process.env.PUBLIC_URL + userData.profile_image} ));
 		} else {
 			return res.send(response.error(400, 'Please select an image', [] ));
 		}
@@ -384,5 +463,110 @@ exports.languageList = async (req,res) => {
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', [] ));
+	}
+}
+
+exports.dashboardSliderImage = async (req,res) => {
+	try {
+		// let userData = await User.findOne({_id:req.user._id});
+		// let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:5}};
+		// let project = {
+		// 	$project : {
+		// 		"full_name" : "$full_name",
+		// 		"profile_image" : "$profile_image",
+		// 	}
+		// }
+		// let supervisorList = await User.aggregate([condition,project])
+
+		let sliderImages = [{'_id':'6176f59d8617dfecff47c259','image':'/public/images/property/property-image-163670891146540.jpg'},
+		{'_id':'6177f11fc350e7eebd3d4222','image':'/public/images/property/property-image-16367089114651.jpg'}];
+		return res.status(200).send({
+			"status": true,
+		    "status_code": "200",
+			"message": "Dashboard slider images",
+			"urlPath": process.env.PUBLIC_URL,
+		    data: sliderImages
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', [] ));
+	}
+}
+
+exports.userDetail = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			userId: Joi.string().min(24).max(24).required()
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		let userData = await User.findOne({_id:req.body.userId},{full_name:1,profile_image:1,mobile_no:1,email:1,property_id:1});
+		if(!userData){
+			return res.send(response.error(400, 'User Not Found', []));
+		}
+		let condition = {"$match": {_id: {$in:userData.property_id} , status:1}};
+		let wingCondition = {"$match": {"wings.status": {$ne:0}}};
+		let unwind = {
+            $unwind: {
+                path: "$wings",
+                preserveNullAndEmptyArrays: true
+            }
+        }
+        let group = {
+			$group:{
+				_id:"$_id",
+				property_name:{$first:"$property_name"},
+				wings:{
+					$push:{
+						_id:"$wings._id",
+						wingsName:"$wings.wings_name",
+					}
+				}
+			}
+		}
+		let wingsData = await Property.aggregate([condition,unwind,wingCondition,group]);
+		let usedCategory = await Task.distinct( "categoryId", { managerId:req.body.userId });
+		userData = JSON.parse(JSON.stringify(userData));
+		let allCategory = [];
+		if(usedCategory.length > 0){
+			allCategory = await Category.find({_id: {$in: usedCategory},status:1},{category_name:1});
+		}
+		delete userData.property_id;
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "User details",
+		    urlPath: process.env.PUBLIC_URL,
+		    data:[{"category": allCategory,
+		    "userData": [userData],
+		    "wingsData":wingsData}]
+		});
+	} catch (error) {
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.activeInactiveStatus = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			userId: Joi.string().min(24).max(24).required(),
+			status: Joi.string().min(1).max(1).required() // 0 = Inactive & 1 = Active
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		if(req.body.userId){
+			const language = await User.findByIdAndUpdate(req.body.userId, {status: req.body.status}, {new: true, runValidators: true});
+		}
+		return res.send(response.success(200, 'Status changes successfully', []));
+	} catch (error) {
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

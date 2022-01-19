@@ -1,32 +1,4 @@
 <%- contentFor('HeaderCss') %>
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/spectrum-colorpicker2/spectrum.min.css" rel="stylesheet" type="text/css">
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css">
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="<%=process.env.PUBLIC_URL%>/public/assets/libs/@chenfengyuan/datepicker/datepicker.min.css">
-<style type="text/css">
-.image_container {
-    height: 120px;
-    width: 200px;
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 10px;
-}
-.image_container img {
-    height: 100%;
-    width: 100%;
-    /* object-fit: cover; */
-}
-.image_container span {
-    top: -6px;
-    right: 8px;
-    color: red;
-    font-size: 28px;
-    font-weight: normal;
-    cursor: pointer;
-}
-</style>
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
 <div class="row">
@@ -57,33 +29,38 @@
                                 <input type="text" name="category_name" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Level</label>
+                                <label class="form-label">Level<span class="required">*</span></label>
                                 <select class="form-control" name="category_level" id="category_level" required>
                                     <option value="1">Level 1</option>
                                     <option value="2">Level 2</option>
                                 </select>
                             </div>
-                            <div class="mb-3" id="single_pdf_input">
-                                <label class="form-label">Upload PDF</label>
-                                <input type="file" name="single_category_files" multiple="" class="form-control" required>
+                            <div class="mb-3" id="single_pdf_div">
+                                <label class="form-label">Upload PDF<span class="required">*</span></label>
+                                <input type="file" name="single_category_files" id="single_category_files" class="form-control" multiple required accept="application/pdf">
                             </div>
-                            <div class="card" id="sub_category">
-                                <div class="card-body">
-                                    <h4 class="card-title">Add Sub Category 
-										<a href="javascript:void(0);" class="add_button btn btn-warning" style="float: right;" title="Add Sub Category">Add More</a>
-									</h4>
-                                    <div class="mb-3 row">
-										<div class="col-md-5 col-5">
-											<input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Sub Category Name" autofocus maxlength="200" required>
+
+							<div class="row mt-4 mb-4" id="sub_category_div">
+								<div class="col-md-10 col-10">
+									<h5 style="padding-top: 5px;">Add Sub Category</h4>
+								</div>
+								<div class="col-md-2 col-2">
+									<button id="addRow" type="button" class="btn btn-warning mb-2 float-end">Add More <i class='bx bx-plus-circle'></i></button>
+								</div>
+								<div class="col-lg-12">
+									<div id="inputFormRow">
+										<div class="input-group mb-2">
+											<div class="col-md-5 col-5" style="padding-right: 10px;">
+												<input type="text" name="sub_category_name" class="form-control" id="sub_category_name" placeholder="Enter Sub Category Name">
+											</div>
+											<div class="col-md-5 col-5" style="padding-right: 10px;">
+												<input type="file" name="sub_category_files[0]" id="sub_category_files" class="form-control" multiple accept="application/pdf">
+											</div>
 										</div>
-										<div class="col-md-5 col-5">
-											<input type="file" name="sub_category_files[0]" multiple="" class="form-control" required>
-										</div>
-                                    </div>
-									<div class="input_field_wrapper"></div>
-									<input type="hidden" name="sub_category_count" id="sub_category_count" value="1" required>
-                                </div>
-                            </div>
+									</div>
+									<div id="newRow"></div>
+								</div>
+							</div>
                         </div>
                     </div>
                     <div class="row" style="margin-bottom:20px;">
@@ -104,38 +81,59 @@
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-validation.init.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        var maxFieldLimit = 30; //Input fields increment limitation
-        var add_more_button = $('.add_button'); //Add button selector
-        var Fieldwrapper = $('.input_field_wrapper'); //Input field wrapper
-        // var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name[0]" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files[0]" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>'; //New input field html 
-        var x = 1; //Initial field counter is 1
-        $(add_more_button).click(function(){ //Once add button is clicked
-            if(x < maxFieldLimit){ //Check maximum number of input fields
-				var fieldHTML = '<div style="display:flex;margin:5px;"><div class="col-md-5 col-5"> <input type="text" name="sub_category_name['+x+']" class="form-control" id="defaultconfig" placeholder="Enter Category Name" autofocus maxlength="200"> </div> <div class="col-md-5 col-5"> <input type="file" name="sub_category_files['+x+']" multiple="" class="form-control"> </div><a href="javascript:void(0);" class="remove_button btn btn-danger" style="margin-left:10px;">-</a></div>';
-                $(Fieldwrapper).append(fieldHTML); // Add field html
-				x++; //Increment field counter
-				$('#sub_category_count').val(x);
-            }
-        });
-        $(Fieldwrapper).on('click', '.remove_button', function(e){ //Once remove button is clicked
-            e.preventDefault();
-            $(this).parent('div').remove(); //Remove field html
-            x--; //Decrement field counter
-			$('#sub_category_count').val(x);
-        });
-    });
+	$(document).ready(function(){
+		let i = 1;
+		// add row
+		$("#addRow").click(function () {
+			var html = '';
+			html += '<div id="inputFormRow">'
+			html += '<div class="input-group mb-3">'
+			html += '<div class="col-md-5 col-5" style="padding-right: 10px;">'
+			html += '<input type="text" name="sub_category_name" class="form-control" id="sub_category_name" placeholder="Enter Sub Category Name" required>'
+			html += '</div>'
+			html += '<div class="col-md-5 col-5" style="padding-right: 10px;">'
+			html += '<input type="file" name="sub_category_files['+i+']" id="sub_category_files" class="form-control" multiple required accept="application/pdf">'
+			html += '</div>'
+			html += '<div class="input-group-append">'
+			html += '<button id="removeRow" type="button" class="btn btn-danger"><i class="bx bx bx-x-circle bx-xs"></i></button>'
+			html += '</div>'
+			html += '</div>'
+			html += '</div>'
+
+			if (i < 10) {
+				$('#newRow').append(html);
+				i++;
+			}
+		});
+
+		// remove row
+		$(document).on('click', '#removeRow', function () {
+			$(this).closest('#inputFormRow').remove();
+			i--;
+		});
+	});
 
 	// on select level hide/show sub category
 	$(function() {
-		$('#sub_category').hide();
-		$('#category_level').change(function(){
+		$('#sub_category_div').hide();
+
+		$('#category_level').change(function() {
+
 			if($('#category_level').val() == 1) {
-				$('#single_pdf_input').show();
-				$('#sub_category').hide();
+				$('#single_pdf_div').show();
+				$("#single_category_files").prop('required',true);
+
+				$('#sub_category_div').hide();
+				$("#sub_category_name").prop('required',false);
+				$("#sub_category_files").prop('required',false);
+
 			} else if($('#category_level').val() == 2) {
-				$('#sub_category').show();
-				$('#single_pdf_input').hide();
+				$('#sub_category_div').show();
+				$("#sub_category_name").prop('required',true);
+				$("#sub_category_files").prop('required',true);
+
+				$('#single_pdf_div').hide();
+				$("#single_category_files").prop('required',false);
 			} 
 		});
 	});
