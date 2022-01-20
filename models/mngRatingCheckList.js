@@ -6,9 +6,9 @@ const mngRatingCheckListSchema = new mongoose.Schema({
 		required: true
 	},
 	ratingTopicId: {
-		type: String,
-		trim: true,
-		required: true
+		// type: String,
+		// trim: true,
+		// required: true
 	},
 	checkListTitle: {
 		type: String,

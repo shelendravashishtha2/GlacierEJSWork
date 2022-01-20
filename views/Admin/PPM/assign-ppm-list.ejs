@@ -214,14 +214,15 @@
 										<label class="form-check-label" for="ppmCheck">All Equipments</label>
 									</div>`;
 					for(let i=0;i < ppm.length; i++){
-						let selected = ""
+						let selected = "checked"
 						let assignPpmDataIndex = assignPpmData.findIndex((x)=> String(x.ppmEquipmentId._id) == String(ppm[i]._id));
-						if (assignPpmDataIndex != -1) {
-							selected = "checked"
+						console.log(assignPpmDataIndex);
+						if (assignPpmDataIndex == -1) {
+							selected = ""
 						}
 						ppmString = ppmString + `<div class="form-check mb-2">
 										<input class="form-check-input" name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ ppm[i]._id + `" `+ selected +`>
-										<label class="form-check-label" for="ppmCheck`+i+`">`+ ppm[i].ppmEquipmentName +` `+selected+`</label>
+										<label class="form-check-label" for="ppmCheck`+i+`">`+ ppm[i].ppmEquipmentName +`</label>
 									</div>`;
 					}
 				}
