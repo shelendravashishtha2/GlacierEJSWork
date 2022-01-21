@@ -312,15 +312,15 @@ exports.assignPpmEquipmentAssetList = async (req,res) => {
 		}
 		res.locals = { title: 'Edit PPM',session: req.session};
 		
-		let ppmData = await assignPpmEquipment.findOne({propertyId: req.params.pid, ppmEquipmentId: req.params.id}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
+		let assignPpmEquipmentData = await assignPpmEquipment.findOne({propertyId: req.params.pid, _id: req.params.id}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
 
-		let taskData = await assignPpmEquipmentAsset.find({propertyId: req.params.pid, ppmEquipmentId: req.params.id});
+		let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({assignPpmEquipmentId: assignPpmEquipmentData._id});
 
 		return res.render('Admin/PPM/assign-ppm-asset-list',{
-			data: ppmData,
+			data: assignPpmEquipmentData,
 			page: 1,
 			totalPage: 1,
-			taskData: taskData,
+			taskData: assignPpmEquipmentAssetData,
 			search: req.query.search ? req.query.search:"",
 			message: req.flash('message'),
 			error: req.flash('error')
@@ -500,8 +500,9 @@ exports.addPropertyWing = async (req,res) => {
 					const element = ppmEquipmentAssetData.assets[j];
 					
 					let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.create({
-						propertyId: req.body.propertyId,
-						ppmEquipmentId: req.body.ppmIds[i],
+						// propertyId: req.body.propertyId,
+						// ppmEquipmentId: req.body.ppmIds[i],
+						assignPpmEquipmentId: assignPpmEquipmentData._id,
 						assetName: element.assetName,
 						vendorName: element.vendorName,
 						frequency: element.frequency,
@@ -553,32 +554,32 @@ exports.propertyWingList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 
-		let wingPpmList = await wingPPMS.find({propertyId:req.query.propertyId});
-		let wingList = [];
-		let wingsData = await Property.findOne({_id: req.query.propertyId,status:1},{wings:1,status:1});
-		let ppmData = await PpmEquipment.find({}, {ppmEquipmentName:1});
-		let assignPpmData = await assignPpmEquipment.find({propertyId: req.query.propertyId}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
+		// let wingPpmList = await wingPPMS.find({propertyId:req.query.propertyId});
+		// let wingList = [];
+		// let wingsData = await Property.findOne({_id: req.query.propertyId,status:1},{wings:1,status:1});
+		let PpmEquipmentData = await PpmEquipment.find({status:1}, {ppmEquipmentName:1});
+		let assignPpmEquipmentData = await assignPpmEquipment.find({propertyId: req.query.propertyId}).populate({"path": "propertyId", "match": {"status": 1} }).populate({"path": "ppmEquipmentId", "match": {"status": 1} });
 
-		wingsData = JSON.parse(JSON.stringify(wingsData));
-		for(let i=0;i< wingsData.wings.length;i++){
-			if(wingsData.wings[i].status == 1){
-				let index = wingPpmList.findIndex((x)=> String(x.wingId) == String(wingsData.wings[i]._id));
-				if(index == -1){
-					wingsData.wings[i].used = false;
-				}else{
-					wingsData.wings[i].used = true;
-				}
-				wingList.push(wingsData.wings[i])
-			}
+		// wingsData = JSON.parse(JSON.stringify(wingsData));
+		// for(let i=0;i< wingsData.wings.length;i++){
+		// 	if(wingsData.wings[i].status == 1){
+		// 		let index = wingPpmList.findIndex((x)=> String(x.wingId) == String(wingsData.wings[i]._id));
+		// 		if(index == -1){
+		// 			wingsData.wings[i].used = false;
+		// 		}else{
+		// 			wingsData.wings[i].used = true;
+		// 		}
+		// 		wingList.push(wingsData.wings[i])
+		// 	}
 			
-		}
+		// }
 		
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
-		    "wings": wingList,
-		    "ppm": ppmData,
-			assignPpmData: assignPpmData
+		    // "wings": wingList,
+		    ppm: PpmEquipmentData,
+			assignPpmData: assignPpmEquipmentData
 		});
 
 	} catch (error) {
@@ -627,8 +628,8 @@ exports.assignPpmList = async (req,res) => {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Assign PPM List',session: req.session};
 		let propertyData = await Property.find({status:1},{property_name:1}).sort({createdAt:-1});
-		return res.render('Admin/PPM/assign-ppm-list',{'data':PropertyResource(propertyData)});
 
+		return res.render('Admin/PPM/assign-ppm-list',{'data':PropertyResource(propertyData)});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -759,13 +760,13 @@ exports.editWingCategory = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-// Edit PPM 
 
-// add update assign property Assets
+// add & update assign property ppm equipment Assets
 exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 	try {
 		let schema = Joi.object({
 			assetId: Joi.optional(), //for update time
+			assignPpmEquipmentId: Joi.required(),
 			ppmEquipmentId: Joi.required(),
 			propertyId: Joi.required(),
 			assetName: Joi.required(),
@@ -780,16 +781,10 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let ppm = await PpmEquipment.findOne({_id: req.body.ppmEquipmentId});
-		if(!ppm){
-			return res.redirect('/ppm');
+		let assignPpmEquipmentData = await assignPpmEquipment.findOne({_id: req.body.assignPpmEquipmentId, status:1});
+		if(!assignPpmEquipmentData){
+			return res.redirect('/assign-ppm');
 		}
-		// let alreadyIndex = ppm.assets.findIndex((x)=> String(x.assetName) == req.body.assetName && String(x._id) != req.body.taskId );
-		// if(alreadyIndex != -1){
-		// 	req.flash('error', 'Equipment name is already exist!');
-		// 	return res.redirect('assign-ppm-equipment-asset-list/'+req.body.propertyId+'/'+req.body.ppmEquipmentId+'');	
-		// }
-		// let message = "";
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		if (!['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].includes(req.body.day)) {
@@ -803,8 +798,9 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 
 		if (assignPpmEquipmentAssetData) {
 			await assignPpmEquipmentAsset.updateOne({_id: req.body.assetId},{
-				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
+				// propertyId: req.body.propertyId,
+				// ppmEquipmentId: req.body.ppmEquipmentId,
+				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
@@ -817,8 +813,9 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 			req.flash('message', message);
 		} else {
 			await assignPpmEquipmentAsset.create({
-				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
+				// propertyId: req.body.propertyId,
+				// ppmEquipmentId: req.body.ppmEquipmentId,
+				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
@@ -831,7 +828,7 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 			req.flash('message', message);
 		}
 
-		return res.redirect('assign-ppm-equipment-asset-list/'+req.body.propertyId+'/'+req.body.ppmEquipmentId+'');
+		return res.redirect('assign-ppm-equipment-asset-list/'+req.body.propertyId+'/'+assignPpmEquipmentData._id+'');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

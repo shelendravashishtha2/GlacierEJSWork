@@ -1,12 +1,16 @@
 const mongoose = require("mongoose");
 
 const assignPpmEquipmentAssetSchema = new mongoose.Schema({
-	propertyId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
-		required:true
-	},
-	ppmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
+	// propertyId: {
+	// 	type: mongoose.Schema.Types.ObjectId, ref: 'Property',
+	// 	required:true
+	// },
+	// ppmEquipmentId: {
+	// 	type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
+	// 	required:true,
+	// },
+	assignPpmEquipmentId: {
+		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment',
 		required:true,
 	},
 

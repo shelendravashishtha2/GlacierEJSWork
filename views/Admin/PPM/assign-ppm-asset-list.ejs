@@ -120,6 +120,7 @@
                         <div class="mb-3 row">
                             <input type="hidden" name="assetId" id="assetId" value="">
                             <input type="hidden" name="ppmEquipmentId" id="ppmEquipmentId" value="<%= data.ppmEquipmentId._id %>">
+                            <input type="hidden" name="assignPpmEquipmentId" id="assignPpmEquipmentId" value="<%= data._id %>">
                             <input type="hidden" name="propertyId" id="propertyId" value="<%= data.propertyId._id %>">
                             <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
                             <div class="col-md-8">
@@ -178,52 +179,10 @@
 
 <script>
     let taskData = <%- JSON.stringify(taskData) %>;
-	
-    let dayArray = [{
-        id:'',
-        string:""
-    },{
-        id:'Monday',
-        string:"Monday"
-    },{
-        id:'Tuesday',
-        string:"Tuesday"
-    },{
-        id:'Wednesday',
-        string:"Wednesday"
-    },{
-        id:'Thursday',
-        string:"Thursday"
-    },{
-        id:'Friday',
-        string:"Friday"
-    },{
-        id:'Saturday',
-        string:"Saturday"
-    },{
-        id:'Sunday',
-        string:"Sunday"
-    }];
-    let frequencyArray = [{
-        id:'Weekly',
-        string:"Weekly"
-    },{
-        id:'Fortnightly',
-        string:"Fortnightly"
-    },{
-        id:'Monthly',
-        string:"Monthly"
-    },{
-        id:'Quarterly',
-        string:"Quarterly"
-    },{
-        id:'Annually',
-        string:"Annually"
-    },{
-        id:'Bi-Annually',
-        string:"Bi-Annually"
-    }]
-    let monthsList = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
+    let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
     function changeFrequency() {
         $('#dayLabel').hide();
@@ -280,36 +239,37 @@
             $("#orderDetailsModalLabel").html("Edit Asset");
         }
             frequencyArray.forEach(function(frequency){
-                if(frequency.id == detail.frequency){
-                    frequencyString = frequencyString + '<option value="'+frequency.id+'" selected="selected">'+frequency.string+'</option>';
+                if(frequency == detail.frequency){
+                    frequencyString = frequencyString + '<option value="'+frequency+'" selected>'+frequency+'</option>';
                 }else{
-                    frequencyString = frequencyString + '<option value="'+frequency.id+'" >'+frequency.string+'</option>';
+                    frequencyString = frequencyString + '<option value="'+frequency+'" >'+frequency+'</option>';
                 }
             })
             monthsList.forEach(function(month,index){
                 if((index+1) == detail.month){
-                    monthString = monthString + '<option value="'+(index+1)+'" selected="selected">'+month+'</option>';
+                    monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
                 }else{
                     monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
                 }
             })
             dayArray.forEach(function(day,index){
-                if(day.string == detail.day){
-                    dayString = dayString + '<option value="'+day.id+'" selected="selected">'+day.string+'</option>';
+                if(day == detail.day){
+                    dayString = dayString + '<option value="'+day+'" selected>'+day+'</option>';
                 }else{
-                    dayString = dayString + '<option value="'+day.id+'" >'+day.string+'</option>';
+                    dayString = dayString + '<option value="'+day+'" >'+day+'</option>';
                 }
             })
             for (i = 1; i < 32; i++) {
                 if(i == detail.date){
-                    dateString = dateString + '<option value="'+i+'" selected="selected">'+i+'</option>';
+                    dateString = dateString + '<option value="'+i+'" selected>'+i+'</option>';
                 }else{
                     dateString = dateString + '<option value="'+i+'">'+i+'</option>';
                 }
             }
             $("#frequency").val(detail.frequency)
-
             $("#frequency").html(frequencyString);
+			changeFrequency()
+
             $("#month").html(monthString);
             $("#day").html(dayString);
             $("#date").html(dateString);            
@@ -317,9 +277,7 @@
             $("#vendorName").val(detail.vendorName);
             $("#assetName").val(detail.assetName);
 
-			// $("select").selectmenu();
-
-        changeFrequency()
+        // changeFrequency()
     }
 	
 </script>
