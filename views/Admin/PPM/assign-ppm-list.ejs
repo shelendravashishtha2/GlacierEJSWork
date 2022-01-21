@@ -104,7 +104,7 @@
     let selectedPPM = [];
 	
     function allPpmEquipmentSelect(){
-        if($("#ppmCheck").is(":checked")){
+        if($("#allPpmCheck").is(":checked")){
             for(let i=0;i < ppm.length; i++){
                 if(!$("#ppmCheck"+i).is(":checked")){
                     $("#ppmCheck"+i).click();
@@ -130,7 +130,7 @@
             $("#ppmClose").click();
         }
         
-        $.post("/add-property-wing",
+        $.post("/store-assign-property-ppm-equipments",
         {
             propertyId: $("#propertyId").val(),
             ppmIds: selectedPPM,
@@ -151,25 +151,13 @@
         }
     }
     
-    function EquipmentStatusChange(propertyId, wingId) {
-        $.post("/update-property-wing-status",
+    function EquipmentStatusChange(assignPpmEquipmentId) {
+        $.post("/update-assign-ppm-equipment-status",
 		{
-			propertyId: propertyId,
-			wingId: wingId
+			assignPpmEquipmentId: assignPpmEquipmentId,
 		},
 		function(data, status){
-			let propertyIndex = properties.findIndex((x)=> x._id == propertyId);
-			if(properties[propertyIndex].status){
-				let wingIndex = properties[propertyIndex].wings.findIndex((x)=> x._id == wingId);
-
-				if(properties[propertyIndex].wings[wingIndex]){
-					if(properties[propertyIndex].wings[wingIndex].status == 0){
-						properties[propertyIndex].wings[wingIndex].status = 1;
-					}else{
-						properties[propertyIndex].wings[wingIndex].status = 0;
-					}
-				}
-			}
+			toastr.success(data.message);
 		});
     }
 
@@ -189,13 +177,12 @@
 
 				// set data in table view
 				for(let i=0;i < assignPpmData.length; i++){
-                    let selected = "";
-
+                    let selected = assignPpmData[i].status == 1 ? "checked": "";
 					wingString = wingString + ` <tr>
                                     <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
                                     <td>`+ assignPpmData[i].ppmEquipmentId.ppmEquipmentName +`</td>
                                     <td class="text-center" style="width: 15%;">
-                                        <input type="checkbox" onchange="EquipmentStatusChange('`+ properties[propertyIndex]._id +`','`+ assignPpmData[i].ppmEquipmentId._id +`')" id="switch`+i+`" switch="success" `+ selected +`>
+                                        <input type="checkbox" onchange="EquipmentStatusChange('`+ assignPpmData[i]._id +`')" id="switch`+i+`" switch="warning" `+ selected +`>
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
                                     </td>
                                     <td class="text-center" style="width: 7%;">
@@ -209,16 +196,25 @@
 				// set data in select box
 				let ppmString = "";
 				if(ppm.length > 0){
-						ppmString = ppmString+`<div class="form-check mb-2">
-										<input class="form-check-input" onchange="allPpmEquipmentSelect()" name="wings" type="checkbox" id="ppmCheck" value="">
-										<label class="form-check-label" for="ppmCheck">All Equipments</label>
-									</div>`;
+					let selected = "checked";
+					if (assignPpmData.length > 0) {
+						selected = ''
+					}
+
+					ppmString = ppmString+`<div class="form-check mb-2">
+									<input class="form-check-input" onchange="allPpmEquipmentSelect()" name="wings" type="checkbox" id="allPpmCheck" value="" `+ selected +`>
+									<label class="form-check-label" for="allPpmCheck">All Equipments</label>
+								</div>`;
 					for(let i=0;i < ppm.length; i++){
-						let selected = "checked"
+						selected = "checked";
+
 						let assignPpmDataIndex = assignPpmData.findIndex((x)=> String(x.ppmEquipmentId._id) == String(ppm[i]._id));
-						console.log(assignPpmDataIndex);
-						if (assignPpmDataIndex == -1) {
-							selected = ""
+						if (assignPpmData.length > 0) {
+							if (assignPpmDataIndex == -1) { //if not assign ppm
+								selected = ""
+							}
+						} else {
+							$("#allPpmCheck").prop('checked', true)
 						}
 						ppmString = ppmString + `<div class="form-check mb-2">
 										<input class="form-check-input" name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ ppm[i]._id + `" `+ selected +`>

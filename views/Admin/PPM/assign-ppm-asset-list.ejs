@@ -7,12 +7,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Edit Equipment (<%= data.ppmEquipmentId.ppmEquipmentName %>)</h4>
+            <h4 class="mb-sm-0 font-size-18"><%= data.ppmEquipmentId.ppmEquipmentName %> Assets List (<%= data.propertyId.property_name %>)</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
-                    <li class="breadcrumb-item active">Edit Equipment</li>
+                    <li class="breadcrumb-item"><a href="/assign-ppm">Assign PPM Equipments List</a></li>
+                    <li class="breadcrumb-item active">Equipment Assets List</li>
                 </ol>
             </div>
         </div>
@@ -60,11 +61,11 @@
                                 <td><%= taskData[i].assetName %></td>
                                 <td><%= taskData[i].frequency %></td>
                                 <td><%= taskData[i].vendorName %></td>
-                                <td class="text-center"><%= taskData[i].date ?? '--' %></td>
-                                <td class="text-center"><%= taskData[i].month ?? '--' %></td>
-                                <td class="text-center"><%= taskData[i].day ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].date ? taskData[i].date : '--' %></td>
+                                <td class="text-center"><%= taskData[i].month ? taskData[i].month : '--' %></td>
+                                <td class="text-center"><%= taskData[i].day ? taskData[i].day : '--' %></td>
                                 <td class="text-center" style="width: 7%;">
-                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i].taskId %>,<%= data.ppmEquipmentId._id %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i]._id %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
@@ -107,16 +108,19 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="orderDetailsModalLabel">Add Equipment</h5>
+                <h5 class="modal-title" id="orderDetailsModalLabel">
+					<!-- Add Equipment -->
+				</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <form action="/add-update-ppm-equipment-asset" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3 row">
-                            <input type="hidden" name="taskId" id="taskId" value="">
-                            <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmEquipmentId._id %>">
+                            <input type="hidden" name="assetId" id="assetId" value="">
+                            <input type="hidden" name="ppmEquipmentId" id="ppmEquipmentId" value="<%= data.ppmEquipmentId._id %>">
+                            <input type="hidden" name="propertyId" id="propertyId" value="<%= data.propertyId._id %>">
                             <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" value="" id="assetName" name="assetName" required placeholder="Enter Asset Name">
@@ -179,25 +183,25 @@
         id:'',
         string:""
     },{
-        id:'monday',
+        id:'Monday',
         string:"Monday"
     },{
-        id:'tuesday',
+        id:'Tuesday',
         string:"Tuesday"
     },{
-        id:'wednesday',
+        id:'Wednesday',
         string:"Wednesday"
     },{
-        id:'thursday',
+        id:'Thursday',
         string:"Thursday"
     },{
-        id:'friday',
+        id:'Friday',
         string:"Friday"
     },{
-        id:'saturday',
+        id:'Saturday',
         string:"Saturday"
     },{
-        id:'sunday',
+        id:'Sunday',
         string:"Sunday"
     }];
     let frequencyArray = [{
@@ -269,35 +273,36 @@
                 date:1,
                 taskId:"",
             }
-            $("#orderDetailsModalLabel").html("Add Task");
+            $("#orderDetailsModalLabel").html("Add Asset");
         }else{
             detail = taskData[taskIndex];
-            $("#orderDetailsModalLabel").html("Edit Task");
+			console.log(detail);
+            $("#orderDetailsModalLabel").html("Edit Asset");
         }
             frequencyArray.forEach(function(frequency){
                 if(frequency.id == detail.frequency){
-                    frequencyString = frequencyString + '<option value="'+frequency.id+'" selected>'+frequency.string+'</option>';
+                    frequencyString = frequencyString + '<option value="'+frequency.id+'" selected="selected">'+frequency.string+'</option>';
                 }else{
                     frequencyString = frequencyString + '<option value="'+frequency.id+'" >'+frequency.string+'</option>';
                 }
             })
             monthsList.forEach(function(month,index){
                 if((index+1) == detail.month){
-                    monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
+                    monthString = monthString + '<option value="'+(index+1)+'" selected="selected">'+month+'</option>';
                 }else{
                     monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
                 }
             })
             dayArray.forEach(function(day,index){
-                if(day._id == detail.day){
-                    dayString = dayString + '<option value="'+day.id+'" selected>'+day.string+'</option>';
+                if(day.string == detail.day){
+                    dayString = dayString + '<option value="'+day.id+'" selected="selected">'+day.string+'</option>';
                 }else{
                     dayString = dayString + '<option value="'+day.id+'" >'+day.string+'</option>';
                 }
             })
             for (i = 1; i < 32; i++) {
                 if(i == detail.date){
-                    dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
+                    dateString = dateString + '<option value="'+i+'" selected="selected">'+i+'</option>';
                 }else{
                     dateString = dateString + '<option value="'+i+'">'+i+'</option>';
                 }
@@ -307,54 +312,32 @@
             $("#frequency").html(frequencyString);
             $("#month").html(monthString);
             $("#day").html(dayString);
-            $("#date").html(dateString);
-            $("#taskId").val(detail.taskId);
+            $("#date").html(dateString);            
+            $("#assetId").val(detail._id);
             $("#vendorName").val(detail.vendorName);
             $("#assetName").val(detail.assetName);
+
+			// $("select").selectmenu();
+
         changeFrequency()
     }
-    function ppmEquipmentNameChange(){
-        if($("#ppmEquipmentName").val().trim() != ""){
-          $.post("/update-ppm-name",
-          {
-            ppmId: '<%= data.ppmEquipmentId._id %>',
-            ppmEquipmentName: $("#ppmEquipmentName").val().trim()
-          },
-          function(data, status){
-            if(data.status){
-                toastr.success(data.message);
-            }else{
-                toastr.error(data.message);
-            }
-          });
-        }
-    }
-
+	
 </script>
 
 
 <%- contentFor('FooterJs') %>
 <script>
-// Any change event occuring on any input.staus (checkbox)...
 $('.status').on('change', function(e) {
-    var ids = $(this).val().split(','); 
-    var taskId = ids[0];
-    var ppmId = ids[1];
-    // A boolean that reflects the checkbox "check status"
+    let assignPpmEquipmentAssetId = $(this).val();
     let checked = $(this).is(':checked');
-    // A simple confirm...
     let changed = confirm("Are you sure you want to change this status?");
-    //... if user cancels...
     if (!changed) {
-        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
-        [return][Terminate function - don't do anything else] */
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
-        $.post("/update-ppm-task-status", {
-            ppmId: ppmId,
-            taskId: taskId
-            }, function(data, status){
-            toastr.success(data.message);
+        $.post("/update-assign-ppm-equipment-asset-status", {
+			assignPpmEquipmentAssetId: assignPpmEquipmentAssetId
+		}, function(data, status){
+			toastr.success(data.message);
         });
     }
 });

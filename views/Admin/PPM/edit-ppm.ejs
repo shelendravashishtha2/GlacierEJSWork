@@ -71,9 +71,9 @@
                                 <td><%= taskData[i].assetName %></td>
                                 <td><%= taskData[i].frequency %></td>
                                 <td><%= taskData[i].vendorName %></td>
-                                <td class="text-center"><%= taskData[i].date ?? '--' %></td>
-                                <td class="text-center"><%= taskData[i].month ?? '--' %></td>
-                                <td class="text-center"><%= taskData[i].day ?? '--' %></td>
+                                <td class="text-center"><%= taskData[i].date ? taskData[i].date : '--' %></td>
+                                <td class="text-center"><%= taskData[i].month ? taskData[i].month : '--' %></td>
+                                <td class="text-center"><%= taskData[i].day ? taskData[i].day : '--' %></td>
                                 <td class="text-center" style="width: 7%;">
                                     <input type="checkbox" id="switch<%= i %>" class="status" value="<%= taskData[i].taskId %>,<%= data.ppmId %>" switch="warning" <% if(taskData[i].status == 1){ %> checked <% } %>>
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>

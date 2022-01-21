@@ -237,6 +237,7 @@ exports.PpmList = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 exports.updatePpmTask = async (req,res) => {
 	try {
 		let schema = Joi.object({
@@ -298,80 +299,6 @@ exports.updatePpmTask = async (req,res) => {
 	}
 }
 
-// exports.assignPpmEquipmentAssetList = async (req,res) => {
-// 	try {
-// 		if(!req.session.user){ return res.redirect('/login'); }
-// 		let schema = Joi.object({
-// 			pid: Joi.required(),
-// 			id: Joi.required()
-// 		});
-// 		let validation = schema.validate(req.params, __joiOptions);
-// 		if (validation.error) {
-// 			return res.send(response.error(400, validation.error.details[0].message, [] ));
-// 		}
-// 		res.locals = { title: 'Edit PPM',session: req.session};
-		
-// 		let page = 1;
-// 		if(req.query.page != undefined){
-// 			page = req.query.page;
-// 		}
-// 		let limit = { $limit : 10};
-// 		let skip = { $skip : (page - 1) * 10};
-// 		let project = {
-// 			$project:{
-// 				taskId: "$assets._id",
-// 				assetName: "$assets.assetName",
-// 				frequency: "$assets.frequency",
-// 				month: "$assets.month",
-// 				date: "$assets.date",
-// 				day: "$assets.day",
-// 				status: "$assets.status",
-// 				vendorName: "$assets.vendorName"
-// 			}
-// 		}
-// 		let aggregateQuery = {
-//             $match: {
-//                 _id: require('mongoose').Types.ObjectId(req.params.id)
-//             }
-//         };
-//         let unwind = {
-//         	$unwind: "$assets"
-//         }
-//         let group = {
-//                 $group: {
-//                     _id: null,
-//                     ppmId: {$first : "$_id"},
-//                     status: {$first : "$status"},
-//                     ppmEquipmentName: {$first : "$ppmEquipmentName"},
-//                     total: { $sum: 1 }
-//                 }
-//             };
-// 		let ppmData = await PpmEquipment.aggregate([aggregateQuery,unwind,group]);
-// 		if(ppmData.length == 0){
-// 			return res.redirect('/ppm');
-// 		}else{
-// 			ppmData = ppmData[0];
-// 		}
-// 		let totalPage = Math.ceil(ppmData.total/10);
-// 		// let taskData = await PpmEquipment.aggregate([aggregateQuery,unwind,skip,limit,project]);
-
-// 		let taskData = await assignPpmEquipmentAsset.find({propertyId: req.params.pid, ppmEquipmentId: req.params.id});
-
-// 		return res.render('Admin/PPM/assign-ppm-asset-list',{
-// 			data: ppmData,
-// 			page: page,
-// 			totalPage: totalPage,
-// 			taskData: taskData,
-// 			search: req.query.search ? req.query.search:"",
-// 			message: req.flash('message'),
-// 			error: req.flash('error')
-// 		});
-// 	} catch (error) {
-// 		errorLog(__filename, req.originalUrl, error);
-// 		return res.send(response.error(500, 'Something want wrong', []));
-// 	}
-// }
-
 exports.assignPpmEquipmentAssetList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
@@ -397,6 +324,36 @@ exports.assignPpmEquipmentAssetList = async (req,res) => {
 			search: req.query.search ? req.query.search:"",
 			message: req.flash('message'),
 			error: req.flash('error')
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.updateAssignPpmEquipmentStatus = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			assignPpmEquipmentId: Joi.required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		let assignPpmEquipmentDetail = await assignPpmEquipment.findOne({_id: req.body.assignPpmEquipmentId});
+		if(assignPpmEquipmentDetail.status == 0){
+			assignPpmEquipmentDetail.status = 1;	
+		}else{
+			assignPpmEquipmentDetail.status = 0
+		}
+		assignPpmEquipmentDetail.save();
+
+		return res.status(200).send({
+		    "status": true,
+		    "status_code": "200",
+		    "message": "Status is update!"
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -803,3 +760,116 @@ exports.editWingCategory = async (req,res) => {
 	}
 }
 // Edit PPM 
+
+// add update assign property Assets
+exports.addUpdatePpmEquipmentAsset = async (req,res) => {
+	try {
+		let schema = Joi.object({
+			assetId: Joi.optional(), //for update time
+			ppmEquipmentId: Joi.required(),
+			propertyId: Joi.required(),
+			assetName: Joi.required(),
+			vendorName: Joi.required(),
+			frequency: Joi.required(),
+			month: Joi.optional(),
+			date: Joi.optional(),
+			day: Joi.optional(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		let ppm = await PpmEquipment.findOne({_id: req.body.ppmEquipmentId});
+		if(!ppm){
+			return res.redirect('/ppm');
+		}
+		// let alreadyIndex = ppm.assets.findIndex((x)=> String(x.assetName) == req.body.assetName && String(x._id) != req.body.taskId );
+		// if(alreadyIndex != -1){
+		// 	req.flash('error', 'Equipment name is already exist!');
+		// 	return res.redirect('assign-ppm-equipment-asset-list/'+req.body.propertyId+'/'+req.body.ppmEquipmentId+'');	
+		// }
+		// let message = "";
+
+		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
+		if (!['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].includes(req.body.day)) {
+			req.body.day = '';
+		}
+
+		let assignPpmEquipmentAssetData
+		if (req.body.assetId) {
+			assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.findById(mongoose.Types.ObjectId(req.body.assetId));
+		}
+
+		if (assignPpmEquipmentAssetData) {
+			await assignPpmEquipmentAsset.updateOne({_id: req.body.assetId},{
+				propertyId: req.body.propertyId,
+				ppmEquipmentId: req.body.ppmEquipmentId,
+				assetName: req.body.assetName,
+				vendorName: req.body.vendorName,
+				frequency: req.body.frequency,
+				month: req.body.month,
+				date: req.body.date,
+				day: req.body.day,
+			})
+
+			message = "Equipment Asset is updated!";
+			req.flash('message', message);
+		} else {
+			await assignPpmEquipmentAsset.create({
+				propertyId: req.body.propertyId,
+				ppmEquipmentId: req.body.ppmEquipmentId,
+				assetName: req.body.assetName,
+				vendorName: req.body.vendorName,
+				frequency: req.body.frequency,
+				month: req.body.month,
+				date: req.body.date,
+				day: req.body.day,
+			})
+
+			message = "Equipment Asset is added!";
+			req.flash('message', message);
+		}
+
+		return res.redirect('assign-ppm-equipment-asset-list/'+req.body.propertyId+'/'+req.body.ppmEquipmentId+'');
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.updateAssignPpmEquipmentAssetStatus = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			assignPpmEquipmentAssetId: Joi.required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		let assignPpmEquipmentAssetDetail = await assignPpmEquipmentAsset.findOne({_id: req.body.assignPpmEquipmentAssetId});
+		if(assignPpmEquipmentAssetDetail.status == 0){
+			assignPpmEquipmentAssetDetail.status = 1;	
+		}else{
+			assignPpmEquipmentAssetDetail.status = 0
+		}
+		assignPpmEquipmentAssetDetail.save();
+
+		// let index = ppmDetail.assets.findIndex((x)=> String(x._id) == String(req.body.taskId));
+		// if(index == -1){
+		// 	return res.redirect('/edit-ppm/'+req.body.ppmId);
+		// } else {
+			
+		// }
+		return res.status(200).send({
+		    "status": true,
+		    "status_code": "200",
+		    "message": "Status is update!"
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}

@@ -85,8 +85,6 @@ module.exports = function (app) {
     // PPM Master
     app.get('/ppm', PpmController.PpmList);
     app.get('/view-ppm', PpmController.viewPpmList);
-    app.get('/assign-ppm', PpmController.assignPpmList);
-    app.get('/assign-ppm-equipment-asset-list/:pid/:id', PpmController.assignPpmEquipmentAssetList);
     app.get('/edit-ppm/:id', PpmController.editPpm);
     app.post('/create-ppm', PpmController.createPpm);
     app.post('/update-ppm-status', PpmController.updatePpmStatus);
@@ -100,7 +98,12 @@ module.exports = function (app) {
     app.post('/edit-property-wing', PpmController.editPropertyWing);
     app.get('/property-wing-list', PpmController.propertyWingList);
     app.get('/property-equipments-list', PpmController.propertyEquipmentsList);
-    app.post('/add-property-wing', PpmController.addPropertyWing);
+    app.post('/store-assign-property-ppm-equipments', PpmController.addPropertyWing);
+	app.get('/assign-ppm', PpmController.assignPpmList);
+    app.get('/assign-ppm-equipment-asset-list/:pid/:id', PpmController.assignPpmEquipmentAssetList);
+	app.post('/update-assign-ppm-equipment-status', PpmController.updateAssignPpmEquipmentStatus);
+	app.post('/add-update-ppm-equipment-asset', PpmController.addUpdatePpmEquipmentAsset);
+	app.post('/update-assign-ppm-equipment-asset-status', PpmController.updateAssignPpmEquipmentAssetStatus);
 
     // SOP
     app.get('/sop', isUserAllowed, SopController.sopList);
