@@ -299,7 +299,6 @@ exports.updatePpmTask = async (req,res) => {
 			message = "Task added successfully";
 		}
 		ppm.markModified('assets');
-		console.log(obj);
 		ppm.save(function(err){
 			console.log(err);
 		});

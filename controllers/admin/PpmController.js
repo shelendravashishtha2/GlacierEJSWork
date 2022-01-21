@@ -854,12 +854,6 @@ exports.updateAssignPpmEquipmentAssetStatus = async (req,res) => {
 		}
 		assignPpmEquipmentAssetDetail.save();
 
-		// let index = ppmDetail.assets.findIndex((x)=> String(x._id) == String(req.body.taskId));
-		// if(index == -1){
-		// 	return res.redirect('/edit-ppm/'+req.body.ppmId);
-		// } else {
-			
-		// }
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",

@@ -1,23 +1,23 @@
 require('dotenv').config();
-const express = require("express");
+const express = require('express');
 const app = express();
-require("./config/dbConn");
+require('./config/dbConn');
 // import controller
 var AuthController = require('./controllers/AuthController');
-const { formCron } = require('./controllers/api/cronController')
+const { formCron, ppmCron } = require('./controllers/api/cronController');
 
-const apiRouter = require("./routers/api");
-const pageRouter = require("./routers/web");
-const adminRouter = require("./routers/admin_api");
+const apiRouter = require('./routers/api');
+const pageRouter = require('./routers/web');
+const adminRouter = require('./routers/admin_api');
 const fileUpload = require('express-fileupload');
-const path = require("path");
-const response = require("./helper/response");
-const {errorLog} = require('./helper/consoleLog');
+const path = require('path');
+const response = require('./helper/response');
+const { errorLog } = require('./helper/consoleLog');
 var flash = require('connect-flash');
 var session = require('express-session');
-var i18n = require("i18n-express");
+var i18n = require('i18n-express');
 var toastr = require('express-toastr');
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 
 global.__basedir = __dirname;
@@ -25,37 +25,41 @@ global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quot
 
 const port = process.env.PORT || 3000;
 
-app.use(session({
-	key: 'user_sid',
-	secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767s4d5f4sd65f4s6d5',
-	resave: false, //true
-	saveUninitialized: true, //false
-	cookie: {
-		// Session expires after 1 min : 60000 of in activity.
-		// expires: 14 * 24 * 3600000 //2 weeks
-		// secure: true,
-		maxAge: 1000*60*60*24*1, //1day
-	}
-}));
+app.use(
+    session({
+        key: 'user_sid',
+        secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767s4d5f4sd65f4s6d5',
+        resave: false, //true
+        saveUninitialized: true, //false
+        cookie: {
+            // Session expires after 1 min : 60000 of in activity.
+            // expires: 14 * 24 * 3600000 //2 weeks
+            // secure: true,
+            maxAge: 1000 * 60 * 60 * 24 * 1, //1day
+        },
+    }),
+);
 
 // app.use(cookieParser('nodedemo'));
 app.use(cookieParser());
 app.use(flash());
-app.use(i18n({
-	translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
-	siteLangs: ["es", "en", "de", "ru", "it"],
-	textsVarName: 'translation'
-}));
+app.use(
+    i18n({
+        translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
+        siteLangs: ['es', 'en', 'de', 'ru', 'it'],
+        textsVarName: 'translation',
+    }),
+);
 
 app.use(toastr());
 
 app.use(function (req, res, next) {
-    res.locals.toasts = req.toastr.render()
-    next()
+    res.locals.toasts = req.toastr.render();
+    next();
 });
 
 app.get('/layouts/', function (req, res) {
-	res.render('view');
+    res.render('view');
 });
 
 // apply controller
@@ -76,18 +80,26 @@ app.use('/public', express.static('./public'));
 pageRouter(app);
 app.use('/api', apiRouter);
 app.use('/admin/api', adminRouter);
+
+//cron schedule
 cron.schedule('31 18 * * *', async () => {
-  await formCron();
+    await formCron();
+});
+cron.schedule('* * * * *', async () => { //will run every day at 12:00 AM
+	// cron.schedule('*/10 * * * * *', async () => { //will run every day at 12:00 AM
+	await ppmCron();
 });
 
-app.all('/api/*', (req,res) => {
-	return res.send(response.error(404, 'API Request not found!', [] ));
-})
+app.all('/api/*', (req, res) => {
+    return res.send(
+        response.error(404, 'API Request not found!', []),
+    );
+});
 
-app.listen(port, (error)=> {
-	if(error) {
-		errorLog(__filename, "--", error);
-		throw error
-	}
-	console.log(`connection is setup at ${port}`);
-})
+app.listen(port, (error) => {
+    if (error) {
+        errorLog(__filename, '--', error);
+        throw error;
+    }
+    console.log(`connection is setup at ${port}`);
+});
