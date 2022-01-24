@@ -6,6 +6,7 @@ const assignPpmEquipment = require("../../models/assignPpmEquipment");
 const assignPpmEquipmentAsset = require("../../models/assignPpmEquipmentAsset");
 const Property = require("../../models/Property");
 const wingPPMS = require("../../models/wingPPMS");
+const assignPpmTask = require("../../models/assignPpmTask");
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
@@ -500,8 +501,8 @@ exports.addPropertyWing = async (req,res) => {
 					const element = ppmEquipmentAssetData.assets[j];
 					
 					let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.create({
-						// propertyId: req.body.propertyId,
-						// ppmEquipmentId: req.body.ppmIds[i],
+						propertyId: req.body.propertyId,
+						ppmEquipmentId: req.body.ppmIds[i],
 						assignPpmEquipmentId: assignPpmEquipmentData._id,
 						assetName: element.assetName,
 						vendorName: element.vendorName,
@@ -709,6 +710,7 @@ exports.propertiesWisePpmList = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 //  PPM Full Details
 exports.ppmDetails = async (req,res) => {
 	try {
@@ -796,32 +798,50 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 			assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.findById(mongoose.Types.ObjectId(req.body.assetId));
 		}
 
+		let day, month, date;
+		if (req.body.frequency == 'Weekly') {
+			day = req.body.day;
+		} else if(req.body.frequency == 'Fortnightly') {
+			date = req.body.date;
+		} else if(req.body.frequency == 'Monthly') {
+			date = req.body.date;
+		} else if(req.body.frequency == 'Quarterly') {
+			date = req.body.date;
+			month = req.body.month;
+		} else if(req.body.frequency == 'Annually') {
+			date = req.body.date;
+			month = req.body.month;
+		} else if(req.body.frequency == 'Bi-Annually') {
+			date = req.body.date;
+			month = req.body.month;
+		}
+
 		if (assignPpmEquipmentAssetData) {
 			await assignPpmEquipmentAsset.updateOne({_id: req.body.assetId},{
-				// propertyId: req.body.propertyId,
-				// ppmEquipmentId: req.body.ppmEquipmentId,
+				propertyId: req.body.propertyId,
+				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
-				month: req.body.month,
-				date: req.body.date,
-				day: req.body.day,
+				month: month ? month : '',
+				date: date ? date : '',
+				day: day ? day : '',
 			})
 
 			message = "Equipment Asset is updated!";
 			req.flash('message', message);
 		} else {
 			await assignPpmEquipmentAsset.create({
-				// propertyId: req.body.propertyId,
-				// ppmEquipmentId: req.body.ppmEquipmentId,
+				propertyId: req.body.propertyId,
+				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
-				month: req.body.month,
-				date: req.body.date,
-				day: req.body.day,
+				day: day,
+				month: month,
+				date: date,
 			})
 
 			message = "Equipment Asset is added!";
@@ -858,6 +878,66 @@ exports.updateAssignPpmEquipmentAssetStatus = async (req,res) => {
 		    "status": true,
 		    "status_code": "200",
 		    "message": "Status is update!"
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+// view Properties Ppm Task
+exports.viewPropertiesPpmTask = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			id: Joi.required()
+		});
+		let validation = schema.validate(req.params, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		res.locals = { title: 'Assign PPM List',session: req.session};
+
+		let assignPpmTaskData = await assignPpmTask.find({propertyId: req.params.id});
+		
+		return res.render('Admin/PPM/property-ppm-task-list',{
+			data: { propertyId: req.params.id },
+			page: 1,
+			totalPage: 1,
+			assignPpmTaskData: assignPpmTaskData,
+			message: [],
+			error: [],
+			search: req.query.search?req.query.search:""
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+// view Properties Ppm Task details
+exports.viewPropertiesPpmTaskDetails = async (req,res) => {
+	try {
+		if(!req.session.user){ return res.redirect('/login'); }
+		let schema = Joi.object({
+			id: Joi.required()
+		});
+		let validation = schema.validate(req.params, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		res.locals = { title: 'Assign PPM List',session: req.session};
+
+		let assignPpmTaskData = await assignPpmTask.findOne({_id: req.params.id});
+
+		return res.render('Admin/PPM/property-ppm-task-list-details',{
+			data: { propertyId: assignPpmTaskData.propertyId },
+			page: 1,
+			totalPage: 1,
+			assignPpmTaskData: assignPpmTaskData,
+			message: [],
+			error: [],
+			search: req.query.search?req.query.search:""
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

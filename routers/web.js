@@ -104,6 +104,8 @@ module.exports = function (app) {
 	app.post('/update-assign-ppm-equipment-status', PpmController.updateAssignPpmEquipmentStatus);
 	app.post('/add-update-ppm-equipment-asset', PpmController.addUpdatePpmEquipmentAsset);
 	app.post('/update-assign-ppm-equipment-asset-status', PpmController.updateAssignPpmEquipmentAssetStatus);
+	app.get('/view-properties-ppm-task/:id', PpmController.viewPropertiesPpmTask);
+	app.get('/view-properties-ppm-task-details/:id', PpmController.viewPropertiesPpmTaskDetails);
 
     // SOP
     app.get('/sop', isUserAllowed, SopController.sopList);

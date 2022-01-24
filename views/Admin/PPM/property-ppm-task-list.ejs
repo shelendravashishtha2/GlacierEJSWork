@@ -1,0 +1,107 @@
+<%- contentFor('HeaderCss') %>
+<%- contentFor('breadcrumb') %>
+<style>
+    .text-center{text-align: center;}
+</style>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">View PPM (property name)</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
+                    <li class="breadcrumb-item active">View PPM</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <div class="row mb-2">
+                    <div class="col-sm-8">
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="text-sm-end">
+                            <button type="button" onclick="detailTask(-1)" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".orderDetailsModal"><i class="mdi mdi-plus me-1"></i> <b>ADD ASSET NAME</b> </button>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-check">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Asset Name</th>
+                                <th>Frequency</th>
+                                <th>Vendor Name</th>
+                                <th class="text-center">Due date</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(assignPpmTaskData.length ==0) { %>
+                                <tr><td colspan="6" class="text-center">No data found</td></tr>
+                            <% } %>
+                            <% for(let i=0; i<assignPpmTaskData.length; i++){ %>
+                            <tr>
+                                <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
+                                <td><%= assignPpmTaskData[i].assetName %></td>
+                                <td><%= assignPpmTaskData[i].frequency %></td>
+                                <td><%= assignPpmTaskData[i].vendorName %></td>
+                                <td class="text-center"><%= moment(assignPpmTaskData[i].dueDate).format('DD-MM-YYYY') %></td>
+                                <td class="text-center" style="width: 7%;">
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= assignPpmTaskData[i]._id %>" switch="warning" <% if(assignPpmTaskData[i].status == 1){ %> checked <% } %>>
+                                    <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
+                                </td>
+                                <td class="text-center" style="width: 7%;">
+                                    <a href="/view-properties-ppm-task-details/<%= assignPpmTaskData[i]._id %>" class="btn btn-outline-warning">View</a>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+<%- contentFor('FooterJs') %>
+<script>
+$('.status').on('change', function(e) {
+    let assignPpmEquipmentAssetId = $(this).val();
+    let checked = $(this).is(':checked');
+    let changed = confirm("Are you sure you want to change this status?");
+    if (!changed) {
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    } else {
+        $.post("/update-assign-ppm-equipment-asset-status", {
+			assignPpmEquipmentAssetId: assignPpmEquipmentAssetId
+		}, function(data, status){
+			toastr.success(data.message);
+        });
+    }
+});
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
+<%- contentFor('BottomJs') %>

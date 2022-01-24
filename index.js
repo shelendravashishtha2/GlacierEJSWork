@@ -19,6 +19,7 @@ var i18n = require('i18n-express');
 var toastr = require('express-toastr');
 var cookieParser = require('cookie-parser');
 const cron = require('node-cron');
+const moment = require('moment');
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
@@ -65,6 +66,9 @@ app.get('/layouts/', function (req, res) {
 // apply controller
 AuthController(app);
 
+// apply moment for global view page
+app.locals.moment = require('moment');
+
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
 app.set('views', path.join(__dirname, 'views'));
@@ -85,8 +89,7 @@ app.use('/admin/api', adminRouter);
 cron.schedule('31 18 * * *', async () => {
     await formCron();
 });
-cron.schedule('* * * * *', async () => { //will run every day at 12:00 AM
-	// cron.schedule('*/10 * * * * *', async () => { //will run every day at 12:00 AM
+cron.schedule('00 00 * * *', async () => { //will run every day at 12:00 AM //00 00 * * *
 	await ppmCron();
 });
 
