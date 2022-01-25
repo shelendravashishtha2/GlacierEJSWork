@@ -4,7 +4,7 @@ const app = express();
 require('./config/dbConn');
 // import controller
 var AuthController = require('./controllers/AuthController');
-const { formCron, ppmCron } = require('./controllers/api/cronController');
+const { formCron, ppmCron } = require('./controllers/cronController');
 
 const apiRouter = require('./routers/api');
 const pageRouter = require('./routers/web');
@@ -89,8 +89,11 @@ app.use('/admin/api', adminRouter);
 cron.schedule('31 18 * * *', async () => {
     await formCron();
 });
-cron.schedule('00 00 * * *', async () => { //will run every day at 12:00 AM //00 00 * * *
+cron.schedule('01 00 * * *', async () => { //will run every day at 12:01 AM
 	await ppmCron();
+});
+cron.schedule('*/10 * * * * *', async () => { //for testing
+	// await ppmCron();
 });
 
 app.all('/api/*', (req, res) => {

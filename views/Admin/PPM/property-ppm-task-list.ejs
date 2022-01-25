@@ -44,7 +44,7 @@
                                 <th>Frequency</th>
                                 <th>Vendor Name</th>
                                 <th class="text-center">Due date</th>
-                                <th class="text-center">Status</th>
+                                <th class="text-center">Completion Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -56,12 +56,19 @@
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= assignPpmTaskData[i].assetName %></td>
-                                <td><%= assignPpmTaskData[i].frequency %></td>
+                                <td><%= assignPpmTaskData[i].assignPpmEquipmentAssetId.frequency %></td>
                                 <td><%= assignPpmTaskData[i].vendorName %></td>
                                 <td class="text-center"><%= moment(assignPpmTaskData[i].dueDate).format('DD-MM-YYYY') %></td>
                                 <td class="text-center" style="width: 7%;">
-                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= assignPpmTaskData[i]._id %>" switch="warning" <% if(assignPpmTaskData[i].status == 1){ %> checked <% } %>>
-                                    <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
+									<% if (assignPpmTaskData[i].completionStatus == 1) { %>
+										Pending
+									<% } else if (assignPpmTaskData[i].completionStatus == 2) { %>
+										In-progress
+									<% } else if (assignPpmTaskData[i].completionStatus == 3) { %>
+										Completed
+									<% } else if (assignPpmTaskData[i].completionStatus == 4) { %>
+										Incomplete
+									<% } %>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
                                     <a href="/view-properties-ppm-task-details/<%= assignPpmTaskData[i]._id %>" class="btn btn-outline-warning">View</a>

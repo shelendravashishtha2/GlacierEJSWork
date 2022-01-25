@@ -1,8 +1,8 @@
-const PropertyTask = require('../../models/propertyTask');
-const CategoryCheckList = require('../../models/CategoryCheckList');
-const Form = require('../../models/Form');
-const assignPpmEquipmentAsset = require('../../models/assignPpmEquipmentAsset');
-const assignPpmTask = require('../../models/assignPpmTask');
+const PropertyTask = require('../models/propertyTask');
+const CategoryCheckList = require('../models/CategoryCheckList');
+const Form = require('../models/Form');
+const assignPpmEquipmentAsset = require('../models/assignPpmEquipmentAsset');
+const assignPpmTask = require('../models/assignPpmTask');
 
 exports.formCron = async (req, res) => {
     try {
@@ -313,6 +313,7 @@ exports.formCron = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+		errorLog(__filename, 'task cron job', error);
     }
 };
 
@@ -321,7 +322,9 @@ exports.ppmCron = async (req, res) => {
 		console.log('ppm cron running');
 		const daysArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
 		let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
-        const date = new Date();
+        let date = new Date();
+		// date.addDays(7); //before 7 day task generate
+		date.setDate(date.getDate() - 1);
 
 		// let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1}).populate({path: 'assignPpmEquipmentId', match: {status: 1}});
 		let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1});
@@ -334,8 +337,9 @@ exports.ppmCron = async (req, res) => {
 
 					await assignPpmTask.create({
 						propertyId: EquipmentAssetData.propertyId,
-						ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
@@ -355,8 +359,9 @@ exports.ppmCron = async (req, res) => {
 
 					await assignPpmTask.create({
 						propertyId: EquipmentAssetData.propertyId,
-						ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
@@ -374,8 +379,9 @@ exports.ppmCron = async (req, res) => {
 
 					await assignPpmTask.create({
 						propertyId: EquipmentAssetData.propertyId,
-						ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
@@ -411,8 +417,9 @@ exports.ppmCron = async (req, res) => {
 
 						await assignPpmTask.create({
 							propertyId: EquipmentAssetData.propertyId,
-							ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+							// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+							assignPpmEquipmentAssetId: EquipmentAssetData._id,
 							assetName: EquipmentAssetData.assetName,
 							vendorName: EquipmentAssetData.vendorName,
 							dueDate: date,
@@ -432,8 +439,9 @@ exports.ppmCron = async (req, res) => {
 
 					await assignPpmTask.create({
 						propertyId: EquipmentAssetData.propertyId,
-						ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
@@ -456,8 +464,9 @@ exports.ppmCron = async (req, res) => {
 
 						await assignPpmTask.create({
 							propertyId: EquipmentAssetData.propertyId,
-							ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
+							// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+							assignPpmEquipmentAssetId: EquipmentAssetData._id,
 							assetName: EquipmentAssetData.assetName,
 							vendorName: EquipmentAssetData.vendorName,
 							dueDate: date,
@@ -473,5 +482,6 @@ exports.ppmCron = async (req, res) => {
 		}
 	} catch (error) {
 		console.log(error);
+		errorLog(__filename, 'ppm cron job', error);
 	}
 }

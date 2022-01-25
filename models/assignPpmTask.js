@@ -3,14 +3,18 @@ const mongoose = require("mongoose");
 const assignPpmTaskSchema = new mongoose.Schema({
 	propertyId: {
 		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
-		// required:true
+		required:true
 	},
-	ppmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
-		// required:true,
-	},
+	// ppmEquipmentId: {
+	// 	type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
+	// 	required:true,
+	// },
 	assignPpmEquipmentId: {
 		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment',
+		required:true,
+	},
+	assignPpmEquipmentAssetId: {
+		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment_Asset',
 		required:true,
 	},
 
@@ -38,8 +42,8 @@ const assignPpmTaskSchema = new mongoose.Schema({
 		trim: true,
 	},
 	completionStatus: {
-		type: Number, //1=pending, 2=working-process 3=completed
-		min: [1,'invalid status'], max: [3,'invalid status'], default: 1,
+		type: Number, //1=pending, 2=In-progress 3=completed 4=incomplete
+		min: [1,'invalid status'], max: [4,'invalid status'], default: 1,
 	},
 	remark: {
 		type: String
@@ -47,6 +51,7 @@ const assignPpmTaskSchema = new mongoose.Schema({
 	attachPhotos: {
 		type: [String]
 	},
+	
 
 	status: {
 		type: Number, //0=Inactive, 1=active

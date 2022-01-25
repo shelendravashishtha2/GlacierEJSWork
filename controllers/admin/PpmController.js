@@ -898,7 +898,7 @@ exports.viewPropertiesPpmTask = async (req,res) => {
 		}
 		res.locals = { title: 'Assign PPM List',session: req.session};
 
-		let assignPpmTaskData = await assignPpmTask.find({propertyId: req.params.id});
+		let assignPpmTaskData = await assignPpmTask.find({propertyId: req.params.id}).populate({path: 'assignPpmEquipmentAssetId', populate: { path: 'ppmEquipmentId'}});
 		
 		return res.render('Admin/PPM/property-ppm-task-list',{
 			data: { propertyId: req.params.id },

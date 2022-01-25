@@ -186,53 +186,15 @@
 <script>
     let taskData = <%- JSON.stringify(taskData) %>;
 	
-    let dayArray = [{
-        id:'',
-        string:""
-    },{
-        id:'monday',
-        string:"Monday"
-    },{
-        id:'tuesday',
-        string:"Tuesday"
-    },{
-        id:'wednesday',
-        string:"Wednesday"
-    },{
-        id:'thursday',
-        string:"Thursday"
-    },{
-        id:'friday',
-        string:"Friday"
-    },{
-        id:'saturday',
-        string:"Saturday"
-    },{
-        id:'sunday',
-        string:"Sunday"
-    }];
-    let frequencyArray = [{
-        id:'Weekly',
-        string:"Weekly"
-    },{
-        id:'Fortnightly',
-        string:"Fortnightly"
-    },{
-        id:'Monthly',
-        string:"Monthly"
-    },{
-        id:'Quarterly',
-        string:"Quarterly"
-    },{
-        id:'Annually',
-        string:"Annually"
-    },{
-        id:'Bi-Annually',
-        string:"Bi-Annually"
-    }]
-    let monthsList = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
+    let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
     function changeFrequency() {
+		$('#day option:selected').removeAttr('selected');
+		$('#month option:selected').removeAttr('selected');
+		$('#date option:selected').removeAttr('selected');
+
         $('#dayLabel').hide();
         $('#monthLabel').hide();
         $('#dateLabel').hide();
@@ -267,6 +229,7 @@
            $('#month').attr('required',true);
         }
     }
+
     function detailTask(taskIndex){
         let detail;
         let monthString = "";
@@ -285,45 +248,48 @@
             detail = taskData[taskIndex];
             $("#orderDetailsModalLabel").html("Edit Task");
         }
-            frequencyArray.forEach(function(frequency){
-                if(frequency.id == detail.frequency){
-                    frequencyString = frequencyString + '<option value="'+frequency.id+'" selected>'+frequency.string+'</option>';
-                }else{
-                    frequencyString = frequencyString + '<option value="'+frequency.id+'" >'+frequency.string+'</option>';
-                }
-            })
-            monthsList.forEach(function(month,index){
-                if((index+1) == detail.month){
-                    monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
-                }else{
-                    monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
-                }
-            })
-            dayArray.forEach(function(day,index){
-                if(day._id == detail.day){
-                    dayString = dayString + '<option value="'+day.id+'" selected>'+day.string+'</option>';
-                }else{
-                    dayString = dayString + '<option value="'+day.id+'" >'+day.string+'</option>';
-                }
-            })
-            for (i = 1; i < 32; i++) {
-                if(i == detail.date){
-                    dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
-                }else{
-                    dateString = dateString + '<option value="'+i+'">'+i+'</option>';
-                }
-            }
-            $("#frequency").val(detail.frequency)
 
-            $("#frequency").html(frequencyString);
-            $("#month").html(monthString);
-            $("#day").html(dayString);
-            $("#date").html(dateString);
-            $("#taskId").val(detail.taskId);
-            $("#vendorName").val(detail.vendorName);
-            $("#assetName").val(detail.assetName);
-        changeFrequency()
+		frequencyArray.forEach(function(frequency){
+			if(frequency == detail.frequency){
+				frequencyString = frequencyString + '<option value="'+frequency+'" selected>'+frequency+'</option>';
+			}else{
+				frequencyString = frequencyString + '<option value="'+frequency+'" >'+frequency+'</option>';
+			}
+		})
+		monthsList.forEach(function(month,index){
+			if((index+1) == detail.month){
+				monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
+			}else{
+				monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
+			}
+		})
+		dayArray.forEach(function(day,index){
+			if(day == detail.day){
+				dayString = dayString + '<option value="'+day+'" selected>'+day+'</option>';
+			}else{
+				dayString = dayString + '<option value="'+day+'" >'+day+'</option>';
+			}
+		})
+		for (i = 1; i < 32; i++) {
+			if(i == detail.date){
+				dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
+			}else{
+				dateString = dateString + '<option value="'+i+'">'+i+'</option>';
+			}
+		}
+		$("#frequency").val(detail.frequency)
+		$("#frequency").html(frequencyString);
+		changeFrequency()
+
+		$("#month").html(monthString);
+		$("#day").html(dayString);
+		$("#date").html(dateString);
+		$("#taskId").val(detail.taskId);
+		$("#vendorName").val(detail.vendorName);
+		$("#assetName").val(detail.assetName);
+		// changeFrequency()
     }
+	
     function ppmEquipmentNameChange(){
         if($("#ppmEquipmentName").val().trim() != ""){
           $.post("/update-ppm-name",
