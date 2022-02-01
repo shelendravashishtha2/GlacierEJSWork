@@ -402,6 +402,7 @@ exports.dashboardIndex = async (req,res) => {
 	try {
 		let message = "Successfully logged in., You're in!";
 		res.locals = { title: 'Properties',session: req.session};
+		
 		req.session.error = '';
 		let project = {
 			$project:{

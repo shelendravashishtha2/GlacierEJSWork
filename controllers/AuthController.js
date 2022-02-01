@@ -8,96 +8,92 @@ var urlencodeParser = bodyParser.urlencoded({ extended: false });
 const AuthController = require('../controllers/admin/AuthController');
 const User = require("../models/User");
 
-var validator = require('express-validator');
-
-var axios = require("axios");
-
 module.exports = function (app) {
 
 	// Inner Auth
-	app.get('/auth-login', function (req, res) {
-		res.locals = { title: 'Login' };
-		res.render('AuthInner/auth-login');
-	});
-	app.get('/auth-login-2', function (req, res) {
-		res.locals = { title: 'Login 2' };
-		res.render('AuthInner/auth-login-2');
-	});
-	app.get('/auth-register', function (req, res) {
-		res.locals = { title: 'Register' };
-		res.render('AuthInner/auth-register');
-	});
-	app.get('/auth-register-2', function (req, res) {
-		res.locals = { title: 'Register 2' };
-		res.render('AuthInner/auth-register-2');
-	});
-	app.get('/auth-recoverpw', function (req, res) {
-		res.locals = { title: 'Recoverpw' };
-		res.render('AuthInner/auth-recoverpw');
-	});
-	app.get('/auth-recoverpw-2', function (req, res) {
-		res.locals = { title: 'Recoverpw 2' };
-		res.render('AuthInner/auth-recoverpw-2');
-	});
-	app.get('/auth-lock-screen', function (req, res) {
-		res.locals = { title: 'Lock Screen' };
-		res.render('AuthInner/auth-lock-screen');
-	});
-	app.get('/auth-lock-screen-2', function (req, res) {
-		res.locals = { title: 'Lock Screen 2' };
-		res.render('AuthInner/auth-lock-screen-2');
-	});
-	app.get('/auth-confirm-mail', function (req, res) {
-		res.locals = { title: 'Confirm Mail' };
-		res.render('AuthInner/auth-confirm-mail');
-	});
-	app.get('/auth-confirm-mail-2', function (req, res) {
-		res.locals = { title: 'Confirm Mail 2' };
-		res.render('AuthInner/auth-confirm-mail-2');
-	});
-	app.get('/auth-email-verification', function (req, res) {
-		res.locals = { title: 'Email verification' };
-		res.render('AuthInner/auth-email-verification');
-	});
-	app.get('/auth-email-verification-2', function (req, res) {
-		res.locals = { title: 'Email verification 2' };
-		res.render('AuthInner/auth-email-verification-2');
-	});
-	app.get('/auth-two-step-verification', function (req, res) {
-		res.locals = { title: 'Two step verification' };
-		res.render('AuthInner/auth-two-step-verification');
-	});
-	app.get('/auth-two-step-verification-2', function (req, res) {
-		res.locals = { title: 'Two step verification 2' };
-		res.render('AuthInner/auth-two-step-verification-2');
-	});
+	// app.get('/auth-login', function (req, res) {
+	// 	res.locals = { title: 'Login' };
+	// 	res.render('AuthInner/auth-login');
+	// });
+	// app.get('/auth-login-2', function (req, res) {
+	// 	res.locals = { title: 'Login 2' };
+	// 	res.render('AuthInner/auth-login-2');
+	// });
+	// app.get('/auth-register', function (req, res) {
+	// 	res.locals = { title: 'Register' };
+	// 	res.render('AuthInner/auth-register');
+	// });
+	// app.get('/auth-register-2', function (req, res) {
+	// 	res.locals = { title: 'Register 2' };
+	// 	res.render('AuthInner/auth-register-2');
+	// });
+	// app.get('/auth-recoverpw', function (req, res) {
+	// 	res.locals = { title: 'Recoverpw' };
+	// 	res.render('AuthInner/auth-recoverpw');
+	// });
+	// app.get('/auth-recoverpw-2', function (req, res) {
+	// 	res.locals = { title: 'Recoverpw 2' };
+	// 	res.render('AuthInner/auth-recoverpw-2');
+	// });
+	// app.get('/auth-lock-screen', function (req, res) {
+	// 	res.locals = { title: 'Lock Screen' };
+	// 	res.render('AuthInner/auth-lock-screen');
+	// });
+	// app.get('/auth-lock-screen-2', function (req, res) {
+	// 	res.locals = { title: 'Lock Screen 2' };
+	// 	res.render('AuthInner/auth-lock-screen-2');
+	// });
+	// app.get('/auth-confirm-mail', function (req, res) {
+	// 	res.locals = { title: 'Confirm Mail' };
+	// 	res.render('AuthInner/auth-confirm-mail');
+	// });
+	// app.get('/auth-confirm-mail-2', function (req, res) {
+	// 	res.locals = { title: 'Confirm Mail 2' };
+	// 	res.render('AuthInner/auth-confirm-mail-2');
+	// });
+	// app.get('/auth-email-verification', function (req, res) {
+	// 	res.locals = { title: 'Email verification' };
+	// 	res.render('AuthInner/auth-email-verification');
+	// });
+	// app.get('/auth-email-verification-2', function (req, res) {
+	// 	res.locals = { title: 'Email verification 2' };
+	// 	res.render('AuthInner/auth-email-verification-2');
+	// });
+	// app.get('/auth-two-step-verification', function (req, res) {
+	// 	res.locals = { title: 'Two step verification' };
+	// 	res.render('AuthInner/auth-two-step-verification');
+	// });
+	// app.get('/auth-two-step-verification-2', function (req, res) {
+	// 	res.locals = { title: 'Two step verification 2' };
+	// 	res.render('AuthInner/auth-two-step-verification-2');
+	// });
 
 	// Crypto
-	app.get('/crypto-ico-landing', function (req, res) {
-		res.locals = { title: 'Crypto Ico Landing' };
-		res.render('Crypto/crypto-ico-landing');
-	});
+	// app.get('/crypto-ico-landing', function (req, res) {
+	// 	res.locals = { title: 'Crypto Ico Landing' };
+	// 	res.render('Crypto/crypto-ico-landing');
+	// });
 
 
 	// Auth Pages
 
-	app.get('/pages-maintenance', function (req, res) {
-		res.locals = { title: 'Pages Maintenance' };
-		res.render('Pages/pages-maintenance');
-	});
-	app.get('/pages-comingsoon', function (req, res) {
-		res.locals = { title: 'Pages Comingsoon' };
-		res.render('Pages/pages-comingsoon');
-	});
+	// app.get('/pages-maintenance', function (req, res) {
+	// 	res.locals = { title: 'Pages Maintenance' };
+	// 	res.render('Pages/pages-maintenance');
+	// });
+	// app.get('/pages-comingsoon', function (req, res) {
+	// 	res.locals = { title: 'Pages Comingsoon' };
+	// 	res.render('Pages/pages-comingsoon');
+	// });
 
-	app.get('/pages-404', function (req, res) {
-		res.locals = { title: 'Pages 404' };
-		res.render('Pages/pages-404');
-	});
-	app.get('/pages-500', function (req, res) {
-		res.locals = { title: 'Pages 500' };
-		res.render('Pages/pages-500');
-	});
+	// app.get('/pages-404', function (req, res) {
+	// 	res.locals = { title: 'Pages 404' };
+	// 	res.render('Pages/pages-404');
+	// });
+	// app.get('/pages-500', function (req, res) {
+	// 	res.locals = { title: 'Pages 500' };
+	// 	res.render('Pages/pages-500');
+	// });
 
 
 	app.get('/register', function (req, res) {
@@ -119,6 +115,7 @@ module.exports = function (app) {
 	});
 
 	app.get('/login', function (req, res) {
+		res.locals = { title: 'Login' };
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 
