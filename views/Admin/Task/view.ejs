@@ -36,19 +36,42 @@
                             <table class="table mb-0">
                                 <tbody>
                                     <tr>
-                                        <td style="width: 20%;"><b>Property Name</b> </td><td>: <%= property_name %></td>
+                                        <td style="width: 20%;"><b>Property Name : </b> </td>
+										<td>
+											<%= property_name %>
+										</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Category</b></td><td>: <%= categories %></td>
+                                        <td><b>Category : </b></td>
+										<td>
+											<% for( let i = 0; i < categoryData.length; i++ ) { %>
+												<%= i != 0 ? ',' : '' %> <%= categoryData[i].category_name %>
+											<% } %>
+										</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Operations Team</b></td><td>: <%= operationTeams %></td>
+                                        <td><b>Operations Team : </b></td>
+										<td>
+											<% for( let i = 0; i < operationTeams.length; i++ ) { %>
+												<%= i != 0 ? ',' : '' %> <%= operationTeams[i].full_name %>
+											<% } %>
+										</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Manager</b></td><td>: <%= managers %></td>
+                                        <td><b>Manager : </b></td>
+										<td>
+											<% for( let i = 0; i < managers.length; i++ ) { %>
+												<%= i != 0 ? ', ' : '' %> <%= managers[i].full_name %>
+											<% } %>
+										</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Supervisor</b></td><td>: <%= supervisors %></td>
+                                        <td><b>Supervisor : </b></td>
+										<td>
+											<% for( let i = 0; i < supervisors.length; i++ ) { %>
+												<%= i != 0 ? ',' : '' %> <%= supervisors[i].full_name %>
+											<% } %>
+										</td>
                                     </tr>
                                 </tbody>
                             </table>

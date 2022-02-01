@@ -38,8 +38,8 @@
                         <div class="mb-3 row">
                             <label class="col-md-4 col-form-label">Select Property Name</label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <input type="hidden" class="form-select" id="taskId" name="taskId" value="<%= taskData._id %>" readonly>
-                                <input type="text" class="form-select"  value="<%= data.property_name %>" disabled>
+                                <input type="hidden" class="form-select" id="propertyId" name="propertyId" value="<%= propertyData._id %>" readonly>
+                                <input type="text" class="form-select"  value="<%= propertyData.property_name %>" disabled>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -83,43 +83,13 @@
                             <label class="col-md-4 col-form-label">Select Operations Team *</label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
                                 <select class="select2 form-control select2-multiple" name="operationTeamId[]" id="operationTeamId" multiple="multiple" data-placeholder="Choose Operations Team..." required>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Manager</label>
-                            <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="managerId[]" id="managerId" multiple="multiple" data-placeholder="Choose Manager...">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Supervisor</label>
-                            <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="supervisorId[]" id="supervisorId" multiple="multiple" data-placeholder="Choose Supervisor...">
+									<% for( let i = 0; i < allOperationTeam.length; i++ ) { %>
+										<option value="<%= allOperationTeam[i]._id %>" <%= allOperationTeam[i].status ? 'selected' : '' %>><%= allOperationTeam[i].full_name %></option>
+									<% } %>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <!--<div class="col-md-5">
-                        <h4>Operations Team</h4>
-                        <hr>
-                        <span>Opration Team 1 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Opration Team 2 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Opration Team 3 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <h4 style="margin-top: 15px;">Manager</h4>
-                        <hr>
-                        <span>Manager 1 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Manager 2 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Manager 3 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Manager 4 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Manager 5 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <h4 style="margin-top: 15px;">Supervisor</h4>
-                        <hr>
-                        <span>Supervisor 1 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Supervisor 2 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                        <span>Supervisor 3 <span style="margin-left: 5px; color: red; cursor: pointer;"> &#x2715; </span></span> &nbsp;&nbsp;
-                    </div>-->
                 </div>
                 <div class="row">
                     <div class="col-md-3"></div>
@@ -140,51 +110,6 @@
     <% if(message){ %>
         toastr.success('<%= message %>');
     <% } %>
-    let taskData = <%-JSON.stringify(taskData)%>;
-    changeProperty();
-    function changeProperty(){
-        $.get("/property-task",
-        {
-            propertyId: taskData.propertyId
-        },
-        function(data, status){
-           let managerOption = "";
-           let supervisorOption = "";
-           let operationTeamOption = "";
-           for(let i = 0;i< data.allSupervisor.length;i++){
-                let index = taskData.supervisorId.indexOf(data.allSupervisor[i]._id);
-                if(index == -1){
-                    supervisorOption = supervisorOption + "<option value='"+data.allSupervisor[i]._id+"'>"+data.allSupervisor[i].full_name+"</option>";
-                }else{
-                    supervisorOption = supervisorOption + "<option selected value='"+data.allSupervisor[i]._id+"'>"+data.allSupervisor[i].full_name+"</option>";
-                }
-           }
-           for(let i = 0;i< data.allManager.length;i++){
-                let index = taskData.managerId.indexOf(data.allManager[i]._id);
-                if(index != -1){
-                    managerOption = managerOption + "<option selected value='"+data.allManager[i]._id+"'>"+data.allManager[i].full_name+"</option>";
-                }else{
-                    managerOption = managerOption + "<option value='"+data.allManager[i]._id+"'>"+data.allManager[i].full_name+"</option>";
-                }
-                
-           }
-           for(let i = 0;i< data.allOperationTeam.length;i++){
-                let index = taskData.operationTeamId.indexOf(data.allOperationTeam[i]._id);
-                if(index != -1){
-                    operationTeamOption = operationTeamOption + "<option selected value='"+data.allOperationTeam[i]._id+"'>"+data.allOperationTeam[i].full_name+"</option>";
-                }else{
-                    operationTeamOption = operationTeamOption + "<option value='"+data.allOperationTeam[i]._id+"'>"+data.allOperationTeam[i].full_name+"</option>";
-                }
-                
-           }
-           $("#supervisorId").html(supervisorOption);
-           $("#managerId").html(managerOption);
-           $("#operationTeamId").html(operationTeamOption);
-           $("#supervisorId").select2();
-           $("#managerId").select2();
-           $("#operationTeamId").select2();
-        });
-    }
 </script>
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
 <!-- form advanced init -->
