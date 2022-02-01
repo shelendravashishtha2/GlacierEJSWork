@@ -5,10 +5,6 @@ const assignPpmTaskSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
 		required:true
 	},
-	// ppmEquipmentId: {
-	// 	type: mongoose.Schema.Types.ObjectId, ref: 'ppm_Equipment',
-	// 	required:true,
-	// },
 	assignPpmEquipmentId: {
 		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment',
 		required:true,
@@ -21,6 +17,10 @@ const assignPpmTaskSchema = new mongoose.Schema({
 	assetName: {
 		type: String,
 		required: true,
+		trim: true,
+	},
+	assetLocation: {
+		type: String,
 		trim: true,
 	},
 	vendorName: {
@@ -51,7 +51,18 @@ const assignPpmTaskSchema = new mongoose.Schema({
 	attachPhotos: {
 		type: [String]
 	},
-	
+	serviceReports: {
+		type: [String]
+	},
+	riskAssessmentStatus: {
+		type: Number, //1=No Risk, 2=Asset itself 3=environment
+		min: [1,'invalid status'], 
+		max: [3,'invalid status'], 
+		default: 1,
+	},
+	riskAssessmentAssetStatusColor: {
+		type: String
+	},
 
 	status: {
 		type: Number, //0=Inactive, 1=active

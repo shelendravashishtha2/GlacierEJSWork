@@ -2,7 +2,7 @@ const Property = require("../../models/Property");
 const Task = require("../../models/propertyTask");
 const User = require("../../models/User");
 const Form = require("../../models/Form");
-const RatingSetting = require("../../models/RatingSetting");
+const SettingRating = require("../../models/SettingRating");
 const CategoryCheckList = require("../../models/CategoryCheckList");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -444,7 +444,7 @@ exports.userDetail = async (req, res) => {
 		if(userData.position_id == 4){
 			query = { managerId:req.query.userId };
 		}else if(userData.position_id == 5){
-			query = { superviserId:req.query.userId };
+			query = { supervisorId:req.query.userId };
 		}else if(userData.position_id == 2){
 			query = { operationTeamId:req.query.userId };
 		}
@@ -632,12 +632,12 @@ exports.propertyListWithRating = async (req, res) => {
 			}
 		}
 		let propertyList = await Property.aggregate([condition,project]);
-		let ratingSettingData = await RatingSetting.find({});
+		let settingRatingData = await SettingRating.find({});
 		for(let i=0;i<propertyList.length;i++){
 			if(propertyList[i].rating != 0){
-				let index = ratingSettingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
+				let index = settingRatingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
 				if(index != -1){
-					propertyList[i].rating = ratingSettingData[i].rating_name; 
+					propertyList[i].rating = settingRatingData[i].rating_name; 
 				}else{
 					propertyList[i].rating = "E";
 				}

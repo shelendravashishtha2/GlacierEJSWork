@@ -31,78 +31,75 @@
                     </div>
                 </div>
                 <hr>
-                <div class="row mb-2">
-                    <div class="col-md-8">
-                        <div class="mb-3 row">
-                            <label class="col-md-2 col-form-label">Select Property Name</label>
-                            <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
-                                <select class="form-select">
-                                    <option>Select Property Name</option>
-                                    <% for (i = 0; i < data.length; i++) { %>
-                                    <option><%= data[i].property_name %></option>
-                                    <% } %>
-                                </select>
+
+                <form action="/store-assign-auditor" method="POST" enctype="multipart/form-data" class="custom-validation">
+                    <div class="row mb-2">
+                        <div class="col-md-8">
+                            <div class="mb-3 row">
+                                <label class="col-md-2 col-form-label">Select Property Name</label>
+                                <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
+                                    <select name="propertyId" class="form-select" required>
+                                        <option value="">Select Property Name</option>
+                                        <% for (i = 0; i < data.length; i++) { %>
+                                        <option value="<%= data[i]._id %>"><%= data[i].property_name %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-md-2 col-form-label">Select Group Name</label>
-                            <div class="col-md-5" style="border: 1px solid #ced4da;">
-                                <div data-simplebar="init" style="max-height: 300px;">
-                                    <div class="simplebar-wrapper" style="margin: 0px;">
-                                        <div class="simplebar-mask">
-                                            <div class="simplebar-offset" style="bottom: 0px;">
-                                                <div class="simplebar-content-wrapper" style="height: auto; overflow: hidden scroll;">
-                                                    <div class="simplebar-content" style="padding: 0px;">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-nowrap align-middle table-hover mb-0">
-                                                                <tbody>
-                                                                    <% for (i = 0; i < 50; i++) { %>
-                                                                    <tr>
-                                                                        <td style="width: 50px;">
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck<%=i+1%>" checked>
-                                                                                <label class="form-check-label" for="tasklistCheck<%=i+1%>"></label>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="#" class="text-dark">Compliance</a></h5>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <% } %>
-                                                                </tbody>
-                                                            </table>
+                            <div class="mb-3 row">
+                                <label class="col-md-2 col-form-label">Select Group Name</label>
+                                <div class="col-md-5" style="border: 1px solid #ced4da;">
+                                    <div data-simplebar="init" style="max-height: 300px;">
+                                        <div class="simplebar-wrapper" style="margin: 0px;">
+                                            <div class="simplebar-mask">
+                                                <div class="simplebar-offset" style="bottom: 0px;">
+                                                    <div class="simplebar-content-wrapper" style="height: auto; overflow: hidden scroll;">
+                                                        <div class="simplebar-content" style="padding: 0px;">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-nowrap align-middle table-hover mb-0">
+                                                                    <tbody>
+                                                                        <% for (i = 0; i < groupNameData.length; i++) { %>
+                                                                        <tr>
+                                                                            <td style="width: 50px;">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" name="groupId" type="checkbox" id="groupName<%=i+1%>" checked value="<%= groupNameData[i]._id %>">
+                                                                                    <label class="form-check-label" for="groupName<%=i+1%>"><h5 class="text-truncate font-size-14 mb-1"><%= groupNameData[i].groupName %></h5></label>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% } %>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="simplebar-placeholder" style="width: auto; height: 448px;"></div>
                                         </div>
-                                        <div class="simplebar-placeholder" style="width: auto; height: 448px;"></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-md-2 col-form-label">Select Auditor</label>
-                            <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
-                                <select class="form-select">
-                                    <option>Select Auditor</option>
-                                    <option>Auditor-1</option>
-                                    <option>Auditor-2</option>
-                                    <option>Auditor-3</option>
-                                    <option>Auditor-4</option>
-                                    <option>Auditor-5</option>
-                                    <option>Auditor-6</option>
-                                </select>
+                            <div class="mb-3 row">
+                                <label class="col-md-2 col-form-label">Select Auditor</label>
+                                <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
+                                    <select class="form-select" name="auditorId" required>
+                                        <option value="">Select Auditor</option>
+                                        <% for (i = 0; i < auditorData.length; i++) { %>
+                                        <option value="<%= auditorData[i]._id %>"><%= auditorData[i].full_name %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-6">
-                        <button type="submit" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;"> <b>Submit</b> </button>
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-6">
+                            <button type="submit" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;"> <b>Submit</b> </button>
+                        </div>
                     </div>
-                </div>
+                </form>
 
             </div>
         </div>

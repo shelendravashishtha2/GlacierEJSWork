@@ -25,7 +25,7 @@ const categoryCheckListSchema = new mongoose.Schema({
 	},
 	form: {
 		type: Array,
-		defult: [],
+		default: [],
 	},
 	frequency: {
 		type: String,

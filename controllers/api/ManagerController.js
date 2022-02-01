@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../helper/response");
 const SOP = require('../../models/SOP');
-const RatingSetting = require("../../models/RatingSetting");
+const SettingRating = require("../../models/SettingRating");
 const Rating = require("../../models/Rating");
 const {errorLog} = require("../../helper/consoleLog");
 const Joi = require("joi");
@@ -217,12 +217,12 @@ exports.propertyListWithRating = async (req, res) => {
 			}
 		}
 		let propertyList = await Property.aggregate([condition,project]);
-		let ratingSettingData = await RatingSetting.find({});
+		let settingRatingData = await SettingRating.find({});
 		for(let i=0;i<propertyList.length;i++){
 			if(propertyList[i].rating != 0){
-				let index = ratingSettingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
+				let index = settingRatingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
 				if(index != -1){
-					propertyList[i].rating = ratingSettingData[i].rating_name; 
+					propertyList[i].rating = settingRatingData[i].rating_name; 
 				}else{
 					propertyList[i].rating = "E";
 				}
@@ -611,7 +611,7 @@ exports.assignSupervisor = async (req, res) => {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).required(),
 			propertyId: Joi.string().min(24).max(24).required(),
-			superviserId: Joi.string().min(24).max(24).required()
+			supervisorId: Joi.string().min(24).max(24).required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
@@ -623,17 +623,17 @@ exports.assignSupervisor = async (req, res) => {
 				alreadyTask = new Task; 
 				alreadyTask.propertyId = req.body.propertyId;
 				alreadyTask.categoryId = req.body.categoryId[i];
-				alreadyTask.superviserId = [];
+				alreadyTask.supervisorId = [];
 			}
-			for(let j=0;j<req.body.superviserId.length;j++){
-				let index = alreadyTask.superviserId.indexOf(ObjectId(req.body.superviserId[j]))
+			for(let j=0;j<req.body.supervisorId.length;j++){
+				let index = alreadyTask.supervisorId.indexOf(ObjectId(req.body.supervisorId[j]))
 				if(index == -1){
-					alreadyTask.superviserId.push(ObjectId(req.body.superviserId[j]));		
+					alreadyTask.supervisorId.push(ObjectId(req.body.supervisorId[j]));		
 				}
 			}
 			await alreadyTask.save();
 		}
-		return res.send(response.success(200, 'Superviser Assign Successfully' ));
+		return res.send(response.success(200, 'Supervisor Assign Successfully' ));
 	} catch (error) {
 		console.log(error);
 		errorLog(__filename, req.originalUrl, error);

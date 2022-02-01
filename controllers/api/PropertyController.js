@@ -1,5 +1,5 @@
 const Property = require("../../models/Property");
-const RatingSetting = require("../../models/RatingSetting");
+const SettingRating = require("../../models/SettingRating");
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
@@ -24,12 +24,12 @@ exports.propertyList = async (req, res) => {
 			}
 		}
 		let propertyList = await Property.aggregate([condition,project]);
-		let ratingSettingData = await RatingSetting.find({});
+		let settingRatingData = await SettingRating.find({});
 		for(let i=0;i<propertyList.length;i++){
 			if(propertyList[i].rating != 0){
-				let index = ratingSettingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
+				let index = settingRatingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
 				if(index != -1){
-					propertyList[i].rating = ratingSettingData[i].rating_name; 
+					propertyList[i].rating = settingRatingData[i].rating_name; 
 				}else{
 					propertyList[i].rating = "E";
 				}

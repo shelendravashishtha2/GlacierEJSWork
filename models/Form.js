@@ -25,11 +25,11 @@ const formSchema = new mongoose.Schema({
 	},
 	completeDate: {
 		type: Date,
-		defult: null,
+		default: null,
 	},
 	form: {
 		type: Array,
-		defult: [],
+		default: [],
 	},
 	percentage:{
 		type: Number,

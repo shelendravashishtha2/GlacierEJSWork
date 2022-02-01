@@ -42,6 +42,7 @@
                             <tr>
                                 <th class="text-center">Sr.No</th>
                                 <th>Asset Name</th>
+                                <th>Asset Location</th>
                                 <th>Frequency</th>
                                 <th>Vendor Name</th>
                                 <th class="text-center">Date</th>
@@ -59,6 +60,7 @@
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= taskData[i].assetName %></td>
+                                <td><%= taskData[i].assetLocation %></td>
                                 <td><%= taskData[i].frequency %></td>
                                 <td><%= taskData[i].vendorName %></td>
                                 <td class="text-center"><%= taskData[i].date ? taskData[i].date : '--' %></td>
@@ -127,7 +129,12 @@
                                 <input class="form-control" type="text" value="" id="assetName" name="assetName" required placeholder="Enter Asset Name">
                             </div>
                         </div>
-
+						<div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Location<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" value="" name="assetLocation" required id="assetLocation" placeholder="Enter Asset Location">
+                            </div>
+                        </div>
                         <div class="mb-3 row">
                             <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Vendor Name<span class="required">*</span></label>
                             <div class="col-md-8">
@@ -282,6 +289,7 @@
 		$("#assetId").val(detail._id);
 		$("#vendorName").val(detail.vendorName);
 		$("#assetName").val(detail.assetName);
+		$("#assetLocation").val(detail.assetLocation);
 
         // changeFrequency()
     }

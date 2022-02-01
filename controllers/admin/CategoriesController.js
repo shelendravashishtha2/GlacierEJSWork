@@ -275,11 +275,11 @@ exports.checkList = async (req,res) => {
 	}
 }
 
-// Master FRS Checklist : 
-exports.frsCheckList = async (req,res) => {
+// Master FRC Checklist : 
+exports.frcCheckList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Master FRS Checklist',session: req.session};
+		res.locals = { title: 'Master FRC Checklist',session: req.session};
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -329,6 +329,7 @@ exports.frsCheckList = async (req,res) => {
 				status:1,
 				category_id:"$categories._id",
 				category_name:"$categories.category_name",
+				frequency: 1,
 			}
 		}
 
@@ -343,7 +344,7 @@ exports.frsCheckList = async (req,res) => {
 
 		let paramsCategoryId = req.query.search;
 
-		return res.render('Admin/Categories/master-frs-checklist',{ data: CategoryCheckListData, categoryData: categoryData,paramsCategoryId:paramsCategoryId,'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Categories/master-frc-checklist',{ data: CategoryCheckListData, categoryData: categoryData,paramsCategoryId:paramsCategoryId,'message': req.flash('message'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -435,7 +436,7 @@ exports.updateChecklistDetails = async (req,res) => {
 			date: req.body.date,
 		},{ new: true });
 		req.flash('message', 'Category checklist is updated!');
-		return res.redirect('master-frs');
+		return res.redirect('master-frc');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {

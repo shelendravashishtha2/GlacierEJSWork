@@ -235,6 +235,12 @@ exports.userList = async (req,res) => {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Users', session: req.session};
 		req.session.error =  '';
+		let condition;
+		if(req.session.user.position_id == 1){
+			condition = {"$match": {position_id: {$in:[2,3,4,5]}}};
+		}else{
+			condition = {"$match": {position_id: {$in:[3,4,5]}}};
+		}
 
 		let page = 1;
 		if(req.query.page != undefined){
@@ -270,7 +276,7 @@ exports.userList = async (req,res) => {
                 createdAt:-1
             }
         };
-		let UserData = await User.aggregate([search,sort,skip,limit,project]);
+		let UserData = await User.aggregate([condition,search,sort,skip,limit,project]);
 
 		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
 	} catch (error) {

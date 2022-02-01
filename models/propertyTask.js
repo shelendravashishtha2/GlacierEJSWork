@@ -18,7 +18,7 @@ const propertyTaskSchema = new mongoose.Schema({
 		type:  [mongoose.Schema.Types.ObjectId],
 		default: []
 	},
-	superviserId: {
+	supervisorId: {
 		type:  [mongoose.Schema.Types.ObjectId],
 		default: []
 	}
@@ -27,5 +27,5 @@ const propertyTaskSchema = new mongoose.Schema({
 	versionKey: false
 });
 
-const propertyTask = new mongoose.model("propertyTask", propertyTaskSchema);
+const propertyTask = new mongoose.model("property_Task", propertyTaskSchema);
 module.exports = propertyTask;

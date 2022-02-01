@@ -91,4 +91,14 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>

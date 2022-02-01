@@ -96,7 +96,7 @@
                         <div class="mb-3 row">
                             <label class="col-md-4 col-form-label">Select Supervisor</label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="superviserId[]" id="superviserId" multiple="multiple" data-placeholder="Choose Supervisor...">
+                                <select class="select2 form-control select2-multiple" name="supervisorId[]" id="supervisorId" multiple="multiple" data-placeholder="Choose Supervisor...">
                                 </select>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
            let supervisorOption = "";
            let operationTeamOption = "";
            for(let i = 0;i< data.allSupervisor.length;i++){
-                let index = taskData.superviserId.indexOf(data.allSupervisor[i]._id);
+                let index = taskData.supervisorId.indexOf(data.allSupervisor[i]._id);
                 if(index == -1){
                     supervisorOption = supervisorOption + "<option value='"+data.allSupervisor[i]._id+"'>"+data.allSupervisor[i].full_name+"</option>";
                 }else{
@@ -177,10 +177,10 @@
                 }
                 
            }
-           $("#superviserId").html(supervisorOption);
+           $("#supervisorId").html(supervisorOption);
            $("#managerId").html(managerOption);
            $("#operationTeamId").html(operationTeamOption);
-           $("#superviserId").select2();
+           $("#supervisorId").select2();
            $("#managerId").select2();
            $("#operationTeamId").select2();
         });

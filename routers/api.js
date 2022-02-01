@@ -67,14 +67,12 @@ router.post("/history-detail", auth, HistoryController.historyDetail);
 router.post("/manager/update", auth, AuthController.update); // user login
 router.get("/manager/assign-task-list", auth, ManagerController.assignTaskList);
 router.post("/manager/assign-supervisor", auth, ManagerController.assignSupervisor);
-router.get("/manager/property-list-with-rating", auth, ManagerController.propertyListWithRating);
 // router.get("/manager/formList", auth, ManagerController.formList);
 router.post("/manager/updateRating", auth, ManagerController.updateRating)
 
 // supervisor
 router.post("/supervisor/update", auth, AuthController.update); // user login
 router.get("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
-router.get("/supervisor/property-list-with-rating", auth, SupervisorController.propertyListWithRating);
 // router.get("/supervisor/formList", auth, SupervisorController.formList);
 router.post("/supervisor/updateRating", auth, SupervisorController.updateRating)
 module.exports = router;

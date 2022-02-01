@@ -290,8 +290,7 @@ exports.updatePpmTask = async (req,res) => {
 			req.flash('message', message);
 		}
 		ppm.markModified('assets');
-		ppm.save(function(err){
-		});
+		ppm.save(function(err){});
 
 		return res.redirect('/edit-ppm/'+req.body.ppmId);	
 	} catch (error) {
@@ -505,6 +504,7 @@ exports.addPropertyWing = async (req,res) => {
 						ppmEquipmentId: req.body.ppmIds[i],
 						assignPpmEquipmentId: assignPpmEquipmentData._id,
 						assetName: element.assetName,
+						assetLocation: '',
 						vendorName: element.vendorName,
 						frequency: element.frequency,
 						month: element.month,
@@ -772,6 +772,7 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 			ppmEquipmentId: Joi.required(),
 			propertyId: Joi.required(),
 			assetName: Joi.required(),
+			assetLocation: Joi.required(),
 			vendorName: Joi.required(),
 			frequency: Joi.required(),
 			month: Joi.optional(),
@@ -822,6 +823,7 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
+				assetLocation: req.body.assetLocation,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
 				month: month ? month : '',
@@ -837,6 +839,7 @@ exports.addUpdatePpmEquipmentAsset = async (req,res) => {
 				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
+				assetLocation: req.body.assetLocation,
 				vendorName: req.body.vendorName,
 				frequency: req.body.frequency,
 				day: day,
@@ -898,7 +901,7 @@ exports.viewPropertiesPpmTask = async (req,res) => {
 		}
 		res.locals = { title: 'Assign PPM List',session: req.session};
 
-		let assignPpmTaskData = await assignPpmTask.find({propertyId: req.params.id}).populate({path: 'assignPpmEquipmentAssetId', populate: { path: 'ppmEquipmentId'}});
+		let assignPpmTaskData = await assignPpmTask.find({propertyId: req.params.id}).populate({path: 'assignPpmEquipmentAssetId', populate: { path: 'ppmEquipmentId'}}).populate({path: 'assignPpmEquipmentId', populate: { path: 'ppmEquipmentId'}});
 		
 		return res.render('Admin/PPM/property-ppm-task-list',{
 			data: { propertyId: req.params.id },
@@ -928,7 +931,7 @@ exports.viewPropertiesPpmTaskDetails = async (req,res) => {
 		}
 		res.locals = { title: 'Assign PPM List',session: req.session};
 
-		let assignPpmTaskData = await assignPpmTask.findOne({_id: req.params.id});
+		let assignPpmTaskData = await assignPpmTask.findOne({_id: req.params.id}).populate({path: 'assignPpmEquipmentId', populate: { path: 'ppmEquipmentId'}});
 
 		return res.render('Admin/PPM/property-ppm-task-list-details',{
 			data: { propertyId: assignPpmTaskData.propertyId },

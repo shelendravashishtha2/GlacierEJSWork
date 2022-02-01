@@ -19,6 +19,10 @@ const assignPpmEquipmentAssetSchema = new mongoose.Schema({
 		required: true,
 		trim: true,
 	},
+	assetLocation: {
+		type: String,
+		trim: true,
+	},
 	vendorName: {
 		type: String,
 		required:true,

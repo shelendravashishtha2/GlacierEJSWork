@@ -40,7 +40,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">#</th>
+                                <th class="text-center" style="width: 5%">Risk Assessment <br> Status</th>
+                                <th>Equipments Name</th>
                                 <th>Asset Name</th>
+                                <th>Asset Location</th>
                                 <th>Frequency</th>
                                 <th>Vendor Name</th>
                                 <th class="text-center">Due date</th>
@@ -55,7 +58,12 @@
                             <% for(let i=0; i<assignPpmTaskData.length; i++){ %>
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
+                                <td class="text-center">
+									<div style="border-radius: 50%; width: 25px; height: 25px; margin: auto; background: <%= assignPpmTaskData[i].riskAssessmentAssetStatusColor %>;"></div>
+								</td>
+                                <td><%= assignPpmTaskData[i].assignPpmEquipmentId.ppmEquipmentId.ppmEquipmentName %></td>
                                 <td><%= assignPpmTaskData[i].assetName %></td>
+                                <td><%= assignPpmTaskData[i].assetLocation %></td>
                                 <td><%= assignPpmTaskData[i].assignPpmEquipmentAssetId.frequency %></td>
                                 <td><%= assignPpmTaskData[i].vendorName %></td>
                                 <td class="text-center"><%= moment(assignPpmTaskData[i].dueDate).format('DD-MM-YYYY') %></td>

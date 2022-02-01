@@ -35,13 +35,19 @@
                                 <select class="form-control" id="position_id" name="position_id">
                                     <option value="">Select Position</option>
                                     <% if (typeof error.inputData != 'undefined' && typeof error.inputData.position_id != 'undefined') { %>
-										<option value="2" <% if(error.inputData.position_id == 2) {%> selected <% } %> >Operation Team</option>
-										<option value="3" <% if(error.inputData.position_id == 3) {%> selected <% } %> >Auditor</option>
+                                        <% if(session) { %>
+                                        <% if(session.user.position_id == 1) { %>
+                                        <option value="2" <% if(error.inputData.position_id == 2) {%> selected <% } %> >Operation Team</option>
+                                        <% } } %>
+                                        <option value="3" <% if(error.inputData.position_id == 3) {%> selected <% } %> >Auditor</option>
 										<option value="4" <% if(error.inputData.position_id == 4) {%> selected <% } %> >Manager</option>
 										<option value="5" <% if(error.inputData.position_id == 5) {%> selected <% } %> >Supervisor</option>
-									<% } else { %>
-										<option value="2">Operation Team</option>
-										<option value="3">Auditor</option>
+                                    <% } else { %>
+                                        <% if(session) { %>
+                                        <% if(session.user.position_id == 1) { %>
+                                            <option value="2">Operation Team</option>
+                                        <% } } %>
+                                        <option value="3">Auditor</option>
 										<option value="4">Manager</option>
 										<option value="5">Supervisor</option>
 									<% } %>

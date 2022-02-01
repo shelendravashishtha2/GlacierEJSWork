@@ -1,90 +1,120 @@
 <%- contentFor('HeaderCss') %>
 <%- contentFor('breadcrumb') %>
-<!-- <style>
-.fa-chevron-circle-right:hover{
-
-}</style> -->
 <!-- start page title -->
 <div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">View PPM Task Details</h4>
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
-                    <li class="breadcrumb-item"><a href="/view-properties-ppm-task/<%= data.propertyId %>">View PPM</a></li>
-                    <li class="breadcrumb-item active">View PPM Task Details</li>
-                </ol>
-            </div>
-        </div>
-    </div>
+	<div class="col-12">
+		<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+			<h4 class="mb-sm-0 font-size-18">View PPM Task Details</h4>
+			<div class="page-title-right">
+				<ol class="breadcrumb m-0">
+					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+					<li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
+					<li class="breadcrumb-item"><a href="/view-properties-ppm-task/<%= data.propertyId %>">View PPM</a></li>
+					<li class="breadcrumb-item active">View PPM Task Details</li>
+				</ol>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- end page title -->
 <%- contentFor('body') %>
 <div class="row">
-    <div class="col-xl-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title mb-2"><i class="fa fa-th-large"></i> PPM Task Details :</h4>
-                <div class="table-responsive">
-                    <table class="table table-nowrap table-hover mb-0">
-                        <tbody>
-                            <tr>
-                                <th scope="row" style="width: 20%;">Equipment Name</th>
-                                <td>: <%= assignPpmTaskData.assetName %></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" style="width: 20%;">Asset Name</th>
-								<td>: <%= assignPpmTaskData.assetName %></td>
-                            </tr>
-							<tr>
-                                <th scope="row" style="width: 20%;">Vendor name</th>
-                                <td style="white-space: normal;">: <%= assignPpmTaskData.vendorName %></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" style="width: 20%;">Due date</th>
-                                <td style="white-space: normal;">: <%= assignPpmTaskData.dueDate ? moment(assignPpmTaskData.dueDate).format('DD-MM-YYYY') : assignPpmTaskData.dueDate %></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" style="width: 20%;">Completion Date</th>
-                                <td>: <%= assignPpmTaskData.completionDate ? moment(assignPpmTaskData.completionDate).format('DD-MM-YYYY') : assignPpmTaskData.completionDate %></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" style="width: 20%;">Completion By</th>
-                                <td>: <%= assignPpmTaskData.completionBy %></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-	<div class="col-xl-8">
-        <div class="card">
-            <div class="card-body">
-				<h3>remark</h3>
-				<p><%= assignPpmTaskData.remark %> </p>
-			</div>
-		</div>
-		<div class="card">
-            <div class="card-body">
-				<h3>Attach Photos</h3>
-				<p><%= assignPpmTaskData.attachPhotos %> </p>
-				<img src="" alt="">
-				<img src="" alt="">
-				<img src="" alt="">
-				<img src="" alt="">
+<div class="col-xl-4">
+	<div class="card">
+		<div class="card-body">
+			<h4 class="card-title mb-2"><i class="fa fa-th-large"></i> PPM Task Details :</h4>
+			<div class="table-responsive">
+				<table class="table table-nowrap table-hover mb-0">
+					<tbody>
+						<tr>
+							<th scope="row" style="width: 20%;">Equipment Name</th>
+							<td>: <%= assignPpmTaskData.assignPpmEquipmentId.ppmEquipmentId.ppmEquipmentName %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Asset Name</th>
+							<td>: <%= assignPpmTaskData.assetName %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Asset Location</th>
+							<td>: <%= assignPpmTaskData.assetLocation %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Vendor name</th>
+							<td style="white-space: normal;">: <%= assignPpmTaskData.vendorName %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Due date</th>
+							<td style="white-space: normal;">: <%= assignPpmTaskData.dueDate ?
+									moment(assignPpmTaskData.dueDate).format('DD-MM-YYYY') :
+									assignPpmTaskData.dueDate %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Completion Date</th>
+							<td>: <%= assignPpmTaskData.completionDate ?
+									moment(assignPpmTaskData.completionDate).format('DD-MM-YYYY') :
+									assignPpmTaskData.completionDate %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Completion By</th>
+							<td>: <%= assignPpmTaskData.completionBy %>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Risk Assessment Status</th>
+							<td>: <%#= assignPpmTaskData.riskAssessmentStatus %> No Risk</td>
+						</tr>
+						<tr>
+							<th scope="row" style="width: 20%;">Risk Assessment Asset Status</th>
+							<td> <span style="float: left;">:</span>
+								<div style="background: <%= assignPpmTaskData.riskAssessmentAssetStatusColor %>; border-radius: 50%; width: 20px; height: 20px; margin-left: 10px;"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="col-xl-8">
+	<div class="card">
+		<div class="card-body">
+			<h3>remark</h3>
+			<p>
+				<%= assignPpmTaskData.remark %>
+			</p>
+		</div>
+	</div>
+	<div class="card">
+		<div class="card-body">
+			<h3>Attach Photos</h3>
+			<div>
+				<%= assignPpmTaskData.attachPhotos %>
+				<img src="https://picsum.photos/100?random=1" style="margin-right: 20px;">
+				<img src="https://picsum.photos/100?random=2" style="margin-right: 20px;">
+				<img src="https://picsum.photos/100?random=3" style="margin-right: 20px;">
+			</div>
+		</div>
+	</div>
+	<div class="card">
+		<div class="card-body">
+			<h3>Service Reports</h3>
+			<ul>
+				<li><a href="https://www.clickdimensions.com/links/TestPDFfile.pdf" target="_blank" rel="noopener noreferrer">Service Report 1</a></li>
+				<li><a href="https://www.clickdimensions.com/links/TestPDFfile.pdf" target="_blank" rel="noopener noreferrer">Service Report 2</a></li>
+			</ul>
+			<%#= assignPpmTaskData.serviceReports %>
+		</div>
+	</div>
+</div>
 
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<!-- apexcharts -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/apexcharts/apexcharts.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/profile.init.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/fontawesome.init.js"></script>
 <%- contentFor('BottomJs') %>

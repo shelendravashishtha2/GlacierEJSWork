@@ -43,7 +43,7 @@ module.exports = function (app) {
 	app.get('/create-category-checklist', CategoriesController.createCheckList); //create category vise checklist add 
 	app.post('/store-category-checklist', CategoriesController.addCheckListAValidation ,CategoriesController.storeChecklist); //store checklist
 	app.get('/edit-category-checklist/:id', CategoriesController.checkList); //edit category page with view category checklist list page
-	app.get('/master-frs', CategoriesController.frsCheckList); // FRS Chicklist
+	app.get('/master-frc', CategoriesController.frcCheckList); // FRC Chicklist
 	app.post('/change-checklist-status', CategoriesController.changeChecklistStatus); //change category status API
     app.post('/update-categories', CategoriesController.updateCategory); //update category
 	app.get('/edit-checklist-details/:id', CategoriesController.editChecklistDetails); //edit checklist details page
@@ -76,11 +76,20 @@ module.exports = function (app) {
 
     // Manage Rating
     app.get('/manage-rating', ManageRatingController.manageRatingList);
+    app.post('/add-group', ManageRatingController.addGroup);
+    app.post('/add-topic', ManageRatingController.addTopic);
+    app.post('/add-topic-checklist', ManageRatingController.addTopicChecklist);
+    app.post('/store-assign-auditor', ManageRatingController.storeAssignAuditor);
     app.get('/assign-auditor', ManageRatingController.assignAuditor);
     app.get('/group-list', ManageRatingController.groupList);
     app.get('/edit-group', ManageRatingController.editGroup);
-    app.get('/edit-group-name', ManageRatingController.editGroupName);
-    app.get('/edit-topic', ManageRatingController.editTopic);
+    app.get('/edit-group-name/:id', ManageRatingController.editGroupName);
+    app.get('/edit-topic/:id', ManageRatingController.editTopic);
+    app.post('/update-group-status', ManageRatingController.updateGroupStatus); // jayesh
+    app.post('/update-rating-topic-status', ManageRatingController.updateRatingTopicStatus); // jayesh 
+    app.post('/update-topic-checklist-status', ManageRatingController.updateTopicChecklistStatus); // jayesh
+    app.post('/update-groupname', ManageRatingController.updateGroupName); //update group name - jayesh
+    app.post('/update-topic-name', ManageRatingController.updateTopicName); //update topic name - jayesh
 
     // PPM Master
     app.get('/ppm', PpmController.PpmList);
@@ -127,5 +136,6 @@ module.exports = function (app) {
     // Setting 
     app.get('/setting', isUserAllowed, SettingController.settingList);
     app.post('/store-rating-setting', isUserAllowed, SettingController.storeSetting);
-
+    app.post('/store-ppm-risk-assessment-color', isUserAllowed, SettingController.storePpmRiskAssessmentColor);
+    app.get('/delete-ppm-risk-assessment-color/:id', isUserAllowed, SettingController.deletePpmRiskAssessmentColor);
 }

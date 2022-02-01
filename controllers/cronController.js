@@ -16,17 +16,77 @@ exports.formCron = async (req, res) => {
             'saturday',
             'sunday',
         ];
-        const date = new Date();
+
+		let date = new Date();
+		// date.setDate(date.getDate() + 7); //add 7 day in currant date
+
         const propertyTask = await PropertyTask.find();
         for (let task of propertyTask) {
-            const managers = [];
-            const supervisors = task.superviserId;
+            const managers = task.managerId;
+            const supervisors = task.supervisorId;
             const categoryCheckList = await CategoryCheckList.find({
                 category_id: task.categoryId,
             });
+
             for (let category of categoryCheckList) {
-                if (category.frequency === 'monthly') {
-                    if (date.getDate() + 1 == category.date) {
+				if (category.frequency === 'daily') {
+					console.log('daily');
+					if (managers.length > 0) {
+						for (let manager of managers) {
+							const obj = {
+								categoryChecklistId: category._id,
+								categoryId: category.category_id,
+								userId: manager,
+								status: 0,
+								completeDate: null,
+								form: category.form,
+								percentage: 0,
+							};
+							if (category.type === 'register') {
+								const data = await Form.findOne({
+									category_id:
+										category.category_id,
+									userId: manager,
+								});
+								if (!data) {
+									await Form.create(obj);
+									console.log(12333);
+								} else {
+									// await Form.create(obj);
+									console.log(1233344444);
+								}
+							}
+						}
+					}
+					if (supervisors.length > 0) {
+						for (let supervisor of supervisors) {
+							const obj = {
+								categoryChecklistId: category._id,
+								categoryId: category.category_id,
+								userId: supervisor,
+								status: 0,
+								completeDate: null,
+								form: category.form,
+								percentage: 0,
+							};
+							if (category.type === 'register') {
+								const data = await Form.findOne({
+									category_id: category.category_id,
+									userId: supervisor,
+								});
+								if (!data) {
+									await Form.create(obj);
+									console.log(12333);
+								} else {
+									// await Form.create(obj);
+									console.log(1233344444);
+								}
+							}
+						}
+					}
+                    
+                } else if (category.frequency === 'monthly') {
+                    if (date.getDate() == category.date) {
                         console.log('monthly');
                         if (managers.length > 0) {
                             for (let manager of managers) {
@@ -41,14 +101,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -66,14 +127,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -81,8 +143,8 @@ exports.formCron = async (req, res) => {
                     }
                 } else if (category.frequency === 'quarterly') {
                     if (
-                        date.getMonth() + 1 == category.month &&
-                        date.getDate() + 1 == category.date
+                        date.getMonth() == category.month &&
+                        date.getDate() == category.date
                     ) {
                         console.log('quarterly');
                         if (managers.length > 0) {
@@ -98,19 +160,19 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id:  category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
                         }
-
                         if (supervisors.length > 0) {
                             for (let supervisor of supervisors) {
                                 const obj = {
@@ -124,14 +186,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -139,8 +202,8 @@ exports.formCron = async (req, res) => {
                     }
                 } else if (category.frequency === 'annually') {
                     if (
-                        date.getMonth() + 1 == category.month &&
-                        date.getDate() + 1 == category.date
+                        date.getMonth() == category.month &&
+                        date.getDate() == category.date
                     ) {
                         console.log('annually');
                         if (managers.length > 0) {
@@ -156,19 +219,19 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
                         }
-
                         if (supervisors.length > 0) {
                             for (let supervisor of supervisors) {
                                 const obj = {
@@ -182,14 +245,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -197,8 +261,8 @@ exports.formCron = async (req, res) => {
                     }
                 } else if (category.frequency === 'bi-annually') {
                     if (
-                        date.getMonth() + 1 == category.month &&
-                        date.getDate() + 1 == category.date
+                        date.getMonth() == category.month &&
+                        date.getDate() == category.date
                     ) {
                         console.log('bi-annually');
                         if (managers.length > 0) {
@@ -214,19 +278,19 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
                         }
-
                         if (supervisors.length > 0) {
                             for (let supervisor of supervisors) {
                                 const obj = {
@@ -240,14 +304,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -269,19 +334,19 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
                         }
-
                         if (supervisors.length > 0) {
                             for (let supervisor of supervisors) {
                                 const obj = {
@@ -295,14 +360,15 @@ exports.formCron = async (req, res) => {
                                 };
                                 if (category.type === 'register') {
                                     const data = await Form.findOne({
-                                        category_id:
-                                            category.category_id,
+                                        category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
                                         await Form.create(obj);
+										console.log(12333);
                                     } else {
-                                        await Form.create(obj);
+                                        // await Form.create(obj);
+										console.log(1233344444);
                                     }
                                 }
                             }
@@ -324,7 +390,7 @@ exports.ppmCron = async (req, res) => {
 		let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
         let date = new Date();
 		// date.addDays(7); //before 7 day task generate
-		date.setDate(date.getDate() - 1);
+		date.setDate(date.getDate() + 7);
 
 		// let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1}).populate({path: 'assignPpmEquipmentId', match: {status: 1}});
 		let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1});
@@ -341,6 +407,7 @@ exports.ppmCron = async (req, res) => {
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
+						assetLocation: EquipmentAssetData.assetLocation,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
 						// completionDate: '',
@@ -363,6 +430,7 @@ exports.ppmCron = async (req, res) => {
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
+						assetLocation: EquipmentAssetData.assetLocation,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
 						// completionDate: '',
@@ -383,6 +451,7 @@ exports.ppmCron = async (req, res) => {
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
+						assetLocation: EquipmentAssetData.assetLocation,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
 						// completionDate: '',
@@ -421,6 +490,7 @@ exports.ppmCron = async (req, res) => {
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 							assignPpmEquipmentAssetId: EquipmentAssetData._id,
 							assetName: EquipmentAssetData.assetName,
+							assetLocation: EquipmentAssetData.assetLocation,
 							vendorName: EquipmentAssetData.vendorName,
 							dueDate: date,
 							// completionDate: '',
@@ -443,6 +513,7 @@ exports.ppmCron = async (req, res) => {
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 						assignPpmEquipmentAssetId: EquipmentAssetData._id,
 						assetName: EquipmentAssetData.assetName,
+						assetLocation: EquipmentAssetData.assetLocation,
 						vendorName: EquipmentAssetData.vendorName,
 						dueDate: date,
 						// completionDate: '',
@@ -468,6 +539,7 @@ exports.ppmCron = async (req, res) => {
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
 							assignPpmEquipmentAssetId: EquipmentAssetData._id,
 							assetName: EquipmentAssetData.assetName,
+							assetLocation: EquipmentAssetData.assetLocation,
 							vendorName: EquipmentAssetData.vendorName,
 							dueDate: date,
 							// completionDate: '',

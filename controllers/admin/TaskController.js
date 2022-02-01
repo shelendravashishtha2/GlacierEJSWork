@@ -139,24 +139,26 @@ exports.propertyUser = async (req,res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let propertyData = await Property.findOne({_id:req.query.propertyId},{property_name:1});
+		let propertyData = await Property.findOne({_id: req.query.propertyId}, {property_name: 1});
 		if(!propertyData){
 			return res.status(200).send({
 			    "status": false,
 			    "status_code": "200"
 			});	
 		}
-		let allSupervisor = await User.find({"position_id":5,property_id:req.query.propertyId},{full_name:1})
-		let allManager = await User.find({"position_id":4,property_id:req.query.propertyId},{full_name:1})
-		let allOperationTeam = await User.find({"position_id":2,property_id:req.query.propertyId},{full_name:1})
-		let usedCategory = await Task.distinct( "categoryId", { propertyId:req.query.propertyId });
-		let allCategory = await Category.find({_id: {$nin: usedCategory},status:1});
+
+		let allOperationTeam = await User.find({"position_id": 2}, {full_name: 1})
+		let assignOperationTeam = await Task.find({propertyId: req.query.propertyId}).distinct("operationTeamId");
+		let usedCategory = await Task.distinct( "categoryId", {propertyId: req.query.propertyId});
+		let assignedCategory = await Category.find({_id: {$in: usedCategory}, status: 1});
+		let allCategory = await Category.find({status: 1});
+
 		return res.status(200).send({
-		    "status": true,
-		    allSupervisor: allSupervisor,
-		    allManager: allManager,
-		    allCategory: allCategory,
-		    allOperationTeam: allOperationTeam
+			"status": true,
+			allCategory: allCategory,
+			assignedCategory: assignedCategory,
+			allOperationTeam: allOperationTeam,
+			assignOperationTeam: assignOperationTeam,
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -174,32 +176,34 @@ exports.createTaskSubmit = async (req,res) => {
 			categoryId: Joi.required(),
 			operationTeamId: Joi.required(),
 			managerId: Joi.optional(),
-			superviserId: Joi.optional(),
+			supervisorId: Joi.optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let alreadyTask = await Task.findOne({propertyId:req.body.propertyId,categoryId:req.body.categoryId});
-		if(alreadyTask){
-			return res.redirect("/task");
-		}
-		for(let i=0;i<req.body.categoryId.length;i++){
-			let task = await Task.create({
-				propertyId: req.body.propertyId,
-				categoryId: req.body.categoryId[i],
-				operationTeamId: req.body.operationTeamId,
-				managerId: req.body.managerId,
-				superviserId: req.body.superviserId,
 
-			})
+		for(let i=0;i<req.body.categoryId.length;i++){
+			let alreadyExists = await Task.exists({propertyId: req.body.propertyId, categoryId: req.body.categoryId[i]});
+			if(!alreadyExists){
+				await Task.create({
+					propertyId: req.body.propertyId,
+					categoryId: req.body.categoryId[i],
+					operationTeamId: req.body.operationTeamId,
+				})
+			} else {
+				await Task.updateOne({propertyId: req.body.propertyId, categoryId: req.body.categoryId[i]},{
+					operationTeamId: req.body.operationTeamId,	
+				})
+			}
+			
 		}
 		return res.redirect("/task?message=Task Assign Successfully");
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";
-		req.session.error = {errorMessage: errorMessage,inputData: req.body};
+		req.session.error = {errorMessage: errorMessage, inputData: req.body};
 		return res.redirect('back');
 	}
 }
@@ -208,6 +212,7 @@ exports.createTask = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Task List', session:req.session};
+
 		let taskData = await Task.distinct("propertyId", { });
 		let query = {};
 		/*if(taskData.length > 0){
@@ -215,7 +220,7 @@ exports.createTask = async (req,res) => {
 		}*/
 		let propertyData = await Property.find(query,{property_name:1});
 		let allCategory = await Category.find({"status":1},{category_name:1})
-		return res.render('Admin/Task/create',{'data':propertyData,allCategory:allCategory});
+		return res.render('Admin/Task/create',{ data: propertyData, allCategory: allCategory});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -229,23 +234,25 @@ exports.createTask = async (req,res) => {
 exports.updateTaskSubmit = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
+		res.locals = { title: 'Task List', session:req.session};
+
 		let schema = Joi.object({
 			taskId: Joi.required(),
 			categoryId: Joi.required(),
 			operationTeamId: Joi.required(),
 			managerId: Joi.optional(),
-			superviserId: Joi.optional(),
+			supervisorId: Joi.optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		res.locals = { title: 'Task List', session:req.session};
+		
 		let taskData = await Task.updateOne({_id:req.body.taskId},{
 			categoryId: req.body.categoryId?req.body.categoryId:[],
 			operationTeamId: req.body.operationTeamId?req.body.operationTeamId:[],
 			managerId: req.body.managerId?req.body.managerId:[],
-			superviserId: req.body.superviserId?req.body.superviserId:[],
+			supervisorId: req.body.supervisorId?req.body.supervisorId:[],
 
 		})
 		return res.redirect("/edit-task/"+req.body.taskId+"?message=Task Updated Successfully")
@@ -312,8 +319,8 @@ exports.viewTask = async (req,res) => {
 				managers.push(manager[i].full_name);
 			}
 		}
-		if(taskData.superviserId.length > 0){
-			let supervisor = await User.find({_id:{ $in: taskData.superviserId}},{full_name:1});
+		if(taskData.supervisorId.length > 0){
+			let supervisor = await User.find({_id:{ $in: taskData.supervisorId}},{full_name:1});
 			for(let i=0;i<supervisor.length;i++){
 				supervisors.push(supervisor[i].full_name);
 			}

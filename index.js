@@ -86,13 +86,12 @@ app.use('/api', apiRouter);
 app.use('/admin/api', adminRouter);
 
 //cron schedule
-cron.schedule('31 18 * * *', async () => {
-    await formCron();
-});
 cron.schedule('01 00 * * *', async () => { //will run every day at 12:01 AM
+	await formCron();
 	await ppmCron();
 });
 cron.schedule('*/10 * * * * *', async () => { //for testing
+	// await formCron();
 	// await ppmCron();
 });
 

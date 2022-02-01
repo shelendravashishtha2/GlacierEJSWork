@@ -36,7 +36,7 @@
                 <div class="row mb-2">
                     <div class="col-md-7">
                         <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Property Name<span class="required">*</span></label>
+                            <label class="col-md-5 col-form-label">Select Property Name<span class="required">*</span></label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
                                 <select class="form-select" id="propertyId" name="propertyId" onchange="changeProperty()" required>
                                     <option value="">Select Property Name</option>
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Category Name<span class="required">*</span></label>
+                            <label class="col-md-5 col-form-label">Select Category Name<span class="required">*</span></label>
                             <div class="col-md-7" style="border: 1px solid #ced4da;">
                                 <div data-simplebar="init" style="max-height: 300px;">
                                     <div class="simplebar-wrapper" style="margin: 0px;">
@@ -72,23 +72,9 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Operations Team <span class="required">*</span></label>
+                            <label class="col-md-5 col-form-label">Select Operations Team <span class="required">*</span></label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
                                 <select class="select2 form-control select2-multiple" name="operationTeamId[]" id="operationTeamId" multiple="multiple" data-placeholder="Choose Operations Team...">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3 row" style="display: none;">
-                            <label class="col-md-4 col-form-label">Select Manager</label>
-                            <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="managerId[]" id="managerId" multiple="multiple" data-placeholder="Choose Manager...">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3 row" style="display: none;">
-                            <label class="col-md-4 col-form-label">Select Supervisor</label>
-                            <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="superviserId[]" id="superviserId" multiple="multiple" data-placeholder="Choose Supervisor...">
                                 </select>
                             </div>
                         </div>
@@ -118,7 +104,7 @@
             }
       }
       if(isAtLeastOneCheckboxSelected == false){
-        toastr.error("Please select atleast one category");
+        toastr.error("Please select at list one category");
       }
       return isAtLeastOneCheckboxSelected;
     });
@@ -130,39 +116,47 @@
             propertyId: propertyId
         },
         function(data, status){
-           let managerOption = "";
-           let supervisorOption = "";
-           let operationTeamOption = "";
-           let categoryOption = "";
-           for(let i = 0;i< data.allSupervisor.length;i++){
-                supervisorOption = supervisorOption + "<option value='"+data.allSupervisor[i]._id+"'>"+data.allSupervisor[i].full_name+"</option>";
-           }
-           for(let i = 0;i< data.allManager.length;i++){
-                managerOption = managerOption + "<option value='"+data.allManager[i]._id+"'>"+data.allManager[i].full_name+"</option>";
-           }
-           for(let i = 0;i< data.allOperationTeam.length;i++){
-                operationTeamOption = operationTeamOption + "<option value='"+data.allOperationTeam[i]._id+"'>"+data.allOperationTeam[i].full_name+"</option>";
-           }
-           for(let i = 0;i< data.allCategory.length;i++){
+			let operationTeamOption = "";
+			let categoryOption = "";
+			
+			// operation team select box
+			for(let i = 0;i< data.allOperationTeam.length;i++){
+				const allOperationTeamData = data.allOperationTeam[i];
+				let selected = '';
+				for (let j = 0; j < data.assignOperationTeam.length; j++) {
+					const assignOperationTeamData = data.assignOperationTeam[j];
+					if (assignOperationTeamData == allOperationTeamData._id) {
+						selected = 'selected';
+					}
+				}
+				operationTeamOption = operationTeamOption + "<option value='"+data.allOperationTeam[i]._id+"' "+selected+">"+data.allOperationTeam[i].full_name+"</option>";
+			}
+
+			//category box
+			for(let i = 0; i < data.allCategory.length; i++){
+				const allCategoryData = data.allCategory[i];
+				let checked = '';
+				for (let j = 0; j < data.assignedCategory.length; j++) {
+					const assignedCategoryData = data.assignedCategory[j];
+					if (assignedCategoryData._id == allCategoryData._id) {
+						checked = 'checked';
+					}
+				}
                 categoryOption = categoryOption + `<tr>
-                <td style="width: 50px;">
-                    <div class="form-check">
-                        <input class="form-check-input" name="categoryId[]" type="checkbox" id="tasklistCheck`+(i+1)+`" value="`+ data.allCategory[i]._id+`" checked >
-                        <label class="form-check-label" for="tasklistCheck`+(i+1)+`"></label>
-                    </div>
-                </td>
-                <td>
-                    <h5 class="text-truncate font-size-14 mb-1"><a href="#" class="text-dark">`+data.allCategory[i].category_name+`</a></h5>
-                </td>
-            </tr>`;
-}
-           $("#allCategory").html(categoryOption);
-           $("#superviserId").html(supervisorOption);
-           $("#managerId").html(managerOption);
-           $("#operationTeamId").html(operationTeamOption);
-           $("#superviserId").select2();
-           $("#managerId").select2();
-           $("#operationTeamId").select2();
+					<td style="width: 50px;">
+						<div class="form-check">
+							<input class="form-check-input" name="categoryId[]" type="checkbox" id="tasklistCheck`+(i+1)+`" value="`+ data.allCategory[i]._id+`" ${checked} >
+							<label class="form-check-label" for="tasklistCheck`+(i+1)+`"></label>
+						</div>
+					</td>
+					<td>
+						<h5 class="text-truncate font-size-14 mb-1"><a href="#" class="text-dark">`+data.allCategory[i].category_name+`</a></h5>
+					</td>
+				</tr>`;
+			}
+			$("#allCategory").html(categoryOption);
+			$("#operationTeamId").html(operationTeamOption);
+			$("#operationTeamId").select2();
         });
     }
 </script>

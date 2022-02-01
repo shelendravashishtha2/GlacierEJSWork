@@ -24,31 +24,32 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+            <form method="GET" action="/group-list" id="form">
                 <div class="row mb-2">
                    <!-- start searching -->
                    <div class="col-sm-3">
                         <div class="search-box">
                             <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
+                                <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
+                                <input type="hidden" name="page" id="page" value="<%= page %>">
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-3" style="padding: 0px;">
-                        <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
+                        <button type="button" onclick="pagination(1)" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
                     </div>
                     <!-- end searching -->
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <button type="button"
-                                class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addgroup"> <b>NEW GROUP</b> </button>
-                            <button type="button"
-                                class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addtopic"> <b>ADD TOPIC</b> </button>
-                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addchecklist"> <b>ADD CHECKLIST</b>
+                            <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addgroup"> <b>NEW GROUP</b> </button>
+                            <button type="button" hidden class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addtopic" id="addtopic"> <b>ADD TOPIC</b> </button>
+                            <button type="button" hidden class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addchecklist" id="addchecklist"> <b>ADD CHECKLIST</b>
                             </button>
                         </div>
                     </div>
                 </div>
                 <hr>
+            </form>
                 <div class="table-responsive">
                     <table class="table align-middle table-nowrap table-check">
                         <thead class="table-light">
@@ -60,35 +61,46 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% if(data.length ==0) { %>
+                                <tr><td colspan="4" class="text-center">No data found</td></tr>
+                            <% } %>
+                            <% for (i = 0; i < data.length; i++) { %>
                             <tr>
-                                <td class="text-center" style="width: 7%;">1</td>
-                                <td>Compliance</td>
+                                <td style="width: 7%;" class="text-center"><%= (10*(page-1))+ 1 + i %></td>
+                                <td><%= data[i].groupName %></td>
                                 <td class="text-center" style="width: 7%;">
-                                    <input type="checkbox" id="switch0" switch="warning" checked="">
-                                    <label for="switch0" data-on-label="Yes" data-off-label="No"></label>
+                                    <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i]._id %>" switch="warning" <% if(data[i].status == 1){ %> checked <% } %>>
+                                    <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
-                                    <a href="/edit-group-name" type="button" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <a href="/edit-group-name/<%= data[i]._id %>" type="button" class="btn btn-outline-warning"><b>Edit</b></a>
                                 </td>
                             </tr>
+                              <% } %>
                         </tbody>
                     </table>
                 </div>
+               <!-- start pagination -->
                 <ul class="pagination pagination-rounded justify-content-end mb-2">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                            <i class="mdi mdi-chevron-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
+                    <% if(page > 1){ %>
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="pagination(<%=(Number(page)-1)%>)" aria-label="Previous">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% for (i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item  <% if(page == i){ %> active <% } %>"><a class="page-link"  href="#" onclick="pagination(<%=i%>)"><%=i%></a></li>
+                    <% } %>
+                    <% if(page < totalPage){ %>
                     <li class="page-item">
-                        <a class="page-link" href="javascript: void(0);" aria-label="Next">
+                        <a class="page-link"  href="#" onclick="pagination(<%=(Number(page)+1)%>)" aria-label="Next">
                             <i class="mdi mdi-chevron-right"></i>
                         </a>
                     </li>
+                    <% } %>
                 </ul>
+                <!-- end pagination -->
             </div>
         </div>
     </div>
@@ -107,12 +119,13 @@
                 <div class="row">
                     <label for="example-text-input" class="col-md-3 col-form-label">Group Name<span class="required">*</span></label>
                     <div class="col-md-9">
-                        <input class="form-control" type="text" value="Compliance" id="example-text-input" placeholder="Enter Compliance">
+                        <input class="form-control" type="text" id="groupName" name="groupName" placeholder="Enter Group Name" maxlength="200">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-dismiss="modal">Next</button>
+            <div class="modal-footer" style="margin-top: -10px;">
+                <button type="button" id="submitGroup" class="btn btn-warning waves-effect waves-light">Next</button>
+                <button type="button" id="newGroupClose" hidden data-bs-dismiss="modal">close</button>
             </div>
             <div style="padding:0px 10px 10px 10px;"> <span class="required">*</span> Represent that it's compulsory fields </div>
         </div>
@@ -133,18 +146,19 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label for="example-text-input" class="col-md-3 col-form-label">Group Name:-</label>
-                        <label for="example-text-input" class="col-md-3 col-form-label">Compliance</label>
+                        <label for="example-text-input" class="col-md-3 col-form-label" id="groupNameLabel"></label>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="example-text-input" class="col-md-3 col-form-label">Topic Name<span class="required">*</span></label>
                     <div class="col-md-8">
-                        <input class="form-control" type="text" value="Fire" id="example-text-input" placeholder="Fire">
+                        <input class="form-control" type="text" name="topicName" id="topicName" placeholder="Enter Topic Name">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-dismiss="modal">Next</button>
+                <button type="button" id="submitTopic" class="btn btn-warning waves-effect waves-light">Next</button>
+                <button type="button" id="newTopicClose" hidden data-bs-dismiss="modal">close</button>
             </div>
         </div>
     </div>
@@ -160,49 +174,118 @@
                 <h5 class="modal-title" id="orderdetailsModalLabel">Add Checklist</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="/add-group" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="example-text-input" class="col-md-6 col-form-label">Group Name :-</label>
-                        <label for="example-text-input" class="col-md-3 col-form-label">Compliance</label>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="example-text-input" class="col-md-6 col-form-label">Topic Name :-</label>
-                        <label for="example-text-input" class="col-md-3 col-form-label">Fire</label>
-                    </div>
-                </div>
-                <br>
+                <input type="hidden" name="groupName" id="finalGroupName">
+                <input type="hidden" name="topicName" id="finalTopicName">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label">Check List :-</label>
+                            <label for="example-text-input" class="col-md-4 col-form-label">Group Name :-</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="Are All Fire Extinguishers in Green Zone" id="example-text-input" placeholder="Are All Fire Extinguishers in Green Zone">
+                                <span id="topicGroupNameLabel"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">Topic Name :-</label>
+                            <div class="col-md-8">
+                                <span id="topicNameLabel"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="checkListTitle" class="col-md-4 col-form-label">Check List :-</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" name="checkListTitle" id="checkListTitlet" placeholder="Enter check list">
                             </div>
                         </div>
 
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label">Cue For Auditor :-</label>
+                            <label for="cueForAuditor" class="col-md-4 col-form-label">Cue For Auditor :-</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="Tack 4 Random Sample From each Tow" id="example-text-input" placeholder="Tack 4 Random Sample From each Tow">
+                                <input class="form-control" type="text" name="cueForAuditor" id="cueForAuditor" placeholder="Enter Cue For Auditor">
                             </div>
                         </div>
 
                         <div class="mb-3 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label">Weightage :-</label>
+                            <label for="weightage" class="col-md-4 col-form-label">Weightage :-</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="1" id="example-text-input" placeholder="1">
+                                <input class="form-control" type="text" name="weightage" value="1" id="weightage" placeholder="1">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" data-bs-dismiss="modal">Submit</button>
+                <button type="submit" class="btn btn-warning btn-rounded waves-effect waves-light">Submit</button>
             </div>
+            </form>
         </div>
     </div>
 </div>
 <!-- end modal -->
 <%- contentFor('FooterJs') %>
+<script>
+// Any change event occuring on any input.staus (checkbox)...
+$('.status').on('change', function(e) {
+    // A boolean that reflects the checkbox "check status"
+    let checked = $(this).is(':checked');
+    // A simple confirm...
+    let changed = confirm("Are you sure you want to change this status?");
+    //... if user cancels...
+    if (!changed) {
+        /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+        [return][Terminate function - don't do anything else] */
+        return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+    }else{
+        $.post("<%=process.env.PUBLIC_URL%>/update-group-status", {
+            grpId: $(this).val()
+            }, function(data, status){
+            toastr.success(data.message);
+        });
+    }
+});
+</script>
+<script>
+
+function pagination(i){
+    $("#page").val(i);
+    $("#form").submit();
+}
+
+$("#submitGroup").click(function(){
+    let groupName = $("#groupName").val();
+    if(groupName.trim() != ""){
+        $("#groupNameLabel").html(groupName);
+        $("#newGroupClose").click();
+        $("#addtopic").click();
+    }else{
+        toastr.error("Group name is required!");
+    }
+})
+
+$("#submitTopic").click(function(){
+    let topicName = $("#topicName").val();
+    let groupName = $("#groupName").val();
+    if(topicName.trim() != ""){
+        $("#topicNameLabel").html(topicName);
+        $("#topicGroupNameLabel").html(groupName);
+        $("#finalTopicName").val(topicName);
+        $("#finalGroupName").val(groupName);
+        $("#addchecklist").click();
+        $("#newTopicClose").click();
+    }else{
+        toastr.error("Topic name is required!");
+    }
+})
+</script>
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>
