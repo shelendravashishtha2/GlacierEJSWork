@@ -18,10 +18,11 @@ exports.taskList = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Assign Task List', session: req.session };
 
-		// let page = 1;
-		// if(req.query.page != undefined){
-		// 	page = req.query.page;
-		// }
+		let page = 1;
+		if(req.query.page != undefined){
+			page = req.query.page;
+		}
+		
 		// let limit = { $limit : 10};
 		// let skip = { $skip : (page - 1) * 10};
 		// let group = {
@@ -225,9 +226,9 @@ exports.createTask = async (req, res) => {
 
 		let taskData = await Task.distinct("propertyId", {});
 		let query = {};
-		/*if(taskData.length > 0){
+		if(taskData.length > 0){
 			query = {_id: {$nin: taskData}}
-		}*/
+		}
 		let propertyData = await Property.find(query, { property_name: 1 });
 		let allCategory = await Category.find({ "status": 1 }, { category_name: 1 })
 		return res.render('Admin/Task/create', { data: propertyData, allCategory: allCategory });

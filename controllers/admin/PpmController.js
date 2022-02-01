@@ -1,5 +1,4 @@
 const User = require("../../models/User");
-// const PPM = require("../../models/PPM");
 const PpmEquipment = require("../../models/ppmEquipment");
 const PpmEquipmentAsset = require("../../models/ppmEquipmentAsset");
 const assignPpmEquipment = require("../../models/assignPpmEquipment");

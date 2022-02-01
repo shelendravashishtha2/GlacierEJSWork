@@ -1,4 +1,4 @@
-const PPM = require("../../models/PPM");
+const PPM = require("../../models/ppmEquipment");
 const wingPPMS = require("../../models/wingPPMS");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;

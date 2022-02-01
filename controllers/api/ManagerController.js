@@ -1,6 +1,6 @@
 const User = require("../../models/User");
 const Task = require("../../models/propertyTask");
-const PPM = require("../../models/PPM");
+const PPM = require("../../models/ppmEquipment");
 const Category = require("../../models/Category");
 const CategoryCheckList = require("../../models/CategoryCheckList");
 const Property = require("../../models/Property");
