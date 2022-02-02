@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const mngRatingCheckListSchema = new mongoose.Schema({
+const MngRatingCheckListMasterSchema = new mongoose.Schema({
 	ratingGroupId: {
 		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Group',
+		ref: 'Mng_Rating_Group_Master',
 		required: true
 	},
 	ratingTopicId: {
 		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Topic',
+		ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
 	checkListTitle: {
@@ -38,5 +38,5 @@ const mngRatingCheckListSchema = new mongoose.Schema({
 });
 
 
-const mngRatingCheckList = new mongoose.model("mng_Rating_Check_List", mngRatingCheckListSchema);
-module.exports = mngRatingCheckList;
+const MngRatingCheckListMaster = new mongoose.model("Mng_Rating_CheckList_Master", MngRatingCheckListMasterSchema);
+module.exports = MngRatingCheckListMaster;

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const CategoryFrcMasterSchema = new mongoose.Schema({
 	category_id: {
 		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Category',
+		ref: 'Category_Master',
 		required:true,
 		trim: true,
 	},

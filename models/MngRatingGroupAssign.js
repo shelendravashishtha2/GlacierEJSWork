@@ -1,23 +1,18 @@
 const mongoose = require("mongoose");
-const mngRatingAssignAuditorTopicSchema = new mongoose.Schema({
-    propertyId: {
+const MngRatingGroupAssignSchema = new mongoose.Schema({
+	propertyId: {
 		type:  mongoose.Schema.Types.ObjectId,
 		ref: 'Property',
 		required: true
     },
     groupId: {
 		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Group',
+		ref: 'Mng_Rating_Group_Master',
 		required: true
 	},
 	auditorId: {
 		type:  mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: true
-	},
-	topicId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Topic',
 		required: true
 	},
 	status: {
@@ -31,6 +26,5 @@ const mngRatingAssignAuditorTopicSchema = new mongoose.Schema({
 	timestamps: true
 });
 
-
-const mngRatingAssignAuditorTopic = new mongoose.model("mng_Rating_Assign_Auditor_topic", mngRatingAssignAuditorTopicSchema);
-module.exports = mngRatingAssignAuditorTopic;
+const MngRatingGroupAssign = new mongoose.model("Mng_Rating_Group_Assign", MngRatingGroupAssignSchema);
+module.exports = MngRatingGroupAssign;

@@ -1,8 +1,8 @@
-const PropertyTask = require('../models/propertyTask');
-const CategoryCheckList = require('../models/CategoryCheckList');
+const PropertyTask = require('../models/CategoryAssign');
+const CategoryCheckList = require('../models/CategoryFrcMaster');
 const Form = require('../models/Form');
-const assignPpmEquipmentAsset = require('../models/assignPpmEquipmentAsset');
-const assignPpmTask = require('../models/assignPpmTask');
+const PpmEquipmentAssetAssign = require('../models/PpmEquipmentAssetAssign');
+const PpmTaskAssign = require('../models/PpmTaskAssign');
 
 exports.formCron = async (req, res) => {
     try {
@@ -392,8 +392,8 @@ exports.ppmCron = async (req, res) => {
 		// date.addDays(7); //before 7 day task generate
 		date.setDate(date.getDate() + 7);
 
-		// let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1}).populate({path: 'assignPpmEquipmentId', match: {status: 1}});
-		let assignPpmEquipmentAssetData = await assignPpmEquipmentAsset.find({status: 1});
+		// let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({status: 1}).populate({path: 'assignPpmEquipmentId', match: {status: 1}});
+		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({status: 1});
 
 		for (const EquipmentAssetData of assignPpmEquipmentAssetData) {
 			if (EquipmentAssetData.frequency == frequencyArray[0]) { // Weekly
@@ -401,7 +401,7 @@ exports.ppmCron = async (req, res) => {
 					console.log('Weekly generate task');
 					// console.log(EquipmentAssetData);
 
-					await assignPpmTask.create({
+					await PpmTaskAssign.create({
 						propertyId: EquipmentAssetData.propertyId,
 						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
@@ -424,7 +424,7 @@ exports.ppmCron = async (req, res) => {
 					console.log('Fortnightly generate task');
 					// console.log(EquipmentAssetData);
 
-					await assignPpmTask.create({
+					await PpmTaskAssign.create({
 						propertyId: EquipmentAssetData.propertyId,
 						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
@@ -445,7 +445,7 @@ exports.ppmCron = async (req, res) => {
 					console.log('Monthly generate task');
 					// console.log(EquipmentAssetData);
 
-					await assignPpmTask.create({
+					await PpmTaskAssign.create({
 						propertyId: EquipmentAssetData.propertyId,
 						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
@@ -484,7 +484,7 @@ exports.ppmCron = async (req, res) => {
 						console.log('Quarterly generate task');
 						// console.log(EquipmentAssetData);
 
-						await assignPpmTask.create({
+						await PpmTaskAssign.create({
 							propertyId: EquipmentAssetData.propertyId,
 							// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
@@ -507,7 +507,7 @@ exports.ppmCron = async (req, res) => {
 					console.log('Annually generate task');
 					// console.log(EquipmentAssetData);
 
-					await assignPpmTask.create({
+					await PpmTaskAssign.create({
 						propertyId: EquipmentAssetData.propertyId,
 						// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 						assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
@@ -533,7 +533,7 @@ exports.ppmCron = async (req, res) => {
 						console.log('Bi-Annually generate task');
 						// console.log(EquipmentAssetData);
 
-						await assignPpmTask.create({
+						await PpmTaskAssign.create({
 							propertyId: EquipmentAssetData.propertyId,
 							// ppmEquipmentId: EquipmentAssetData.ppmEquipmentId,
 							assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,

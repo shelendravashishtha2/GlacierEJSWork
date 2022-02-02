@@ -1,15 +1,11 @@
 const mongoose = require("mongoose");
-const mngRatingTopicSchema = new mongoose.Schema({
-	ratingGroupId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Group',
-		required: true
-	},
-	topicName: {
+const MngRatingGroupMasterSchema = new mongoose.Schema({
+	groupName: {
 		type: String,
 		trim: true,
 		required: true
 	},
+	
 	status: {
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
@@ -22,5 +18,5 @@ const mngRatingTopicSchema = new mongoose.Schema({
 });
 
 
-const mngRatingTopic = new mongoose.model("mng_Rating_Topic", mngRatingTopicSchema);
-module.exports = mngRatingTopic;
+const MngRatingGroupMaster = new mongoose.model("Mng_Rating_Group_Master", MngRatingGroupMasterSchema);
+module.exports = MngRatingGroupMaster;

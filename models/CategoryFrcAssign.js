@@ -8,7 +8,7 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 	},
 	assignCategoryId: {
 		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Property',
+		ref: 'Category_Assign',
 		required: true
 	},
 	supervisorId: {

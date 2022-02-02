@@ -8,7 +8,7 @@ const CategoryAssignSchema = new mongoose.Schema({
 	},
 	categoryId: {
 		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Category',
+		ref: 'Category_Master',
 		required: true
 	},
 	operationTeamId: {

@@ -103,10 +103,8 @@ router.post('/update-property-wing-status', PpmController.updatePropertyWingStat
 router.post('/update-ppm-task-status', PpmController.updatePpmTaskStatus);
 router.get('/properties-wise-view-ppm/:id', isUserAllowed, PpmController.propertiesWisePpmList);
 router.get('/ppm-details/:id/:pid', isUserAllowed, PpmController.ppmDetails);
-router.get('/edit-wing-category/:pid/:id', isUserAllowed, PpmController.editWingCategory);
-router.post('/edit-property-wing', PpmController.editPropertyWing);
+// router.post('/edit-property-wing', PpmController.editPropertyWing);
 router.get('/property-wing-list', isUserAllowed, PpmController.propertyWingList);
-router.get('/property-equipments-list', isUserAllowed, PpmController.propertyEquipmentsList);
 router.post('/store-assign-property-ppm-equipments', PpmController.addPropertyWing);
 router.get('/assign-ppm', isUserAllowed, PpmController.assignPpmList);
 router.get('/assign-ppm-equipment-asset-list/:pid/:id', isUserAllowed, PpmController.assignPpmEquipmentAssetList);

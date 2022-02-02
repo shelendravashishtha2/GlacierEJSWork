@@ -1,6 +1,6 @@
 const User = require("../../models/User");
-const Task = require("../../models/propertyTask");
-const CategoryCheckList = require("../../models/CategoryCheckList");
+const CategoryAssign = require("../../models/CategoryAssign");
+const CategoryCheckList = require("../../models/CategoryFrcMaster");
 const Form = require("../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -10,58 +10,70 @@ const Joi = require("joi");
 
 exports.categoryList = async (req, res) => {
 	try {
-		
-		//let categoryData = await Category.find({status:1},{category_name:1});
-		let propertyIds = [];
-		for(let i=0;i < req.user.property_id.length;i++){
-			propertyIds.push(ObjectId(req.user.property_id[i]));
+		let schema = Joi.object({
+			propertyId: Joi.string().min(24).max(24).required()
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let condition = {"$match": {propertyId: {$in:propertyIds}}};
-		let project = {
-			$project:{
-				category_id:"$categories._id",
-				category_name:"$categories.category_name",
-				createdAt:"$categories.createdAt",
-				percentage:"25"
-			}
-		}
-		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$categoryId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
-                                    {
-                                        $eq: [false, "$$isDeleted"]
-                                    }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-							category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-		let categoryData = await Task.aggregate([condition,lookup,unwind,project]);
+		// let propertyIds = [];
+		// for(let i=0;i < req.user.property_id.length;i++){
+		// 	propertyIds.push(ObjectId(req.user.property_id[i]));
+		// }
+
+		// let condition = {"$match": {propertyId: {$in:propertyIds}}};
+		// let project = {
+		// 	$project:{
+		// 		category_id:"$categories._id",
+		// 		category_name:"$categories.category_name",
+		// 		createdAt:"$categories.createdAt",
+		// 		percentage:"25"
+		// 	}
+		// }
+		// let lookup = {
+        // 	$lookup: {
+        //         from: 'categories',
+        //         let: {
+        //             id: "$categoryId"
+        //         },
+        //         pipeline: [{
+        //                 $match: {
+        //                     $expr: {
+        //                         $and: [{
+        //                                 $eq: ["$_id", "$$id"]
+        //                             }/*,
+        //                             {
+        //                                 $eq: [false, "$$isDeleted"]
+        //                             }*/
+        //                         ]
+        //                     }
+        //                 }
+        //             },
+        //             {
+        //                 $project: {
+        //                     _id:1,
+		// 					category_name: 1
+        //                 }
+        //             }
+        //         ],
+        //         as: 'categories',
+        //     }
+        // }
+
+        // let unwind = {
+        //     $unwind: {
+        //         path: "$categories",
+        //         preserveNullAndEmptyArrays: true
+        //     }
+        // }
+		// let categoryData = await CategoryAssign.aggregate([condition,lookup,unwind,project]);
+
+		let categoryData = await CategoryAssign.find({propertyId: req.body.propertyId, operationTeamId: req.user._id})
+				.populate({path: 'categoryId', model: 'Category_Master'});
+
+		categoryData = categoryData.map(function(i) { return i.categoryId; });
 
 		return res.status(200).send({
 		    "status": true,

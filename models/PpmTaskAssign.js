@@ -6,11 +6,11 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 		required:true
 	},
 	assignPpmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment',
+		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Assign',
 		required:true,
 	},
 	assignPpmEquipmentAssetId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'assign_Ppm_Equipment_Asset',
+		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Asset_Assign',
 		required:true,
 	},
 

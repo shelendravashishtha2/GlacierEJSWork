@@ -1,28 +1,23 @@
 const mongoose = require("mongoose");
-const mngRatingAssignAuditorTopicWiseCheckListSchema = new mongoose.Schema({
+const MngRatingTopicAssignSchema = new mongoose.Schema({
     propertyId: {
 		type:  mongoose.Schema.Types.ObjectId,
 		ref: 'Property',
 		required: true
     },
-	ratingGroupId: {
+    groupId: {
 		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Group',
+		ref: 'Mng_Rating_Group_Master',
 		required: true
 	},
-	ratingTopicId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Topic',
-		required: true
-	},
-	checkListId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'mng_Rating_Check_List',
-		required: true
-	},
-    auditorId: {
+	auditorId: {
 		type:  mongoose.Schema.Types.ObjectId,
 		ref: 'User',
+		required: true
+	},
+	topicId: {
+		type:  mongoose.Schema.Types.ObjectId,
+		ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
 	status: {
@@ -37,5 +32,5 @@ const mngRatingAssignAuditorTopicWiseCheckListSchema = new mongoose.Schema({
 });
 
 
-const mngRatingAssignAuditorTopicWiseCheckList = new mongoose.model("mng_Rating_Assign_Auditor_topic_wise_checklist", mngRatingAssignAuditorTopicWiseCheckListSchema);
-module.exports = mngRatingAssignAuditorTopicWiseCheckList;
+const MngRatingTopicAssign = new mongoose.model("Mng_Rating_Topic_Assign", MngRatingTopicAssignSchema);
+module.exports = MngRatingTopicAssign;

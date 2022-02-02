@@ -74,5 +74,6 @@ router.post("/manager/updateRating", auth, ManagerController.updateRating)
 router.post("/supervisor/update", auth, AuthController.update); // user login
 router.get("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
 // router.get("/supervisor/formList", auth, SupervisorController.formList);
-router.post("/supervisor/updateRating", auth, SupervisorController.updateRating)
+router.post("/supervisor/updateRating", auth, SupervisorController.updateRating);
+
 module.exports = router;

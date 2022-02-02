@@ -1,5 +1,4 @@
-const PPM = require("../../models/ppmEquipment");
-const wingPPMS = require("../../models/wingPPMS");
+const PPM = require("../../models/PpmEquipmentMaster");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../helper/response");
@@ -136,13 +135,7 @@ exports.propertiesWisePpmList = async (req,res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let winglist = await wingPPMS.find({propertyId:req.body.projectId});
-		let ppmArray = [];
-		for(let i =0;i<winglist.length;i++){
-			for(let j =0;j<winglist[i].ppmIds.length;j++){
-				ppmArray.push(winglist[i].ppmIds[j]);
-			}
-		}
+
 		let project = {
 			$project:{
 				_id:{_id:1},
@@ -151,13 +144,13 @@ exports.propertiesWisePpmList = async (req,res) => {
 		}
        
 		let ppmData = await PPM.aggregate([project]);
+
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
             "message": "Property wise ppm list",
 		    data: ppmData
 		});
-
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

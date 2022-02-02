@@ -1,5 +1,5 @@
-const Category = require("../../models/Category");
-const CategoryCheckList = require("../../models/CategoryCheckList");
+const Category = require("../../models/CategoryMaster");
+const CategoryCheckList = require("../../models/CategoryFrcMaster");
 const Form = require("../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
