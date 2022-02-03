@@ -89,7 +89,7 @@
                             <% for (i = 0; i < data.length; i++) { %>
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
-                                <td><%= data[i].checkListTitle %></td>
+                                <td><%= data[i].checklistTitle %></td>
                                 <td><%= data[i].cueForAuditor %></td>
                                 <td class="text-center" style="width: 7%;"><%= data[i].weightage %></td>
                                 <td class="text-center" style="width: 7%;">
@@ -142,7 +142,7 @@
             <form action="/add-topic-checklist" method="POST" enctype="multipart/form-data" class="custom-validation">
                 <input type="hidden" name="ratingGroupId" value="<%= topicDetails.ratingGroupId._id %>">
                 <input type="hidden" name="ratingTopicId" value="<%= topicDetails._id %>">
-                <input type="hidden" name="checkListId" id="checkListId">
+                <input type="hidden" name="checklistId" id="checklistId">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -160,7 +160,7 @@
                             <div class="mb-3 row">
                                 <label for="example-text-input" class="col-md-4 col-form-label">Check List :-</label>
                                 <div class="col-md-8">
-                                    <input class="form-control" type="text" name="checkListTitle" id="checkListTitle" placeholder="Enter Checklist" required>
+                                    <input class="form-control" type="text" name="checklistTitle" id="checklistTitle" placeholder="Enter Checklist" required>
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -205,8 +205,8 @@ function detailTask(taskIndex){
             detail = taskData[taskIndex];
             console.log(detail);
             $("#orderDetailsModalLabel").html("Edit Checklist");
-            $("#checkListId").val(detail._id);
-            $("#checkListTitle").val(detail.checkListTitle);
+            $("#checklistId").val(detail._id);
+            $("#checklistTitle").val(detail.checklistTitle);
             $("#cueForAuditor").val(detail.cueForAuditor);
             $("#weightage").val(detail.weightage);
         }
@@ -225,7 +225,7 @@ $('.status').on('change', function(e) {
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
         $.post("<%=process.env.PUBLIC_URL%>/update-topic-checklist-status", {
-            topicCheckListId: $(this).val()
+            topicChecklistId: $(this).val()
             }, function(data, status){
             toastr.success(data.message);
         });

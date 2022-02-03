@@ -15,16 +15,17 @@ const MngRatingChecklistAssignSchema = new mongoose.Schema({
 		ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
-	checkListId: {
-		type:  mongoose.Schema.Types.ObjectId,
+	checklistIds: {
+		type:  [mongoose.Schema.Types.ObjectId],
 		ref: 'mng_Rating_Check_List',
 		required: true
 	},
-    auditorId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
-		required: true
-	},
+    // auditorId: {
+	// 	type:  mongoose.Schema.Types.ObjectId,
+	// 	ref: 'User',
+	// 	required: true
+	// },
+	
 	status: {
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1

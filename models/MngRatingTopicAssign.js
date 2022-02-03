@@ -10,16 +10,17 @@ const MngRatingTopicAssignSchema = new mongoose.Schema({
 		ref: 'Mng_Rating_Group_Master',
 		required: true
 	},
-	auditorId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
-		required: true
-	},
-	topicId: {
-		type:  mongoose.Schema.Types.ObjectId,
+	topicIds: {
+		type:  [mongoose.Schema.Types.ObjectId],
 		ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
+	// auditorId: {
+	// 	type:  mongoose.Schema.Types.ObjectId,
+	// 	ref: 'User',
+	// 	required: true
+	// },
+
 	status: {
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1

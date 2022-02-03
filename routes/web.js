@@ -43,11 +43,11 @@ router.get('/categories', isUserAllowed, CategoriesController.categoryList); //c
 router.post('/change-category-status', isUserAllowed, CategoriesController.changeCategoryStatus); //change category status API
 router.get('/create-categories', isUserAllowed, CategoriesController.categoryCreate); //create category
 router.post("/category-store", isUserAllowed, CategoriesController.categoryAddValidationForm, CategoriesController.categoryAdd); // store category
-router.get('/create-category-checklist/:id', isUserAllowed, CategoriesController.createCheckList); //create category vise checklist add 
-router.get('/create-category-checklist', isUserAllowed, CategoriesController.createCheckList); //create category vise checklist add 
-router.post('/store-category-checklist', isUserAllowed, CategoriesController.addCheckListAValidation, CategoriesController.storeChecklist); //store checklist
-router.get('/edit-category-checklist/:id', isUserAllowed, CategoriesController.checkList); //edit category page with view category checklist list page
-router.get('/master-frc', isUserAllowed, CategoriesController.frcCheckList); // FRC Checklist
+router.get('/create-category-checklist/:id', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add 
+router.get('/create-category-checklist', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add 
+router.post('/store-category-checklist', isUserAllowed, CategoriesController.addChecklistAValidation, CategoriesController.storeChecklist); //store checklist
+router.get('/edit-category-checklist/:id', isUserAllowed, CategoriesController.checklist); //edit category page with view category checklist list page
+router.get('/master-frc', isUserAllowed, CategoriesController.frcChecklist); // FRC Checklist
 router.post('/change-checklist-status', isUserAllowed, CategoriesController.changeChecklistStatus); //change category status API
 router.post('/update-categories', isUserAllowed, CategoriesController.updateCategory); //update category
 router.get('/edit-checklist-details/:id', isUserAllowed, CategoriesController.editChecklistDetails); //edit checklist details page
@@ -83,10 +83,11 @@ router.get('/manage-rating', isUserAllowed, ManageRatingController.manageRatingL
 router.post('/add-group', isUserAllowed, ManageRatingController.addGroup);
 router.post('/add-topic', isUserAllowed, ManageRatingController.addTopic);
 router.post('/add-topic-checklist', isUserAllowed, ManageRatingController.addTopicChecklist);
-router.post('/store-assign-auditor', isUserAllowed, ManageRatingController.storeAssignAuditor);
+router.post('/store-assign-groups', isUserAllowed, ManageRatingController.storeAssignAuditor);
 router.get('/assign-auditor', isUserAllowed, ManageRatingController.assignAuditor);
 router.get('/group-list', isUserAllowed, ManageRatingController.groupList);
-router.get('/edit-group', isUserAllowed, ManageRatingController.editGroup);
+router.get('/edit-assign-group', isUserAllowed, ManageRatingController.editGroup);
+// router.post('/update-assign-groups', isUserAllowed, ManageRatingController.updateAssignGroups); //update assign group
 router.get('/edit-group-name/:id', isUserAllowed, ManageRatingController.editGroupName);
 router.get('/edit-topic/:id', isUserAllowed, ManageRatingController.editTopic);
 router.post('/update-group-status', isUserAllowed, ManageRatingController.updateGroupStatus); //
@@ -94,6 +95,7 @@ router.post('/update-rating-topic-status', isUserAllowed, ManageRatingController
 router.post('/update-topic-checklist-status', isUserAllowed, ManageRatingController.updateTopicChecklistStatus); //
 router.post('/update-group-name', isUserAllowed, ManageRatingController.updateGroupName); //update group name
 router.post('/update-topic-name', isUserAllowed, ManageRatingController.updateTopicName); //update topic name
+router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGroupList); //update topic name
 
 // PPM Master
 router.get('/ppm', isUserAllowed, PpmController.PpmList);

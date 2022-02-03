@@ -1,6 +1,6 @@
 const User = require("../../models/User");
 const CategoryAssign = require("../../models/CategoryAssign");
-const CategoryCheckList = require("../../models/CategoryFrcMaster");
+const CategoryChecklist = require("../../models/CategoryFrcMaster");
 const Form = require("../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -87,7 +87,7 @@ exports.categoryList = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-exports.categoryCheckList = async (req, res) => {
+exports.categoryChecklist = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).required()
@@ -138,7 +138,7 @@ exports.categoryCheckList = async (req, res) => {
 				//percentage:{ $ifNull: [ "$percentage.percentage", 0 ] }
 			}
 		}
-		let categoryChecklistData = await CategoryCheckList.aggregate([condition/*,lookup,unwind*/,project]);
+		let categoryChecklistData = await CategoryChecklist.aggregate([condition/*,lookup,unwind*/,project]);
 		categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
 		for(let i=0;i<categoryChecklistData.length;i++){
 			let form = await Form.findOne({categoryChecklistId:categoryChecklistData[i]._id,userId:req.user._id}).sort({createdAt:-1});
@@ -165,13 +165,13 @@ exports.categoryCheckList = async (req, res) => {
 exports.formDetail = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			CategoryCheckListId: Joi.string().min(24).max(24).required()
+			CategoryChecklistId: Joi.string().min(24).max(24).required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let formDetail = await CategoryCheckList.findOne({_id:req.body.CategoryCheckListId},{form:1});
+		let formDetail = await CategoryChecklist.findOne({_id:req.body.CategoryChecklistId},{form:1});
 		if (!formDetail) {
 			return res.send(response.error(400, "Category Checklist not found", [] ));
 		}

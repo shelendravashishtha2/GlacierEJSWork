@@ -32,22 +32,22 @@
                 </div>
                 <hr>
 
-                <form action="/store-assign-auditor" method="POST" enctype="multipart/form-data" class="custom-validation">
+                <form action="/store-assign-groups" method="POST" enctype="multipart/form-data" class="custom-validation">
                     <div class="row mb-2">
                         <div class="col-md-8">
                             <div class="mb-3 row">
-                                <label class="col-md-2 col-form-label">Select Property Name</label>
+                                <label class="col-md-4 col-form-label">Select Property Name</label>
                                 <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
-                                    <select name="propertyId" class="form-select" required>
+                                    <select class="form-select" id="propertyId" name="propertyId" onchange="changeProperty()" required>
                                         <option value="">Select Property Name</option>
                                         <% for (i = 0; i < data.length; i++) { %>
-                                        <option value="<%= data[i]._id %>"><%= data[i].property_name %></option>
+                                        	<option value="<%= data[i]._id %>"><%= data[i].property_name %></option>
                                         <% } %>
                                     </select>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label class="col-md-2 col-form-label">Select Group Name</label>
+                                <label class="col-md-4 col-form-label">Select Group Name</label>
                                 <div class="col-md-5" style="border: 1px solid #ced4da;">
                                     <div data-simplebar="init" style="max-height: 300px;">
                                         <div class="simplebar-wrapper" style="margin: 0px;">
@@ -57,18 +57,9 @@
                                                         <div class="simplebar-content" style="padding: 0px;">
                                                             <div class="table-responsive">
                                                                 <table class="table table-nowrap align-middle table-hover mb-0">
-                                                                    <tbody>
-                                                                        <% for (i = 0; i < groupNameData.length; i++) { %>
-                                                                        <tr>
-                                                                            <td style="width: 50px;">
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" name="groupId" type="checkbox" id="groupName<%=i+1%>" checked value="<%= groupNameData[i]._id %>">
-                                                                                    <label class="form-check-label" for="groupName<%=i+1%>"><h5 class="text-truncate font-size-14 mb-1"><%= groupNameData[i].groupName %></h5></label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <% } %>
-                                                                    </tbody>
+                                                                    <tbody id="allGroup">
+                                                                    
+																	</tbody>
                                                                 </table>
                                                             </div>
                                                         </div>
@@ -81,12 +72,12 @@
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label class="col-md-2 col-form-label">Select Auditor</label>
+                                <label class="col-md-4 col-form-label">Select Auditor</label>
                                 <div class="col-md-5" style="padding-right:0px;padding-left:0px;">
                                     <select class="form-select" name="auditorId" required>
                                         <option value="">Select Auditor</option>
                                         <% for (i = 0; i < auditorData.length; i++) { %>
-                                        <option value="<%= auditorData[i]._id %>"><%= auditorData[i].full_name %></option>
+                                        	<option value="<%= auditorData[i]._id %>"><%= auditorData[i].full_name %></option>
                                         <% } %>
                                     </select>
                                 </div>
@@ -106,5 +97,58 @@
     </div>
 </div>
 <!-- end row -->
+
+<script>
+    $('#formData').submit(function () {
+		var inputs = $("input:checkbox[name^='groupId']");
+		var isAtLeastOneCheckboxSelected = false;
+		for (var i = inputs.length - 1; i >= 0; --i) {
+			if (inputs[i].checked) {
+				isAtLeastOneCheckboxSelected = true;
+			}
+		}
+		if (isAtLeastOneCheckboxSelected == false) {
+			toastr.error("Please select at list one category");
+		}
+		return isAtLeastOneCheckboxSelected;
+	});
+
+	function changeProperty() {
+		let propertyId = $("#propertyId").val();
+		$.get("/assign-group-list",
+			{
+				propertyId: propertyId
+			},
+			function (data, status) {
+				let allGroupList = data.allGroupList;
+				let assignedGroupList = data.assignedGroupList;
+				let groupOption = "";
+
+				//category box
+				for (let i = 0; i < allGroupList.length; i++) {
+					const allCategoryData = allGroupList[i];
+					let checked = '';
+					for (let j = 0; j < assignedGroupList.length; j++) {
+						const assignedCategoryData = assignedGroupList[j];
+						if (assignedCategoryData._id == allCategoryData._id) {
+							checked = 'checked';
+						}
+					}
+					groupOption = groupOption + `<tr>
+						<td style="width: 50px;">
+							<div class="form-check">
+								<input class="form-check-input" name="groupId" type="checkbox" id="tasklistCheck`+ (i + 1) + `" value="` + allGroupList[i]._id + `" ${checked}>
+								<label class="form-check-label" for="tasklistCheck`+ (i + 1) + `"></label>
+							</div>
+						</td>
+						<td>
+							<h5 class="text-truncate font-size-14 mb-1"><a href="#" class="text-dark">`+ allGroupList[i].groupName + `</a></h5>
+						</td>
+					</tr>`;
+				}
+				$("#allGroup").html(groupOption);
+			});
+		}
+</script>
 <%- contentFor('FooterJs') %>
 <%- contentFor('BottomJs') %>

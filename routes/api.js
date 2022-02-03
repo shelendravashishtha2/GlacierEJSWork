@@ -40,7 +40,7 @@ router.post("/sop-category-list", auth, SopController.sopCategoryList); // prope
 router.post("/sop-category-detail", auth, SopController.categorySOPDetail);
 
 router.post("/category-list", auth, CategoryController.categoryList);
-router.post("/category-wise-check-list", auth, CategoryController.categoryCheckList);
+router.post("/category-wise-check-list", auth, CategoryController.categoryChecklist);
 router.post("/form-detail", auth, CategoryController.formDetail);
 router.post("/form-submit", auth, CategoryController.formSubmit);
 router.post("/form-submit-detail", auth, CategoryController.getFormSubmitedDetail);

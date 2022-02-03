@@ -1,5 +1,5 @@
 const PropertyTask = require('../models/CategoryAssign');
-const CategoryCheckList = require('../models/CategoryFrcMaster');
+const CategoryChecklist = require('../models/CategoryFrcMaster');
 const Form = require('../models/Form');
 const PpmEquipmentAssetAssign = require('../models/PpmEquipmentAssetAssign');
 const PpmTaskAssign = require('../models/PpmTaskAssign');
@@ -24,11 +24,11 @@ exports.formCron = async (req, res) => {
         for (let task of propertyTask) {
             const managers = task.managerId;
             const supervisors = task.supervisorId;
-            const categoryCheckList = await CategoryCheckList.find({
+            const categoryChecklist = await CategoryChecklist.find({
                 category_id: task.categoryId,
             });
 
-            for (let category of categoryCheckList) {
+            for (let category of categoryChecklist) {
 				if (category.frequency === 'daily') {
 					console.log('daily');
 					if (managers.length > 0) {

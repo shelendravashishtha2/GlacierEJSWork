@@ -1,5 +1,5 @@
 const Category = require("../../models/CategoryMaster");
-const CategoryCheckList = require("../../models/CategoryFrcMaster");
+const CategoryChecklist = require("../../models/CategoryFrcMaster");
 const Form = require("../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -171,8 +171,8 @@ exports.historyDetail = async (req, res) => {
 		if(!category) {
 			return res.send(response.error(400, "Category not found", [] ));
 		}
-		let checkList = await CategoryCheckList.findOne({_id:form.categoryChecklistId});
-		if(!checkList) {
+		let checklist = await CategoryChecklist.findOne({_id:form.categoryChecklistId});
+		if(!checklist) {
 			return res.send(response.error(400, "Category Checklist not found", [] ));
 		}
 		return res.status(200).send({
@@ -181,11 +181,11 @@ exports.historyDetail = async (req, res) => {
             "message": "History details",
 		    data:{
 		    	categoryName: category.category_name,
-		    	checkListName: checkList.checklist_name,
+		    	checklistName: checklist.checklist_name,
 		    	completeDate: form.completeDate,
 		    	percentage: form.percentage,
 		    	status: form.status,
-		    	type: checkList.type,
+		    	type: checklist.type,
 		    }
 		});
 	} catch (error) {
