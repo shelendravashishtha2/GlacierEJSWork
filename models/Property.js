@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {errorLog} = require("../helper/consoleLog");
 const Joi = require("joi");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const wingsSchema = new mongoose.Schema({ 
 	wings_name: {
@@ -71,6 +72,8 @@ const propertySchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+propertySchema.plugin(mongoosePaginate);
 
 const Property = new mongoose.model("Property", propertySchema);
 module.exports = Property;

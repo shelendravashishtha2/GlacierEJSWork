@@ -1,35 +1,35 @@
 const User = require("../../models/User");
-const Category = require("../../models/CategoryMaster");
-const CategoryCheckList = require("../../models/CategoryFrcMaster");
+const CategoryMaster = require("../../models/CategoryMaster");
+const CategoryFrcMaster = require("../../models/CategoryFrcMaster");
 const Setting = require("../../models/setting");
 const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
+const { errorLog } = require("../../helper/consoleLog");
 const CategoryResource = require('../resources/CategoryResource');
-const { check,sanitizeBody,validationResult,matchedData } = require('express-validator');
+const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 var toastr = require('express-toastr');
 const Joi = require("joi");
 
-exports.categoryAddValidationForm=[
+exports.categoryAddValidationForm = [
 	// Category name validation
 	check('category_name').trim().notEmpty().withMessage('Category name required')
 		.isLength({ min: 2 }).withMessage('must be at least 2 chars long')
 		.custom(value => {
-			return Category.findOne({category_name: value}).then((data) => { if (data) {return Promise.reject('category name already exists')} })
+			return CategoryMaster.findOne({ category_name: value }).then((data) => { if (data) { return Promise.reject('category name already exists') } })
 		}),
 ];
 
 // Category add api
 exports.categoryAdd = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Category Add', session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Category Add', session: req.session };
 
 		const errors = validationResult(req);
-		if(!errors.isEmpty()){
+		if (!errors.isEmpty()) {
 			let errMsg = errors.mapped();
-			req.session.error = {errMsg: errMsg, inputData: req.body};
+			req.session.error = { errMsg: errMsg, inputData: req.body };
 			return res.redirect('back');
 		} else {
 			req.session.error = '';
@@ -55,40 +55,40 @@ exports.categoryAdd = async (req, res) => {
 }
 
 // Category List Page
-exports.categoryList = async (req,res) => {
+exports.categoryList = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Categories',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Categories', session: req.session };
 
 		let page = 1;
-		if(req.query.page != undefined){
+		if (req.query.page != undefined) {
 			page = req.query.page;
 		}
-		let limit = { $limit : 10};
-		let skip = { $skip : (page - 1) * 10};
+		let limit = { $limit: 10 };
+		let skip = { $skip: (page - 1) * 10 };
 		let project = {
-			$project:{
-				category_name:1,
-				status:1
+			$project: {
+				category_name: 1,
+				status: 1
 			}
 		}
 		let query1 = {};
-		if(req.query.search){
-			query1['category_name'] = {$regex: new RegExp(req.query.search, 'i')};
+		if (req.query.search) {
+			query1['category_name'] = { $regex: new RegExp(req.query.search, 'i') };
 		}
-		let totalProperty = await Category.count(query1);
-		totalPage = Math.ceil(totalProperty/10);
+		let totalProperty = await CategoryMaster.count(query1);
+		totalPage = Math.ceil(totalProperty / 10);
 
-		let search = {"$match": {$or: [query1]}};
+		let search = { "$match": { $or: [query1] } };
 		let sort = {
-            $sort:{
-                createdAt:-1
-            }
+			$sort: {
+				createdAt: -1
+			}
 		};
 
-		let categoryData = await Category.aggregate([search,sort,skip,limit,project]);
+		let categoryData = await CategoryMaster.aggregate([search, sort, skip, limit, project]);
 
-		return res.render('Admin/Categories/index',{'data':categoryData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Categories/index', { 'data': categoryData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('message'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -96,17 +96,17 @@ exports.categoryList = async (req,res) => {
 }
 
 // Category List Page
-exports.changeCategoryStatus = async (req,res) => {
+exports.changeCategoryStatus = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			_id: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let data = await Category.findOne({_id: req.body._id});
+		let data = await CategoryMaster.findOne({ _id: req.body._id });
 		data.status == 0 ? data.status = 1 : data.status = 0;
 		data.save();
 
@@ -118,15 +118,15 @@ exports.changeCategoryStatus = async (req,res) => {
 }
 
 // Category Create Page
-exports.categoryCreate = async (req,res) => {
+exports.categoryCreate = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Create Category',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Create Category', session: req.session };
 		res.locals.error = req.session.error ? req.session.error : '';
-		
-		let categoryData = await Category.find({});
 
-		return res.render('Admin/Categories/create-category', {'data':CategoryResource(categoryData)});
+		let categoryData = await CategoryMaster.find({});
+
+		return res.render('Admin/Categories/create-category', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -134,13 +134,13 @@ exports.categoryCreate = async (req,res) => {
 }
 
 // Checklist Multi Form
-exports.checklistMultiForm = async (req,res) => {
+exports.checklistMultiForm = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Checklist Multi Form',session: req.session};
-		
-		let categoryData = await Category.find({});
-		return res.render('Admin/Categories/checklist-multi-form',{'data':CategoryResource(categoryData)});
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Checklist Multi Form', session: req.session };
+
+		let categoryData = await CategoryMaster.find({});
+		return res.render('Admin/Categories/checklist-multi-form', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -148,12 +148,12 @@ exports.checklistMultiForm = async (req,res) => {
 }
 
 // Edit Check List Multi Form
-exports.editCheckListForm = async (req,res) => {
+exports.editCheckListForm = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Edit Checklist Multi Form',session: req.session};
-		let categoryData = await Category.find({});
-		return res.render('Admin/Categories/edit-checklist-multi-form',{'data':CategoryResource(categoryData)});
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Edit Checklist Multi Form', session: req.session };
+		let categoryData = await CategoryMaster.find({});
+		return res.render('Admin/Categories/edit-checklist-multi-form', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -161,40 +161,40 @@ exports.editCheckListForm = async (req,res) => {
 }
 
 // Category Add Checklist Page
-exports.createCheckList = async (req,res) => {
+exports.createCheckList = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Add Check List Category',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Add Check List Category', session: req.session };
 		let setting = await Setting.findOne({});
 		let uniqueId = 0;
-		if(!setting){
+		if (!setting) {
 			let setting = await Setting.create({
-				uniqueId: 1,	
+				uniqueId: 1,
 			})
 			uniqueId = 1;
-		}else{
+		} else {
 			uniqueId = setting.uniqueId;
 		}
 		uniqueId = uniqueId.toString().padStart(8, "0");
 		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		let condition = {"$match": {status:1}};
+		let condition = { "$match": { status: 1 } };
 
 		let project = {
-			$project:{
-				category_name:1,
+			$project: {
+				category_name: 1,
 			}
 		}
-		let categoryData = await Category.aggregate([condition,project]);
+		let categoryData = await CategoryMaster.aggregate([condition, project]);
 
-		return res.render('Admin/Categories/create-check-list',{'months':monthsList,uniqueId:uniqueId, category_id: req.params.id,categoryData:categoryData});
+		return res.render('Admin/Categories/create-check-list', { 'months': monthsList, uniqueId: uniqueId, category_id: req.params.id, categoryData: categoryData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-exports.addCheckListAValidation=[
+exports.addCheckListAValidation = [
 	check('category_id').trim().notEmpty().withMessage('category id required').isMongoId().withMessage('category id is not valid'),
 	check('checklist_name').trim().notEmpty().withMessage('Checklist Id required')
 		.isLength({ min: 3 }).withMessage('must be at least 5 chars long'),
@@ -203,15 +203,15 @@ exports.addCheckListAValidation=[
 ];
 
 // Category store Checklist
-exports.storeChecklist = async (req,res) => {
+exports.storeChecklist = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Store category wise checklist details',session: req.session};
-		
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Store category wise checklist details', session: req.session };
+
 		const errors = validationResult(req);
-		if(!errors.isEmpty()){
+		if (!errors.isEmpty()) {
 			let errMsg = errors.mapped();
-			req.session.error = {errMsg: errMsg, inputData: req.body};
+			req.session.error = { errMsg: errMsg, inputData: req.body };
 			return res.redirect('back');
 		} else {
 			req.session.error = '';
@@ -219,12 +219,12 @@ exports.storeChecklist = async (req,res) => {
 
 		let setting = await Setting.findOne({});
 		let uniqueId = 0;
-		if(!setting){
+		if (!setting) {
 			let setting = await Setting.create({
-				uniqueId: 1,	
+				uniqueId: 1,
 			})
 			uniqueId = 1;
-		}else{
+		} else {
 			uniqueId = setting.uniqueId;
 			setting.uniqueId = setting.uniqueId + 1;
 			setting.save();
@@ -236,13 +236,13 @@ exports.storeChecklist = async (req,res) => {
 			checklist_name: req.body.checklist_name,
 			type: req.body.type,
 			frequency: req.body.frequency,
-			day: req.body.day?req.body.day:null,
-			month: req.body.month?req.body.month:null,
-			date: req.body.date?req.body.date:null,
+			day: req.body.day ? req.body.day : null,
+			month: req.body.month ? req.body.month : null,
+			date: req.body.date ? req.body.date : null,
 		});
 		await CategoryCheckListData.save();
-		
-		return res.redirect('create-checklist-multi-form/'+CategoryCheckListData._id);
+
+		return res.redirect('create-checklist-multi-form/' + CategoryCheckListData._id);
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
@@ -252,23 +252,23 @@ exports.storeChecklist = async (req,res) => {
 			errorLog(__filename, req.originalUrl, error);
 			errorMessage = "Something want wrong";
 		}
-		req.session.error = {errorMessage: errorMessage, inputData: req.body};
+		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
 	}
 }
 
 // Category CheckList Page 
-exports.checkList = async (req,res) => {
+exports.checkList = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Edit Category Checklist',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Edit Category Checklist', session: req.session };
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
-		let CategoryData = await Category.findOne({_id: req.params.id});
-		let CategoryCheckListData = await CategoryCheckList.find({category_id: req.params.id});
+		let CategoryData = await CategoryMaster.findOne({ _id: req.params.id });
+		let CategoryCheckListData = await CategoryFrcMaster.find({ category_id: req.params.id });
 
-		return res.render('Admin/Categories/edit-category-checklist',{ data: CategoryCheckListData, CategoryData: CategoryData,'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryCheckListData, CategoryData: CategoryData, 'message': req.flash('message'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -276,75 +276,90 @@ exports.checkList = async (req,res) => {
 }
 
 // Master FRC Checklist : 
-exports.frcCheckList = async (req,res) => {
+exports.frcCheckList = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Master FRC Checklist',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Master FRC Checklist', session: req.session };
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
-		let condition = {"$match": {status:1}};
-		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$category_id"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
-                                    {
-                                        $eq: [false, "$$isDeleted"]
-                                    }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
+		// let condition = { "$match": { status: 1 } };
+		// let lookup = {
+		// 	$lookup: {
+		// 		from: 'categories',
+		// 		let: {
+		// 			id: "$category_id"
+		// 		},
+		// 		pipeline: [{
+		// 			$match: {
+		// 				$expr: {
+		// 					$and: [{
+		// 						$eq: ["$_id", "$$id"]
+		// 					}/*,
+        //                             {
+        //                                 $eq: [false, "$$isDeleted"]
+        //                             }*/
+		// 					]
+		// 				}
+		// 			}
+		// 		},
+		// 		{
+		// 			$project: {
+		// 				_id: 1,
+		// 				category_name: 1
+		// 			}
+		// 		}
+		// 		],
+		// 		as: 'categories',
+		// 	}
+		// }
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-		}
-		
-		let project = {
-			$project:{
-				checklist_id:1,
-				checklist_name:1,
-				type:1,
-				status:1,
-				category_id:"$categories._id",
-				category_name:"$categories.category_name",
-				frequency: 1,
-			}
-		}
+		// let unwind = {
+		// 	$unwind: {
+		// 		path: "$categories",
+		// 		preserveNullAndEmptyArrays: true
+		// 	}
+		// }
 
-		let query1 = {};
-		if(req.query.search){
-			query1['category_id'] = require('mongoose').Types.ObjectId(req.query.search);
-		}
-		let search = {"$match": {$or: [query1]}};
-		
-		let CategoryCheckListData = await CategoryCheckList.aggregate([search,condition,lookup,unwind,project])
-		let categoryData = await Category.aggregate([condition]);
+		// let project = {
+		// 	$project: {
+		// 		checklist_id: 1,
+		// 		checklist_name: 1,
+		// 		type: 1,
+		// 		status: 1,
+		// 		category_id: "$categories._id",
+		// 		category_name: "$categories.category_name",
+		// 		frequency: 1,
+		// 	}
+		// }
+
+		// let query1 = {};
+		// if (req.query.search) {
+		// 	query1['category_id'] = require('mongoose').Types.ObjectId(req.query.search);
+		// }
+		// let search = { "$match": { $or: [query1] } };
+
+		// let CategoryCheckListData = await CategoryFrcMaster.aggregate([search, condition, lookup, unwind, project])
+		// let categoryData = await CategoryMaster.aggregate([condition]);
 
 		let paramsCategoryId = req.query.search;
 
-		return res.render('Admin/Categories/master-frc-checklist',{ data: CategoryCheckListData, categoryData: categoryData,paramsCategoryId:paramsCategoryId,'message': req.flash('message'), 'error': req.flash('error')});
+		let allCategoryData = await CategoryMaster.find({status: 1});
+
+		let findQuery = { status: 1 }
+		if (req.query.search) {
+			findQuery.category_id = req.query.search
+		}
+
+		let CategoryCheckListData = await CategoryFrcMaster.find(findQuery).populate({path: 'category_id'}).sort({createdAt: 'desc'});
+
+		return res.render('Admin/Categories/master-frc-checklist', {
+            data: CategoryCheckListData,
+            categoryData: allCategoryData,
+            paramsCategoryId: paramsCategoryId,
+            message: req.flash('message'),
+            error: req.flash('error'),
+        })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -352,17 +367,17 @@ exports.frcCheckList = async (req,res) => {
 }
 
 // Category List Page
-exports.changeChecklistStatus = async (req,res) => {
+exports.changeChecklistStatus = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			_id: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let data = await CategoryCheckList.findOne({_id: req.body._id});
+		let data = await CategoryFrcMaster.findOne({ _id: req.body._id });
 		data.status == 0 ? data.status = 1 : data.status = 0;
 		data.save();
 
@@ -374,17 +389,17 @@ exports.changeChecklistStatus = async (req,res) => {
 }
 
 // Update Category store
-exports.updateCategory = async (req,res) => {
+exports.updateCategory = async (req, res) => {
 	try {
-		let CategoryData = await Category.findOne({category_name: req.body.category_name});
+		let CategoryData = await CategoryMaster.findOne({ category_name: req.body.category_name });
 		if (!CategoryData) {
-			let CategoryData = await Category.updateOne({_id: req.body.category_id}, {category_name: req.body.category_name});
+			let CategoryData = await CategoryMaster.updateOne({ _id: req.body.category_id }, { category_name: req.body.category_name });
 		} else {
 			req.flash('error', 'Category name already exists!');
 			return res.redirect('back');
 		}
 		req.flash('message', 'Category is updated!');
-		return res.redirect('edit-category-checklist/'+req.body.category_id);
+		return res.redirect('edit-category-checklist/' + req.body.category_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.flash('error', 'Something want wrong');
@@ -393,15 +408,15 @@ exports.updateCategory = async (req,res) => {
 }
 
 // Edit Checklist page
-exports.editChecklistDetails = async (req,res) => {
+exports.editChecklistDetails = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Edit checklist page',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Edit checklist page', session: req.session };
 
-		let CategoryCheckListData = await CategoryCheckList.findOne({_id: req.params.id});
+		let CategoryCheckListData = await CategoryFrcMaster.findOne({ _id: req.params.id });
 		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		return res.render('Admin/Categories/edit-check-list',{ data: CategoryCheckListData, months: monthsList,'message': req.flash('message'), 'error': req.flash('error') });
+		return res.render('Admin/Categories/edit-check-list', { data: CategoryCheckListData, months: monthsList, 'message': req.flash('message'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -409,32 +424,32 @@ exports.editChecklistDetails = async (req,res) => {
 }
 
 
-exports.updateChecklistValidation=[
+exports.updateChecklistValidation = [
 	check('checklist_name').trim().notEmpty().withMessage('Checklist Id required')
 		.isLength({ min: 3 }).withMessage('must be at least 5 chars long'),
 	check('frequency').trim().notEmpty().withMessage('Frequency is required')
 ];
 
 // Update Category store
-exports.updateChecklistDetails = async (req,res) => {
+exports.updateChecklistDetails = async (req, res) => {
 	try {
 		const errors = validationResult(req);
-		if(!errors.isEmpty()){
+		if (!errors.isEmpty()) {
 			let errMsg = errors.mapped();
-			req.session.error = {errMsg: errMsg, inputData: req.body};
+			req.session.error = { errMsg: errMsg, inputData: req.body };
 			return res.redirect('back');
 		} else {
 			req.session.error = '';
 		}
 
-		let CategoryCheckListData = await CategoryCheckList.findOneAndUpdate({_id: req.body._id}, {
+		let CategoryCheckListData = await CategoryFrcMaster.findOneAndUpdate({ _id: req.body._id }, {
 			checklist_id: req.body.checklist_id,
 			checklist_name: req.body.checklist_name,
 			frequency: req.body.frequency,
 			day: req.body.day,
 			month: req.body.month,
 			date: req.body.date,
-		},{ new: true });
+		}, { new: true });
 		req.flash('message', 'Category checklist is updated!');
 		return res.redirect('master-frc');
 	} catch (error) {
@@ -446,24 +461,24 @@ exports.updateChecklistDetails = async (req,res) => {
 			errorLog(__filename, req.originalUrl, error);
 			errorMessage = "Something want wrong";
 		}
-		req.session.error = {errorMessage: errorMessage, inputData: req.body};
+		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
 	}
 }
 
 // Edit Checklist page
-exports.updateFormCreate = async (req,res) => {
+exports.updateFormCreate = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
+		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			checklistId: Joi.required(),
 			forms: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let categoryCheckListData = await CategoryCheckList.findOne({_id: req.body.checklistId});
+		let categoryCheckListData = await CategoryFrcMaster.findOne({ _id: req.body.checklistId });
 		categoryCheckListData.form = req.body.forms;
 		await categoryCheckListData.save();
 		return res.send(response.success(200, 'Form update Successfully'));
@@ -471,28 +486,28 @@ exports.updateFormCreate = async (req,res) => {
 
 	}
 }
-exports.createChecklistMultiForm = async (req,res) => {
+exports.createChecklistMultiForm = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Create Checklist Form',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'Create Checklist Form', session: req.session };
 
-		let CategoryCheckListData = await CategoryCheckList.findOne({_id: req.params.id}).populate({path: 'category_id'});
+		let CategoryCheckListData = await CategoryFrcMaster.findOne({ _id: req.params.id }).populate({ path: 'category_id' });
 
-		return res.render('Admin/Categories/edit-checklist-multi-form',{ data: CategoryCheckListData });
+		return res.render('Admin/Categories/edit-checklist-multi-form', { data: CategoryCheckListData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-exports.viewChecklistMultiForm = async (req,res) => {
+exports.viewChecklistMultiForm = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'View Checklist Form',session: req.session};
+		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals = { title: 'View Checklist Form', session: req.session };
 
-		let CategoryCheckListData = await CategoryCheckList.findOne({_id: req.params.id}).populate({path: 'category_id'});
+		let CategoryCheckListData = await CategoryFrcMaster.findOne({ _id: req.params.id }).populate({ path: 'category_id' });
 
-		return res.render('Admin/Categories/view-checklist-multi-form',{ data: CategoryCheckListData });
+		return res.render('Admin/Categories/view-checklist-multi-form', { data: CategoryCheckListData });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

@@ -31,7 +31,7 @@
                         <div class="search-box">
                             <div class="position-relative">
                                 <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
-                                <input type="hidden" name="page" id="page" value="<%= page %>">
+                                <input type="hidden" name="page" id="page" value="<%= propertyData.page %>">
                             </div>
                         </div>
                     </div>
@@ -57,42 +57,47 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% if(data.length ==0) { %>
+                            <% if(propertyData.docs.length == 0) { %>
                                 <tr><td colspan="3" class="text-center">No data found</td></tr>
                             <% } %>
-                            <% for (i = 0; i < data.length; i++) { %>
+                            <% for (i = 0; i < propertyData.docs.length; i++) { %>
                             <tr>
-                                <td class="text-center" style="width:7%"><%= (10*(page-1))+ 1 + i %></td>
-                                <td><%= data[i].property_name %></td>
+                                <td class="text-center" style="width:7%"><%= propertyData.pagingCounter + i %></td>
+                                <td><%= propertyData.docs[i].property_name %></td>
                                 <td class="text-center" style="width:7%">
-                                    <a href="edit-task/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
-                                    <a href="view-task/<%= data[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+                                    <a href="edit-task/<%= propertyData.docs[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <a href="view-task/<%= propertyData.docs[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
                                 </td>
                             </tr>     
-                            <%  } %>                     
+                            <%  } %>
                         </tbody>
                     </table>
                 </div>
-                 <!-- start pagination -->
-                 <ul class="pagination pagination-rounded justify-content-end mb-2">
-                    <% if(page > 1){ %>
-                        <li class="page-item">
-                            <a class="page-link" href="#" onclick="pagination(<%=(Number(page)-1)%>)" aria-label="Previous">
-                                <i class="mdi mdi-chevron-left"></i>
-                            </a>
-                        </li>
-                    <% } %>
-                    <% for (i = 1; i <= totalPage; i++) { %>
-                        <li class="page-item  <% if(page == i){ %> active <% } %>"><a class="page-link"  href="#" onclick="pagination(<%=i%>)"><%=i%></a></li>
-                    <% } %>
-                    <% if(page < totalPage){ %>
-                    <li class="page-item">
-                        <a class="page-link"  href="#" onclick="pagination(<%=(Number(page)+1)%>)" aria-label="Next">
-                            <i class="mdi mdi-chevron-right"></i>
-                        </a>
-                    </li>
-                    <% } %>
-                </ul>
+				<!-- start pagination -->
+				<div class="row">
+					<div class="col-6">
+						<p>Showing <%= propertyData.pagingCounter %> to <%= propertyData.pagingCounter + (propertyData.limit-1) %> of <%= propertyData.totalDocs %> entries</p>
+					</div>
+					<div class="col-6">
+						<ul class="pagination pagination-rounded justify-content-end mb-2">
+							<li class="page-item <%= propertyData.hasPrevPage ? '' : 'disabled' %>">
+								<a class="page-link" onclick="pagination(<%= propertyData.prevPage %>)" aria-label="Previous">
+									<i class="mdi mdi-chevron-left"></i>
+								</a>
+							</li>
+							<% for( let i = 0; i < propertyData.totalPages; i++ ) { %>
+								<li class="page-item <%= propertyData.page == i+1 ? 'active' : '' %>">
+									<a class="page-link" onclick="pagination(<%= i+1 %>)"><%= i+1 %></a>
+								</li>
+							<% } %>
+							<li class="page-item <%= propertyData.hasNextPage ? '' : 'disabled' %>">
+								<a class="page-link" onclick="pagination(<%= propertyData.prevPage %>)" aria-label="Next">
+									<i class="mdi mdi-chevron-right"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
                 <!-- end pagination -->
             </div>
         </div>

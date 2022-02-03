@@ -4,7 +4,7 @@ const CategoryFrcMasterSchema = new mongoose.Schema({
 	category_id: {
 		type:  mongoose.Schema.Types.ObjectId,
 		ref: 'Category_Master',
-		required:true,
+		required: true,
 		trim: true,
 	},
     checklist_id: {

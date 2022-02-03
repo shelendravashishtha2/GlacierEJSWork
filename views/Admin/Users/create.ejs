@@ -65,12 +65,12 @@
 								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.mobile_no != 'undefined' ) ? error.errMsg.mobile_no.msg: ''%></p>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Upload Image<span class="required">*</span></label>
+                                <label class="form-label">Upload Profile</label>
                                 <input type="file" name="profile_image" id="fileName" onchange="validateFileType()" class="form-control" maxlength="200" accept="image/png, image/jpg, image/jpeg">
 								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.profile_image != 'undefined' ) ? error.errMsg.profile_image.msg: ''%></p>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Address<span class="required">*</span></label>
+                                <label class="form-label">Address</label>
                                 <textarea type="text" name="address" class="form-control" placeholder="Enter Address Here..." maxlength="300"><%= typeof error.inputData != 'undefined' ? error.inputData.address : '' %></textarea>
 								<p style="color: red;"><%=(typeof error.errMsg != 'undefined' && typeof error.errMsg.address != 'undefined' ) ? error.errMsg.address.msg: ''%></p>
                             </div>
@@ -152,7 +152,7 @@
           }
       }else{
         if(isAtLeastOneCheckboxSelected < 1){
-            toastr.error("Please select atleast one property");
+            toastr.error("Please select at least one property");
             return false;
         }
       }

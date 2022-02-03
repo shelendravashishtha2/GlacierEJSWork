@@ -55,7 +55,8 @@
                         <div class="col-xl-2">
                             <div class="mb-3">
                                 <label class="form-label">Type<span class="required">*</span></label>
-                                <select class="form-select" name="type" required>
+                                <select class="form-select" name="type" id="type" onchange="frcTypeChange(this)" required>
+									<option value="" selected disabled hidden>Choose here</option>
                                     <option value="form">Form</option>
                                     <option value="register">Register</option>
                                     <option value="check_list">Checklist</option>
@@ -66,7 +67,8 @@
                         <div class="col-xl-2">
                             <div class="mb-3">
                                 <label class="form-label">Frequency<span class="required">*</span></label>
-                                <select class="form-select" id="frequency" name="frequency" calue="weekly" onchange="changeFrequency()" required>
+                                <select class="form-select" id="frequency" name="frequency" onchange="changeFrequency()" required>
+                                    <option value="" selected disabled hidden>Choose here</option>
                                     <option value="none">None</option>
                                     <option value="daily">Daily</option>
                                     <option value="weekly">Weekly</option>
@@ -139,9 +141,11 @@
 		$('.checklist_month').hide().prop('required',false);
   		$('.checklist_date').hide().prop('required',false);
 	});
+
     setTimeout(function(){
         changeFrequency();
     },100)
+
 	function changeFrequency() {
 		$('.checklist_day').hide().prop('required',false);
 		$('.checklist_month').hide().prop('required',false);
@@ -164,6 +168,17 @@
 			$('.checklist_month').show();
 			$('.checklist_date').show();
 		}
+	}
+
+	function frcTypeChange(selectObject) {
+		var value = selectObject.value;
+		if (value == "check_list") {
+			$("#frequency option[value=none]").hide();
+		} else {
+			$("#frequency option[value=none]").show();
+		}
+		$('#frequency').prop('selectedIndex',0);
+		changeFrequency()
 	}
 </script>
 <%- contentFor('BottomJs') %>

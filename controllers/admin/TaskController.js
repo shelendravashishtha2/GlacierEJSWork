@@ -1,7 +1,7 @@
 const User = require("../../models/User");
 const Property = require("../../models/Property");
-const Task = require("../../models/CategoryAssign");
-const Category = require("../../models/CategoryMaster");
+const CategoryAssign = require("../../models/CategoryAssign");
+const CategoryMaster = require("../../models/CategoryMaster");
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
@@ -18,116 +18,22 @@ exports.taskList = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Assign Task List', session: req.session };
 
-		let page = 1;
-		if(req.query.page != undefined){
-			page = req.query.page;
+		let propertyIds = await CategoryAssign.distinct('propertyId');
+
+		let findQuery = { _id: { $in: propertyIds }, status: 1 }
+		if (req.query.search) {
+			findQuery.property_name = { $regex: new RegExp(req.query.search, 'i') }
 		}
-		
-		// let limit = { $limit : 10};
-		// let skip = { $skip : (page - 1) * 10};
-		// let group = {
-		// 	$group:{
-		// 		_id:"$_id",
-		// 		propertyId:{$first:"$property._id"},
-		// 		property_name:{$first:"$property.property_name"},
-		// 		category_name:{$first:"$categories.category_name"},
-		// 		createdAt:{$first:"$property.createdAt"}
-		// 	}
-		// }
-		// let lookup = {
-		// 	$lookup: {
-		//         from: 'properties',
-		//         let: {
-		//             id: "$propertyId"
-		//         },
-		//         pipeline: [{
-		//                 $match: {
-		//                     $expr: {
-		//                         $and: [{
-		//                                 $eq: ["$_id", "$$id"]
-		//                             }/*,
-		//                             {
-		//                                 $eq: [false, "$$isDeleted"]
-		//                             }*/
-		//                         ]
-		//                     }
-		//                 }
-		//             },
-		//             {
-		//                 $project: {
-		//                     _id:1,
-		//                     property_name: 1
-		//                 }
-		//             }
-		//         ],
-		//         as: 'property',
-		//     }
-		// }
 
-		// let unwind = {
-		//     $unwind: {
-		//         path: "$property",
-		//         preserveNullAndEmptyArrays: true
-		//     }
-		// }
-		// let lookup1 = {
-		// 	$lookup: {
-		//         from: 'categories',
-		//         let: {
-		//             id: "$categoryId"
-		//         },
-		//         pipeline: [{
-		//                 $match: {
-		//                     $expr: {
-		//                         $and: [{
-		//                                 $eq: ["$_id", "$$id"]
-		//                             }/*,
-		//                             {
-		//                                 $eq: [false, "$$isDeleted"]
-		//                             }*/
-		//                         ]
-		//                     }
-		//                 }
-		//             },
-		//             {
-		//                 $project: {
-		//                     _id:1,
-		//                     category_name: 1
-		//                 }
-		//             }
-		//         ],
-		//         as: 'categories',
-		//     }
-		// }
+		const options = {
+			page: req.query.page ? Math.max(1, req.query.page) : 1,
+			limit: 10
+		};
 
-		// let unwind1 = {
-		//     $unwind: {
-		//         path: "$categories",
-		//         preserveNullAndEmptyArrays: true
-		//     }
-		// }
-
-		// let query1 = {};
-		// if(req.query.search){
-		// 	query1['property_name'] = {$regex: new RegExp(req.query.search, 'i')};
-		// }
-		// let search = {"$match": {$or: [query1]}};
-		// let sort = {
-		//     $sort:{
-		//         createdAt:-1
-		//     }
-		// };
-		// let totalProperty = await Task.count({});
-		// totalPage = Math.ceil(totalProperty/10);
-		// let propertyData = await Task.aggregate([lookup,unwind,lookup1,unwind1,group,search,sort,skip,limit]);
-
-		let propertyIds = await Task.find({}).populate({ path: 'propertyId', model: 'Property' }).distinct("propertyId");
-		let propertyData = await Property.find({ _id: { $in: propertyIds } })
+		let propertyData = await Property.paginate(findQuery, options);
 
 		return res.render('Admin/Task/index', {
-			data: propertyData,
-			page: 1,
-			totalPage: 1,
+			propertyData: propertyData,
 			search: req.query.search ? req.query.search : "",
 			message: req.query.message ? req.query.message : ""
 		});
@@ -159,10 +65,10 @@ exports.propertyUser = async (req, res) => {
 		}
 
 		let allOperationTeam = await User.find({ "position_id": 2 }, { full_name: 1 })
-		let assignOperationTeam = await Task.find({ propertyId: req.query.propertyId }).distinct("operationTeamId");
-		let usedCategory = await Task.distinct("categoryId", { propertyId: req.query.propertyId });
-		let assignedCategory = await Category.find({ _id: { $in: usedCategory }, status: 1 });
-		let allCategory = await Category.find({ status: 1 });
+		let assignOperationTeam = await CategoryAssign.find({ propertyId: req.query.propertyId }).distinct("operationTeamId");
+		let usedCategory = await CategoryAssign.distinct("categoryId", { propertyId: req.query.propertyId });
+		let assignedCategory = await CategoryMaster.find({ _id: { $in: usedCategory }, status: 1 });
+		let allCategory = await CategoryMaster.find({ status: 1 });
 
 		return res.status(200).send({
 			"status": true,
@@ -195,22 +101,21 @@ exports.createTaskSubmit = async (req, res) => {
 		}
 
 		for (let i = 0; i < req.body.categoryId.length; i++) {
-			let alreadyExists = await Task.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
+			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
 			if (!alreadyExists) {
-				await Task.create({
+				await CategoryAssign.create({
 					propertyId: req.body.propertyId,
 					categoryId: req.body.categoryId[i],
 					operationTeamId: req.body.operationTeamId,
 				})
 			} else {
-				await Task.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
+				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
 				})
 			}
 
 		}
 		return res.redirect("/task?message=Task Assign Successfully");
-
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";
@@ -224,13 +129,13 @@ exports.createTask = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Task List', session: req.session };
 
-		let taskData = await Task.distinct("propertyId", {});
+		let taskData = await CategoryAssign.distinct("propertyId", {});
 		let query = {};
 		if(taskData.length > 0){
 			query = {_id: {$nin: taskData}}
 		}
 		let propertyData = await Property.find(query, { property_name: 1 });
-		let allCategory = await Category.find({ "status": 1 }, { category_name: 1 })
+		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 })
 		return res.render('Admin/Task/create', { data: propertyData, allCategory: allCategory });
 
 	} catch (error) {
@@ -261,15 +166,15 @@ exports.updateTaskSubmit = async (req, res) => {
 		}
 
 		for (let i = 0; i < req.body.categoryId.length; i++) {
-			let alreadyExists = await Task.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
+			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
 			if (!alreadyExists) {
-				await Task.create({
+				await CategoryAssign.create({
 					propertyId: req.body.propertyId,
 					categoryId: req.body.categoryId[i],
 					operationTeamId: req.body.operationTeamId,
 				})
 			} else {
-				await Task.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
+				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
 				})
 			}
@@ -289,7 +194,7 @@ exports.updateTaskSubmit = async (req, res) => {
 		// 	return res.send(response.error(400, validation.error.details[0].message, [] ));
 		// }
 
-		// let taskData = await Task.updateOne({_id:req.body.taskId},{
+		// let taskData = await CategoryAssign.updateOne({_id:req.body.taskId},{
 		// 	categoryId: req.body.categoryId?req.body.categoryId:[],
 		// 	operationTeamId: req.body.operationTeamId?req.body.operationTeamId:[],
 		// 	managerId: req.body.managerId?req.body.managerId:[],
@@ -310,7 +215,7 @@ exports.editTask = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Edit Task', session: req.session };
 
-		let taskData = await Task.findOne({ propertyId: req.params.id });
+		let taskData = await CategoryAssign.findOne({ propertyId: req.params.id });
 		if (!taskData) {
 			return res.redirect('/task');
 		}
@@ -320,15 +225,15 @@ exports.editTask = async (req, res) => {
 			return res.redirect('/task');
 		}
 
-		let allCategory = await Category.find({ "status": 1 }, { category_name: 1 });
-		let assignCategory = await Task.find({ propertyId: req.params.id });
+		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 });
+		let assignCategory = await CategoryAssign.find({ propertyId: req.params.id });
 
 		allCategory = JSON.parse(JSON.stringify(allCategory));
 
-		for (let i = 0; i < allCategory.length; i++) {
+		for (let i = 0; i < allCategoryMaster.length; i++) {
 			const allCategoryData = allCategory[i];
 			let status = false;
-			for (let j = 0; j < assignCategory.length; j++) {
+			for (let j = 0; j < assignCategoryMaster.length; j++) {
 				const assignCategoryData = assignCategory[j];
 				if (String(allCategoryData._id) == String(assignCategoryData.categoryId)) {
 					status = true;
@@ -338,7 +243,7 @@ exports.editTask = async (req, res) => {
 		}
 
 		let allOperationTeam = await User.find({ "position_id": 2 }, { _id: 1, full_name: 1 }).lean();
-		let assignOperationTeam = await Task.find({ propertyId: req.params.id }).distinct("operationTeamId");
+		let assignOperationTeam = await CategoryAssign.find({ propertyId: req.params.id }).distinct("operationTeamId");
 
 		for (let i = 0; i < allOperationTeam.length; i++) {
 			const allOperationTeamData = allOperationTeam[i];
@@ -375,16 +280,16 @@ exports.viewTask = async (req, res) => {
 		res.locals = { title: 'View Task', session: req.session };
 
 		let property = await Property.findOne({ _id: req.params.id }, { property_name: 1 });
-		let categoryIds = await Task.find({ propertyId: req.params.id }).distinct("categoryId");
-		let categoryData = await Category.find({_id: {$in: categoryIds}});
+		let categoryIds = await CategoryAssign.find({ propertyId: req.params.id }).distinct("categoryId");
+		let categoryData = await CategoryMaster.find({_id: {$in: categoryIds}});
 
-		let operationTeamIds = await Task.find({propertyId: req.params.id}).distinct("operationTeamId");
+		let operationTeamIds = await CategoryAssign.find({propertyId: req.params.id}).distinct("operationTeamId");
 		let operationTeams = await User.find({_id: {$in: operationTeamIds}});
 
-		let managerIds = await Task.find({propertyId: req.params.id}).distinct("managerId");
+		let managerIds = await CategoryAssign.find({propertyId: req.params.id}).distinct("managerId");
 		let managers = await User.find({_id: {$in: managerIds}});
 
-		let supervisorIds = await Task.find({propertyId: req.params.id}).distinct("supervisorId");
+		let supervisorIds = await CategoryAssign.find({propertyId: req.params.id}).distinct("supervisorId");
 		let supervisors = await User.find({_id: {$in: supervisorIds}});
 
 		// let operationTeams = [];

@@ -68,23 +68,32 @@
                         </tbody>
                     </table>
                 </div>
-                <ul class="pagination pagination-rounded justify-content-end mb-2">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                            <i class="mdi mdi-chevron-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                            <i class="mdi mdi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
+				<!-- start pagination -->
+				<div class="row">
+					<div class="col-6">
+						<p>Showing <%= propertyData.pagingCounter %> to <%= propertyData.pagingCounter + (propertyData.limit-1) %> of <%= propertyData.totalDocs %> entries</p>
+					</div>
+					<div class="col-6">
+						<ul class="pagination pagination-rounded justify-content-end mb-2">
+							<li class="page-item <%= propertyData.hasPrevPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%= propertyData.prevPage %>)" aria-label="Previous">
+									<i class="mdi mdi-chevron-left"></i>
+								</a>
+							</li>
+							<% for( let i = 0; i < propertyData.totalPages; i++ ) { %>
+								<li class="page-item <%= propertyData.page == i+1 ? 'active' : '' %>">
+									<a class="page-link" href="javascript: void(0);" onclick="pagination(<%= i+1 %>)"><%= i+1 %></a>
+								</li>
+							<% } %>
+							<li class="page-item <%= propertyData.hasNextPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%= propertyData.prevPage %>)" aria-label="Next">
+									<i class="mdi mdi-chevron-right"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+                <!-- end pagination -->
             </div>
         </div>
     </div>

@@ -95,7 +95,11 @@ exports.userCreate = async (req,res) => {
 
 		let UserData = await User.find({position: 5});
 		let propertyData = await Property.find();
-		return res.render('Admin/Users/create',{ data: UserResource(UserData), propertyData: propertyData });
+
+		return res.render('Admin/Users/create', {
+            data: UserResource(UserData),
+            propertyData: propertyData,
+        })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.session.error = {errorMessage: "Something want wrong"};
@@ -109,7 +113,7 @@ exports.userAddValidation = [
 	check('mobile_no').trim().notEmpty().withMessage('mobile no is required')
 		.isNumeric().withMessage('mobile no is must be numeric'),
 	check('position_id').trim().notEmpty().withMessage('position is required'),
-	check('address').trim().notEmpty().withMessage('address is required'),
+	// check('address').trim().notEmpty().withMessage('address is required'),
 	check('password').trim().notEmpty().withMessage('password is required'),
 	check('email').trim().notEmpty().withMessage('email is required')
 		.normalizeEmail().isEmail().withMessage('must be a valid email')
@@ -130,7 +134,7 @@ exports.userAdd = async (req, res) => {
 			return res.redirect('back');
 		} else {
 			req.session.error = '';
-		}	
+		}
 
         if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
@@ -157,9 +161,9 @@ exports.userAdd = async (req, res) => {
 			});
 			req.body.profile_image = '/public/images/users/' + fileName;
 		} else {
-			let errMsg = { profile_image: { msg: 'profile image is required' } };
-			req.session.error = {errMsg: errMsg, inputData: req.body};
-			return res.redirect('back');
+			// let errMsg = { profile_image: { msg: 'profile image is required' } };
+			// req.session.error = {errMsg: errMsg, inputData: req.body};
+			// return res.redirect('back');
 		}
 
 		let positionType = '';

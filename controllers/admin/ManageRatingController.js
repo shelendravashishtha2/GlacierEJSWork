@@ -22,10 +22,24 @@ exports.manageRatingList = async (req,res) => {
 	try {
 		if(!req.session.user){ return res.redirect('/login'); }
 		res.locals = { title: 'Manage Rating',session: req.session};
-		let propertyData = await Property.find({status:1});
-		
-		return res.render('Admin/Manage-Rating/index',{'data':PropertyResource(propertyData),'message': req.flash('message'), 'error': req.flash('error')});
 
+		// let propertyData = await Property.find({status:1});
+		let findQuery = { status: 1 }
+		if (req.query.search) {
+			findQuery.property_name = { $regex: new RegExp(req.query.search, 'i') }
+		};
+		const options = {
+			page: req.query.page ? Math.max(1, req.query.page) : 1,
+			limit: 10
+		};
+		let propertyData = await Property.paginate(findQuery, options);
+
+		return res.render('Admin/Manage-Rating/index', {
+            data: PropertyResource(propertyData.docs),
+            propertyData: propertyData,
+            message: req.flash('message'),
+            error: req.flash('error'),
+        })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
