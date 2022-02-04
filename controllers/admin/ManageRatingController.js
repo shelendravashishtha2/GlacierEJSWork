@@ -14,6 +14,7 @@ const PropertyResource = require('../resources/PropertyResource');
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 const Joi = require("joi");
 const { Validator } = require('node-input-validator');
+const MngRatingTaskAssign = require("../../models/MngRatingTaskAssign");
 
 // Manage Rating List Page
 exports.manageRatingList = async (req, res) => {
@@ -202,7 +203,7 @@ exports.assignAuditor = async (req, res) => {
 		res.locals = { title: 'Assign Auditor - Manage Rating', session: req.session };
 
 		let assignedPropertyIds = await MngRatingGroupAssign.find({}).distinct('propertyId');
-		let propertyData = await Property.find({_id: {$in: assignedPropertyIds}});
+		let propertyData = await Property.find({_id: {$nin: assignedPropertyIds}});
 		// let propertyData = await Property.find({});
 		let groupNameData = await MngRatingGroupMaster.find({ status: 1 });
 		let auditorData = await User.find({ status: 1, position_id: 3 });
@@ -248,7 +249,7 @@ exports.storeAssignAuditor = async (req, res) => {
 			await assignAuditor.save();
 	
 			for (let i = 0; i < req.body.groupId.length; i++) {
-				let MngRatingGroupMasterData = await MngRatingGroupMaster.find({ _id: req.body.groupId[i] });
+				// let MngRatingGroupMasterData = await MngRatingGroupMaster.find({ _id: req.body.groupId[i] });
 	
 				// store group wise topic list. 
 				let ratingTopicIds = await MngRatingTopicMaster.find({ ratingGroupId: req.body.groupId[i], status: 1 }).distinct('_id'); //get only Ids in array
@@ -367,6 +368,7 @@ exports.updateAssignGroups = async (req, res) => {
 		req.body.groupId = Array.isArray(req.body.groupId) ? req.body.groupId : [req.body.groupId];
 
 		const validate = new Validator(req.body, {
+			propertyId: 'required',
 			assignGroupId: 'required',
 			groupId: 'required',
 			auditorId: 'required',
@@ -380,14 +382,17 @@ exports.updateAssignGroups = async (req, res) => {
 		}
 
 		if (req.body.groupId.length > 0) {
-			let MngRatingGroupAssignData = await MngRatingGroupAssign.findOneAndUpdate({ _id: req.body.assignGroupId }, {
+			let MngRatingGroupAssignData = await MngRatingGroupAssign.findOneAndUpdate({ propertyId: req.body.propertyId }, {
 				groupIds: req.body.groupId,
 				auditorId: req.body.auditorId
 			});
-	// *************************************************************************************************************************
+
+			let assignTopicDelete = await MngRatingTopicAssign.deleteMany({ propertyId: req.body.propertyId }); //delete all property assign topic
+			let assignChecklistDelete = await MngRatingChecklistAssign.deleteMany({ propertyId: req.body.propertyId }); //delete all property assign topic
+			
 			for (let i = 0; i < req.body.groupId.length; i++) {
-				let MngRatingGroupMasterData = await MngRatingGroupMaster.find({ _id: req.body.groupId[i] });
-	
+				// let MngRatingGroupMasterData = await MngRatingGroupMaster.find({ _id: req.body.groupId[i] });
+
 				// store group wise topic list. 
 				let ratingTopicIds = await MngRatingTopicMaster.find({ ratingGroupId: req.body.groupId[i], status: 1 }).distinct('_id'); //get only Ids in array
 				if (ratingTopicIds.length > 0) {
@@ -645,7 +650,6 @@ exports.updateTopicName = async (req, res) => {
 // Update topic name
 exports.assignGroupList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required()
 		});
@@ -666,6 +670,151 @@ exports.assignGroupList = async (req, res) => {
 			"status": true,
 			allGroupList: allGroupList,
 			assignedGroupList: assignedGroupList,
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		errorMessage = "Something want wrong";
+		req.session.error = { errorMessage: errorMessage, inputData: req.body };
+		return res.redirect('back');
+	}
+}
+
+// assign Rating Task
+exports.assignRatingTask = async (req, res) => {
+	try {
+		if (!req.session.user) { return res.redirect('/login'); }
+
+		let assignPropertyIds = await MngRatingGroupAssign.distinct('propertyId');
+		// assignPropertyIds = assignPropertyIds.map((i) => String(i));
+
+		let data = [];
+		for (let i = 0; i < assignPropertyIds.length; i++) {
+			let assignGroupsData = await MngRatingGroupAssign.findOne({propertyId: assignPropertyIds[i]});
+			let assignTopicsData = await MngRatingTopicAssign.findOne({propertyId: assignPropertyIds[i]});
+			let assignChecklistData = await MngRatingChecklistAssign.findOne({propertyId: assignPropertyIds[i]});
+			
+			let taskObj = new MngRatingTaskAssign();
+			taskObj.propertyId = assignGroupsData.propertyId;
+			taskObj.auditorId = assignGroupsData.auditorId;
+
+			let assignGroupsArray = [];
+			let totalWeightage = 0;
+			for (let j = 0; j < assignGroupsData.groupIds.length; j++) {	
+
+				let assignTopicsArray = []
+				for (let k = 0; k < assignTopicsData.topicIds.length; k++) {
+
+					let assignChecklistsArray = []
+					for (let l = 0; l < assignChecklistData.checklistIds.length; l++) {
+						let checklistData = await MngRatingChecklistMaster.findOne({_id: assignChecklistData.checklistIds[j]})
+						totalWeightage = totalWeightage + checklistData.weightage ? checklistData.weightage : 0
+						assignChecklistsArray.push({
+							checklistId: assignChecklistData.checklistIds[j],
+							weightage: checklistData.weightage ? checklistData.weightage : 0,
+							point: 0
+						})
+					}
+					assignTopicsArray.push({
+						topicId: assignTopicsData.topicIds[j],
+						assignChecklists: assignChecklistsArray
+					})
+				}
+				assignGroupsArray.push({
+					groupId: assignGroupsData.groupIds[j],
+					assignTopics: assignTopicsArray
+				})
+			}
+			taskObj.assignGroups = assignGroupsArray;
+			taskObj.totalWeightage = totalWeightage;
+			taskObj.totalPoint = 0;
+			taskObj.totalPercentage = 0;
+
+			await taskObj.save();
+			data.push(taskObj);
+		}
+
+		return res.status(200).send({
+			"status": true,
+			data: assignPropertyIds,
+			data2: data
+		});
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		errorMessage = "Something want wrong";
+		req.session.error = { errorMessage: errorMessage, inputData: req.body };
+		return res.redirect('back');
+	}
+}
+
+// assign Rating Task
+exports.viewGroupAssignTask = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			propertyId: Joi.required()
+		});
+		let validation = schema.validate(req.query, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let assignPropertyGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
+
+		console.log(assignPropertyGroupData);
+
+		// if (assignPropertyGroupData) {
+		// 	let assignGroupList = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId});
+		// }
+
+		// let data = [];
+		// for (let i = 0; i < assignPropertyIds.length; i++) {
+		// 	let assignGroupsData = await MngRatingGroupAssign.findOne({propertyId: assignPropertyIds[i]});
+		// 	let assignTopicsData = await MngRatingTopicAssign.findOne({propertyId: assignPropertyIds[i]});
+		// 	let assignChecklistData = await MngRatingChecklistAssign.findOne({propertyId: assignPropertyIds[i]});
+			
+		// 	let taskObj = new MngRatingTaskAssign();
+		// 	taskObj.propertyId = assignGroupsData.propertyId;
+		// 	taskObj.auditorId = assignGroupsData.auditorId;
+
+		// 	let assignGroupsArray = [];
+		// 	let totalWeightage = 0;
+		// 	for (let j = 0; j < assignGroupsData.groupIds.length; j++) {	
+
+		// 		let assignTopicsArray = []
+		// 		for (let k = 0; k < assignTopicsData.topicIds.length; k++) {
+
+		// 			let assignChecklistsArray = []
+		// 			for (let l = 0; l < assignChecklistData.checklistIds.length; l++) {
+		// 				let checklistData = await MngRatingChecklistMaster.findOne({_id: assignChecklistData.checklistIds[j]})
+		// 				totalWeightage = totalWeightage + checklistData.weightage ? checklistData.weightage : 0
+		// 				assignChecklistsArray.push({
+		// 					checklistId: assignChecklistData.checklistIds[j],
+		// 					weightage: checklistData.weightage ? checklistData.weightage : 0,
+		// 					point: 0
+		// 				})
+		// 			}
+		// 			assignTopicsArray.push({
+		// 				topicId: assignTopicsData.topicIds[j],
+		// 				assignChecklists: assignChecklistsArray
+		// 			})
+		// 		}
+		// 		assignGroupsArray.push({
+		// 			groupId: assignGroupsData.groupIds[j],
+		// 			assignTopics: assignTopicsArray
+		// 		})
+		// 	}
+		// 	taskObj.assignGroups = assignGroupsArray;
+		// 	taskObj.totalWeightage = totalWeightage;
+		// 	taskObj.totalPoint = 0;
+		// 	taskObj.totalPercentage = 0;
+
+		// 	await taskObj.save();
+		// 	data.push(taskObj);
+		// }
+
+		return res.status(200).send({
+			"status": true,
+			data: 'assignPropertyIds',
+			data2: 'data'
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

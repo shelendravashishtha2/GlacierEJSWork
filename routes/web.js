@@ -87,15 +87,17 @@ router.post('/store-assign-groups', isUserAllowed, ManageRatingController.storeA
 router.get('/assign-auditor', isUserAllowed, ManageRatingController.assignAuditor);
 router.get('/group-list', isUserAllowed, ManageRatingController.groupList);
 router.get('/edit-assign-group', isUserAllowed, ManageRatingController.editGroup);
-// router.post('/update-assign-groups', isUserAllowed, ManageRatingController.updateAssignGroups); //update assign group
+router.post('/update-assign-groups', isUserAllowed, ManageRatingController.updateAssignGroups); //update assign group
 router.get('/edit-group-name/:id', isUserAllowed, ManageRatingController.editGroupName);
 router.get('/edit-topic/:id', isUserAllowed, ManageRatingController.editTopic);
 router.post('/update-group-status', isUserAllowed, ManageRatingController.updateGroupStatus); //
 router.post('/update-rating-topic-status', isUserAllowed, ManageRatingController.updateRatingTopicStatus); // 
 router.post('/update-topic-checklist-status', isUserAllowed, ManageRatingController.updateTopicChecklistStatus); //
 router.post('/update-group-name', isUserAllowed, ManageRatingController.updateGroupName); //update group name
-router.post('/update-topic-name', isUserAllowed, ManageRatingController.updateTopicName); //update topic name
-router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGroupList); //update topic name
+router.post('/update-topic-name', isUserAllowed, ManageRatingController.updateTopicName); //
+router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGroupList); //
+router.get('/assign-rating-task', isUserAllowed, ManageRatingController.assignRatingTask); // generate rating task
+router.get('/view-group-assign-task', isUserAllowed, ManageRatingController.viewGroupAssignTask); //
 
 // PPM Master
 router.get('/ppm', isUserAllowed, PpmController.PpmList);

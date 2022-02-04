@@ -10,6 +10,7 @@ const MngRatingTopicMasterSchema = new mongoose.Schema({
 		trim: true,
 		required: true
 	},
+	
 	status: {
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
