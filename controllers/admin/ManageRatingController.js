@@ -758,8 +758,10 @@ exports.viewGroupAssignTask = async (req, res) => {
 		}
 
 		let assignPropertyGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
+		// console.log(assignPropertyGroupData);
 
-		console.log(assignPropertyGroupData);
+		let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
+		
 
 		// if (assignPropertyGroupData) {
 		// 	let assignGroupList = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId});
@@ -811,11 +813,20 @@ exports.viewGroupAssignTask = async (req, res) => {
 		// 	data.push(taskObj);
 		// }
 
-		return res.status(200).send({
-			"status": true,
-			data: 'assignPropertyIds',
-			data2: 'data'
+		return res.render('Admin/Manage-Rating/assign-auditor-task-list', { 
+			data: propertyData, 
+			months: monthsList, 
+			page: page, 
+			totalPage: totalPage, 
+			search: req.query.search ? req.query.search : "", 
+			message: req.flash('message'), 
+			error: req.flash('error') 
 		});
+		// return res.status(200).send({
+		// 	"status": true,
+		// 	data: 'assignPropertyIds',
+		// 	data2: 'data'
+		// });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";

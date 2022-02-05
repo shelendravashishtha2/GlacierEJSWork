@@ -1,0 +1,126 @@
+<%- contentFor('HeaderCss') %>
+<%- contentFor('breadcrumb') %>
+<style>
+    .text-center{text-align: center;}
+</style>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Manage Rating</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Manage Rating</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<%- contentFor('body') %>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+				<form action="/manage-rating" method="get" id="form">
+					<div class="row mb-2">
+						<!-- start searching -->
+							<div class="col-sm-3">
+								<div class="search-box">
+									<div class="position-relative">
+										<input type="text" name="search" value="<#%= search %>"  class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3" style="padding: 0px;">
+								<button type="button" onclick="pagination(1)" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
+							</div>
+						<!-- end searching -->
+						<div class="col-sm-6">
+							<div class="text-sm-end">
+								<a href="/assign-auditor"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ASSIGN AUDITOR</b> </button></a>
+								<a href="/group-list"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ADD GROUP</b></button></a>
+							</div>
+						</div>
+					</div>
+				</form>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap table-check">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">Sr.No</th>
+                                <th>Property Name</th>
+                                <th>Auditor Name</th>
+                                <th class="text-center">Rating</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+							<#% for( let i = 0; i < propertyData.docs.length; i++ ) { %>
+								<tr>
+									<td class="text-center" style="width: 7%;"><#%= i+1 %></td>
+									<td><#%= propertyData.docs[i].propertyId.property_name %></td>
+									<td><#%= propertyData.docs[i].auditorId.full_name %></td>
+									<td class="text-center" style="width: 7%;">--</td>
+									<td class="text-center" style="width: 7%;">
+										<a href="/edit-assign-group?propertyId=<#%= propertyData.docs[i].propertyId._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+										<a href="/view-group-assign-task?propertyId=<#%= propertyData.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+									</td>
+								</tr>
+							<#% } %>
+                        </tbody>
+                    </table>
+                </div>
+				<!-- start pagination -->
+				<div class="row">
+					<div class="col-6">
+						<p>Showing <#%= propertyData.pagingCounter %> to <#%= propertyData.pagingCounter + (propertyData.limit-1) %> of <#%= propertyData.totalDocs %> entries</p>
+					</div>
+					<div class="col-6">
+						<ul class="pagination pagination-rounded justify-content-end mb-2">
+							<li class="page-item <#%= propertyData.hasPrevPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<#%= propertyData.prevPage %>)" aria-label="Previous">
+									<i class="mdi mdi-chevron-left"></i>
+								</a>
+							</li>
+							<#% for( let i = 0; i < propertyData.totalPages; i++ ) { %>
+								<li class="page-item <#%= propertyData.page == i+1 ? 'active' : '' %>">
+									<a class="page-link" href="javascript: void(0);" onclick="pagination(<#%= i+1 %>)"><#%= i+1 %></a>
+								</li>
+							<#% } %>
+							<li class="page-item <#%= propertyData.hasNextPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<#%= propertyData.prevPage %>)" aria-label="Next">
+									<i class="mdi mdi-chevron-right"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+                <!-- end pagination -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<%- contentFor('FooterJs') %>
+<#% if(error.length> 0) { %>
+    <script>
+        toastr.error('<#%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<#%= message %>');
+    </script>
+<% } %>
+
+<script>
+    function pagination(i){
+        $("#page").val(i);
+        $("#form").submit();
+    }
+</script>
+<%- contentFor('BottomJs') %>
