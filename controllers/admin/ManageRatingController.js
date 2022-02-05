@@ -749,6 +749,8 @@ exports.assignRatingTask = async (req, res) => {
 // assign Rating Task
 exports.viewGroupAssignTask = async (req, res) => {
 	try {
+// clockify
+// cmder
 		let schema = Joi.object({
 			propertyId: Joi.required()
 		});
@@ -760,7 +762,7 @@ exports.viewGroupAssignTask = async (req, res) => {
 		let assignPropertyGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
 		// console.log(assignPropertyGroupData);
 
-		let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
+		let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({propertyId: req.query.propertyId});
 		
 
 		// if (assignPropertyGroupData) {
@@ -814,10 +816,9 @@ exports.viewGroupAssignTask = async (req, res) => {
 		// }
 
 		return res.render('Admin/Manage-Rating/assign-auditor-task-list', { 
-			data: propertyData, 
-			months: monthsList, 
-			page: page, 
-			totalPage: totalPage, 
+			data: MngRatingTaskAssignData,
+			page: 1, 
+			totalPage: 1, 
 			search: req.query.search ? req.query.search : "", 
 			message: req.flash('message'), 
 			error: req.flash('error') 
