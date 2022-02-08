@@ -8,3 +8,14 @@
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/toastr/build/toastr.min.js"></script>
 <!-- toastr init -->
 <script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/toastr.init.js"></script>
+
+<script>
+	window.addEventListener( "pageshow", function ( event ) {
+		var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
+		if ( historyTraversal ) {
+			// Handle page restore.
+			// alert('refresh');
+			window.location.reload();
+		}
+	});
+</script>

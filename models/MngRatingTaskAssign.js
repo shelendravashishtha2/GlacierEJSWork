@@ -3,7 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const checklistSchema = new mongoose.Schema({ 
 	checklistId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Checklist_Master',
 		required: true
 	},
 	weightage: {
@@ -21,7 +21,7 @@ const checklistSchema = new mongoose.Schema({
 
 const topicSchema = new mongoose.Schema({ 
 	topicId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
 	assignChecklists: [checklistSchema],

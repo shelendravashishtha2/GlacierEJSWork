@@ -749,10 +749,11 @@ exports.assignRatingTask = async (req, res) => {
 // assign Rating Task
 exports.viewGroupAssignTask = async (req, res) => {
 	try {
-// clockify
-// cmder
+		res.locals = { title: 'Manage Rating', session: req.session};
+
 		let schema = Joi.object({
-			propertyId: Joi.required()
+			propertyId: Joi.required(),
+			groupId: Joi.optional()
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
@@ -760,74 +761,99 @@ exports.viewGroupAssignTask = async (req, res) => {
 		}
 
 		let assignPropertyGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'});
-		// console.log(assignPropertyGroupData);
 
-		let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({propertyId: req.query.propertyId});
+		let MngRatingTaskAssignTopicList = [];
+		let propertyAuditorDetails = {};
+		if (req.query.groupId) {
+			let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({propertyId: req.query.propertyId, assignGroups: {$elemMatch: {groupId: req.query.groupId} }})
+				.populate({path: 'auditorId'})
+				.populate({path: 'assignGroups.groupId'})
+				.populate({path: 'assignGroups.assignTopics.topicId'})
+				.populate({path: 'assignGroups.assignTopics.assignChecklists.checklistId'});
 		
+			propertyAuditorDetails = MngRatingTaskAssignData.auditorId;
+			MngRatingTaskAssignTopicList = MngRatingTaskAssignData.assignGroups[0].assignTopics
+		}
 
-		// if (assignPropertyGroupData) {
-		// 	let assignGroupList = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId});
-		// }
-
-		// let data = [];
-		// for (let i = 0; i < assignPropertyIds.length; i++) {
-		// 	let assignGroupsData = await MngRatingGroupAssign.findOne({propertyId: assignPropertyIds[i]});
-		// 	let assignTopicsData = await MngRatingTopicAssign.findOne({propertyId: assignPropertyIds[i]});
-		// 	let assignChecklistData = await MngRatingChecklistAssign.findOne({propertyId: assignPropertyIds[i]});
-			
-		// 	let taskObj = new MngRatingTaskAssign();
-		// 	taskObj.propertyId = assignGroupsData.propertyId;
-		// 	taskObj.auditorId = assignGroupsData.auditorId;
-
-		// 	let assignGroupsArray = [];
-		// 	let totalWeightage = 0;
-		// 	for (let j = 0; j < assignGroupsData.groupIds.length; j++) {	
-
-		// 		let assignTopicsArray = []
-		// 		for (let k = 0; k < assignTopicsData.topicIds.length; k++) {
-
-		// 			let assignChecklistsArray = []
-		// 			for (let l = 0; l < assignChecklistData.checklistIds.length; l++) {
-		// 				let checklistData = await MngRatingChecklistMaster.findOne({_id: assignChecklistData.checklistIds[j]})
-		// 				totalWeightage = totalWeightage + checklistData.weightage ? checklistData.weightage : 0
-		// 				assignChecklistsArray.push({
-		// 					checklistId: assignChecklistData.checklistIds[j],
-		// 					weightage: checklistData.weightage ? checklistData.weightage : 0,
-		// 					point: 0
-		// 				})
-		// 			}
-		// 			assignTopicsArray.push({
-		// 				topicId: assignTopicsData.topicIds[j],
-		// 				assignChecklists: assignChecklistsArray
-		// 			})
-		// 		}
-		// 		assignGroupsArray.push({
-		// 			groupId: assignGroupsData.groupIds[j],
-		// 			assignTopics: assignTopicsArray
-		// 		})
-		// 	}
-		// 	taskObj.assignGroups = assignGroupsArray;
-		// 	taskObj.totalWeightage = totalWeightage;
-		// 	taskObj.totalPoint = 0;
-		// 	taskObj.totalPercentage = 0;
-
-		// 	await taskObj.save();
-		// 	data.push(taskObj);
-		// }
-
-		return res.render('Admin/Manage-Rating/assign-auditor-task-list', { 
-			data: MngRatingTaskAssignData,
-			page: 1, 
-			totalPage: 1, 
-			search: req.query.search ? req.query.search : "", 
-			message: req.flash('message'), 
-			error: req.flash('error') 
+		return res.render('Admin/Manage-Rating/assign-auditor-task-list', {
+			data: {propertyId: req.query.propertyId, groupId: req.query.groupId },
+			assignPropertyGroupData: assignPropertyGroupData.groupIds,
+			propertyAuditorDetails: propertyAuditorDetails,
+			MngRatingTaskAssignTopicList: {docs: MngRatingTaskAssignTopicList},
+			page: 1,
+			totalPage: 1,
+			search: req.query.search ? req.query.search : "",
+			message: req.flash('message'),
+			error: req.flash('error')
 		});
-		// return res.status(200).send({
-		// 	"status": true,
-		// 	data: 'assignPropertyIds',
-		// 	data2: 'data'
-		// });
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		errorMessage = "Something want wrong";
+		req.session.error = { errorMessage: errorMessage, inputData: req.body };
+		return res.redirect('back');
+	}
+}
+
+// view Assign Task Checklist
+exports.viewAssignTaskChecklist = async (req, res) => {
+	try {
+		res.locals = { title: 'Manage Rating', session: req.session};
+
+		let schema = Joi.object({
+			propertyId: Joi.required(),
+			groupId: Joi.required(),
+			topicId: Joi.required(),
+		});
+		let validation = schema.validate(req.query, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let MngRatingTaskAssignTopicList = [];
+		let propertyAuditorDetails = {};
+
+		if (req.query.groupId && req.query.topicId) {
+
+			let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({
+					propertyId: req.query.propertyId,
+					assignGroups: {
+						$elemMatch: {
+							groupId: req.query.groupId,
+							assignTopics: {
+								$elemMatch: { 
+									topicId: req.query.topicId 
+								},
+							},
+						},
+					},
+				})
+                // .populate({path: 'auditorId'})
+                // .populate({path: 'assignGroups.groupId'})
+                // .populate({path: 'assignGroups.assignTopics.topicId'})
+                .populate({
+                    path: 'assignGroups.assignTopics.assignChecklists.checklistId',
+                })
+
+			if (MngRatingTaskAssignData) {
+				// console.log(JSON.stringify(MngRatingTaskAssignData));
+				propertyAuditorDetails = MngRatingTaskAssignData.auditorId;
+				MngRatingTaskAssignTopicList = MngRatingTaskAssignData.assignGroups[0].assignTopics[0].assignChecklists
+			}
+		}
+
+		// console.log(JSON.stringify(MngRatingTaskAssignTopicList));
+
+		return res.render('Admin/Manage-Rating/assign-auditor-task-checklist-details', {
+			data: {propertyId: req.query.propertyId, groupId: req.query.groupId },
+			propertyAuditorDetails: propertyAuditorDetails,
+			// MngRatingAssignTaskData: MngRatingAssignTaskData,
+			MngRatingTaskAssignTopicList: {docs: MngRatingTaskAssignTopicList},
+			page: 1,
+			totalPage: 1,
+			search: req.query.search ? req.query.search : "",
+			message: req.flash('message'),
+			error: req.flash('error')
+		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";

@@ -98,6 +98,7 @@ router.post('/update-topic-name', isUserAllowed, ManageRatingController.updateTo
 router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGroupList); //
 router.get('/assign-rating-task', isUserAllowed, ManageRatingController.assignRatingTask); // generate rating task
 router.get('/view-group-assign-task', isUserAllowed, ManageRatingController.viewGroupAssignTask); //
+router.get('/view-assign-task-checklist', isUserAllowed, ManageRatingController.viewAssignTaskChecklist); //
 
 // PPM Master
 router.get('/ppm', isUserAllowed, PpmController.PpmList);

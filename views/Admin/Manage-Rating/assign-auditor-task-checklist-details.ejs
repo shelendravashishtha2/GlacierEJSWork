@@ -7,12 +7,12 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">View Rating</h4>
+            <h4 class="mb-sm-0 font-size-18">View checklist</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/manage-rating">Manage Rating</a></li>
-                    <li class="breadcrumb-item active">View Rating</li>
+                    <li class="breadcrumb-item active">View checklist</li>
                 </ol>
             </div>
         </div>
@@ -25,31 +25,15 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-				<div class="row mb-2">
-                    <div class="col-sm-8">
-                        <div class="mb-2 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label text-sm-end">Select Property Name :-</label>
-                            <div class="col-md-5">
-                                <select class="form-select" onchange="changeGroupId(this)" name="groupId" id="groupId" >
-                                    <option value="">Select Group Name</option>
-                                    <% for (i = 0; i < assignPropertyGroupData.length; i++) { %>
-                                        <option value="<%= assignPropertyGroupData[i]._id %>" <%= data.groupId == String(assignPropertyGroupData[i]._id) ? 'selected' : '' %>><%= assignPropertyGroupData[i].groupName %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr>
                 <div class="table-responsive">
                     <table class="table align-middle table-nowrap table-check">
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">#</th>
-                                <th class="text-center">Topic name</th>
+                                <th class="text-center">Checklist Name</th>
+                                <th class="text-center">Cue List</th>
                                 <th class="text-center">Weightage</th>
-                                <th class="text-center">Total Point</th>
-                                <th class="text-center">Auditor Name</th>
+                                <th class="text-center">Point</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -57,26 +41,46 @@
 							<% for( let i = 0; i < MngRatingTaskAssignTopicList.docs.length; i++ ) { %>
 								<tr>
 									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
-									<td class="text-center"><%= MngRatingTaskAssignTopicList.docs[i].topicId.topicName %></td>
-									<td class="text-center">
-										<% let totalWeightage = 0; %>
-										<% for( let j = 0; j < MngRatingTaskAssignTopicList.docs[i].assignChecklists.length; j++ ) { %>
-											<% totalWeightage = totalWeightage + MngRatingTaskAssignTopicList.docs[i].assignChecklists[j].checklistId.weightage %>
-										<% } %>
-										<%= totalWeightage %>
-									</td>
-									<td class="text-center">
-										<% let totalPoint = 0; %>
-										<% for( let j = 0; j < MngRatingTaskAssignTopicList.docs[i].assignChecklists.length; j++ ) { %>
-											<% totalPoint = totalPoint + MngRatingTaskAssignTopicList.docs[i].assignChecklists[j].point %>
-										<% } %>
-										<%= totalPoint %>
-									</td>
-									<td class="text-center"><%= propertyAuditorDetails.full_name %> </td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.checklistTitle %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.cueForAuditor %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.weightage %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].point %></td>
 									<td class="text-center" style="width: 7%;">
-										<a href="/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= data.groupId %>&&topicId=<%= MngRatingTaskAssignTopicList.docs[i].topicId._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+										<!-- <a href="/view-assign-rating-task-checklist?propertyId=<%#= MngRatingTaskAssignTopicList.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
+										<a href="javascript: void(0);" class="btn btn-outline-secondary"><b>View</b></a>
 									</td>
 								</tr>
+
+								<!-- Start Checklist Modal -->
+								<div class="modal fade addchecklist" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="orderdetailsModalLabel">More Details</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="modal-body">
+												<div class="row">
+													<div class="col-md-6">
+														<label for="example-text-input" class="col-md-6 col-form-label">Remark:-</label>
+														<label for="example-text-input" class="col-md-3 col-form-label">
+															Hello test remark
+														</label>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-6">
+														<label for="example-text-input" class="col-md-6 col-form-label">Images:-</label>
+														<label for="example-text-input" class="col-md-3 col-form-label">
+															images
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- end modal -->
 							<% } %>
                         </tbody>
                     </table>
@@ -123,31 +127,4 @@
         toastr.success('<%#= message %>');
     </script>
 <% } %>
-
-<script>
-    function pagination(i){
-        $("#page").val(i);
-        $("#form").submit();
-    }
-
-	function changeGroupId(selectObject) {
-		var value = selectObject.value; 
-		window.location.href = "/view-group-assign-task?propertyId=<%= data.propertyId %>&&groupId="+value+"";
-
-		// $.ajax({
-        //     type: "GET",
-        //     url: "/view-group-assign-task?propertyId=<%= data.propertyId %>&&groupId="+value+"",
-        //     // data: {
-        //     //     'search_text' : $(this).val(),
-        //     //     'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
-        //     // },
-        //     success: function(result) { 
-		// 		alert('Successfully called'); 
-		// 	},
-        //     error: function(exception) { 
-		// 		alert('Exception:'+ exception); 
-		// 	}
-        // });
-	}
-</script>
 <%- contentFor('BottomJs') %>
