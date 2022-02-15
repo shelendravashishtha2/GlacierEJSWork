@@ -70,9 +70,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static('./public'));
 
 // Define All Routes
-app.use("/", require("./routes/web"));
 app.use('/api', require("./routes/api"));
 app.use('/admin/api', require("./routes/admin_api"));
+app.use("/", require("./routes/web"));
 
 //cron schedule
 cron.schedule('01 00 * * *', async () => { //will run every night at 12:01 AM

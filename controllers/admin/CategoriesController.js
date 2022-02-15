@@ -230,7 +230,7 @@ exports.storeChecklist = async (req, res) => {
 			setting.save();
 		}
 		uniqueId = uniqueId.toString().padStart(8, "0");
-		const CategoryChecklistData = new CategoryChecklist({
+		const CategoryChecklistData = new CategoryFrcMaster({
 			category_id: req.body.category_id,
 			checklist_id: req.body.checklist_id,
 			checklist_name: req.body.checklist_name,

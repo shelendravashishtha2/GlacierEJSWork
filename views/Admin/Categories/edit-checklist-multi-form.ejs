@@ -22,13 +22,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18" id="formTitle"><%= data.type %></h4>
+            <h4 class="mb-sm-0 font-size-18" id="formTitle"><%#= data.type %></h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
 					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
                     <li class="breadcrumb-item"><a href="/edit-category-checklist/<%= data.category_id._id %>"><%= data.category_id.category_name %> </a></li>
-					<li class="breadcrumb-item active" id="formTitle1"><%= data.type %></li>
+					<li class="breadcrumb-item active" id="formTitle1"><%#= data.type %></li>
                 </ol>
             </div>
         </div>
@@ -40,7 +40,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title" id="formTitle2"><%= data.type %></h4>
+                <h4 class="card-title" id="formTitle2"><%#= data.type %></h4>
                 <!-- end page title -->
                 <div id="build-wrap"></div>
                 <!-- end page title -->
@@ -53,11 +53,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+<script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
 <script>
-    const fbEditor = document.getElementById('build-wrap')
-    const formData = JSON.stringify(<%- JSON.stringify(data.form) %>);
-    const formBuilder = $(fbEditor).formBuilder({ formData })
-    if(JSON.parse(formData).length > 0){
+	//form create
+    let fbEditor = document.getElementById('build-wrap')
+    let formData = <%- JSON.stringify(data.form) %>;
+	let options = {
+		disableFields: ['hidden'],
+		defaultFields: formData,
+    };
+	let formBuilder = $(fbEditor).formBuilder(options)
+
+	//form render(view form)
+	// var container = document.getElementById('fb-rendered-form');
+	// // let formData = <%#- JSON.stringify(data.form) %>;
+	// var formRenderOpts = {
+	// 	formData,
+	// 	dataType: 'json'
+	// };
+	// $(container).formRender(formRenderOpts);
+
+
+    if(formData.length > 0){
         $("#formTitle").html("Edit Form");
         $("#formTitle1").html("Edit Form");
         $("#formTitle2").html("Edit Form");
@@ -68,17 +85,17 @@
     }
 
     setTimeout(function(){
-
             document.getElementsByClassName("save-template")[0].addEventListener("click", function() {
                 if(formBuilder.actions.getData().length > 0){
                   $.post("/update-form-create",
                   {
                     checklistId: '<%= data._id %>',
-                    forms:formBuilder.actions.getData()
+                    forms: formBuilder.actions.getData()
                   },
                   function(data, status){
                         toastr.success(data.message);
-                        window.location.href = "<%=process.env.PUBLIC_URL%>/master-frc";
+                        // window.location.href = "<%#=process.env.PUBLIC_URL%>/master-frc";
+                        window.location.href = history.back(-1);
                   });
                   
                 }else{

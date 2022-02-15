@@ -16,7 +16,12 @@ const checklistSchema = new mongoose.Schema({
 		min: [0,'invalid point'],
 		max: [1,'invalid point']
 	},
-
+	remark: {
+		type: String,
+	},
+	attachPhotos: {
+		type: [String]
+	},
 });
 
 const topicSchema = new mongoose.Schema({ 

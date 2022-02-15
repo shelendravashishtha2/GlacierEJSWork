@@ -171,6 +171,7 @@ exports.formDetail = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+
 		let formDetail = await CategoryChecklist.findOne({_id:req.body.CategoryChecklistId},{form:1});
 		if (!formDetail) {
 			return res.send(response.error(400, "Category Checklist not found", [] ));

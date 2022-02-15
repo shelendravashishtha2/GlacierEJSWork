@@ -38,11 +38,15 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">View FRC Form
-                    <a href="/master-frc" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a>
+                    <!-- <a href="/master-frc" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a> -->
+					<input type="button" value="Back" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;" onclick="history.back(-1)" />
                 </h4>
-                <!-- end page title -->
-                <div id="build-wrap"></div>
-                <!-- end page title -->
+				<div class="row">
+					<div class="col-8">
+						<!-- render form -->
+						<div id="fb-rendered-form"></div>
+					</div>
+				</div>
             </div>
         </div>
     </div>
@@ -52,8 +56,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+<script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
 <script>
-    const fbEditor = document.getElementById('build-wrap')
-    const formData = JSON.stringify(<%- JSON.stringify(data.form) %>);
-    const formBuilder = $(fbEditor).formBuilder({ formData })
+    // const fbEditor = document.getElementById('build-wrap')
+    // const formData = JSON.stringify(<%#- JSON.stringify(data.form) %>);
+    // const formBuilder = $(fbEditor).formBuilder({ formData })
+
+	//form render(view form)
+	var container = document.getElementById('fb-rendered-form');
+	let formData = <%- JSON.stringify(data.form) %>;
+	var formRenderOpts = {
+		formData,
+		dataType: 'json'
+	};
+	$(container).formRender(formRenderOpts);
 </script>

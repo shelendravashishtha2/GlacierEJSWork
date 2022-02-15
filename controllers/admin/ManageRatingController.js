@@ -709,13 +709,13 @@ exports.assignRatingTask = async (req, res) => {
 						let checklistData = await MngRatingChecklistMaster.findOne({_id: assignChecklistData.checklistIds[j]})
 						totalWeightage = totalWeightage + checklistData.weightage ? checklistData.weightage : 0
 						assignChecklistsArray.push({
-							checklistId: assignChecklistData.checklistIds[j],
+							checklistId: assignChecklistData.checklistIds[l],
 							weightage: checklistData.weightage ? checklistData.weightage : 0,
 							point: 0
 						})
 					}
 					assignTopicsArray.push({
-						topicId: assignTopicsData.topicIds[j],
+						topicId: assignTopicsData.topicIds[k],
 						assignChecklists: assignChecklistsArray
 					})
 				}
@@ -770,9 +770,9 @@ exports.viewGroupAssignTask = async (req, res) => {
 				.populate({path: 'assignGroups.groupId'})
 				.populate({path: 'assignGroups.assignTopics.topicId'})
 				.populate({path: 'assignGroups.assignTopics.assignChecklists.checklistId'});
-		
-			propertyAuditorDetails = MngRatingTaskAssignData.auditorId;
-			MngRatingTaskAssignTopicList = MngRatingTaskAssignData.assignGroups[0].assignTopics
+
+			propertyAuditorDetails = MngRatingTaskAssignData?.auditorId;
+			MngRatingTaskAssignTopicList = MngRatingTaskAssignData?.assignGroups[0]?.assignTopics
 		}
 
 		return res.render('Admin/Manage-Rating/assign-auditor-task-list', {
@@ -812,6 +812,8 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 		let MngRatingTaskAssignTopicList = [];
 		let propertyAuditorDetails = {};
 
+		console.log(req.query.topicId);
+
 		if (req.query.groupId && req.query.topicId) {
 
 			let MngRatingTaskAssignData = await MngRatingTaskAssign.findOne({
@@ -823,13 +825,21 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 								$elemMatch: { 
 									topicId: req.query.topicId 
 								},
-							},
+							}
 						},
 					},
 				})
+				.elemMatch('assignGroups.assignTopics', {
+					groupId: req.query.groupId,
+					assignTopics: {
+						$elemMatch: { 
+							topicId: req.query.topicId 
+						},
+					}
+				})
                 // .populate({path: 'auditorId'})
                 // .populate({path: 'assignGroups.groupId'})
-                // .populate({path: 'assignGroups.assignTopics.topicId'})
+                // .populate({path: 'assignGroups.assignTopics.topicId'}) //match: {'_id': req.query.topicId}
                 .populate({
                     path: 'assignGroups.assignTopics.assignChecklists.checklistId',
                 })

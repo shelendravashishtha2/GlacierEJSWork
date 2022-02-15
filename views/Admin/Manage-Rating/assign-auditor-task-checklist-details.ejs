@@ -40,40 +40,44 @@
                         <tbody>
 							<% for( let i = 0; i < MngRatingTaskAssignTopicList.docs.length; i++ ) { %>
 								<tr>
-									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i]._id %> -- <%= i+1 %> -- <%= MngRatingTaskAssignTopicList.docs[i].checklistId.ratingTopicId %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.checklistTitle %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.cueForAuditor %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.weightage %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].point %></td>
 									<td class="text-center" style="width: 7%;">
 										<!-- <a href="/view-assign-rating-task-checklist?propertyId=<%#= MngRatingTaskAssignTopicList.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
-										<a href="javascript: void(0);" class="btn btn-outline-secondary"><b>View</b></a>
+										<a href="javascript: void(0);" >
+											<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".checklistDetails"><b>View</b></button>
+										</a>
 									</td>
 								</tr>
 
 								<!-- Start Checklist Modal -->
-								<div class="modal fade addchecklist" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
+								<div class="modal fade checklistDetails" tabindex="-1" role="dialog" aria-labelledby="checklistDetailsModalLabel" aria-hidden="true">
 									<div class="modal-dialog modal-dialog-centered" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
-												<h5 class="modal-title" id="orderdetailsModalLabel">More Details</h5>
+												<h5 class="modal-title" id="checklistDetailsModalLabel">More Details</h5>
 												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 											</div>
 											<div class="modal-body">
 												<div class="row">
-													<div class="col-md-6">
-														<label for="example-text-input" class="col-md-6 col-form-label">Remark:-</label>
-														<label for="example-text-input" class="col-md-3 col-form-label">
-															Hello test remark
-														</label>
+													<div class="col-md-3 text-end">
+														<label>Remark:-</label>
+													</div>
+													<div class="col-md-9">
+														Hello test remark
+														<%= MngRatingTaskAssignTopicList.docs[i].remark %>
 													</div>
 												</div>
 												<div class="row">
-													<div class="col-md-6">
-														<label for="example-text-input" class="col-md-6 col-form-label">Images:-</label>
-														<label for="example-text-input" class="col-md-3 col-form-label">
-															images
-														</label>
+													<div class="col-md-3 text-end">
+														<label>Images:-</label>
+													</div>
+													<div class="col-md-9">
+														images
+														<%= MngRatingTaskAssignTopicList.docs[i].attachPhotos %>
 													</div>
 												</div>
 											</div>
@@ -85,32 +89,6 @@
                         </tbody>
                     </table>
                 </div>
-				<!-- start pagination -->
-				<div class="row">
-					<div class="col-6">
-						<p>Showing <%#= MngRatingTaskAssignTopicList.pagingCounter %> to <%#= MngRatingTaskAssignTopicList.pagingCounter + (MngRatingTaskAssignTopicList.limit-1) %> of <%#= MngRatingTaskAssignTopicList.totalDocs %> entries</p>
-					</div>
-					<div class="col-6">
-						<ul class="pagination pagination-rounded justify-content-end mb-2">
-							<li class="page-item <%#= MngRatingTaskAssignTopicList.hasPrevPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTaskAssignTopicList.prevPage %>)" aria-label="Previous">
-									<i class="mdi mdi-chevron-left"></i>
-								</a>
-							</li>
-							<% for( let i = 0; i < MngRatingTaskAssignTopicList.totalPages; i++ ) { %>
-								<li class="page-item <%#= MngRatingTaskAssignTopicList.page == i+1 ? 'active' : '' %>">
-									<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= i+1 %>)"><%#= i+1 %></a>
-								</li>
-							<% } %>
-							<li class="page-item <%#= MngRatingTaskAssignTopicList.hasNextPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTaskAssignTopicList.prevPage %>)" aria-label="Next">
-									<i class="mdi mdi-chevron-right"></i>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-                <!-- end pagination -->
             </div>
         </div>
     </div>

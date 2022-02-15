@@ -11,16 +11,20 @@ const HistoryController = require("../controllers/admin/HistoryController");
 const CategoriesController = require("../controllers/admin/CategoriesController");
 const SettingController = require("../controllers/admin/SettingController");
 
-router.use(function (req, res, next) {
+// router.use(function (req, res, next) {
+// 	if (req.session.user) {
+// 		next();
+// 	} else {
+// 		res.redirect('/login');
+// 	}
+// })
+
+function isUserAllowed(req, res, next) {
 	if (req.session.user) {
 		next();
 	} else {
 		res.redirect('/login');
 	}
-})
-
-function isUserAllowed(req, res, next) {
-	next()
 }
 
 router.get('/page-not-found', UserController.pageNotFound);
