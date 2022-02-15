@@ -3,6 +3,12 @@
 <style>
     .text-center{text-align: center;}
     .mb-3 {margin-bottom: 0.5rem !important;}
+    .table > tbody > tr{
+        cursor: pointer;
+    } 
+    .table > tbody > tr > td > table > tbody > tr {
+        cursor: default;
+    } 
 </style>
 <!-- start page title -->
 <div class="row">
@@ -52,9 +58,10 @@
                 </div>
                 </form>
                 <div class="table-responsive">
-                    <table class="table align-middle table-nowrap table-check">
+                    <table class="table align-middle table-nowrap table-check ppm-table">
                         <thead class="table-light">
                             <tr>
+                                <th class="text-center"></th>
                                 <th class="text-center">#</th>
                                 <th>Equipments Name</th>
                                 <th class="text-center">Status</th>
@@ -67,7 +74,8 @@
                             <% } %>
                             <% for (i = 0; i < data.length; i++) { %>
                             <tr>
-                                <td style="width: 7%;" class="text-center"><%= (10*(page-1))+ 1 + i %></td>
+                                <td style="width: 1%;" class="text-center">+</td>
+                                <td style="width: 5%;" class="text-center"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= data[i].ppmEquipmentName %></td>
                                 <td style="text-align: center;width: 10%;">
                                     <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i]._id %>" switch="warning" <% if(data[i].status == 1){ %> checked <% } %>>
@@ -75,6 +83,46 @@
                                 </td>
                                 <td style="text-align: center;width: 10%;">
                                     <a href="/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                </td>
+                            </tr>
+                            <tr class="child" style="display: none;">
+                                <!-- <td></td> -->
+                                <td colspan="5">
+                                    <table class="table align-middle table-nowrap table-check" style="width: 98%; float: right;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">#</th>
+                                                <th>Asset Name</th>
+                                                <th>Frequency</th>
+                                                <th>Vendor Name</th>
+                                                <th>Date</th>
+                                                <th>Month</th>
+                                                <th>Day</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for (j = 0; j < data[i].assets.length; j++) { %>
+                                                <tr>
+                                                    <td class="text-center" style="width: 5%;"><%= j+1  %></td>
+                                                    <td><%= data[i].assets[j].assetName %></td>
+                                                    <td><%= data[i].assets[j].frequency %></td>
+                                                    <td><%= data[i].assets[j].vendorName %></td>
+                                                    <td><%= data[i].assets[j].date %></td>
+                                                    <td><%= data[i].assets[j]?.month ?? '--' %></td>
+                                                    <td><%= data[i].assets[j].day %></td>
+                                                    <td style="text-align: center;width: 10%;">
+                                                        <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i].assets[j]._id %>" switch="warning" <% if(data[i].status == 1){ %> checked <% } %>>
+                                                        <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
+                                                    </td>
+                                                    <td style="text-align: center;width: 10%;">
+                                                        <a href="/edit-ppm/<%= data[i].assets[j]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                                    </td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
                                 </td>
                             </tr>
                             <% } %>
@@ -233,7 +281,14 @@
         $("#page").val(i);
         $("#form").submit();
     }
-
+    $(document).on('click','.ppm-table tbody tr',function(){
+        if($(this).closest('tr').next('tr').is(':hidden')){
+            $('.child').hide();
+            $(this).closest('tr').next('tr').show()
+        }else{
+            $(this).closest('tr').next('tr').hide()
+        }
+    })
     $("#submitppmEquipmentName").click(function(){
         let ppmEquipmentName = $("#ppmEquipmentName").val();
         if(ppmEquipmentName.trim() != ""){

@@ -207,7 +207,8 @@ exports.PpmList = async (req, res) => {
 		let project = {
 			$project: {
 				ppmEquipmentName: 1,
-				status: 1
+				status: 1,
+				assets: 1
 			}
 		}
 		let query1 = {};
@@ -223,9 +224,10 @@ exports.PpmList = async (req, res) => {
 				createdAt: -1
 			}
 		};
-		let propertyData = await PpmEquipment.aggregate([search, sort, skip, limit, project]);
+		let PpmEquipmentData = await PpmEquipment.aggregate([search, sort, skip, limit, project]);
+		console.log(PpmEquipmentData[0], 'ASSETS' );
 		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		return res.render('Admin/PPM/index', { 'data': propertyData, months: monthsList, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('message'), 'error': req.flash('error') });
+		return res.render('Admin/PPM/index', { 'data': PpmEquipmentData, months: monthsList, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('message'), 'error': req.flash('error') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
