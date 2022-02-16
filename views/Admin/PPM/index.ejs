@@ -74,7 +74,7 @@
                             <% } %>
                             <% for (i = 0; i < data.length; i++) { %>
                             <tr>
-                                <td style="width: 1%;" class="text-center">+</td>
+                                <td style="width: 1%;" class="text-center icon">+</td>
                                 <td style="width: 5%;" class="text-center"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= data[i].ppmEquipmentName %></td>
                                 <td style="text-align: center;width: 10%;">
@@ -82,11 +82,12 @@
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td style="text-align: center;width: 10%;">
+                                    <button type="button" onclick="detailTask('<%= i %>',-1)" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target=".addTaskModal"><i class="mdi mdi-plus me-1"></i> <b>Add Task</b> </button>
                                     <a href="/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
                                 </td>
                             </tr>
+                            <!-- Assets Table Within Row Start -->
                             <tr class="child" style="display: none;">
-                                <!-- <td></td> -->
                                 <td colspan="5">
                                     <table class="table align-middle table-nowrap table-check" style="width: 98%; float: right;">
                                         <thead class="table-light">
@@ -95,9 +96,9 @@
                                                 <th>Asset Name</th>
                                                 <th>Frequency</th>
                                                 <th>Vendor Name</th>
-                                                <th>Date</th>
-                                                <th>Month</th>
-                                                <th>Day</th>
+                                                <th class="text-center">Date</th>
+                                                <th class="text-center">Month</th>
+                                                <th class="text-center">Day</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
@@ -105,19 +106,22 @@
                                         <tbody>
                                             <% for (j = 0; j < data[i].assets.length; j++) { %>
                                                 <tr>
+
                                                     <td class="text-center" style="width: 5%;"><%= j+1  %></td>
                                                     <td><%= data[i].assets[j].assetName %></td>
                                                     <td><%= data[i].assets[j].frequency %></td>
                                                     <td><%= data[i].assets[j].vendorName %></td>
-                                                    <td><%= data[i].assets[j].date %></td>
-                                                    <td><%= data[i].assets[j]?.month ?? '--' %></td>
-                                                    <td><%= data[i].assets[j].day %></td>
-                                                    <td style="text-align: center;width: 10%;">
-                                                        <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i].assets[j]._id %>" switch="warning" <% if(data[i].status == 1){ %> checked <% } %>>
+                                                    <td class="text-center"><%=  data[i].assets[j].hasOwnProperty("date") ? data[i].assets[j].date : '--' %></td>
+                                                    <td class="text-center"><%= data[i].assets[j].hasOwnProperty("month") && data[i].assets[j].month !=="" ? data[i].assets[j].month : '--' %></td>
+                                                    <td class="text-center"><%= data[i].assets[j].hasOwnProperty("day") && data[i].assets[j].day !=="" ? data[i].assets[j].day : '--' %></td>
+                                                    <td class="text-center" style="width: 7%;">
+                                                        <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i].assets[j]._id %>,<%= data[i]._id %>" switch="warning" <% if(data[i].assets[j].status == 1){ %> checked <% } %>>
                                                         <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                                     </td>
-                                                    <td style="text-align: center;width: 10%;">
-                                                        <a href="/edit-ppm/<%= data[i].assets[j]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                                    <td class="text-center" style="width: 7%;">
+                                                        <a href="javascript: void(0);" >
+                                                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>','<%= j %>')" data-bs-target=".addTaskModal"><b>Edit</b></button>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             <% } %>
@@ -125,6 +129,8 @@
                                     </table>
                                 </td>
                             </tr>
+                            <!-- Assets Table Within Row End -->
+
                             <% } %>
                         </tbody>
                     </table>
@@ -275,18 +281,155 @@
         </div>
     </div>
 </form>
+<div class="modal fade addTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskDetailModalLabel">Add Equipment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3 row">
+                            <input type="hidden" name="taskId" id="taskId" value="">
+                            <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmId %>">
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" value="" id="assetName-frequency" name="assetName" required placeholder="Enter Asset Name">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Vendor Name<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" value="" name="vendorName" required id="vendorName-frequency" placeholder="Enter Vendor Name">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="frequency" onchange="changeAssetFrequency()" id="asset-frequency" required>
+                                   
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row" id="dayLabelFrequency">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Day<span class="required">*</span></label>
+                            <div class="col-md-8" id="daySelectDiv">
+                                <select class="form-select" id="day-frequency" name="day">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row" id="monthLabelFrequency">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Month<span class="required">*</span></label>
+                            <div class="col-md-8" id="monthSelectDiv">
+                                <select class="form-select" id="month-frequency" name="month">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row" id="dateLabelFrequency">
+                            <label class="col-md-4 col-form-label" style="text-align:right">Date<span class="required">*</span></label>
+                            <div class="col-md-8" id="dateSelectDiv">
+                                <select class="form-select" name="date" id="date-frequency">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning waves-effect waves-light" >submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <%- contentFor('FooterJs') %>
 <script>
+    let taskData = <%- JSON.stringify(data) %>;
+    let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
+    let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    function detailTask(equipmentIndex,assetIndex){
+        let detail;
+        let monthString = "";
+        let frequencyString = "";
+        let dayString = "";
+        let dateString = "";
+        if(assetIndex == -1){
+            detail = {
+                frequency:1,
+                month:1,
+                date:1,
+                taskId:"",
+            }
+            $("#taskDetailModalLabel").html("Add Task");
+        }else{
+            detail = taskData[equipmentIndex]['assets'][assetIndex];
+            $("#taskDetailModalLabel").html("Edit Task");
+        }
+        $('#ppmId').val(taskData[equipmentIndex]._id)
+		frequencyArray.forEach(function(frequency){
+			if(frequency == detail.frequency){
+				frequencyString = frequencyString + '<option value="'+frequency+'" selected>'+frequency+'</option>';
+			}else{
+				frequencyString = frequencyString + '<option value="'+frequency+'" >'+frequency+'</option>';
+			}
+		})
+		monthsList.forEach(function(month,index){
+			if((index+1) == detail.month){
+				monthString = monthString + '<option value="'+(index+1)+'" selected>'+month+'</option>';
+			}else{
+				monthString = monthString + '<option value="'+(index+1)+'" >'+month+'</option>';
+			}
+		})
+		dayArray.forEach(function(day,index){
+			if(day == detail.day){
+				dayString = dayString + '<option value="'+day+'" selected>'+day+'</option>';
+			}else{
+				dayString = dayString + '<option value="'+day+'" >'+day+'</option>';
+			}
+		})
+		for (i = 1; i < 32; i++) {
+			if(i == detail.date){
+				dateString = dateString + '<option selected value="'+i+'">'+i+'</option>';
+			}else{
+				dateString = dateString + '<option value="'+i+'">'+i+'</option>';
+			}
+		}
+		$("#asset-frequency").val(detail.frequency)
+		$("#asset-frequency").html(frequencyString);
+		changeAssetFrequency()
+
+		$("#month-frequency").html(monthString);
+		$("#day-frequency").html(dayString);
+		$("#date-frequency").html(dateString);
+		$("#taskId").val(detail.taskId);
+		$("#vendorName-frequency").val(detail.vendorName);
+		$("#assetName-frequency").val(detail.assetName);
+		// changeFrequency()
+    }
     function pagination(i){
         $("#page").val(i);
         $("#form").submit();
     }
-    $(document).on('click','.ppm-table tbody tr',function(){
-        if($(this).closest('tr').next('tr').is(':hidden')){
+    $(document).on('click', '.ppm-table tbody tr', function () {
+        //Check if closest tr is hidden or not and the closest tr having child class or not. 
+        if ($(this).closest('tr').next('tr').is(':hidden') && $(this).closest('tr').next('tr').hasClass('child')) {
+            //Hide all child tr elements
             $('.child').hide();
+            $('.icon').html('+');
+            //Show closest tr element
             $(this).closest('tr').next('tr').show()
-        }else{
+            $(this).find('>:first-child').html('-');
+        } else if ($(this).closest('tr').next('tr').hasClass('child')) {
+            //If closest tr element is not hidden then hide it
             $(this).closest('tr').next('tr').hide()
+            $(this).find('>:first-child').html('+');
         }
     })
     $("#submitppmEquipmentName").click(function(){
@@ -337,9 +480,49 @@
            $('#monthSelect').show();
         }
     }
+    function changeAssetFrequency() {
+        $('#day-frequency option:selected').removeAttr('selected');
+		$('#month-frequency option:selected').removeAttr('selected');
+		$('#date-frequency option:selected').removeAttr('selected');
+
+        $('#dayLabelFrequency').hide();
+        $('#monthLabelFrequency').hide();
+        $('#dateLabelFrequency').hide();
+		$('#day-frequncy').attr('required',false).val('');
+		$('#month-frequency').attr('required',false).val('');
+		$('#date-frequency').attr('required',false).val('');
+
+        let optionValue = $("#asset-frequency").val();
+        if(optionValue == 'Weekly'){
+            $('#dayLabelFrequency').show();
+            $('#day-frequency').attr('required',true);
+        } else if(optionValue == 'Fortnightly') {
+            $('#dateLabelFrequency').show();
+            $('#date-frequency').attr('required',true);
+        } else if(optionValue == 'Monthly') {
+            $('#dateLabelFrequency').show();
+            $('#date-frequency').attr('required',true);
+        }  else if(optionValue == 'Quarterly') {
+           $('#dateLabelFrequency').show();
+           $('#date-frequency').attr('required',true);
+           $('#monthLabelFrequency').show();
+           $('#month-frequency').attr('required',true);
+        }  else if(optionValue == 'Annually') {
+           $('#dateLabelFrequency').show();
+           $('#date-frequency').attr('required',true);
+           $('#monthLabelFrequency').show();
+           $('#month-frequency').attr('required',true);
+        }  else if(optionValue == 'Bi-Annually') {
+           $('#dateLabelFrequency').show();
+           $('#date-frequency').attr('required',true);
+           $('#monthLabelFrequency').show();
+           $('#month-frequency').attr('required',true);
+        }
+    }
 </script>
 
 <script>
+    
 // Any change event occuring on any input.staus (checkbox)...
 $('.status').on('change', function(e) {
     // A boolean that reflects the checkbox "check status"
