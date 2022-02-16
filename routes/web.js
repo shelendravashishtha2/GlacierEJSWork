@@ -103,6 +103,7 @@ router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGro
 router.get('/assign-rating-task', isUserAllowed, ManageRatingController.assignRatingTask); // generate rating task
 router.get('/view-group-assign-task', isUserAllowed, ManageRatingController.viewGroupAssignTask); //
 router.get('/view-assign-task-checklist', isUserAllowed, ManageRatingController.viewAssignTaskChecklist); //
+router.get('/store-assign-checklist-point', isUserAllowed, ManageRatingController.storeAssignChecklistPoint); // for testing
 
 // PPM Master
 router.get('/ppm', isUserAllowed, PpmController.PpmList);

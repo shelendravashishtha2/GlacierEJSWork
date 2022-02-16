@@ -219,27 +219,65 @@ exports.createNewPPM = async (req,res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		const exists = await PPM.findOne({ ppmEquipmentName: req.body.ppmEquipmentName });
-		if(exists) {
-			return res.send(response.error(400, 'PPM name already exists', [] ));
-		}
+		// const exists = await PPM.findOne({ ppmEquipmentName: req.body.ppmEquipmentName });
+		// if(exists) {
+		// 	return res.send(response.error(400, 'PPM name already exists', [] ));
+		// }
 		
-		let obj = new PPM({
-			ppmEquipmentName: req.body.ppmEquipmentName,
-			status: 1,
-			assets:[
-			{
-				assetName: req.body.assetName,
-				vendorName: req.body.vendorName,
-				frequency: req.body.frequency,
-            	month: req.body.month,
-            	date: req.body.date,
-            	created_by: req.user._id,
-            	updated_by: req.user._id,
-				status: 1
-			}]
-		});
-		let propertyData = await obj.save();
+		// let obj = new PPM({
+		// 	ppmEquipmentName: req.body.ppmEquipmentName,
+		// 	status: 1,
+		// 	assets:[
+		// 	{
+		// 		assetName: req.body.assetName,
+		// 		vendorName: req.body.vendorName,
+		// 		frequency: req.body.frequency,
+        //     	month: req.body.month,
+        //     	date: req.body.date,
+        //     	created_by: req.user._id,
+        //     	updated_by: req.user._id,
+		// 		status: 1
+		// 	}]
+		// });
+		// let propertyData = await obj.save();
+
+		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
+		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+			req.body.day = '';
+		}
+
+		let day, month, date;
+		if (req.body.frequency == 'Weekly') {
+			day = req.body.day;
+		} else if (req.body.frequency == 'Fortnightly') {
+			date = req.body.date;
+		} else if (req.body.frequency == 'Monthly') {
+			date = req.body.date;
+		} else if (req.body.frequency == 'Quarterly') {
+			date = req.body.date;
+			month = req.body.month;
+		} else if (req.body.frequency == 'Annually') {
+			date = req.body.date;
+			month = req.body.month;
+		} else if (req.body.frequency == 'Bi-Annually') {
+			date = req.body.date;
+			month = req.body.month;
+		}
+
+	
+		await PpmEquipmentAssetAssign.create({
+			propertyId: req.body.propertyId,
+			ppmEquipmentId: req.body.ppmEquipmentId,
+			assignPpmEquipmentId: assignPpmEquipmentData._id,
+			assetName: req.body.assetName,
+			assetLocation: req.body.assetLocation,
+			vendorName: req.body.vendorName,
+			frequency: req.body.frequency,
+			day: day,
+			month: month,
+			date: date,
+		})
+
 		return res.send(response.success(200, 'PPM task added', []));
 	} catch (error) {
 		console.log(error);

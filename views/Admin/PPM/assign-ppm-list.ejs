@@ -170,17 +170,18 @@
 				propertyId: $("#propertyId").val()
 			},
             function(data, status){
-                properties[propertyIndex].wings = data.wings;
+				console.log(data);
+                // properties[propertyIndex].wings = data.wings;
                 ppm = data.ppm;
                 assignPpmData = data.assignPpmData;
-                wings = properties[propertyIndex].wings;
+                // wings = properties[propertyIndex].wings;
 
 				// set data in table view
 				for(let i=0;i < assignPpmData.length; i++){
                     let selected = assignPpmData[i].status == 1 ? "checked": "";
 					wingString = wingString + ` <tr>
                                     <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
-                                    <td>`+ assignPpmData[i].ppmEquipmentId.ppmEquipmentName +`</td>
+                                    <td>`+ assignPpmData[i].ppmEquipmentId?.ppmEquipmentName +`</td>
                                     <td class="text-center" style="width: 15%;">
                                         <input type="checkbox" onchange="EquipmentStatusChange('`+ assignPpmData[i]._id +`')" id="switch`+i+`" switch="warning" `+ selected +`>
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>

@@ -17,7 +17,7 @@ const MngRatingChecklistAssignSchema = new mongoose.Schema({
 	},
 	checklistIds: {
 		type:  [mongoose.Schema.Types.ObjectId],
-		ref: 'mng_Rating_Check_List',
+		ref: 'Mng_Rating_Checklist_Master',
 		required: true
 	},
     // auditorId: {
