@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">Property Wise Completed & Pending Task Report</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                 </ol>
             </div>
         </div>
@@ -23,7 +23,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="/properties" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/properties" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-md-3">

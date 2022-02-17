@@ -139,7 +139,7 @@ exports.supervisorList = async (req,res) => {
 		    "status": true,
 			"status_code": "200",
 			"message": "Supervisor list",
-			urlPath: process.env.PUBLIC_URL,
+			urlPath: process.env.APP_URL,
 		    data: supervisorList
 		});
 	} catch (error) {
@@ -165,7 +165,7 @@ exports.managerList = async (req, res) => {
 		    "status": true,
 			"status_code": "200",
 			"message": "Manager list",
-			urlPath: process.env.PUBLIC_URL,
+			urlPath: process.env.APP_URL,
 		    data: managerList
 		});
 	} catch (error) {
@@ -184,7 +184,7 @@ exports.userProfile = async (req, res) => {
 		    "status": true,
 			"status_code": "200",
 			"message": "User profile details",
-		    urlPath: process.env.PUBLIC_URL,
+		    urlPath: process.env.APP_URL,
 		    data: UserResource(UserData)
 		});
 	} catch (error) {
@@ -277,7 +277,7 @@ exports.profileImageUpload = async (req, res) => {
 			fileName = '/public/images/users/' + fileName;
 			const _id = req.user._id;
 			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new : true, runValidators: true} );
-			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": process.env.PUBLIC_URL + userData.profile_image} ));
+			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": process.env.APP_URL + userData.profile_image} ));
 		} else {
 			return res.send(response.error(400, 'Please select an image', [] ));
 		}
@@ -484,7 +484,7 @@ exports.dashboardSliderImage = async (req,res) => {
 			"status": true,
 		    "status_code": "200",
 			"message": "Dashboard slider images",
-			"urlPath": process.env.PUBLIC_URL,
+			"urlPath": process.env.APP_URL,
 		    data: sliderImages
 		});
 	} catch (error) {
@@ -538,7 +538,7 @@ exports.userDetail = async (req, res) => {
 		    "status": true,
 			"status_code": "200",
 			"message": "User details",
-		    urlPath: process.env.PUBLIC_URL,
+		    urlPath: process.env.APP_URL,
 		    data:[{"category": allCategory,
 		    "userData": [userData],
 		    "wingsData":wingsData}]

@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">Master User</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Master User</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="/users" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/users" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -41,7 +41,7 @@
                     <!-- end searching -->
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <a href="/create-users"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>ADD USER</b></button></a>
+                            <a href="<%= process.env.APP_URL %>/create-users"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>ADD USER</b></button></a>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                                     <tr>
                                         <td style="width: 5%;text-align: center;"><%= (10*(page-1))+ 1 + i %></td>
                                         <td style="text-align: center;">
-                                            <img src="<%= data[i].profile_image %>" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Profile Image" class="rounded-circle" height="50px" width="50px" >
+                                            <img src="<%= data[i].profile_image %>" onerror="this;this.src='<%=process.env.APP_URL%>/public/images/users/user-profile.png';" alt="Profile Image" class="rounded-circle" height="50px" width="50px" >
                                         </td>
                                         <td><%= data[i].full_name %></td>
                                         <td><%= data[i].mobile_no %></td>
@@ -81,9 +81,9 @@
                                             <input type="checkbox" id="switch<%=i+1%>" class="status" switch="warning" value="<%= data[i]._id %>" <%= data[i].status == 1 ? 'checked' : '' %>/>
                                             <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label>
                                         </td>
-                                        <td style="width: 10%;text-align: center;"><a href="/edit-users/<%= data[i]._id %>"> 
+                                        <td style="width: 10%;text-align: center;"><a href="<%= process.env.APP_URL %>/edit-users/<%= data[i]._id %>"> 
                                             <button class="btn btn-outline-warning"><b>Edit</b></button></a>
-                                            <a href="/view-users/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
+                                            <a href="<%= process.env.APP_URL %>/view-users/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
                                         </td>
                                     </tr>
                                 <% } %>

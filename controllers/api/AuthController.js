@@ -188,7 +188,7 @@ exports.login = async (req, res) => {
 					"status": true,
 					"status_code": "200",
 					"message": "Login success",
-					urlPath: process.env.PUBLIC_URL,
+					urlPath: process.env.APP_URL,
 					data: UserResource(userData)
 				});
 			} else {

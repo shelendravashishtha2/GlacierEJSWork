@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">Assign Equipments</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
+                        <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/ppm">PPM</a></li>
                     <li class="breadcrumb-item active">Assign Equipments</li>
                 </ol>
             </div>
@@ -130,7 +130,7 @@
             $("#ppmClose").click();
         }
         
-        $.post("/store-assign-property-ppm-equipments",
+        $.post("<%=process.env.APP_URL%>/store-assign-property-ppm-equipments",
         {
             propertyId: $("#propertyId").val(),
             ppmIds: selectedPPM,
@@ -152,7 +152,7 @@
     }
     
     function EquipmentStatusChange(assignPpmEquipmentId) {
-        $.post("/update-assign-ppm-equipment-status",
+        $.post("<%=process.env.APP_URL%>/update-assign-ppm-equipment-status",
 		{
 			assignPpmEquipmentId: assignPpmEquipmentId,
 		},
@@ -165,7 +165,7 @@
         let propertyIndex = properties.findIndex((x)=> x._id == $("#propertyId").val());
         let wingString = "";
         if(properties[propertyIndex]){
-             $.get("/property-wing-list",
+             $.get("<%=process.env.APP_URL%>/property-wing-list",
 			{
 				propertyId: $("#propertyId").val()
 			},
@@ -187,7 +187,7 @@
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
                                     </td>
                                     <td class="text-center" style="width: 7%;">
-										<a href="/assign-ppm-equipment-asset-list/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i]._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
+										<a href="<%= process.env.APP_URL %>/assign-ppm-equipment-asset-list/`+ properties[propertyIndex]._id +`/`+ assignPpmData[i]._id +`" class="btn btn-outline-warning"><b>Edit</b></a>
                                     </td>
                                 </tr>`
                 }

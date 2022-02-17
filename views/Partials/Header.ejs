@@ -3,21 +3,21 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="/" class="logo logo-dark">
+                <a href="<%= process.env.APP_URL %>/" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
+                        <img src="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/logo-img.png" alt="" height="17">
+                        <img src="<%=process.env.APP_URL%>/public/assets/images/logo-img.png" alt="" height="17">
                     </span>
                 </a>
 
-                <a href="/" class="logo logo-light">
+                <a href="<%= process.env.APP_URL %>/" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
+                        <img src="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/logo-img.png" alt="" height="19">
+                        <img src="<%=process.env.APP_URL%>/public/assets/images/logo-img.png" alt="" height="19">
                     </span>
                 </a>
             </div>
@@ -87,7 +87,7 @@
                         </a>
                         <a href="" class="text-reset notification-item">
                             <div class="d-flex">
-                                <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-3.jpg"
+                                <img src="<%=process.env.APP_URL%>/public/assets/images/users/avatar-3.jpg"
                                     class="me-3 rounded-circle avatar-xs" alt="user-pic">
                                 <div class="flex-grow-1">
                                     <h6 class="mt-0 mb-1">James Lemire</h6>
@@ -117,7 +117,7 @@
 
                         <a href="" class="text-reset notification-item">
                             <div class="d-flex">
-                                <img src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-4.jpg"
+                                <img src="<%=process.env.APP_URL%>/public/assets/images/users/avatar-4.jpg"
                                     class="me-3 rounded-circle avatar-xs" alt="user-pic">
                                 <div class="flex-grow-1">
                                     <h6 class="mt-0 mb-1">Salena Layfield</h6>
@@ -141,11 +141,11 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <% if(session) { %>
-                    <% if(session.user.profile_image && session.user.profile_image!= '') { %>
-                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%><%- session.user.profile_image %>" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Header Avatar">
-                    <% }else { %>
-                            <img class="rounded-circle header-profile-user" src="<%=process.env.PUBLIC_URL%>/public/assets/images/users/avatar-1.jpg" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Header Avatar">
-                    <% } %>
+						<% if(session.user.profile_image && session.user.profile_image!= '') { %>
+								<img class="rounded-circle header-profile-user" src="<%=process.env.APP_URL%><%- session.user.profile_image %>" onerror="this;this.src='<%=process.env.APP_URL%>/public/images/users/user-profile.png';" alt="Header Avatar">
+						<% }else { %>
+								<img class="rounded-circle header-profile-user" src="<%=process.env.APP_URL%>/public/assets/images/users/avatar-1.jpg" onerror="this;this.src='<%=process.env.APP_URL%>/public/images/users/user-profile.png';" alt="Header Avatar">
+						<% } %>
                     <% } %>
                     <% if(session) { %>
                     <span class="d-none d-xl-inline-block ms-1" key="t-henry"><%- session.user.full_name %></span>
@@ -155,7 +155,7 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile"><%=translation.Profile%></span></a>
-                    <a class="dropdown-item text-danger" href="/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout"><%=translation.Logout%></span></a>
+                    <a class="dropdown-item text-danger" href="<%= process.env.APP_URL %>/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout"><%=translation.Logout%></span></a>
                 </div>
             </div>
         </div>

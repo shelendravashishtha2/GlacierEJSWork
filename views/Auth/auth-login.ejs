@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Login | <%=process.env.PROJECT_NAME%></title>
+    <title>Login | <%=process.env.APP_NAME%></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="<%=process.env.PROJECT_NAME%>" name="description" />
-    <meta content="<%=process.env.PROJECT_NAME%>" name="author" />
+    <meta content="<%=process.env.APP_NAME%>" name="description" />
+    <meta content="<%=process.env.APP_NAME%>" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="public/assets/images/favicon-logo.png">
     <%- include ('../Partials/HeaderStyle') %>
@@ -23,7 +23,7 @@
                                 <div class="col-7">
                                     <div class="text-primary p-4">
                                         <h5 class="text-primary">Welcome Back !</h5>
-                                        <p>Sign in to continue to <%=process.env.PROJECT_NAME%>.</p>
+                                        <p>Sign in to continue to <%=process.env.APP_NAME%>.</p>
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
@@ -51,7 +51,7 @@
                                         <%= message %>
                                     </div>
                                 <% } %>
-                                <form class="form-horizontal" method="post" action="/post-login">
+                                <form class="form-horizontal" method="post" action="<%= process.env.APP_URL %>/post-login">
 
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>
@@ -77,7 +77,7 @@
                                     </div>
 
                                     <div class="mt-4 text-center">
-                                        <a href="/forgot-password" class="text-muted"><i class="mdi mdi-lock me-1"></i>Forgot your password?</a>
+                                        <a href="<%= process.env.APP_URL %>/forgot-password" class="text-muted"><i class="mdi mdi-lock me-1"></i>Forgot your password?</a>
                                     </div>
                                 </form>
                             </div>
@@ -87,7 +87,7 @@
                     <div class="mt-5 text-center">
                         <div>
                             <!-- <p>Don't have an account ? <a href="register" class="fw-medium text-primary"> Signup now </a> </p> -->
-                            <p>© <%= new Date().getFullYear(); %> <%=process.env.PROJECT_NAME%>. Crafted with <i class="mdi mdi-heart text-danger"></i>by Glasierinc</p>
+                            <p>© <%= new Date().getFullYear(); %> <%=process.env.APP_NAME%>. Crafted with <i class="mdi mdi-heart text-danger"></i>by Glasierinc</p>
                         </div>
                     </div>
 

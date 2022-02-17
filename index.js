@@ -20,7 +20,7 @@ global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
 
 const baseUrl = process.env.BASE_URL || "/"; // Default
-const port = process.env.PORT || 1000;
+const port = process.env.APP_PORT || 1000;
 
 app.all('/', (req, res, next) => {
 	(baseUrl != '/') ? res.redirect(baseUrl) : next()

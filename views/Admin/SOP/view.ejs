@@ -1,5 +1,5 @@
 <%- contentFor('HeaderCss') %>
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/sop_view_css/sop-view-style.css"rel="stylesheet"type="text/css"/>
+<link href="<%=process.env.APP_URL%>/public/assets/sop_view_css/sop-view-style.css"rel="stylesheet"type="text/css" />
 
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
@@ -9,8 +9,8 @@
             <h4 class="mb-sm-0 font-size-18">View SOP</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/sop">SOP</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/sop">SOP</a></li>
                     <li class="breadcrumb-item active">View SOP</li>
                 </ol>
             </div>
@@ -28,7 +28,7 @@
 					<% if (data.level == 1) { %>
 						<% for( let j = 0; j < data.single_category_files.length; j++ ) { %>
 							<li> 
-								<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= data.single_category_files[j] %>"><span> <%= data.single_category_files[j] %> </span></a> 
+								<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data.single_category_files[j] %>"><span> <%= data.single_category_files[j] %> </span></a> 
 							</li>
 						<% } %>
 					<% } else if (data.level == 2) { %>
@@ -38,7 +38,7 @@
 								<ul>
 									<% for( let j = 0; j < data.sub_category[i].sub_category_files.length; j++ ) { %>
 										<li> 
-											<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= data.sub_category[i].sub_category_files[j] %>" target="_blank"> 
+											<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data.sub_category[i].sub_category_files[j] %>" target="_blank"> 
 												<span> <%= data.sub_category[i].sub_category_files[j] %> </span>
 											</a> 
 										</li>

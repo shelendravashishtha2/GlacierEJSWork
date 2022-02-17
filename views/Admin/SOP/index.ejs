@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">SOP</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">SOP</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="/sop" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/sop" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -44,7 +44,7 @@
                         <div class="text-sm-end">
                         <% if(session) { %>
                         <% if(session.user.position_id == 1) { %>
-                            <a href="/create-sop"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>+ ADD SOP</b></button></a>
+                            <a href="<%= process.env.APP_URL %>/create-sop"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>+ ADD SOP</b></button></a>
                         <% } } %>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                                     <% if (data[i].level == 1) { %>
 										<% for( let j = 0; j < data[i].single_category_files.length; j++ ) { %>
 											<% if (j > 0) { %>, <% } %>
-											<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= data[i].single_category_files[j] %>" target="_blank"><%= data[i].single_category_files[j] %></a>
+											<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data[i].single_category_files[j] %>" target="_blank"><%= data[i].single_category_files[j] %></a>
 										<% } %>
 										<br>
                                     <% } else if (data[i].level == 2) { %>
@@ -97,7 +97,7 @@
                                             <% if (element.sub_category_name) { %>
 												<% for( let j = 0; j < element.sub_category_files.length; j++ ) { %>
 													<% if (j > 0) { %>, <% } %>
-													<a href="<%=process.env.PUBLIC_URL%>/public/images/sop_files/<%= element.sub_category_files[j] %>" target="_blank"><%= element.sub_category_files[j] %></a>
+													<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= element.sub_category_files[j] %>" target="_blank"><%= element.sub_category_files[j] %></a>
 												<% } %>
 												<br>
                                             <% } else { %>
@@ -113,9 +113,9 @@
                                 <td style="width: 10%;text-align: center;">
                                     <% if(session) { %>
                                     <% if(session.user.position_id == 1) { %>
-                                    <a href="/edit-sop/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
+                                    <a href="<%= process.env.APP_URL %>/edit-sop/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
                                     <% } } %>
-                                    <a href="/view-sop/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
+                                    <a href="<%= process.env.APP_URL %>/view-sop/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
                                 </td>
                             </tr>
                             <% } %>

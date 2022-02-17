@@ -7,8 +7,8 @@
             <h4 class="mb-sm-0 font-size-18">Add Category</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/categories">Master Category</a></li>
                     <li class="breadcrumb-item active">Add Category</li>
                 </ol>
             </div>
@@ -22,7 +22,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Add Category</h4>
-                <form action="/category-store" method="POST" class="custom-validation">
+                <form action="<%= process.env.APP_URL %>/category-store" method="POST" class="custom-validation">
                     <div class="row">
                         <div class="col-xl-6">
                             <div class="mb-3">

@@ -12,7 +12,7 @@
             <h4 class="mb-sm-0 font-size-18">Categorys</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Categorys</li>
                 </ol>
             </div>
@@ -25,7 +25,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Categorys Record <a href="/create-categorys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> Add Category</button></a></h4>
+                <h4 class="card-title">Categorys Record <a href="<%= process.env.APP_URL %>/create-categorys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><i class="fa fa-plus"></i> Add Category</button></a></h4>
                 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                     <thead>
                     <tr>
@@ -46,8 +46,8 @@
                         <td style="width: 10%;text-align: center;">30-09-2021</td>
                         <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
                             <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
-                        <td style="width: 10%;text-align: center;"><a href="/edit-categorys"> <button class="btn btn-outline-primary">Edit</button></a>
-                            <a href="/view-categorys"><button class="btn btn-outline-secondary">View</button></a></td>
+                        <td style="width: 10%;text-align: center;"><a href="<%= process.env.APP_URL %>/edit-categorys"> <button class="btn btn-outline-primary">Edit</button></a>
+                            <a href="<%= process.env.APP_URL %>/view-categorys"><button class="btn btn-outline-secondary">View</button></a></td>
                     </tr>
                     <% } %>
                     </tbody>

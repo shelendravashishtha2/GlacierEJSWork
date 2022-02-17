@@ -11,8 +11,8 @@
             <h4 class="mb-sm-0 font-size-18">Property Details</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/properties">Master Property</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/properties">Master Property</a></li>
                     <li class="breadcrumb-item active">Property Details</li>
                 </ol>
             </div>
@@ -80,7 +80,7 @@
                                     </td>
                                     <td> 
                                         <% if(categoryData[i].categoryId) { %>
-                                        <a href="/edit-category-checklist/<%= categoryData[i].categoryId._id %>">
+                                        <a href="<%= process.env.APP_URL %>/edit-category-checklist/<%= categoryData[i].categoryId._id %>">
                                             <i class="fas fa-chevron-circle-right" style="font-size: 20px;"></i>
                                         </a>
                                         <% } %>
@@ -195,7 +195,7 @@
 <!-- end row -->
 <%- contentFor('FooterJs') %>
 <!-- apexcharts -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/apexcharts/apexcharts.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/profile.init.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/fontawesome.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/profile.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/fontawesome.init.js"></script>
 <%- contentFor('BottomJs') %>

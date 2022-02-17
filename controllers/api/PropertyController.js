@@ -73,7 +73,7 @@ exports.propertyDetail = async (req, res) => {
 		    "status": true,
 			"status_code": "200",
 			"message": "Property details",
-			"urlPath": process.env.PUBLIC_URL,
+			"urlPath": process.env.APP_URL,
 		    data: [{
 		    	property_name:property.property_name,
 		    	name_of_owner:property.name_of_owner,

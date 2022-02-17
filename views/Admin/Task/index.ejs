@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">Assign List</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Assign List</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="/task" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/task" id="form">
                 <div class="row mb-2">
                    <!-- start searching -->
                    <div class="col-sm-3">
@@ -41,7 +41,7 @@
                     <!-- end searching -->
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <a href="/create-task" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ASSIGN TASK</b></a>
+                            <a href="<%= process.env.APP_URL %>/create-task" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ASSIGN TASK</b></a>
                         </div>
                     </div>
                 </div>

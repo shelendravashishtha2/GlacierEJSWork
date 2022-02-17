@@ -10,9 +10,9 @@
             <h4 class="mb-sm-0 font-size-18">Edit Group</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/manage-rating">Manage Rating</a></li>
-                    <li class="breadcrumb-item"><a href="/group-list">Group List</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/manage-rating">Manage Rating</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/group-list">Group List</a></li>
                     <li class="breadcrumb-item active">Edit Group</li>
                 </ol>
             </div>
@@ -25,7 +25,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="/update-group-name" method="POST" class="custom-validation">
+                <form action="<%= process.env.APP_URL %>/update-group-name" method="POST" class="custom-validation">
                     <input type="hidden" name="group_id" value="<%= groupDetails._id %>" required>
                     <div class="row mb-2">
                         <div class="col-sm-8">
@@ -41,12 +41,12 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="text-sm-end">
-                                <a href="/group-list" class="btn btn-warning waves-effect waves-light mb-2 me-2">Back </a>
+                                <a href="<%= process.env.APP_URL %>/group-list" class="btn btn-warning waves-effect waves-light mb-2 me-2">Back </a>
                             </div>
                         </div>
                     </div>
                 </form>
-                <form method="GET" action="/edit-group-name/<%= groupId %>" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/edit-group-name/<%= groupId %>" id="form">
                     <div class="row mb-2">
                         <!-- start searching -->
                         <div class="col-sm-3">
@@ -94,7 +94,7 @@
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
-                                    <a href="/edit-topic/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <a href="<%= process.env.APP_URL %>/edit-topic/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
                                 </td>
                             </tr>
                              <% } %>
@@ -168,7 +168,7 @@
                 <h5 class="modal-title" id="orderdetailsModalLabel">Add Checklist</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/add-topic" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <form action="<%= process.env.APP_URL %>/add-topic" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <input type="hidden" name="groupId" value="<%= groupDetails._id %>">
                 <input type="hidden" name="topicName" id="finalTopicName">
@@ -231,7 +231,7 @@ $('.status').on('change', function(e) {
         [return][Terminate function - don't do anything else] */
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
-        $.post("<%=process.env.PUBLIC_URL%>/update-rating-topic-status", {
+        $.post("<%=process.env.APP_URL%>/update-rating-topic-status", {
             topicId: $(this).val()
             }, function(data, status){
             toastr.success(data.message);

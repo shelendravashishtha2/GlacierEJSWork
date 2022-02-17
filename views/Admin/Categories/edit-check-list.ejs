@@ -7,9 +7,9 @@
             <h4 class="mb-sm-0 font-size-18">Edit FRC</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/categories">Master Category</a></li>
-                    <li class="breadcrumb-item"><a href="/edit-category-checklist/<%= data.category_id %>">Category Name</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/edit-category-checklist/<%= data.category_id %>">Category Name</a></li>
                     <li class="breadcrumb-item active">Edit FRC</li>
                 </ol>
             </div>
@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Edit FRC</h4>
-                <form action="/update-checklist-details" method="POST">
+                <form action="<%= process.env.APP_URL %>/update-checklist-details" method="POST">
 					<input type="hidden" name="_id" value="<%= data._id %>">
                     <div class="row">
                         <div class="col-xl-4">
@@ -109,8 +109,8 @@
                         <div class="col-xl-2"></div>
                         <div class="col-xl-6">
                             <button type="submit" class="btn btn-warning btn-rounded waves-effect waves-light"><b><i class="bx bx-check-double label-icon"></i> Edit</b></button>
-                            <a href="/create-checklist-multi-form/<%= data._id %>" class="btn btn-outline-warning btn-rounded">Modify FRC</a>
-                            <a href="/view-checklist-multi-form/<%= data._id %>" class="btn btn-outline-warning btn-rounded">View FRC</a>
+                            <a href="<%= process.env.APP_URL %>/create-checklist-multi-form/<%= data._id %>" class="btn btn-outline-warning btn-rounded">Modify FRC</a>
+                            <a href="<%= process.env.APP_URL %>/view-checklist-multi-form/<%= data._id %>" class="btn btn-outline-warning btn-rounded">View FRC</a>
                         </div>  
                     </div>
                 </form>
@@ -121,7 +121,7 @@
 <!-- end row -->
 <%- contentFor('FooterJs') %>
 <!-- Add Category init -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
 
 <script>
 	$(document).ready(function(){

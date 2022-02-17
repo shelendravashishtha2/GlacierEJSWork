@@ -110,7 +110,7 @@
                     <div class="row">
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="/properties-wise-completed-uncompleted-task">
+                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-primary me-1"></i>Total Task</p>
                                     <h5>100</h5>
                                 </a>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="/properties-wise-completed-uncompleted-task">
+                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-success me-1"></i> Completed Task</p>
                                     <h5>60 (60%)</h5>
                                 </a>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="/properties-wise-completed-uncompleted-task">
+                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i> Pending Task</p>
                                     <h5>40 (40%)</h5>
                                 </a>
@@ -144,7 +144,7 @@
 <script src="public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 <script src="public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
 <script src="public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/apexcharts/apexcharts.min.js"></script>
 <script>
     var options = {
           series: [60, 40],
@@ -169,7 +169,7 @@
         chart.render();
 </script>
 <!-- Saas dashboard init -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/saas-dashboard.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/saas-dashboard.init.js"></script>
 <% if(error.length> 0) { %>
     <script>
         toastr.error('<%= error %>');

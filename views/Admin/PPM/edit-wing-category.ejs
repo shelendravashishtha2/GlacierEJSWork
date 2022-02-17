@@ -7,8 +7,8 @@
             <h4 class="mb-sm-0 font-size-18">Assign PPM</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/ppm">PPM</a></li>
+                        <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/ppm">PPM</a></li>
                     <li class="breadcrumb-item active">Assign PPM</li>
                 </ol>
             </div>
@@ -26,7 +26,7 @@
                         <h4>Edit Wing PPM</h4>
                     </div>
                     <div class="col-sm-6">
-                        <a href="/assign-ppm" class="btn btn-warning waves-effect waves-light" style="float: right;">Back</a>
+                        <a href="<%= process.env.APP_URL %>/assign-ppm" class="btn btn-warning waves-effect waves-light" style="float: right;">Back</a>
                     </div>
                 </div>
                 <hr>
@@ -81,7 +81,7 @@
             }
         }
         if(selectedPPM.length > 0){
-            $.post("/edit-property-wing",
+            $.post("<%=process.env.APP_URL%>/edit-property-wing",
               {
                 wingId: '<%= wingId %>',
                 propertyId: '<%= propertyId %>',

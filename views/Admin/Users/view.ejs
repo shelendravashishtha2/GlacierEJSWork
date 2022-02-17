@@ -7,8 +7,8 @@
             <h4 class="mb-sm-0 font-size-18">Profile</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-					<li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/users">Master User</a></li>
+					<li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/users">Master User</a></li>
                     <li class="breadcrumb-item active">Profile</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col-md-12" style="text-align: center;">
                         <div class="avatar-md profile-user-wid mb-4" style="margin: 0px auto; padding-top: 13px;">
-                            <img src="<%= data[0].profile_image %>" onerror="this;this.src='/public/images/users/user-profile.png';" alt="Profile Image" class="img-thumbnail rounded-circle" style="height: 70px; width: 100% !important;">
+                            <img src="<%= data[0].profile_image %>" onerror="this;this.src='<%=process.env.APP_URL%>/public/images/users/user-profile.png';" alt="Profile Image" class="img-thumbnail rounded-circle" style="height: 70px; width: 100% !important;">
                         </div>
                         <h5 class="font-size-15 text-truncate"><%= data[0].full_name %></h5>
                         <p class="text-muted mb-0 text-truncate"><%= data[0].position_type %> </p>
@@ -125,7 +125,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title mb-4">Assign Property List 
-                    <a href="/users" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a>
+                    <a href="<%= process.env.APP_URL %>/users" class="text-center btn btn-warning waves-effect waves-light" style="align-items: center;float: right;"> <b>Back</b> </a>
                 </h4>
                 <div class="table-responsive">
                     <table class="table table-nowrap table-hover mb-0">
@@ -156,5 +156,5 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/profile.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/profile.init.js"></script>
 <%- contentFor('BottomJs') %>

@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">View checklist</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/manage-rating">Manage Rating</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/manage-rating">Manage Rating</a></li>
                     <li class="breadcrumb-item active">View checklist</li>
                 </ol>
             </div>
@@ -46,7 +46,7 @@
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.weightage %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].point %></td>
 									<td class="text-center" style="width: 7%;">
-										<!-- <a href="/view-assign-rating-task-checklist?propertyId=<%#= MngRatingTaskAssignTopicList.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
+										<!-- <a href="<%= process.env.APP_URL %>/view-assign-rating-task-checklist?propertyId=<%#= MngRatingTaskAssignTopicList.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
 										<a href="javascript: void(0);" >
 											<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".checklistDetails"><b>View</b></button>
 										</a>

@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">History</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/history">History</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/history">History</a></li>
                     <li class="breadcrumb-item active">Category History</li>
                 </ol>
             </div>
@@ -88,7 +88,7 @@
                                 <td class="text-center" style="width: 10%;">80%</td>
                                 <td>Housekeeping</td>
                                 <td class="text-center" style="width: 10%;">
-                                    <a href="/category-checklist-history" class="btn btn-outline-warning"><b>View</b></a>
+                                    <a href="<%= process.env.APP_URL %>/category-checklist-history" class="btn btn-outline-warning"><b>View</b></a>
                                 </td>
                             </tr>
                         </tbody>
@@ -114,14 +114,14 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
 
 <!-- form advanced init -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
 <%- contentFor('BottomJs') %>

@@ -1,9 +1,9 @@
 <%- contentFor('HeaderCss') %>
 <!-- DataTables -->
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <!-- Responsive datatable examples -->
-<link href="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
 <div class="row">
@@ -12,7 +12,7 @@
             <h4 class="mb-sm-0 font-size-18">Master FRC</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="#">Master FRC</a></li>
                 </ol>
             </div>
@@ -26,7 +26,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
-                    <form method="GET" action="/master-frc" id="form">
+                    <form method="GET" action="<%= process.env.APP_URL %>/master-frc" id="form">
                         <div class="row mb-2">
                             <!-- start searching -->
                             <div class="col-sm-3">
@@ -41,12 +41,12 @@
                             </div>
                             <div class="col-sm-3" style="padding: 0px;">
                                 <button type="submit" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
-                                <a href="/master-frc" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-refresh"></i> Refresh</a>
+                                <a href="<%= process.env.APP_URL %>/master-frc" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-refresh"></i> Refresh</a>
                             </div>
                             <!-- end searching -->
                             <div class="col-sm-6">
                                 <div class="text-sm-end">
-                                    <a href="/create-category-checklist">
+                                    <a href="<%= process.env.APP_URL %>/create-category-checklist">
                                         <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" style="float: right;">
                                             <b><i class="fa fa-plus"></i> ADD FRC </b>
                                         </button>
@@ -96,7 +96,7 @@
 							<input type="checkbox" id="switch<%=i+1%>" switch="warning" class="status" value="<%= data[i]._id %>" <%= data[i].status == 1 ? 'checked' : '' %> />
                             <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
                         <td style="width: 10%;text-align: center;">
-                            <a href="/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
+                            <a href="<%= process.env.APP_URL %>/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
                         </td>
                     </tr>
                     <% } %>
@@ -109,17 +109,17 @@
 <!-- end row -->
 <%- contentFor('FooterJs') %>
 <!-- Required datatable js -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <!-- Buttons examples -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
 
 <!-- Responsive examples -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <!-- Datatable init js -->
-<script src="<%=process.env.PUBLIC_URL%>/public/assets/js/pages/datatables.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/datatables.init.js"></script>
 
 <script>   
 // Any change event occuring on any input.staus (checkbox)...
@@ -134,7 +134,7 @@ $('.status').on('change', function(e) {
         [return][Terminate function - don't do anything else] */
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
-        $.post("<%=process.env.PUBLIC_URL%>/change-checklist-status", {
+        $.post("<%=process.env.APP_URL%>/change-checklist-status", {
             _id: $(this).val()
             }, function(data, status){
             toastr.success(data.message);
