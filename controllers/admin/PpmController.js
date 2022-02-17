@@ -236,7 +236,6 @@ exports.PpmList = async (req, res) => {
             message: req.flash('message'),
             error: req.flash('error'),
         })
-
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
