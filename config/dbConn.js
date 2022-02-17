@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://kamalsherma:l2GIQc5mMOu0gtDo@cluster0.bpyxs.mongodb.net/crest_property_solutions?retryWrites=true&w=majority", {
+// mongoose.connect("mongodb+srv://kamalsherma:l2GIQc5mMOu0gtDo@cluster0.bpyxs.mongodb.net/crest_property_solutions?retryWrites=true&w=majority", {
+mongoose.connect(process.env.MONGO_DB_URL, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 }).then(() => {

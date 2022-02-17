@@ -19,7 +19,12 @@ const cron = require('node-cron');
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
 
-const port = process.env.PORT || 3000;
+const baseUrl = process.env.BASE_URL || "/"; // Default
+const port = process.env.PORT || 1000;
+
+app.all('/', (req, res, next) => {
+	(baseUrl != '/') ? res.redirect(baseUrl) : next()
+});
 
 app.use(
     session({
@@ -50,11 +55,11 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/layouts/', function (req, res) {
+app.get(baseUrl + '/layouts/', function (req, res) {
     res.render('view');
 });
 
-app.locals.moment = require('moment'); // apply moment for global view page
+app.locals.moment = require('moment'); // apply moment for global ejs view page
 
 AuthController(app); // for auth routes
 
@@ -67,12 +72,12 @@ app.set('view engine', 'ejs');
 app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/public', express.static('./public'));
+app.use(baseUrl + 'public', express.static('./public'));
 
 // Define All Routes
-app.use('/api', require("./routes/api"));
-app.use('/admin/api', require("./routes/admin_api"));
-app.use("/", require("./routes/web"));
+app.use(baseUrl + 'api', require("./routes/api"));
+app.use(baseUrl + 'admin/api', require("./routes/admin_api"));
+app.use(baseUrl + "", require("./routes/web"));
 
 //cron schedule
 cron.schedule('01 00 * * *', async () => { //will run every night at 12:01 AM
@@ -84,7 +89,7 @@ cron.schedule('*/10 * * * * *', async () => { //for testing
 	// await ppmCron();
 });
 
-app.all('/api/*', (req, res) => {
+app.all(baseUrl + 'api/*', (req, res) => {
     return res.send( response.error(404, 'API Request not found!', []), []);
 });
 

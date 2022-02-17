@@ -1,9 +1,11 @@
-const PPM = require("../../models/PpmEquipmentMaster");
+const PpmEquipmentMaster = require("../../models/PpmEquipmentMaster");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../helper/response");
 const {errorLog} = require("../../helper/consoleLog");
 const Joi = require("joi");
+const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
+const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
 
 exports.ppmTaskDetail = async (req, res) => {
 	try {
@@ -15,35 +17,40 @@ exports.ppmTaskDetail = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let ppmTaskList = await PPM.findOne({_id:req.body.ppmId,status:1});
-		if(!ppmTaskList){
-			return res.send(response.error(400, 'PPM Not Found', []));
-		}
-		let index;
-		for(let i=0;i<ppmTaskList.assets.length;i++){
-			if(String(ppmTaskList.assets[i]._id) == String(req.body.taskId)){
-				index = i;
-			}
-		}
-		if(index == -1){
-			return res.send(response.error(400, 'PPM Task Not Found', []));
-		}
+
+		// let ppmTaskList = await PpmEquipmentAssign.findOne({ _id: req.body.ppmId, status: 1 });
+		// if(!ppmTaskList){
+		// 	return res.send(response.error(400, 'PPM Not Found', []));
+		// }
+		// let index;
+		// for(let i=0;i<ppmTaskList.assets.length;i++){
+		// 	if(String(ppmTaskList.assets[i]._id) == String(req.body.taskId)){
+		// 		index = i;
+		// 	}
+		// }
+		// if(index == -1){
+		// 	return res.send(response.error(400, 'PPM Task Not Found', []));
+		// }
+
+		let ppmTaskList = await PpmEquipmentAssetAssign.findOne({ _id: ObjectId(req.body.taskId), assignPpmEquipmentId: ObjectId(req.body.ppmId), status: 1 }).populate({path: 'assignPpmEquipmentId'});
+
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
             "message": "PPM task details",
-		    data: [{
-		    	_id:ppmTaskList._id,
-		    	ppmEquipmentName:ppmTaskList.ppmEquipmentName,
-		    	task:[{
-		    		assetName: ppmTaskList.assets[index].assetName,
-		    		vendorName: ppmTaskList.assets[index].vendorName,
-		    		frequency: ppmTaskList.assets[index].frequency,
-					day: ppmTaskList.assets[index].day,
-					date: ppmTaskList.assets[index].date,
-					month: ppmTaskList.assets[index].month,
-		    	}],
-		    }]
+			data: [ppmTaskList]
+		    // data: [{
+		    // 	_id:ppmTaskList._id,
+		    // 	ppmEquipmentName:ppmTaskList.ppmEquipmentName,
+		    // 	task:[{
+		    // 		assetName: ppmTaskList.assets[index].assetName,
+		    // 		vendorName: ppmTaskList.assets[index].vendorName,
+		    // 		frequency: ppmTaskList.assets[index].frequency,
+			// 		day: ppmTaskList.assets[index].day,
+			// 		date: ppmTaskList.assets[index].date,
+			// 		month: ppmTaskList.assets[index].month,
+		    // 	}],
+		    // }]
 		});
 	} catch (error) {
 		console.log(error);
@@ -61,33 +68,37 @@ exports.ppmTaskList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let condition = {"$match": {_id: ObjectId(req.body.ppmId),status:1}};
-		let condition1 = {"$match": {"assets.status":1}};
-		let group = {
-			$group:{
-				_id:"$_id",
-				ppmEquipmentName:{$first:"$ppmEquipmentName"},
-				assets:{
-					$push:{
-                        _id:"$assets._id",
-						assetName: "$assets.assetName",
-						frequency: "$assets.frequency",
-						day: "$assets.day",
-						date: "$assets.date",
-						vendorName: "$assets.vendorName",
-						month: "$assets.month",
-						status:"t"
-					}
-				}
-			}
-		}
-		let unwind = {
-            $unwind: {
-                path: "$assets",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-		let ppmTaskList = await PPM.aggregate([condition,unwind,condition1,group])
+
+		// let condition = {"$match": {_id: ObjectId(req.body.ppmId), status:1}};
+		// let condition1 = {"$match": {"assets.status":1}};
+		// let group = {
+		// 	$group:{
+		// 		_id:"$_id",
+		// 		ppmEquipmentName:{$first:"$ppmEquipmentName"},
+		// 		assets:{
+		// 			$push:{
+        //                 _id:"$assets._id",
+		// 				assetName: "$assets.assetName",
+		// 				frequency: "$assets.frequency",
+		// 				day: "$assets.day",
+		// 				date: "$assets.date",
+		// 				vendorName: "$assets.vendorName",
+		// 				month: "$assets.month",
+		// 				status:"t"
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// let unwind = {
+        //     $unwind: {
+        //         path: "$assets",
+        //         preserveNullAndEmptyArrays: true
+        //     }
+        // }
+		// let ppmTaskList = await PpmEquipmentAssign.aggregate([condition,unwind,condition1,group])
+
+		let ppmTaskList = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: ObjectId(req.body.ppmId), status:1 })
+
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
@@ -102,15 +113,15 @@ exports.ppmTaskList = async (req, res) => {
 }
 exports.ppmList = async (req, res) => {
 	try {
-		let condition = {"$match": {status:1}};
-		let project = {
-			$project:{
-				ppmEquipmentName:"$ppmEquipmentName",
-				status:"$status"
-			}
-		}
-		
-		let ppmList = await PPM.aggregate([project])
+		// let condition = {"$match": {status:1}};
+		// let project = {
+		// 	$project:{
+		// 		ppmEquipmentName:"$ppmEquipmentName",
+		// 		status:"$status"
+		// 	}
+		// }
+		// let ppmList = await PpmEquipmentAssign.aggregate([project])
+		let ppmList = await PpmEquipmentAssign.find({status: 1}).select({ppmEquipmentName: 1, status: 1})
 		
 		return res.status(200).send({
 		    "status": true,
@@ -143,7 +154,7 @@ exports.propertiesWisePpmList = async (req,res) => {
 			}
 		}
        
-		let ppmData = await PPM.aggregate([project]);
+		let ppmData = await PpmEquipmentAssign.aggregate([project]);
 
 		return res.status(200).send({
 		    "status": true,
@@ -168,12 +179,12 @@ exports.editppmEquipmentName = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		const exists = await PPM.findOne({ ppmEquipmentName: req.body.ppm_name });
-		if(exists) {
-			return res.send(response.error(400, 'PPM name already exists', [] ));
-		}
+		// const exists = await PpmEquipmentAssign.findOne({ ppmEquipmentName: req.body.ppm_name });
+		// if(exists) {
+		// 	return res.send(response.error(400, 'PPM name already exists', [] ));
+		// }
 		if(req.body.ppmId){
-			const updateData = await PPM.findByIdAndUpdate(req.body.ppmId, {ppmEquipmentName: req.body.ppm_name}, {new: true, runValidators: true});
+			const updateData = await PpmEquipmentAssign.findByIdAndUpdate(req.body.ppmId, {ppmEquipmentName: req.body.ppm_name}, {new: true, runValidators: true});
 		}
 		return res.send(response.success(200, 'PPM name updated', []));
 	} catch (error) {
@@ -194,7 +205,7 @@ exports.activeInactiveStatus = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 		if(req.body.ppmId){
-			const updateData = await PPM.findByIdAndUpdate(req.body.ppmId, {status: req.body.status}, {new: true, runValidators: true});
+			const updateData = await PpmEquipmentAssign.findByIdAndUpdate(req.body.ppmId, {status: req.body.status}, {new: true, runValidators: true});
 		}
 		return res.send(response.success(200, 'Status changes successfully', []));
 	} catch (error) {
@@ -207,39 +218,20 @@ exports.activeInactiveStatus = async (req, res) => {
 exports.createNewPPM = async (req,res) => {
 	try {
 		let schema = Joi.object({
+			propertyId: Joi.required(),
 			ppmEquipmentName: Joi.required(),
+			assetName: Joi.required(),
+			assetLocation: Joi.optional(),
+			vendorName: Joi.required(),
+			frequency: Joi.required(),
 			month: Joi.optional(),
 			date: Joi.optional(),
-			assetName: Joi.required(),
-			vendorName: Joi.required(),
-			frequency: Joi.required()
+			day: Joi.optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-
-		// const exists = await PPM.findOne({ ppmEquipmentName: req.body.ppmEquipmentName });
-		// if(exists) {
-		// 	return res.send(response.error(400, 'PPM name already exists', [] ));
-		// }
-		
-		// let obj = new PPM({
-		// 	ppmEquipmentName: req.body.ppmEquipmentName,
-		// 	status: 1,
-		// 	assets:[
-		// 	{
-		// 		assetName: req.body.assetName,
-		// 		vendorName: req.body.vendorName,
-		// 		frequency: req.body.frequency,
-        //     	month: req.body.month,
-        //     	date: req.body.date,
-        //     	created_by: req.user._id,
-        //     	updated_by: req.user._id,
-		// 		status: 1
-		// 	}]
-		// });
-		// let propertyData = await obj.save();
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
@@ -264,19 +256,24 @@ exports.createNewPPM = async (req,res) => {
 			month = req.body.month;
 		}
 
-	
-		await PpmEquipmentAssetAssign.create({
+		let PpmEquipmentAssignData = await PpmEquipmentAssign.create({
 			propertyId: req.body.propertyId,
-			ppmEquipmentId: req.body.ppmEquipmentId,
-			assignPpmEquipmentId: assignPpmEquipmentData._id,
-			assetName: req.body.assetName,
-			assetLocation: req.body.assetLocation,
-			vendorName: req.body.vendorName,
-			frequency: req.body.frequency,
-			day: day,
-			month: month,
-			date: date,
+			ppmEquipmentName: req.body.ppmEquipmentName,
 		})
+		console.log(req.body);
+		if (PpmEquipmentAssignData) {
+			let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.create({
+				propertyId: req.body.propertyId,
+				assignPpmEquipmentId: PpmEquipmentAssignData._id,
+				assetName: req.body.assetName,
+				assetLocation: req.body.assetLocation,
+				vendorName: req.body.vendorName,
+				frequency: req.body.frequency,
+				day: day,
+				month: month,
+				date: date,
+			})
+		}
 
 		return res.send(response.success(200, 'PPM task added', []));
 	} catch (error) {
@@ -303,7 +300,7 @@ exports.updatePpmTask = async (req,res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let ppm = await PPM.findOne({_id:req.body.ppmId});
+		let ppm = await PpmEquipmentAssign.findOne({_id:req.body.ppmId});
 		if(!ppm){
 			return res.send(response.error(500, 'ppmId not valid', []));
 		}

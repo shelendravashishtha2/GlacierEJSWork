@@ -772,8 +772,8 @@ exports.viewGroupAssignTask = async (req, res) => {
 				.populate({path: 'assignGroups.assignTopics.topicId'})
 				.populate({path: 'assignGroups.assignTopics.assignChecklists.checklistId'});
 
-			propertyAuditorDetails = MngRatingTaskAssignData?.auditorId;
-			MngRatingTaskAssignTopicList = MngRatingTaskAssignData?.assignGroups[0]?.assignTopics
+			propertyAuditorDetails = MngRatingTaskAssignData.auditorId;
+			MngRatingTaskAssignTopicList = MngRatingTaskAssignData.assignGroups[0].assignTopics
 		}
 
 		return res.render('Admin/Manage-Rating/assign-auditor-task-list', {

@@ -1,7 +1,10 @@
 PROJECT_NAME=Crest Property Solutions
-BASE_URL=/
+# BASE_URL=/
+BASE_URL=/test/
 PUBLIC_URL=http://13.235.29.135
 PORT=3000
+# development || production
+NODE_ENV="development"
 
 # for jwt token
 SECRET_KEY=d32a72ad744f1a806846c2f57ff0df48e3380f7eaa0295e726dd4642a656
@@ -15,3 +18,6 @@ mail_username=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 MAIL_PASSWORD=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 mail_from_address=admin@glasier.in
 MAIL_FROM_NAME=GlasierInc
+
+# Database connection
+MONGO_DB_URL="mongodb+srv://kamalsherma:l2GIQc5mMOu0gtDo@cluster0.bpyxs.mongodb.net/crest_property_solutions"

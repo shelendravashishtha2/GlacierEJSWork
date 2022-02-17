@@ -5,9 +5,14 @@ const PpmEquipmentAssignSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
 		required:true
 	},
-	ppmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Master',
+	// ppmEquipmentId: {
+	// 	type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Master',
+	// 	required:true,
+	// },
+	ppmEquipmentName: {
+		type: String,
 		required:true,
+		trim: true,
 	},
 
 	status: {
