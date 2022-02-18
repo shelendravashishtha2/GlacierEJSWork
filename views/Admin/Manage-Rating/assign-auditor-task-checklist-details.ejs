@@ -38,15 +38,15 @@
                             </tr>
                         </thead>
                         <tbody>
-							<% for( let i = 0; i < MngRatingTaskAssignTopicList.docs.length; i++ ) { %>
+							<% for( let i = 0; i < MngRatingChecklistAssignData.docs.length; i++ ) { %>
 								<tr>
-									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i]._id %> -- <%= i+1 %> -- <%= MngRatingTaskAssignTopicList.docs[i].checklistId.ratingTopicId %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.checklistTitle %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.cueForAuditor %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].checklistId.weightage %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingTaskAssignTopicList.docs[i].point %></td>
+									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].checklistTitle %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].cueForAuditor %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].weightage %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].point %></td>
 									<td class="text-center" style="width: 7%;">
-										<!-- <a href="<%= process.env.APP_URL %>/view-assign-rating-task-checklist?propertyId=<%#= MngRatingTaskAssignTopicList.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
+										<!-- <a href="<%#= process.env.APP_URL %>/view-assign-rating-task-checklist?propertyId=<%#= MngRatingChecklistAssignData.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
 										<a href="javascript: void(0);" >
 											<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".checklistDetails"><b>View</b></button>
 										</a>
@@ -68,7 +68,7 @@
 													</div>
 													<div class="col-md-9">
 														Hello test remark
-														<%= MngRatingTaskAssignTopicList.docs[i].remark %>
+														<%= MngRatingChecklistAssignData.docs[i].remark %>
 													</div>
 												</div>
 												<div class="row">
@@ -77,7 +77,7 @@
 													</div>
 													<div class="col-md-9">
 														images
-														<%= MngRatingTaskAssignTopicList.docs[i].attachPhotos %>
+														<%= MngRatingChecklistAssignData.docs[i].attachPhotos %>
 													</div>
 												</div>
 											</div>

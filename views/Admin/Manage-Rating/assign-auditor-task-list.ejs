@@ -28,12 +28,12 @@
 				<div class="row mb-2">
                     <div class="col-sm-8">
                         <div class="mb-2 row">
-                            <label for="example-text-input" class="col-md-4 col-form-label text-sm-end">Select Property Name :-</label>
+                            <label for="example-text-input" class="col-md-4 col-form-label text-sm-end">Select Group Name :-</label>
                             <div class="col-md-5">
                                 <select class="form-select" onchange="changeGroupId(this)" name="groupId" id="groupId" >
                                     <option value="">Select Group Name</option>
-                                    <% for (i = 0; i < assignPropertyGroupData.length; i++) { %>
-                                        <option value="<%= assignPropertyGroupData[i]._id %>" <%= data.groupId == String(assignPropertyGroupData[i]._id) ? 'selected' : '' %>><%= assignPropertyGroupData[i].groupName %></option>
+                                    <% for (i = 0; i < assignPropertyGroupData.groupIds.length; i++) { %>
+                                        <option value="<%= assignPropertyGroupData.groupIds[i]._id %>" <%= data.groupId == String(assignPropertyGroupData.groupIds[i]._id) ? 'selected' : '' %>><%= assignPropertyGroupData.groupIds[i].groupName %></option>
                                     <% } %>
                                 </select>
                             </div>
@@ -54,27 +54,17 @@
                             </tr>
                         </thead>
                         <tbody>
-							<% for( let i = 0; i < MngRatingTaskAssignTopicList.docs.length; i++ ) { %>
+							<% for( let i = 0; i < MngRatingChecklistAssignData.docs?.topicIds.length; i++ ) { %>
 								<tr>
 									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
-									<td class="text-center"><%= MngRatingTaskAssignTopicList.docs[i].topicId.topicName %></td>
-									<td class="text-center">
-										<% let totalWeightage = 0; %>
-										<% for( let j = 0; j < MngRatingTaskAssignTopicList.docs[i].assignChecklists.length; j++ ) { %>
-											<% totalWeightage = totalWeightage + MngRatingTaskAssignTopicList.docs[i].assignChecklists[j].checklistId.weightage %>
-										<% } %>
-										<%= totalWeightage %>
+									<td class="text-center"><%= MngRatingChecklistAssignData.docs.topicIds[i].topicName %></td>
+									<td class="text-center">10
 									</td>
-									<td class="text-center">
-										<% let totalPoint = 0; %>
-										<% for( let j = 0; j < MngRatingTaskAssignTopicList.docs[i].assignChecklists.length; j++ ) { %>
-											<% totalPoint = totalPoint + MngRatingTaskAssignTopicList.docs[i].assignChecklists[j].point %>
-										<% } %>
-										<%= totalPoint %>
+									<td class="text-center">5
 									</td>
-									<td class="text-center"><%= propertyAuditorDetails.full_name %> </td>
+									<td class="text-center"><%= assignPropertyGroupData.auditorId.full_name %> </td>
 									<td class="text-center" style="width: 7%;">
-										<a href="<%= process.env.APP_URL %>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= data.groupId %>&&topicId=<%= MngRatingTaskAssignTopicList.docs[i].topicId._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+										<a href="<%= process.env.APP_URL %>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= data.groupId %>&&topicId=<%= MngRatingChecklistAssignData.docs.topicIds[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
 									</td>
 								</tr>
 							<% } %>
@@ -84,22 +74,22 @@
 				<!-- start pagination -->
 				<div class="row">
 					<div class="col-6">
-						<p>Showing <%#= MngRatingTaskAssignTopicList.pagingCounter %> to <%#= MngRatingTaskAssignTopicList.pagingCounter + (MngRatingTaskAssignTopicList.limit-1) %> of <%#= MngRatingTaskAssignTopicList.totalDocs %> entries</p>
+						<p>Showing <%#= MngRatingChecklistAssignData.pagingCounter %> to <%#= MngRatingChecklistAssignData.pagingCounter + (MngRatingChecklistAssignData.limit-1) %> of <%#= MngRatingChecklistAssignData.totalDocs %> entries</p>
 					</div>
 					<div class="col-6">
 						<ul class="pagination pagination-rounded justify-content-end mb-2">
-							<li class="page-item <%#= MngRatingTaskAssignTopicList.hasPrevPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTaskAssignTopicList.prevPage %>)" aria-label="Previous">
+							<li class="page-item <%#= MngRatingChecklistAssignData.hasPrevPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingChecklistAssignData.prevPage %>)" aria-label="Previous">
 									<i class="mdi mdi-chevron-left"></i>
 								</a>
 							</li>
-							<% for( let i = 0; i < MngRatingTaskAssignTopicList.totalPages; i++ ) { %>
-								<li class="page-item <%#= MngRatingTaskAssignTopicList.page == i+1 ? 'active' : '' %>">
+							<% for( let i = 0; i < MngRatingChecklistAssignData.totalPages; i++ ) { %>
+								<li class="page-item <%#= MngRatingChecklistAssignData.page == i+1 ? 'active' : '' %>">
 									<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= i+1 %>)"><%#= i+1 %></a>
 								</li>
 							<% } %>
-							<li class="page-item <%#= MngRatingTaskAssignTopicList.hasNextPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTaskAssignTopicList.prevPage %>)" aria-label="Next">
+							<li class="page-item <%#= MngRatingChecklistAssignData.hasNextPage ? '' : 'disabled' %>">
+								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingChecklistAssignData.prevPage %>)" aria-label="Next">
 									<i class="mdi mdi-chevron-right"></i>
 								</a>
 							</li>
@@ -136,7 +126,7 @@
 
 		// $.ajax({
         //     type: "GET",
-        //     url: "<%=process.env.APP_URL%>/view-group-assign-task?propertyId=<%= data.propertyId %>&&groupId="+value+"",
+        //     url: "<%#=process.env.APP_URL%>/view-group-assign-task?propertyId=<%#= data.propertyId %>&&groupId="+value+"",
         //     // data: {
         //     //     'search_text' : $(this).val(),
         //     //     'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()

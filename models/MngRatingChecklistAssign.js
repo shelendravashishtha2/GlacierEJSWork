@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 const MngRatingChecklistAssignSchema = new mongoose.Schema({
     propertyId: {
 		type:  mongoose.Schema.Types.ObjectId,
@@ -20,11 +22,6 @@ const MngRatingChecklistAssignSchema = new mongoose.Schema({
 		ref: 'Mng_Rating_Checklist_Master',
 		required: true
 	},
-    // auditorId: {
-	// 	type:  mongoose.Schema.Types.ObjectId,
-	// 	ref: 'User',
-	// 	required: true
-	// },
 	
 	status: {
 		type: Number, //0=Inactive, 1=Active
@@ -37,6 +34,7 @@ const MngRatingChecklistAssignSchema = new mongoose.Schema({
 	timestamps: true
 });
 
+MngRatingChecklistAssignSchema.plugin(mongoosePaginate);
 
 const MngRatingChecklistAssign = new mongoose.model("Mng_Rating_Checklist_Assign", MngRatingChecklistAssignSchema);
 module.exports = MngRatingChecklistAssign;

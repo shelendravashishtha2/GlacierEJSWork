@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 const MngRatingTopicAssignSchema = new mongoose.Schema({
     propertyId: {
 		type:  mongoose.Schema.Types.ObjectId,
@@ -15,11 +17,6 @@ const MngRatingTopicAssignSchema = new mongoose.Schema({
 		ref: 'Mng_Rating_Topic_Master',
 		required: true
 	},
-	// auditorId: {
-	// 	type:  mongoose.Schema.Types.ObjectId,
-	// 	ref: 'User',
-	// 	required: true
-	// },
 
 	status: {
 		type: Number, //0=Inactive, 1=Active
@@ -32,6 +29,7 @@ const MngRatingTopicAssignSchema = new mongoose.Schema({
 	timestamps: true
 });
 
+MngRatingTopicAssignSchema.plugin(mongoosePaginate);
 
 const MngRatingTopicAssign = new mongoose.model("Mng_Rating_Topic_Assign", MngRatingTopicAssignSchema);
 module.exports = MngRatingTopicAssign;
