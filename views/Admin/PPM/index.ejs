@@ -83,7 +83,8 @@
                                 </td>
                                 <td style="text-align: center;width: 10%;">
                                     <button type="button" onclick="detailTask('<%= i %>',-1)" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target=".addTaskModal"><i class="mdi mdi-plus me-1"></i> <b>Add Task</b> </button>
-                                    <a href="<%= process.env.APP_URL %>/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <!-- <a href="<%= process.env.APP_URL %>/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a> -->
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>','<%= j %>')" data-bs-target=".equipmentNameEditModal"><b>Edit</b></button>
                                 </td>
                             </tr>
                             <!-- Assets Table Within Row Start -->
@@ -348,12 +349,45 @@
         </div>
     </div>
 </div>
+<div class="modal fade equipmentNameEditModal" tabindex="-1" role="dialog" aria-labelledby="equipmentNameEditModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="equipmentNameEditModal">Add Equipment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<%= process.env.APP_URL %>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <div class="modal-body">
+                <div class="row">
+                            <label for="example-text-input" class="col-md-3 col-form-label">Equipment Name:-</label>
+                            <div class="col-md-6">
+                                <input class="form-control" type="text" id="ppmEquipmentName"
+                                    placeholder="Compliance" value="">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="ppmEquipmentNameChange()"
+                                    class="btn btn-warning btn-rounded waves-effect waves-light">Edit</button>
+                            </div>
+                        </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning waves-effect waves-light" >submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <%- contentFor('FooterJs') %>
 <script>
     let taskData = <%- JSON.stringify(data) %>;
     let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
     let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function equipmentEdit(){
+
+    }
+
     function detailTask(equipmentIndex,assetIndex){
         let detail;
         let monthString = "";
