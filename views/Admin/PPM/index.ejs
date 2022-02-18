@@ -115,8 +115,8 @@
                                                     <td class="text-center"><%= data[i].assets[j].hasOwnProperty("month") && data[i].assets[j].month !=="" ? data[i].assets[j].month : '--' %></td>
                                                     <td class="text-center"><%= data[i].assets[j].hasOwnProperty("day") && data[i].assets[j].day !=="" ? data[i].assets[j].day : '--' %></td>
                                                     <td class="text-center" style="width: 7%;">
-                                                        <input type="checkbox" id="switch<%= i %>" class="status" value="<%= data[i].assets[j]._id %>,<%= data[i]._id %>" switch="warning" <% if(data[i].assets[j].status == 1){ %> checked <% } %>>
-                                                        <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
+                                                        <input type="checkbox" id="switch_asset<%= i %>" class="asset-status" value="<%= data[i].assets[j]._id %>,<%= data[i]._id %>" switch="warning" <% if(data[i].assets[j].status == 1){ %> checked <% } %>>
+                                                        <label for="switch_asset<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                                     </td>
                                                     <td class="text-center" style="width: 7%;">
                                                         <a href="javascript: void(0);" >
@@ -293,7 +293,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3 row">
-                            <input type="hidden" name="taskId" id="taskId" value="">
+                            <input type="hidden" name="assetId" id="assetId" value="">
                             <input type="hidden" name="ppmId" id="ppmId" value="<%= data.ppmId %>">
                             <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
                             <div class="col-md-8">
@@ -365,7 +365,7 @@
                 frequency:1,
                 month:1,
                 date:1,
-                taskId:"",
+                assetId:"",
             }
             $("#taskDetailModalLabel").html("Add Task");
         }else{
@@ -403,12 +403,11 @@
 		}
 		$("#asset-frequency").val(detail.frequency)
 		$("#asset-frequency").html(frequencyString);
-		changeAssetFrequency()
-
+		changeAssetFrequency();
 		$("#month-frequency").html(monthString);
 		$("#day-frequency").html(dayString);
 		$("#date-frequency").html(dateString);
-		$("#taskId").val(detail.taskId);
+		$("#assetId").val(detail._id);
 		$("#vendorName-frequency").val(detail.vendorName);
 		$("#assetName-frequency").val(detail.assetName);
 		// changeFrequency()
@@ -543,6 +542,32 @@ $('.status').on('change', function(e) {
     }
 });
 </script>
+<script>
+    // Any change event occuring on any input.staus (checkbox)...
+    $('.asset-status').on('change', function(e) {
+        var ids = $(this).val().split(','); 
+        console.log($(this).attr('class'));
+        var assetId = ids[0];
+        var ppmId = ids[1];
+        // A boolean that reflects the checkbox "check status"
+        let checked = $(this).is(':checked');
+        // A simple confirm...
+        let changed = confirm("Are you sure you want to change asset status?");
+        //... if user cancels...
+        if (!changed) {
+            /* ...ternary: [?][if checkbox is checked] - [uncheck it] [:][otherwise] - [check it]
+            [return][Terminate function - don't do anything else] */
+            return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
+        }else{
+            $.post("<%=process.env.APP_URL%>/update-ppm-task-status", {
+                ppmId: ppmId,
+                assetId: assetId
+                }, function(data, status){
+                toastr.success(data.message);
+            });
+        }
+    });
+    </script>
 <!-- end modal -->
 <% if(error.length> 0) { %>
     <script>

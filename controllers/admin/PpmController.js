@@ -76,14 +76,14 @@ exports.updatePpmTaskStatus = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			ppmId: Joi.required(),
-			taskId: Joi.required()
+			assetId: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 		let ppmDetail = await PpmEquipment.findOne({ _id: req.body.ppmId });
-		let index = ppmDetail.assets.findIndex((x) => String(x._id) == String(req.body.taskId));
+		let index = ppmDetail.assets.findIndex((x) => String(x._id) == String(req.body.assetId));
 		if (index == -1) {
 			return res.redirect('/edit-ppm/' + req.body.ppmId);
 		} else {
@@ -98,7 +98,7 @@ exports.updatePpmTaskStatus = async (req, res) => {
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
-			"message": "Status is update!"
+			"message": "Asset Status Updated!"
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -246,7 +246,7 @@ exports.updatePpmTask = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			ppmId: Joi.required(),
-			taskId: Joi.optional(),
+			assetId: Joi.optional(),
 			month: Joi.optional(),
 			date: Joi.optional(),
 			day: Joi.optional(),
@@ -262,9 +262,9 @@ exports.updatePpmTask = async (req, res) => {
 		if (!ppm) {
 			return res.redirect('/ppm');
 		}
-		let alreadyIndex = ppm.assets.findIndex((x) => String(x.assetName) == req.body.assetName && String(x._id) != req.body.taskId);
+		let alreadyIndex = ppm.assets.findIndex((x) => String(x.assetName) == req.body.assetName && String(x._id) != req.body.assetId);
 		if (alreadyIndex != -1) {
-			req.flash('error', 'Equipment name is already exist!');
+			req.flash('error', 'Asset name is already exist!');
 			return res.redirect('/edit-ppm/' + req.body.ppmId);
 		}
 		let message = "";
@@ -281,21 +281,21 @@ exports.updatePpmTask = async (req, res) => {
 			month: req.body.month,
 			date: req.body.date
 		}
-		if (req.body.taskId) {
-			let index = ppm.assets.findIndex((x) => String(x._id) == req.body.taskId);
-			obj._id = req.body.taskId;
+		if (req.body.assetId) {
+			let index = ppm.assets.findIndex((x) => String(x._id) == req.body.assetId);
+			obj._id = req.body.assetId;
 			ppm.assets[index] = obj;
-			message = "Equipment name is updated!";
-			req.flash('message', message);
+			message = "Asset name has been updated!";
 		} else {
 			ppm.assets.push(obj);
-			message = "Equipment name is added!";
-			req.flash('message', message);
+			message = "Asset name has been added!";
+		// req.flash('message', message);
 		}
 		ppm.markModified('assets');
-		ppm.save(function (err) { });
-
-		return res.redirect('/edit-ppm/' + req.body.ppmId);
+		await ppm.save();
+		
+		req.flash('message', message);
+		return res.redirect('/ppm/');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
