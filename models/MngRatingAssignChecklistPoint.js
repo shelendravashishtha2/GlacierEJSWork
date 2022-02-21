@@ -25,7 +25,8 @@ const MngRatingAssignChecklistPointSchema = new mongoose.Schema({
 	point: {
 		type: Number,
 		min: [0,'invalid point'],
-		max: [1,'invalid point']
+		max: [1,'invalid point'],
+		default: 0
 	},
 	remark: {
 		type: String,

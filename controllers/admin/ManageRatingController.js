@@ -16,6 +16,7 @@ const Joi = require("joi");
 const { Validator } = require('node-input-validator');
 const MngRatingTaskAssign = require("../../models/MngRatingTaskAssign");
 const MngRatingAssignChecklistPoint = require("../../models/MngRatingAssignChecklistPoint");
+const SettingRating = require("../../models/SettingRating");
 
 // Manage Rating List Page
 exports.manageRatingList = async (req, res) => {
@@ -44,10 +45,45 @@ exports.manageRatingList = async (req, res) => {
 		};
 		let options = {
 			populate: [{path: 'propertyId'}, {path: 'auditorId'}],
+			lean: true,
 			page: req.query.page ? Math.max(1, req.query.page) : 1,
 			limit: 10
 		};
 		let propertyData = await MngRatingGroupAssign.paginate(findQuery, options);
+
+		for (let i = 0; i < propertyData.docs.length; i++) {
+			const propertyDetails = propertyData.docs[i];
+			let totalWeightage = 0.0;
+			let totalPoint = 0.0;
+
+			let MngRatingChecklistAssignData = await MngRatingChecklistAssign.find({propertyId: propertyDetails.propertyId._id}).populate({path: 'checklistIds'}).sort({createdAt: -1}).lean();
+			let MngRatingAssignChecklistPointData = await MngRatingAssignChecklistPoint.find({propertyId: propertyDetails.propertyId._id}).sort({createdAt: -1});
+
+			for (let j = 0; j < MngRatingChecklistAssignData.length; j++) {
+				for (let k = 0; k < MngRatingChecklistAssignData[j].checklistIds.length; k++) {
+					const element = MngRatingChecklistAssignData[k].checklistIds[k];
+					if (element) {
+						totalWeightage = totalWeightage + element.weightage;
+						for (let l = 0; l < MngRatingAssignChecklistPointData.length; l++) {
+							const element2 = MngRatingAssignChecklistPointData[l];
+							if (String(element2.checklistId) == String(MngRatingChecklistAssignData[k].checklistIds[k]._id)) {
+								totalPoint = totalPoint + element2.point;
+							}
+						}
+					}
+				}
+			}
+			propertyDetails.totalWeightage = totalWeightage;
+			propertyDetails.totalPoint = totalPoint;
+			propertyDetails.per = ((totalPoint * 100) / (totalWeightage ? totalWeightage : 1)).toFixed(2);
+
+			let SettingRatingData = await SettingRating.findOne({min_rating: {$lte: propertyDetails.per}, max_rating: {$gte: propertyDetails.per}});
+			if (SettingRatingData) {
+				propertyDetails.rating = SettingRatingData.rating_name
+			} else {
+				propertyDetails.rating = '--'
+			}
+		}
 
 		return res.render('Admin/Manage-Rating/index', {
 			propertyData: propertyData,
@@ -753,14 +789,16 @@ exports.viewGroupAssignTask = async (req, res) => {
 		}
 
 		let assignPropertyGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId}).populate({path: 'groupIds'}).populate({path: 'auditorId'});
-
-		let MngRatingTopicAssignData = await MngRatingTopicAssign.findOne({propertyId: req.query.propertyId, groupId: req.query.groupId}).populate({path: 'topicIds'}).lean();
-
-		let MngRatingChecklistAssignData = await MngRatingChecklistAssign.find({propertyId: req.query.propertyId, ratingGroupId: req.query.groupId}).populate({path: 'ratingTopicId'}).populate({path: 'checklistIds'}).lean();
-
-		let MngRatingAssignChecklistPointData = await MngRatingAssignChecklistPoint.find({propertyId: req.query.propertyId}).sort({createdAt: -1}).lean();
+		let MngRatingTopicAssignData;
+		let MngRatingChecklistAssignData;
+		let MngRatingAssignChecklistPointData;
+		let MngRatingTopicAssignDataArray = [];
 
 		if (req.query.groupId) {
+			MngRatingTopicAssignData = await MngRatingTopicAssign.findOne({propertyId: req.query.propertyId, groupId: req.query.groupId}).populate({path: 'groupId'}).populate({path: 'topicIds'}).lean();
+			MngRatingChecklistAssignData = await MngRatingChecklistAssign.find({propertyId: req.query.propertyId, ratingGroupId: req.query.groupId}).populate({path: 'ratingTopicId'}).populate({path: 'checklistIds'}).lean();
+			MngRatingAssignChecklistPointData = await MngRatingAssignChecklistPoint.find({propertyId: req.query.propertyId}).sort({createdAt: -1}).lean();
+
 			if (MngRatingTopicAssignData.topicIds != null) {
 				for (let i = 0; i < MngRatingTopicAssignData.topicIds.length; i++) {
 					const element1 = MngRatingTopicAssignData.topicIds[i]; //topic id 
@@ -790,12 +828,57 @@ exports.viewGroupAssignTask = async (req, res) => {
 					element1.point = totalPoint;
 				}
 			}
+			MngRatingTopicAssignDataArray.push(MngRatingTopicAssignData)
+		} else {
+			assignGroupData = await MngRatingGroupAssign.findOne({propertyId: req.query.propertyId});
+			MngRatingAssignChecklistPointData = await MngRatingAssignChecklistPoint.find({propertyId: req.query.propertyId}).sort({createdAt: -1}).lean();
+
+			for (let z = 0; z < assignPropertyGroupData.groupIds.length; z++) {
+				req.query.groupId = assignPropertyGroupData.groupIds[z];
+				
+				MngRatingTopicAssignData = await MngRatingTopicAssign.findOne({propertyId: req.query.propertyId, groupId: req.query.groupId}).populate({path: 'groupId'}).populate({path: 'topicIds'}).lean();
+				MngRatingChecklistAssignData = await MngRatingChecklistAssign.find({propertyId: req.query.propertyId, ratingGroupId: req.query.groupId}).populate({path: 'ratingTopicId'}).populate({path: 'checklistIds'}).lean();
+
+				if (MngRatingTopicAssignData.topicIds != null) {
+					for (let i = 0; i < MngRatingTopicAssignData.topicIds.length; i++) {
+						const element1 = MngRatingTopicAssignData.topicIds[i]; //topic id 
+						let totalWeightage = 0;
+						let totalPoint = 0;
+						for (let j = 0; j < MngRatingChecklistAssignData.length; j++) {
+							const element2 = MngRatingChecklistAssignData[j];
+							for (let k = 0; k < MngRatingChecklistAssignData[j].checklistIds.length; k++) {
+								const element3 = MngRatingChecklistAssignData[j].checklistIds[k];
+								if (String(element1._id) == String(element3.ratingTopicId)) {
+									totalWeightage = totalWeightage + element3.weightage;
+									for (let l = 0; l < MngRatingAssignChecklistPointData.length; l++) {
+										const element4 = MngRatingAssignChecklistPointData[l];
+										if (String(element3._id) == String(element4.checklistId)) {
+											element3.point = element4.point;
+											totalPoint = totalPoint + element4.point;
+											break;
+										} else {
+											element3.point = 0
+										}
+									}
+								}
+								
+							}
+						}
+						element1.weightage = totalWeightage;
+						element1.point = totalPoint;
+					}
+				}
+				MngRatingTopicAssignDataArray.push(MngRatingTopicAssignData)
+			}
 		}
+
+		// console.log(MngRatingTopicAssignDataArray);
+		// console.log(MngRatingTopicAssignData);
 
 		return res.render('Admin/Manage-Rating/assign-auditor-task-list', {
 			data: {propertyId: req.query.propertyId, groupId: req.query.groupId },
 			assignPropertyGroupData: assignPropertyGroupData,
-			MngRatingTopicAssignData: MngRatingTopicAssignData,
+			MngRatingTopicAssignData: MngRatingTopicAssignDataArray,
 			page: 1,
 			totalPages: 1,
 			search: req.query.search ? req.query.search : "",

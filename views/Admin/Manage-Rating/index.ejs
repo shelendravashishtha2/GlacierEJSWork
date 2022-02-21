@@ -64,7 +64,7 @@
 									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
 									<td><%= propertyData.docs[i].propertyId.property_name %></td>
 									<td><%= propertyData.docs[i].auditorId.full_name %></td>
-									<td class="text-center" style="width: 7%;">--</td>
+									<td class="text-center" style="width: 7%;"><%= propertyData.docs[i].rating %></td>
 									<td class="text-center" style="width: 7%;">
 										<a href="<%= process.env.APP_URL %>/edit-assign-group?propertyId=<%= propertyData.docs[i].propertyId._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
 										<a href="<%= process.env.APP_URL %>/view-group-assign-task?propertyId=<%= propertyData.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a>
@@ -95,6 +95,7 @@
 								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%= propertyData.prevPage %>)" aria-label="Next">
 									<i class="mdi mdi-chevron-right"></i>
 								</a>
+								<%#  %>
 							</li>
 						</ul>
 					</div>

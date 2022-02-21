@@ -48,54 +48,32 @@
                                 <th class="text-center">#</th>
                                 <th class="text-center">Group name</th>
                                 <th class="text-center">Topic name</th>
-                                <th class="text-center">Weightage</th>
+                                <th class="text-center">Total Weightage</th>
                                 <th class="text-center">Total Point</th>
                                 <th class="text-center">Auditor Name</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-							<% for( let i = 0; i < MngRatingTopicAssignData?.topicIds?.length; i++ ) { %>
-								<tr>
-									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
-									<td class="text-center"><%= MngRatingTopicAssignData.topicIds[i].topicName %></td>
-									<td class="text-center"><%= MngRatingTopicAssignData.topicIds[i].weightage %></td>
-									<td class="text-center"><%= MngRatingTopicAssignData.topicIds[i].point %></td>
-									<td class="text-center"><%= assignPropertyGroupData.auditorId.full_name %> </td>
-									<td class="text-center" style="width: 7%;">
-										<a href="<%= process.env.APP_URL %>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= data.groupId %>&&topicId=<%= MngRatingTopicAssignData.topicIds[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
-									</td>
-								</tr>
+							<% for( let i = 0; i < MngRatingTopicAssignData.length; i++ ) { %>
+								<% for( let j = 0; j < MngRatingTopicAssignData[i]?.topicIds?.length; j++ ) { %>
+									<tr>
+										<td class="text-center" style="width: 7%;"><%= j+1 %></td>
+										<td class="text-center"><%= MngRatingTopicAssignData[i].groupId.groupName %></td>
+										<td class="text-center"><%= MngRatingTopicAssignData[i].topicIds[j].topicName %></td>
+										<td class="text-center"><%= MngRatingTopicAssignData[i].topicIds[j].weightage %></td>
+										<td class="text-center"><%= MngRatingTopicAssignData[i].topicIds[j].point %></td>
+										<td class="text-center"><%= assignPropertyGroupData.auditorId.full_name %> </td>
+										<td class="text-center" style="width: 7%;">
+											<a href="<%= process.env.APP_URL %>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= MngRatingTopicAssignData[i].groupId._id %>&&topicId=<%= MngRatingTopicAssignData[i].topicIds[j]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+										</td>
+									</tr>
+								<% } %>
 							<% } %>
                         </tbody>
                     </table>
                 </div>
-				<!-- start pagination -->
-				<div class="row">
-					<div class="col-6">
-						<p>Showing <%#= MngRatingTopicAssignData.pagingCounter %> to <%#= MngRatingTopicAssignData.pagingCounter + (MngRatingTopicAssignData.limit-1) %> of <%#= MngRatingTopicAssignData.totalDocs %> entries</p>
-					</div>
-					<div class="col-6">
-						<ul class="pagination pagination-rounded justify-content-end mb-2">
-							<li class="page-item <%#= MngRatingTopicAssignData.hasPrevPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTopicAssignData.prevPage %>)" aria-label="Previous">
-									<i class="mdi mdi-chevron-left"></i>
-								</a>
-							</li>
-							<% for( let i = 0; i < totalPages; i++ ) { %>
-								<li class="page-item <%#= MngRatingTopicAssignData.page == i+1 ? 'active' : '' %>">
-									<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= i+1 %>)"><%#= i+1 %></a>
-								</li>
-							<% } %>
-							<li class="page-item <%#= MngRatingTopicAssignData.hasNextPage ? '' : 'disabled' %>">
-								<a class="page-link" href="javascript: void(0);" onclick="pagination(<%#= MngRatingTopicAssignData.prevPage %>)" aria-label="Next">
-									<i class="mdi mdi-chevron-right"></i>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-                <!-- end pagination -->
+				<!-- pagination -->
             </div>
         </div>
     </div>
