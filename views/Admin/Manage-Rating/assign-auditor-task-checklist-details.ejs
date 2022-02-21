@@ -38,23 +38,23 @@
                             </tr>
                         </thead>
                         <tbody>
-							<% for( let i = 0; i < MngRatingChecklistAssignData.docs.length; i++ ) { %>
+							<% for( let i = 0; i < MngRatingChecklistAssignData?.checklistIds?.length; i++ ) { %>
 								<tr>
-									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].checklistTitle %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].cueForAuditor %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].weightage %></td>
-									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.docs[i].point %></td>
+									<td class="text-center" style="width: 7%;"><%= i+1 %> <%= JSON.stringify(MngRatingChecklistAssignData.checklistIds[i]._id) %> </td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.checklistIds[i].checklistTitle %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.checklistIds[i].cueForAuditor %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.checklistIds[i].weightage %></td>
+									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.checklistIds[i].point %></td>
 									<td class="text-center" style="width: 7%;">
-										<!-- <a href="<%#= process.env.APP_URL %>/view-assign-rating-task-checklist?propertyId=<%#= MngRatingChecklistAssignData.docs[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
+										<!-- <a href="<%#= process.env.APP_URL %>/view-assign-rating-task-checklist?propertyId=<%#= MngRatingChecklistAssignData.checklistIds[i].propertyId._id %>" class="btn btn-outline-secondary"><b>View</b></a> -->
 										<a href="javascript: void(0);" >
-											<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".checklistDetails"><b>View</b></button>
+											<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" onclick="detailTask('<%= i %>')" data-bs-target=".checklistDetails<%= i %>"><b>View</b></button>
 										</a>
 									</td>
 								</tr>
 
 								<!-- Start Checklist Modal -->
-								<div class="modal fade checklistDetails" tabindex="-1" role="dialog" aria-labelledby="checklistDetailsModalLabel" aria-hidden="true">
+								<div class="modal fade checklistDetails<%= i %>" tabindex="-1" role="dialog" aria-labelledby="checklistDetailsModalLabel" aria-hidden="true">
 									<div class="modal-dialog modal-dialog-centered" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
@@ -67,8 +67,7 @@
 														<label>Remark:-</label>
 													</div>
 													<div class="col-md-9">
-														Hello test remark
-														<%= MngRatingChecklistAssignData.docs[i].remark %>
+														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData.remark %>
 													</div>
 												</div>
 												<div class="row">
@@ -76,8 +75,7 @@
 														<label>Images:-</label>
 													</div>
 													<div class="col-md-9">
-														images
-														<%= MngRatingChecklistAssignData.docs[i].attachPhotos %>
+														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData.attachPhotos %>
 													</div>
 												</div>
 											</div>

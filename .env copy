@@ -22,4 +22,4 @@ mail_from_address=admin@glasier.in
 MAIL_FROM_NAME=GlasierInc
 
 # Database connection
-MONGO_DB_URL="mongodb+srv://kamalsherma:l2GIQc5mMOu0gtDo@cluster0.bpyxs.mongodb.net/crest_property_solutions_test"
+MONGO_DB_URL="mongodb+srv://kamalsherma:l2GIQc5mMOu0gtDo@cluster0.bpyxs.mongodb.net/crest_property_solutions_test" 
