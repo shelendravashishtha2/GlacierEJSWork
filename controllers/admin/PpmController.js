@@ -487,25 +487,27 @@ exports.addPropertyWing = async (req, res) => {
 		if (!req.session.user) { return res.redirect('/login'); }
 
 		// delete data
-		await PpmEquipmentAssign.deleteMany({ propertyId: req.body.propertyId, ppmEquipmentId: { "$nin": req.body.ppmIds } });
-
-		for (let i = 0; i < req.body.ppmIds.length; i++) {
-			let existsData = await PpmEquipmentAssign.findOne({ propertyId: req.body.propertyId, ppmEquipmentId: req.body.ppmIds[i] });
+		let equipmentIds = await PpmEquipmentAssign.find({propertyId: req.body.propertyId, ppmEquipmentName:{$nin:req.body.ppmNames}}).distinct('_id');
+		await PpmEquipmentAssign.deleteMany({ propertyId: req.body.propertyId, ppmEquipmentName: { "$nin": req.body.ppmNames } });
+		console.log(equipmentIds, 'EQUIPMENT ID');
+		await PpmEquipmentAssetAssign.deleteMany({assignPpmEquipmentId:equipmentIds});
+		for (let i = 0; i < req.body.ppmNames.length; i++) {
+			let existsData = await PpmEquipmentAssign.findOne({ propertyId: req.body.propertyId, ppmEquipmentName: req.body.ppmNames[i] });
 			if (!existsData) {
 				// store Ppm Equipment
 				let assignPpmEquipmentData = await PpmEquipmentAssign.create({
 					propertyId: req.body.propertyId,
-					ppmEquipmentId: req.body.ppmIds[i]
+					ppmEquipmentName: req.body.ppmNames[i]
 				})
 
 				// store Ppm Equipment Asset
-				let ppmEquipmentAssetData = await PpmEquipment.findOne({ _id: req.body.ppmIds[i] });
+				let ppmEquipmentAssetData = await PpmEquipment.findOne({ ppmEquipmentName: req.body.ppmNames[i] });
 				for (let j = 0; j < ppmEquipmentAssetData.assets.length; j++) {
 					const element = ppmEquipmentAssetData.assets[j];
 
 					let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.create({
 						propertyId: req.body.propertyId,
-						ppmEquipmentId: req.body.ppmIds[i],
+						ppmEquipmentId: req.body.ppmNames[i],
 						assignPpmEquipmentId: assignPpmEquipmentData._id,
 						assetName: element.assetName,
 						assetLocation: '',
@@ -537,8 +539,7 @@ exports.propertyWingList = async (req, res) => {
 
 		let PpmEquipmentData = await PpmEquipment.find({ status: 1 }, { ppmEquipmentName: 1 });
 		let assignPpmEquipmentData = await PpmEquipmentAssign.find({ propertyId: req.query.propertyId })
-				.populate({path: "propertyId", match: {status: 1} })
-				.populate({path: "ppmEquipmentId", match: {status: 1} });
+				.populate({path: "propertyId", match: {status: 1} });
 
 		console.log(assignPpmEquipmentData);
 		

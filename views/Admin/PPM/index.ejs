@@ -84,7 +84,7 @@
                                 <td style="text-align: center;width: 10%;">
                                     <button type="button" onclick="detailTask('<%= i %>',-1)" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target=".addTaskModal"><i class="mdi mdi-plus me-1"></i> <b>Add Task</b> </button>
                                     <!-- <a href="<%= process.env.APP_URL %>/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a> -->
-                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="detailTask('<%= i %>','<%= j %>')" data-bs-target=".equipmentNameEditModal"><b>Edit</b></button>
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="setEquipmentName('<%= data[i].ppmEquipmentName %>','<%= data[i]._id %>')" data-bs-target=".equipmentNameEditModal"><b>Edit</b></button>
                                 </td>
                             </tr>
                             <!-- Assets Table Within Row Start -->
@@ -359,19 +359,21 @@
             <form action="<%= process.env.APP_URL %>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <div class="row">
-                            <label for="example-text-input" class="col-md-3 col-form-label">Equipment Name:-</label>
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" id="ppmEquipmentName"
+                            <label for="example-text-input" class="col-md-5 col-form-label">Equipment Name:-</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="ppmEquipmentNameEdit"
                                     placeholder="Compliance" value="">
+                                <input class="form-control" type="hidden" id="ppmEquipmentIdEdit"
+                                    placeholder="Compliance" value="" >
                             </div>
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-3">
                                 <button type="button" onclick="ppmEquipmentNameChange()"
                                     class="btn btn-warning btn-rounded waves-effect waves-light">Edit</button>
-                            </div>
+                            </div> -->
                         </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-warning waves-effect waves-light" >submit</button>
+                <button type="button" class="btn btn-warning waves-effect waves-light" onclick="ppmEquipmentNameChange()">submit</button>
             </div>
             </form>
         </div>
@@ -383,9 +385,27 @@
     let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
     let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    function equipmentEdit(){
-
+    function setEquipmentName (name,id) {
+        console.log(name, 'NAME');
+        $('#ppmEquipmentNameEdit').val(name);
+        $('#ppmEquipmentIdEdit').val(id);
+    }
+    function ppmEquipmentNameChange(){
+        if($("#ppmEquipmentNameEdit").val().trim() != ""){
+          $.post("<%=process.env.APP_URL%>/update-ppm-name",
+          {
+            ppmId: $("#ppmEquipmentIdEdit").val(),
+            ppmEquipmentName: $("#ppmEquipmentNameEdit").val().trim()
+          },
+          function(data, status){
+            if(data.status){
+                toastr.success(data.message);
+                location.reload();
+            }else{
+                toastr.error(data.message);
+            }
+          });
+        }
     }
 
     function detailTask(equipmentIndex,assetIndex){
