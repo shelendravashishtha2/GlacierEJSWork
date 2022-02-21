@@ -315,8 +315,8 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 		}
 		res.locals = { title: 'Edit PPM', session: req.session };
 
-		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: req.params.pid, _id: req.params.id }).populate({ "path": "propertyId", "match": { "status": 1 } }).populate({ "path": "ppmEquipmentId", "match": { "status": 1 } });
-
+		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: req.params.pid, _id: req.params.id }).populate({ "path": "propertyId", "match": { "status": 1 } });
+		console.log(assignPpmEquipmentData);
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
 
 		return res.render('Admin/PPM/assign-ppm-asset-list', {
