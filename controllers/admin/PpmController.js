@@ -1,5 +1,5 @@
 const PpmEquipment = require("../../models/PpmEquipmentMaster");
-const PpmEquipmentAsset = require("../../models/PpmEquipmentAssetMaster");
+const PpmEquipmentAsset = require("../../models/__PpmEquipmentAssetMaster");
 const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
 const Property = require("../../models/Property");

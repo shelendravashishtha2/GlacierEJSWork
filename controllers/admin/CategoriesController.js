@@ -35,7 +35,7 @@ exports.categoryAdd = async (req, res) => {
 			req.session.error = '';
 		}
 
-		let CategoryData = new Category({
+		let CategoryData = new CategoryMaster({
 			category_name: req.body.category_name,
 		});
 		await CategoryData.save();
