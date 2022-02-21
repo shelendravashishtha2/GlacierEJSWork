@@ -30,7 +30,7 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	},
 	frequency: {
 		type: String,
-		enum:['Weekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
+		enum:['Thrice-a-day','Twice-a-day','Daily','Weekly','Biweekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
 		required:true,
 		trim: true,
 	},
@@ -39,12 +39,14 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 		min: [1,'invalid status'],
     	max: [12,'invalid status'],
 		trim: true,
+		default: 0,
 	},
 	date: {
 		type: Number,
 		min: [1,'invalid status'],
     	max: [31,'invalid status'],
 		trim: true,
+		default: 0,
 	},
 	day: {
 		type: String,
