@@ -35,8 +35,13 @@ const getAge = (birthDate) => {
 	const age = Math.floor((new Date() - new Date(birthDate).getTime()) / 31557600000);
 	return isNaN(age) ? 0 : age;
 }
-
+function prependToArray(value, array) {
+	var newArray = array.slice();
+	newArray.unshift(value);
+	return newArray;
+  }
 module.exports = {
     userProfilePer,
-	getAge
+	getAge,
+	prependToArray
 };

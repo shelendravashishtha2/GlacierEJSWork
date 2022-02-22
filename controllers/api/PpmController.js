@@ -160,7 +160,9 @@ exports.createPpmAsset = async (req, res) => {
 		}
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 
@@ -248,7 +250,9 @@ exports.updatePpmAsset = async (req, res) => {
 		}
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 

@@ -9,6 +9,8 @@ const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
+const daysEnum = require("../../enum/daysEnum");
+const { prependToArray } = require("../../helper/commonHelpers");
 
 // PPM List Page 
 exports.updatePpmStatus = async (req, res) => {
@@ -269,7 +271,9 @@ exports.updatePpmTask = async (req, res) => {
 		let message = "";
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 		let obj = {
@@ -684,7 +688,9 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		}
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 

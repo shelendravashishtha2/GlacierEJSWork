@@ -3,20 +3,16 @@ const CategoryChecklist = require('../models/CategoryFrcMaster');
 const Form = require('../models/Form');
 const PpmEquipmentAssetAssign = require('../models/PpmEquipmentAssetAssign');
 const PpmTaskAssign = require('../models/PpmTaskAssign');
+const daysEnum = require('../enum/daysEnum');
+const frequencyEnum = require('../enum/frequencyEnum');
 
 exports.formCron = async (req, res) => {
     try {
         console.log('cron running');
-        const days = [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ];
-
+        const days = Object.keys(daysEnum);
+        days= days.map((day)=>{
+            return day.toLowerCase();    
+        })
 		let date = new Date();
 		// date.setDate(date.getDate() + 7); //add 7 day in currant date
 
@@ -320,7 +316,6 @@ exports.formCron = async (req, res) => {
                     }
                 } else if (category.frequency === 'weekly') {
                     if (days[date.getDay()] == category.day) {
-                        console.log('weekly');
                         if (managers.length > 0) {
                             for (let manager of managers) {
                                 const obj = {
@@ -384,10 +379,12 @@ exports.formCron = async (req, res) => {
 };
 
 exports.ppmCron = async (req, res) => {
+    // daysEnum;
+    // frequencyEnum
 	try {
 		console.log('ppm cron running');
-		const daysArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-		let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
+		const daysArray = Object.keys(daysEnum);
+		let frequencyArray = Object.keys(frequencyEnum);
         let date = new Date();
 		// date.addDays(7); //before 7 day task generate
 		date.setDate(date.getDate() + 7);

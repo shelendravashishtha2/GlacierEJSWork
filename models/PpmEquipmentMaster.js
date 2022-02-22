@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const daysEnum = require("../enum/daysEnum");
+const { prependToArray } = require("../helper/commonHelpers");
+
+let daysArr = Object.keys(daysEnum);
+let days = prependToArray('',daysArr);
 
 const assetSchema = new mongoose.Schema({ 
 	assetName: {
@@ -33,7 +38,7 @@ const assetSchema = new mongoose.Schema({
 	},
 	day: {
 		type: String,
-		enum: ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+		enum: days,
 		trim: true,
 		default: '',
 	},
