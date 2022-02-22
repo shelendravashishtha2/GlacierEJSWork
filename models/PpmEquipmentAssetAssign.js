@@ -36,15 +36,17 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	},
 	month: {
 		type: Number,
-		min: [1,'invalid status'],
+		min: [0,'invalid status'],
     	max: [12,'invalid status'],
 		trim: true,
+		default: 0,
 	},
 	date: {
 		type: Number,
-		min: [1,'invalid status'],
+		min: [0,'invalid status'],
     	max: [31,'invalid status'],
 		trim: true,
+		default: 0,
 	},
 	day: {
 		type: String,

@@ -133,7 +133,7 @@
         $.post("<%=process.env.APP_URL%>/store-assign-property-ppm-equipments",
         {
             propertyId: $("#propertyId").val(),
-            ppmIds: selectedPPM,
+            ppmNames: selectedPPM,
         },
 		function(data, status){
 			if(data.status){
@@ -170,18 +170,18 @@
 				propertyId: $("#propertyId").val()
 			},
             function(data, status){
-				console.log(data);
                 // properties[propertyIndex].wings = data.wings;
                 ppm = data.ppm;
                 assignPpmData = data.assignPpmData;
                 // wings = properties[propertyIndex].wings;
+				console.log(assignPpmData);
 
 				// set data in table view
 				for(let i=0;i < assignPpmData.length; i++){
                     let selected = assignPpmData[i].status == 1 ? "checked": "";
 					wingString = wingString + ` <tr>
                                     <td class="text-center" style="width: 5%;">`+(i+1)+`</td>
-                                    <td>`+ assignPpmData[i].ppmEquipmentId?.ppmEquipmentName +`</td>
+                                    <td>`+ assignPpmData[i].ppmEquipmentName +`</td>
                                     <td class="text-center" style="width: 15%;">
                                         <input type="checkbox" onchange="EquipmentStatusChange('`+ assignPpmData[i]._id +`')" id="switch`+i+`" switch="warning" `+ selected +`>
                                         <label for="switch`+i+`" data-on-label="Yes" data-off-label="No"></label>
@@ -208,7 +208,7 @@
 					for(let i=0;i < ppm.length; i++){
 						selected = "checked";
 
-						let assignPpmDataIndex = assignPpmData.findIndex((x)=> String(x.ppmEquipmentId._id) == String(ppm[i]._id));
+						let assignPpmDataIndex = assignPpmData.findIndex((x)=> String(x.ppmEquipmentName) == String(ppm[i].ppmEquipmentName));
 						if (assignPpmData.length > 0) {
 							if (assignPpmDataIndex == -1) { //if not assign ppm
 								selected = ""
@@ -217,7 +217,7 @@
 							$("#allPpmCheck").prop('checked', true)
 						}
 						ppmString = ppmString + `<div class="form-check mb-2">
-										<input class="form-check-input" name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ ppm[i]._id + `" `+ selected +`>
+										<input class="form-check-input" name="wings" type="checkbox" id="ppmCheck`+i+`" value="`+ ppm[i].ppmEquipmentName + `" `+ selected +`>
 										<label class="form-check-label" for="ppmCheck`+i+`">`+ ppm[i].ppmEquipmentName +`</label>
 									</div>`;
 					}
