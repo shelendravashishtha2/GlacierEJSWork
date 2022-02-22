@@ -225,15 +225,13 @@ exports.editTask = async (req, res) => {
 			return res.redirect('/task');
 		}
 
-		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 });
+		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 }).lean();
 		let assignCategory = await CategoryAssign.find({ propertyId: req.params.id });
 
-		allCategory = JSON.parse(JSON.stringify(allCategory));
-
-		for (let i = 0; i < allCategoryMaster.length; i++) {
+		for (let i = 0; i < allCategory.length; i++) {
 			const allCategoryData = allCategory[i];
 			let status = false;
-			for (let j = 0; j < assignCategoryMaster.length; j++) {
+			for (let j = 0; j < assignCategory.length; j++) {
 				const assignCategoryData = assignCategory[j];
 				if (String(allCategoryData._id) == String(assignCategoryData.categoryId)) {
 					status = true;

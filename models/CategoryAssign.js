@@ -6,6 +6,11 @@ const CategoryAssignSchema = new mongoose.Schema({
 		ref: 'Property',
 		required: true
 	},
+	wingIds: {
+		type:  [mongoose.Schema.Types.ObjectId], 
+		ref: 'Property',
+		default: []
+	},
 	categoryId: {
 		type:  mongoose.Schema.Types.ObjectId, 
 		ref: 'Category_Master',
@@ -21,11 +26,11 @@ const CategoryAssignSchema = new mongoose.Schema({
 		ref: 'User',
 		default: []
 	},
-	// supervisorId: {
-	// 	type:  [mongoose.Schema.Types.ObjectId], 
-	// 	ref: 'User',
-	// 	default: []
-	// }
+	supervisorId: {
+		type:  [mongoose.Schema.Types.ObjectId], 
+		ref: 'User',
+		default: []
+	}
 },{
 	timestamps: true,
 	versionKey: false
