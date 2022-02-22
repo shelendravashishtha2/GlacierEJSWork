@@ -64,6 +64,11 @@
                 <li>
                     <a href="<%= process.env.APP_URL %>/history" class="waves-effect"><i class="bx bx-aperture"></i><span key="t-layouts">History</span></a>
                 </li>
+
+				<li>
+                    <a href="<%= process.env.APP_URL %>/report" class="waves-effect"><i class="bx bx-aperture"></i><span key="t-layouts">Report</span></a>
+                </li>
+
                 <% if(session) { %>
                 <% if(session.user.position_id == 1) { %>
                 <li>

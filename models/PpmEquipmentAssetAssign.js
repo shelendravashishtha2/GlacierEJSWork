@@ -31,7 +31,7 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	},
 	frequency: {
 		type: String,
-		enum:['Thrice-a-day','Twice-a-day','Daily','Weekly','Biweekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
+		enum: ['Thrice-a-day','Twice-a-day','Daily','Weekly','Biweekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
 		required:true,
 		trim: true,
 	},

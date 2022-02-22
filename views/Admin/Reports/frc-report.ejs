@@ -1,0 +1,153 @@
+<%- contentFor('HeaderCss') %>
+<!-- DataTables -->
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Responsive DataTable examples -->
+<link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+<%- contentFor('breadcrumb') %>
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Report</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="#">Report</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<%- contentFor('body') %>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <form class="row gy-2 gx-3 align-items-center">
+					<div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">Report for <span class="text-danger">*</span></label>
+								<select class="form-select" id="autoSizingSelect" required>
+									<option selected disabled>Select Report</option>
+									<option value="1">PPM</option>
+									<option value="2">FRC</option>
+								</select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">Property <span class="text-danger">*</span></label>
+								<select class="form-select" id="autoSizingSelect">
+									<option selected disabled>Select Property</option>
+									<% for (i = 0; i < PropertyList.length; i++) { %>
+										<option value="<%= PropertyList[i]._id %>"><%= PropertyList[i]._id %></option>
+									<% } %>
+								</select>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingInput">Start Date <span class="text-danger">*</span></label>
+								<div class="input-group" id="datepicker1">
+									<input type="text" name="start-date" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true">
+									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+								</div>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingInputGroup">End Date <span class="text-danger">*</span></label>
+								<div class="input-group" id="datepicker2">
+									<input type="text" name="end-date" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" required>
+									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+								</div>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">Status </label>
+								<select class="form-select" id="autoSizingSelect">
+									<option selected disabled>Select Status</option>
+									<option value="1">Complete Task</option>
+									<option value="2">Pending Task</option>
+								</select>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button type="submit" class="btn btn-warning w-md">Submit</button>
+						</div>
+					</div>
+                </form>
+            </div> <!-- end card body -->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+<div class="row">
+	<div class="col-12">
+		<table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+			<thead>
+			<tr>
+				<th style="text-align: center;">#</th>
+				<th style="text-align: center;">FRC ID</th>
+				<th>Category Name</th>
+				<th>FRC Name</th>
+				<th style="text-align: center;">Type</th>
+				<th style="text-align: center;">Frequency</th>
+				<th style="text-align: center;">Status</th>
+				<th style="width: 10%;text-align: center;">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th style="text-align: center;">#</th>
+					<th style="text-align: center;">FRC ID</th>
+					<th>Category Name</th>
+					<th>FRC Name</th>
+					<th style="text-align: center;">Type</th>
+					<th style="text-align: center;">Frequency</th>
+					<th style="text-align: center;">Status</th>
+					<th style="width: 10%;text-align: center;">Action</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+<%- contentFor('FooterJs') %>
+<!-- Required dataTable js -->
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<!-- DataTable init js -->
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/datatables.init.js"></script>
+
+<script src="public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
+<%- contentFor('BottomJs') %>

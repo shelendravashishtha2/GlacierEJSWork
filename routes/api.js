@@ -58,6 +58,7 @@ router.post("/update-ppm-asset", auth, PpmController.updatePpmAsset); // update 
 router.post("/ppm-asset-status-change", auth, PpmController.ppmAssetStatusChange); // Active - Inactive
 router.post("/ppm-task-list", auth, PpmController.ppmTaskList); //
 router.post("/ppm-task-details", auth, PpmController.ppmTaskDetails); //
+// router.post("/ppm-task-submit", auth, PpmController.ppmTaskDetails); //
 
 // ------------------------------>
 // router.post("/ppm-task-list", auth, PpmController.ppmTaskList);

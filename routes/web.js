@@ -10,6 +10,7 @@ const SopController = require("../controllers/admin/SopController");
 const HistoryController = require("../controllers/admin/HistoryController");
 const CategoriesController = require("../controllers/admin/CategoriesController");
 const SettingController = require("../controllers/admin/SettingController");
+const ReportController = require("../controllers/admin/ReportController");
 
 const baseUrl = process.env.BASE_URL || "/";
 
@@ -105,7 +106,7 @@ router.get('/view-ppm', isUserAllowed, PpmController.viewPpmList);
 router.get('/edit-ppm/:id', isUserAllowed, PpmController.editPpm);
 router.post('/create-ppm', isUserAllowed, PpmController.createPpm);
 router.post('/update-ppm-status', isUserAllowed, PpmController.updatePpmStatus);
-router.post('/update-ppm-name', isUserAllowed, PpmController.updateppmEquipmentName);
+router.post('/update-ppm-name', isUserAllowed, PpmController.updatePpmEquipmentName);
 router.post('/update-ppm-task', isUserAllowed, PpmController.updatePpmTask);
 router.post('/update-property-wing-status', isUserAllowed, PpmController.updatePropertyWingStatus);
 router.post('/update-ppm-task-status', isUserAllowed, PpmController.updatePpmTaskStatus);
@@ -132,6 +133,10 @@ router.post('/change-sop-status', isUserAllowed, SopController.changeSOPStatus);
 router.post('/delete-sop-image', isUserAllowed, SopController.deleteSopImage);
 // router.post('/delete-sop/:id', isUserAllowed, SopController.deleteSop);
 router.get('/view-sop/:id', isUserAllowed, SopController.viewSop);
+
+// Reports
+router.get('/report', isUserAllowed, ReportController.index);
+router.post('/report', isUserAllowed, ReportController.indexFilter);
 
 // History 
 router.get('/history', isUserAllowed, HistoryController.historyList);

@@ -38,7 +38,7 @@ exports.updatePpmStatus = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-exports.updateppmEquipmentName = async (req, res) => {
+exports.updatePpmEquipmentName = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
