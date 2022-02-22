@@ -316,7 +316,6 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 		const {pid, id} = req.params;
 		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: pid, _id: id }).populate({ "path": "propertyId", "match": { "status": 1 } });
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
-		console.log(assignPpmEquipmentAssetData, 'PPM EQUIPMENT DATA');
 		return res.render('Admin/PPM/assign-ppm-asset-list', {
 			// data: assignPpmEquipmentData,
 			assignPpmEquipmentData,
@@ -492,7 +491,6 @@ exports.addPropertyWing = async (req, res) => {
 		// delete data
 		let equipmentIds = await PpmEquipmentAssign.find({propertyId: req.body.propertyId, ppmEquipmentName:{$nin:req.body.ppmNames}}).distinct('_id');
 		await PpmEquipmentAssign.deleteMany({ propertyId: req.body.propertyId, ppmEquipmentName: { "$nin": req.body.ppmNames } });
-		console.log(equipmentIds, 'EQUIPMENT ID');
 		await PpmEquipmentAssetAssign.deleteMany({assignPpmEquipmentId:equipmentIds});
 		for (let i = 0; i < req.body.ppmNames.length; i++) {
 			let existsData = await PpmEquipmentAssign.findOne({ propertyId: req.body.propertyId, ppmEquipmentName: req.body.ppmNames[i] });
@@ -544,8 +542,6 @@ exports.propertyWingList = async (req, res) => {
 		let assignPpmEquipmentData = await PpmEquipmentAssign.find({ propertyId: req.query.propertyId })
 				.populate({path: "propertyId", match: {status: 1} });
 
-		console.log(assignPpmEquipmentData);
-		
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
