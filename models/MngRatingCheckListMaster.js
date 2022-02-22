@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 const MngRatingChecklistMasterSchema = new mongoose.Schema({
 	ratingGroupId: {
 		type:  mongoose.Schema.Types.ObjectId,

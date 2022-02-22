@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const CategoryAssignSchema = new mongoose.Schema({
 	propertyId: {
@@ -7,7 +8,7 @@ const CategoryAssignSchema = new mongoose.Schema({
 		required: true
 	},
 	wingIds: {
-		type:  [mongoose.Schema.Types.ObjectId], 
+		type:  [mongoose.Schema.Types.ObjectId],
 		ref: 'Property',
 		default: []
 	},

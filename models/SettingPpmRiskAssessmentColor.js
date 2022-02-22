@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const SettingPpmRiskAssessmentColorSchema = new mongoose.Schema({
 	color_name: {

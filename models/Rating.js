@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 const ratingSchema = new mongoose.Schema({
 	userId: {
 		type:  mongoose.Schema.Types.ObjectId,

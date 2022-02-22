@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {errorLog} = require("../helper/consoleLog");
 const Joi = require("joi");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const userSchema = new mongoose.Schema({
 	email: {

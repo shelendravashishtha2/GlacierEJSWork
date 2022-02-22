@@ -12,14 +12,14 @@ module.exports = function (app) {
 
 	const baseUrl = process.env.BASE_URL || "/"; // Default
 
-	app.get('/register', function (req, res) {
+	app.get(baseUrl + 'register', function (req, res) {
 		if (req.user) { res.redirect('Dashboard/index'); }
 		else {
 			res.render('Auth/auth-register', { 'message': req.flash('message'), 'error': req.flash('error') });
 		}
 	});
 
-	app.post('/post-register', urlencodeParser, function (req, res) {
+	app.post(baseUrl + 'post-register', urlencodeParser, function (req, res) {
 		let tempUser = { username: req.body.username, email: req.body.email, password: req.body.password };
 		users.push(tempUser);
 
@@ -27,15 +27,15 @@ module.exports = function (app) {
 		sess = req.session;
 		sess.user = tempUser;
 
-		res.redirect('/');
+		res.redirect(baseUrl + '');
 	});
 
-	app.get('/login', function (req, res) {
+	app.get(baseUrl + 'login', function (req, res) {
 		res.locals = { title: 'Login' };
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 
-	app.post('/post-login', urlencodeParser, async function (req, res) {
+	app.post(baseUrl + 'post-login', urlencodeParser, async function (req, res) {
 
 		const email = req.body.email;
 		const password = req.body.password;
@@ -48,22 +48,22 @@ module.exports = function (app) {
 				// Assign value in session
 				sess = req.session;
 				sess.user = userData;
-				res.redirect('/');	
+				res.redirect(baseUrl + '');	
 			}else{
 				req.flash('error', 'Incorrect password!');
-				res.redirect('/login');
+				res.redirect(baseUrl + 'login');
 			}
 		} else {
 			req.flash('error', 'Incorrect email or password!');
-			res.redirect('/login');
+			res.redirect(baseUrl + 'login');
 		}
 	});
 
-	app.get('/forgot-password', function (req, res) {
+	app.get(baseUrl + 'forgot-password', function (req, res) {
 		res.render('Auth/auth-forgot-password', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 
-	app.post('/post-forgot-password', urlencodeParser, async function (req, res) {
+	app.post(baseUrl + 'post-forgot-password', urlencodeParser, async function (req, res) {
 		try {
 			const email = req.body.email;
 			const userData = await User.findOne({ email: email });
@@ -101,23 +101,23 @@ module.exports = function (app) {
 				await User.findByIdAndUpdate(userData._id, {reset_password_status: 1}, {new : true, runValidators: true} );
 				// return res.send(response.success(200, 'Email Send Successfully', [] ));
 				req.flash('message', 'We have e-mailed your password reset link!');
-				res.redirect('/forgot-password');
+				res.redirect(baseUrl + 'forgot-password');
 			} else {
 				req.flash('error', 'Email Not Found!!');
-				res.redirect('/forgot-password');
+				res.redirect(baseUrl + 'forgot-password');
 			}
 		} catch (error) {
 			console.log(error);
 			req.flash('error', 'Something want wrong!!');
-			res.redirect('/forgot-password');
+			res.redirect(baseUrl + 'forgot-password');
 		}
 	});
 
-	app.get('/logout', function (req, res) {
+	app.get(baseUrl + 'logout', function (req, res) {
 		// Assign null value in session
 		sess = req.session;
 		sess.user = null;
-		res.redirect('/login');
+		res.redirect(baseUrl + 'login');
 	});
 
 	app.get("/reset-password/:key/:id", AuthController.resetPasswordWeb); // Reset Password web page

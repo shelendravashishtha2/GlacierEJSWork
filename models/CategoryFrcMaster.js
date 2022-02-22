@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const CategoryFrcMasterSchema = new mongoose.Schema({
 	category_id: {

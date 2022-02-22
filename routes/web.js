@@ -11,19 +11,13 @@ const HistoryController = require("../controllers/admin/HistoryController");
 const CategoriesController = require("../controllers/admin/CategoriesController");
 const SettingController = require("../controllers/admin/SettingController");
 
-// router.use(function (req, res, next) {
-// 	if (req.session.user) {
-// 		next();
-// 	} else {
-// 		res.redirect('/login');
-// 	}
-// })
+const baseUrl = process.env.BASE_URL || "/";
 
 function isUserAllowed(req, res, next) {
 	if (req.session.user) {
 		next();
 	} else {
-		res.redirect('/login');
+		res.redirect(baseUrl + 'login');
 	}
 }
 
