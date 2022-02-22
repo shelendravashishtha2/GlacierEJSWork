@@ -313,13 +313,16 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 		res.locals = { title: 'Edit PPM', session: req.session };
-
-		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: req.params.pid, _id: req.params.id }).populate({ "path": "propertyId", "match": { "status": 1 } });
-		console.log(assignPpmEquipmentData);
+		const {pid, id} = req.params;
+		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: pid, _id: id }).populate({ "path": "propertyId", "match": { "status": 1 } });
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
-
 		return res.render('Admin/PPM/assign-ppm-asset-list', {
-			data: assignPpmEquipmentData,
+			// data: assignPpmEquipmentData,
+			assignPpmEquipmentData,
+			data:{
+				propertyId: pid,
+				equipmentId: id 	
+			},
 			page: 1,
 			totalPage: 1,
 			taskData: assignPpmEquipmentAssetData,
@@ -488,7 +491,6 @@ exports.addPropertyWing = async (req, res) => {
 		// delete data
 		let equipmentIds = await PpmEquipmentAssign.find({propertyId: req.body.propertyId, ppmEquipmentName:{$nin:req.body.ppmNames}}).distinct('_id');
 		await PpmEquipmentAssign.deleteMany({ propertyId: req.body.propertyId, ppmEquipmentName: { "$nin": req.body.ppmNames } });
-		console.log(equipmentIds, 'EQUIPMENT ID');
 		await PpmEquipmentAssetAssign.deleteMany({assignPpmEquipmentId:equipmentIds});
 		for (let i = 0; i < req.body.ppmNames.length; i++) {
 			let existsData = await PpmEquipmentAssign.findOne({ propertyId: req.body.propertyId, ppmEquipmentName: req.body.ppmNames[i] });
@@ -540,8 +542,6 @@ exports.propertyWingList = async (req, res) => {
 		let assignPpmEquipmentData = await PpmEquipmentAssign.find({ propertyId: req.query.propertyId })
 				.populate({path: "propertyId", match: {status: 1} });
 
-		console.log(assignPpmEquipmentData);
-		
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -664,7 +664,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		let schema = Joi.object({
 			assetId: Joi.optional(), //for update time
 			assignPpmEquipmentId: Joi.required(),
-			ppmEquipmentId: Joi.required(),
 			propertyId: Joi.required(),
 			assetName: Joi.required(),
 			assetLocation: Joi.required(),
@@ -715,7 +714,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		if (assignPpmEquipmentAssetData) {
 			await PpmEquipmentAssetAssign.updateOne({ _id: req.body.assetId }, {
 				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,
@@ -731,7 +729,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		} else {
 			await PpmEquipmentAssetAssign.create({
 				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,

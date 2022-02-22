@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18"><%= data.ppmEquipmentName %> Assets List (<%= data.propertyId.property_name %>)</h4>
+            <h4 class="mb-sm-0 font-size-18"><%= assignPpmEquipmentData.ppmEquipmentName %> Assets List (<%= assignPpmEquipmentData.propertyId.property_name %>)</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
@@ -80,6 +80,25 @@
                         </tbody>
                     </table>
                 </div>
+                <ul class="pagination pagination-rounded justify-content-end mb-2">
+                    <% if(page > 1){ %>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="<%= process.env.APP_URL %>/assignPpmEquipmentData/<%=data.propertyId%>/<%=data.equipmentId%>?page=<%=i-1%>" aria-label="Previous">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% for (i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item  active"><a class="page-link" href="<%= process.env.APP_URL %>/assignPpmEquipmentData/<%=data.propertyId%>/<%=data.equipmentId%>?page=<%=i%>"><%=i%></a></li>
+                    <% } %>
+                    <% if(page < totalPage){ %>
+                    <li class="page-item">
+                        <a class="page-link" href="<%= process.env.APP_URL %>/assignPpmEquipmentData/<%=data.propertyId%>/<%=data.equipmentId%>?page=<%=i+1%>" aria-label="Next">
+                            <i class="mdi mdi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
             </div>
         </div>
     </div>
@@ -102,8 +121,8 @@
                     <div class="col-md-12">
                         <div class="mb-3 row">
                             <input type="hidden" name="assetId" id="assetId" value="">
-                            <input type="hidden" name="assignPpmEquipmentId" id="assignPpmEquipmentId" value="<%= data._id %>">
-                            <input type="hidden" name="propertyId" id="propertyId" value="<%= data.propertyId._id %>">
+                            <input type="hidden" name="assignPpmEquipmentId" id="assignPpmEquipmentId" value="<%= assignPpmEquipmentData._id %>">
+                            <input type="hidden" name="propertyId" id="propertyId" value="<%= assignPpmEquipmentData.propertyId._id %>">
                             <label for="example-text-input" class="col-md-4 col-form-label" style="text-align:right">Asset Name<span class="required">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" value="" id="assetName" name="assetName" required placeholder="Enter Asset Name">
