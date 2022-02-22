@@ -313,13 +313,17 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 		res.locals = { title: 'Edit PPM', session: req.session };
-
-		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: req.params.pid, _id: req.params.id }).populate({ "path": "propertyId", "match": { "status": 1 } });
-		console.log(assignPpmEquipmentData);
+		const {pid, id} = req.params;
+		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: pid, _id: id }).populate({ "path": "propertyId", "match": { "status": 1 } });
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
-
+		console.log(assignPpmEquipmentAssetData, 'PPM EQUIPMENT DATA');
 		return res.render('Admin/PPM/assign-ppm-asset-list', {
-			data: assignPpmEquipmentData,
+			// data: assignPpmEquipmentData,
+			assignPpmEquipmentData,
+			data:{
+				propertyId: pid,
+				equipmentId: id 	
+			},
 			page: 1,
 			totalPage: 1,
 			taskData: assignPpmEquipmentAssetData,
@@ -664,7 +668,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		let schema = Joi.object({
 			assetId: Joi.optional(), //for update time
 			assignPpmEquipmentId: Joi.required(),
-			ppmEquipmentId: Joi.required(),
 			propertyId: Joi.required(),
 			assetName: Joi.required(),
 			assetLocation: Joi.required(),
@@ -715,7 +718,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		if (assignPpmEquipmentAssetData) {
 			await PpmEquipmentAssetAssign.updateOne({ _id: req.body.assetId }, {
 				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,
@@ -731,7 +733,6 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		} else {
 			await PpmEquipmentAssetAssign.create({
 				propertyId: req.body.propertyId,
-				ppmEquipmentId: req.body.ppmEquipmentId,
 				assignPpmEquipmentId: assignPpmEquipmentData._id,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,
