@@ -70,12 +70,16 @@
                                 <select class="form-select" id="frequency" name="frequency" onchange="changeFrequency()" required>
                                     <option value="" selected disabled hidden>Choose here</option>
                                     <option value="none">None</option>
-                                    <option value="daily">Daily</option>
+                                    <% for (j = 0; j < frequencyArr.length; j++) { %>
+                                        <option value="<%=frequencyArr[j]%>"><%=frequencyArr[j]%></option>
+                                    <% } %>
+
+                                    <!-- <option value="daily">Daily</option>
                                     <option value="weekly">Weekly</option>
                                     <option value="monthly">Monthly</option>
                                     <option value="quarterly">Quarterly</option>
                                     <option value="annually">Annually</option>
-                                    <option value="bi_annually">Bi-Annually</option>
+                                    <option value="bi_annually">Bi-Annually</option> -->
                                 </select>
                                 <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.frequency!='undefined' )? errors.frequency.msg:''%></p>
                             </div>
@@ -154,17 +158,17 @@
         let optionValue = $("#frequency").val();
         if(optionValue == 'daily'){
 		}
-		else if(optionValue == 'weekly'){
+		else if(optionValue == 'Weekly'){
   			$('.checklist_day').show();
-		} else if(optionValue == 'monthly') {
+		} else if(optionValue == 'Monthly') {
 			$('.checklist_date').show();
-		}  else if(optionValue == 'quarterly') {
+		}  else if(optionValue == 'Quarterly') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'annually') {
+		}  else if(optionValue == 'Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'bi_annually') {
+		}  else if(optionValue == 'Bi_annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
 		}

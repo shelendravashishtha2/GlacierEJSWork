@@ -393,7 +393,30 @@ exports.ppmCron = async (req, res) => {
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({status: 1});
 
 		for (const EquipmentAssetData of assignPpmEquipmentAssetData) {
-			if (EquipmentAssetData.frequency == frequencyArray[0]) { // Weekly
+            if(EquipmentAssetData.frequency == frequencyArray[0] || EquipmentAssetData.frequency == frequencyArray[1] || EquipmentAssetData.frequency == frequencyArray[2] ){
+                let counts = 1;
+                if(EquipmentAssetData.frequency == frequencyArray[0]){
+                    counts = 3;
+                }else if(EquipmentAssetData.frequency == frequencyArray[1]){
+                    counts = 2;
+                }
+                let records = [];
+                console.log( `${EquipmentAssetData.frequency} generated task`);
+                for(let i=0;i<counts;i++){
+                    records.push({
+                        propertyId: EquipmentAssetData.propertyId,
+                        assignPpmEquipmentId: EquipmentAssetData.assignPpmEquipmentId,
+                        assignPpmEquipmentAssetId: EquipmentAssetData._id,
+                        assetName: EquipmentAssetData.assetName,
+                        assetLocation: EquipmentAssetData.assetLocation,
+                        vendorName: EquipmentAssetData.vendorName,
+                        dueDate: date,
+                        remark: `${EquipmentAssetData.frequency} generated task`,
+                    });
+                }
+                await PpmTaskAssign.insertMany(records)
+            }
+			else if (EquipmentAssetData.frequency == frequencyArray[3]) { // Weekly
 				if (EquipmentAssetData.day.toLowerCase() == daysArray[date.getDay()].toLowerCase()) {
 					console.log('Weekly generate task');
 					// console.log(EquipmentAssetData);
@@ -414,7 +437,7 @@ exports.ppmCron = async (req, res) => {
 						// attachPhotos: [''],
 					})
 				}
-			} else if(EquipmentAssetData.frequency == frequencyArray[1]){ // Fortnightly
+			} else if(EquipmentAssetData.frequency == frequencyArray[4]){ // Fortnightly
 				let date1 = EquipmentAssetData.date
 				let date2 = date1 < 15 ? date1 + 14 : date1 - 14;
 				if (date.getDate() == date1 || date.getDate() == date2) {
@@ -437,7 +460,7 @@ exports.ppmCron = async (req, res) => {
 						// attachPhotos: [''],
 					})
 				}
-			} else if(EquipmentAssetData.frequency == frequencyArray[2]){ // Monthly
+			} else if(EquipmentAssetData.frequency == frequencyArray[5]){ // Monthly
 				if (date.getDate() == EquipmentAssetData.date) {
 					console.log('Monthly generate task');
 					// console.log(EquipmentAssetData);
@@ -458,7 +481,7 @@ exports.ppmCron = async (req, res) => {
 						// attachPhotos: [''],
 					})
 				}
-			} else if(EquipmentAssetData.frequency == frequencyArray[3]){ // Quarterly
+			} else if(EquipmentAssetData.frequency == frequencyArray[6]){ // Quarterly
 				let month = EquipmentAssetData.month; //1-12
 				let setFirstQuarterMonth = 1;
 				if (month < 4){ // quarter 1
@@ -498,7 +521,7 @@ exports.ppmCron = async (req, res) => {
 						})
 					}
 				}
-			} else if(EquipmentAssetData.frequency == frequencyArray[4]){ // Annually/ Yearly
+			} else if(EquipmentAssetData.frequency == frequencyArray[7]){ // Annually/ Yearly
 				let currentMonth = date.getMonth() + 1;
 				if (date.getDate() == EquipmentAssetData.date && currentMonth == EquipmentAssetData.month) {
 					console.log('Annually generate task');
@@ -520,7 +543,7 @@ exports.ppmCron = async (req, res) => {
 						// attachPhotos: [''],
 					})
 				}
-			} else if(EquipmentAssetData.frequency == frequencyArray[5]){ // Bi-Annually
+			} else if(EquipmentAssetData.frequency == frequencyArray[8]){ // Bi-Annually
 				let month1 = EquipmentAssetData.month
 				let month2 = month1 <= 6 ? month1 + 6 : month1 - 6;
 				let currentMonth = date.getMonth() + 1;

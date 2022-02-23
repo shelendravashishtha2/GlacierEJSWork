@@ -85,6 +85,7 @@ cron.schedule('01 00 * * *', async () => { //will run every night at 12:01 AM
 	await ppmCron();
 });
 cron.schedule('*/10 * * * * *', async () => { //for testing
+    console.log('YES');
 	// await formCron();
 	// await ppmCron();
 });

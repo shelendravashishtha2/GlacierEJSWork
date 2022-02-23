@@ -193,7 +193,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment Detail</h5>
+                    <h5 class="modal-title" id="orderdetailsModalLabel">Add Equipment Asset</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -225,12 +225,9 @@
                                 <label class="col-md-4 col-form-label" style="text-align:right">Frequency<span class="required">*</span></label>
                                 <div class="col-md-8">
                                     <select class="form-select" name="frequency" required onchange="changeFrequency()" id="frequency">
-                                        <option value="Weekly" selected>Weekly</option>
-                                        <option value="Fortnightly">Fortnightly</option>
-                                        <option value="Monthly" >Monthly</option>
-                                        <option value="Quarterly" >Quarterly</option>
-                                        <option value="Annually" >Annually</option>
-                                        <option value="Bi-Annually">Bi-Annually</option>
+                                        <% for (j = 0; j < frequencyArr.length; j++) { %>
+                                            <option value="<%=frequencyArr[j]%>" <%= (j===0) ? 'selected' : '' %>><%=frequencyArr[j]%></option>
+                                        <% } %>
                                     </select>
                                 </div>
                             </div>
@@ -240,13 +237,9 @@
                                 <div class="col-md-8" id="daySelect">
                                     <select class="form-select" id="day" name="day">
                                         <option value="">Select Day</option>
-                                        <option value="Monday">Monday</option>
-                                        <option value="Tuesday">Tuesday</option>
-                                        <option value="Wednesday" >Wednesday</option>
-                                        <option value="Thursday" >Thursday</option>
-                                        <option value="Friday" >Friday</option>
-                                        <option value="Saturday">Saturday</option>
-                                        <option value="Sunday">Sunday</option>
+                                        <% for (j = 0; j < daysArr.length; j++) { %>
+                                            <option value="<%=daysArr[j]%>" <%= (j===0) ? 'selected' : '' %>><%=daysArr[j]%></option>
+                                        <% } %>
                                     </select>
                                 </div>
                             </div>
@@ -382,8 +375,8 @@
 <%- contentFor('FooterJs') %>
 <script>
     let taskData = <%- JSON.stringify(data) %>;
-    let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
-    let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let frequencyArray = <%- JSON.stringify(frequencyArr) %>;
+    let dayArray = <%- JSON.stringify(daysArr) %>;
     let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     function setEquipmentName (name,id) {
         console.log(name, 'NAME');
