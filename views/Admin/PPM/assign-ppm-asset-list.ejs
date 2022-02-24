@@ -54,7 +54,7 @@
                         </thead>
                         <tbody>
                             <% if(taskData.length ==0) { %>
-                                <tr><td colspan="6" class="text-center">No data found</td></tr>
+                                <tr><td colspan="10" class="text-center">No data found</td></tr>
                             <% } %>
                             <% for(let i = 0;i<taskData.length;i++){ %>
                             <tr>
@@ -186,8 +186,9 @@
 <script>
     let taskData = <%- JSON.stringify(taskData) %>;
 
-	let frequencyArray = ["Weekly", "Fortnightly", "Monthly", "Quarterly", "Annually", "Bi-Annually"];
-    let dayArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let frequencyArray = <%- JSON.stringify(frequencyArr) %>;
+    let dayArray = <%- JSON.stringify(daysArr) %>;
+
     let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     
     function changeFrequency() {

@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
 const CategoryResource = require('../resources/CategoryResource');
+const daysEnum = require("../../enum/daysEnum");
+const frequencyEnum = require("../../enum/frequencyEnum");
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 var toastr = require('express-toastr');
 const Joi = require("joi");
@@ -186,8 +188,17 @@ exports.createChecklist = async (req, res) => {
 			}
 		}
 		let categoryData = await CategoryMaster.aggregate([condition, project]);
-
-		return res.render('Admin/Categories/create-check-list', { 'months': monthsList, uniqueId: uniqueId, category_id: req.params.id, categoryData: categoryData });
+		let daysArr = Object.keys(daysEnum);
+		let frequencyArr = Object.keys(frequencyEnum);
+		return res.render('Admin/Categories/create-check-list', { 
+			'months': monthsList, 
+			uniqueId: uniqueId, 
+			category_id: req.params.id, 
+			categoryData: categoryData,
+			daysArr: daysArr,
+			frequencyArr: frequencyArr
+ 
+		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

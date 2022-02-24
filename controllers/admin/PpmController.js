@@ -9,6 +9,9 @@ const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
+const daysEnum = require("../../enum/daysEnum");
+const frequencyEnum = require("../../enum/frequencyEnum");
+const { prependToArray } = require("../../helper/commonHelpers");
 
 // PPM List Page 
 exports.updatePpmStatus = async (req, res) => {
@@ -225,7 +228,8 @@ exports.PpmList = async (req, res) => {
 		};
 		let PpmEquipmentData = await PpmEquipment.aggregate([search, sort, skip, limit, project]);
 		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
+		let daysArr = Object.keys(daysEnum);
+		let frequencyArr = Object.keys(frequencyEnum);
 		return res.render('Admin/PPM/index', {
             data: PpmEquipmentData,
             months: monthsList,
@@ -234,6 +238,9 @@ exports.PpmList = async (req, res) => {
             search: req.query.search ? req.query.search : '',
             message: req.flash('message'),
             error: req.flash('error'),
+			daysArr: daysArr,
+			frequencyArr: frequencyArr
+			
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -269,7 +276,9 @@ exports.updatePpmTask = async (req, res) => {
 		let message = "";
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 		let obj = {
@@ -316,6 +325,9 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 		const {pid, id} = req.params;
 		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: pid, _id: id }).populate({ "path": "propertyId", "match": { "status": 1 } });
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
+		let daysArr = Object.keys(daysEnum);
+		let frequencyArr = Object.keys(frequencyEnum);
+
 		return res.render('Admin/PPM/assign-ppm-asset-list', {
 			// data: assignPpmEquipmentData,
 			assignPpmEquipmentData,
@@ -328,7 +340,10 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			taskData: assignPpmEquipmentAssetData,
 			search: req.query.search ? req.query.search : "",
 			message: req.flash('message'),
-			error: req.flash('error')
+			error: req.flash('error'),
+			daysArr: daysArr,
+			frequencyArr: frequencyArr
+
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -366,6 +381,7 @@ exports.updateAssignPpmEquipmentStatus = async (req, res) => {
 	}
 }
 
+/*
 exports.editPpm = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
@@ -384,6 +400,7 @@ exports.editPpm = async (req, res) => {
 		}
 		let limit = { $limit: 10 };
 		let skip = { $skip: (page - 1) * 10 };
+		
 		let project = {
 			$project: {
 				taskId: "$assets._id",
@@ -421,6 +438,8 @@ exports.editPpm = async (req, res) => {
 		}
 		let totalPage = Math.ceil(ppmData.total / 10);
 		let taskData = await PpmEquipment.aggregate([aggregateQuery, unwind, skip, limit, project]);
+		let daysArr = Object.keys(daysEnum);
+		let frequencyArr = Object.keys(frequencyEnum);
 
 		return res.render('Admin/PPM/edit-ppm', {
 			data: ppmData,
@@ -429,13 +448,16 @@ exports.editPpm = async (req, res) => {
 			taskData: taskData,
 			search: req.query.search ? req.query.search : "",
 			message: req.flash('message'),
-			error: req.flash('error')
+			error: req.flash('error'),
+			daysArr: daysArr,
+			frequencyArr: frequencyArr
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+*/
 
 // View PPM List
 exports.viewPpmList = async (req, res) => {
@@ -684,7 +706,9 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 		}
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
-		if (!['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(req.body.day)) {
+		let daysArr = Object.keys(daysEnum);
+		let days = prependToArray('',daysArr);
+		if (!days.includes(req.body.day)) {
 			req.body.day = '';
 		}
 

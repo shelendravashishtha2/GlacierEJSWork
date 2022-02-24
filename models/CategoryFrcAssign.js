@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const daysEnum = require("../enum/daysEnum");
+const { prependToArray } = require("../helper/commonHelpers");
 
+let daysArr = Object.keys(daysEnum);
+let days = prependToArray('',daysArr);
 const CategoryFrcAssignSchema = new mongoose.Schema({
 	propertyId: {
 		type:  mongoose.Schema.Types.ObjectId, 
@@ -58,7 +62,7 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 	},
 	day: {
 		type: String,
-		enum: ['','monday','tuesday','wednesday','thursday','friday','saturday','sunday'],
+		enum: days,
 		trim: true,
 	},
 

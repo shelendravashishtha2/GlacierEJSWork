@@ -103,7 +103,7 @@ router.get('/store-assign-checklist-point', isUserAllowed, ManageRatingControlle
 // PPM Master
 router.get('/ppm', isUserAllowed, PpmController.PpmList);
 router.get('/view-ppm', isUserAllowed, PpmController.viewPpmList);
-router.get('/edit-ppm/:id', isUserAllowed, PpmController.editPpm);
+// router.get('/edit-ppm/:id', isUserAllowed, PpmController.editPpm);
 router.post('/create-ppm', isUserAllowed, PpmController.createPpm);
 router.post('/update-ppm-status', isUserAllowed, PpmController.updatePpmStatus);
 router.post('/update-ppm-name', isUserAllowed, PpmController.updatePpmEquipmentName);

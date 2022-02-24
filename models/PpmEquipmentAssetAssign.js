@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const daysEnum = require("../enum/daysEnum");
+const frequencyEnum = require("../enum/frequencyEnum");
+const { prependToArray } = require("../helper/commonHelpers");
+
+let daysArr = Object.keys(daysEnum);
+let days = prependToArray('',daysArr);
+let frequencyArr = Object.keys(frequencyEnum);
 
 const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	propertyId: {
@@ -31,7 +38,7 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	},
 	frequency: {
 		type: String,
-		enum: ['Thrice-a-day','Twice-a-day','Daily','Weekly','Biweekly','Fortnightly','Monthly','Quarterly','Annually','Bi-Annually'],
+		enum: frequencyArr,
 		required:true,
 		trim: true,
 	},
@@ -51,7 +58,7 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	},
 	day: {
 		type: String,
-		enum: ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+		enum: days,
 		trim: true,
 		default: '',
 	},
