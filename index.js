@@ -15,6 +15,9 @@ const i18n = require('i18n-express');
 const toastr = require('express-toastr');
 const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
+const Moment = require('moment');
+const MomentRange = require('moment-range');
+const moment = MomentRange.extendMoment(Moment);
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
@@ -59,7 +62,8 @@ app.get(baseUrl + '/layouts/', function (req, res) {
     res.render('view');
 });
 
-app.locals.moment = require('moment'); // apply moment for global ejs view page
+app.locals.moment = moment; // apply moment for global ejs view page
+global.moment = moment; // apply moment for global variable
 
 AuthController(app); // for auth routes
 

@@ -4,10 +4,9 @@ module.exports = Object.freeze({
 	'Twice-a-day': 1,
 	'Daily': 2,
 	'Weekly': 3,
-	'Biweekly': 4,
-	'Fortnightly': 5,
-	'Monthly': 6,
-	'Quarterly': 7,
-	'Annually': 8,
-	'Bi-Annually': 9 
+	'Fortnightly': 4,
+	'Monthly': 5,
+	'Quarterly': 6,
+	'Annually': 7,
+	'Bi-Annually': 8
 })

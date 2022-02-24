@@ -137,6 +137,8 @@ router.get('/view-sop/:id', isUserAllowed, SopController.viewSop);
 // Reports
 router.get('/report', isUserAllowed, ReportController.index);
 router.post('/report', isUserAllowed, ReportController.indexFilter);
+router.get('/ppm-report', isUserAllowed, ReportController.ppmReport);
+// router.get('/frc-report', isUserAllowed, ReportController.frcReport);
 
 // History 
 router.get('/history', isUserAllowed, HistoryController.historyList);

@@ -26,16 +26,13 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-				<p>
-					<%= JSON.stringify(Enum.DaysEnum) %>
-				</p>
                 <form class="row gy-2 gx-3 align-items-center" method="post" action="">
 					<div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingSelect">Report for <span class="text-danger">*</span></label>
-								<select name="report-type" class="form-select" id="autoSizingSelect" required>
-									<option selected disabled>Select Report</option>
+								<select name="reportType" class="form-select" id="autoSizingSelect" required>
+									<option value="" selected disabled>Select Report</option>
 									<option value="1">PPM</option>
 									<option value="2">FRC</option>
 								</select>
@@ -44,10 +41,10 @@
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingSelect">Property <span class="text-danger">*</span></label>
-								<select name="propertyId" class="form-select" id="autoSizingSelect">
-									<option selected disabled>Select Property</option>
+								<select name="propertyId" class="form-select" id="autoSizingSelect" required>
+									<option value="" selected disabled>Select Property</option>
 									<% for (i = 0; i < PropertyList.length; i++) { %>
-										<option value="<%= PropertyList[i]._id %>"><%= PropertyList[i]._id %></option>
+										<option value="<%= PropertyList[i]._id %>"><%= PropertyList[i].property_name %></option>
 									<% } %>
 								</select>
                             </div>
@@ -56,7 +53,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingInput">Start Date <span class="text-danger">*</span></label>
 								<div class="input-group" id="datepicker1">
-									<input type="text" name="start-date" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true">
+									<input type="text" name="startDate" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true" required>
 									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 								</div>
                             </div>
@@ -65,7 +62,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingInputGroup">End Date <span class="text-danger">*</span></label>
 								<div class="input-group" id="datepicker2">
-									<input type="text" name="end-date" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" required>
+									<input type="text" name="endDate" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" required>
 									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 								</div>
                             </div>
