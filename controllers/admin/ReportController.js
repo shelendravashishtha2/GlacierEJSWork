@@ -12,6 +12,7 @@ const Property = require("../../models/Property");
 const PpmTaskAssign = require("../../models/PpmTaskAssign");
 const daysEnum = require("../../enum/daysEnum");
 const frequencyEnum = require("../../enum/frequencyEnum");
+const CategoryFrcAssign = require('../../models/CategoryFrcAssign');
 
 // index
 exports.index = async (req, res) => {
@@ -20,23 +21,8 @@ exports.index = async (req, res) => {
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
-		// let schema = Joi.object({
-		// 	ppmId: Joi.required()
-		// });
-		// let validation = schema.validate(req.body, __joiOptions);
-		// if (validation.error) {
-		// 	return res.send(response.error(400, validation.error.details[0].message, []));
-		// }
-
-		// let paramsCategoryId = req.query.search;
-		// let allCategoryData = await CategoryMaster.find({status: 1});
-		// let findQuery = { status: 1 }
-		// if (req.query.search) {
-		// 	findQuery.category_id = req.query.search
-		// }
-		// let CategoryChecklistData = await CategoryFrcMaster.find(findQuery).populate({path: 'category_id'}).sort({createdAt: 'desc'});
-
 		let PropertyList = await Property.find({status: 1}).sort({createdAt: 'desc'});
+
 		return res.render('Admin/Reports/index', {
             PropertyList: PropertyList,
             message: req.flash('message'),
@@ -66,8 +52,6 @@ exports.indexFilter = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		console.log(req.body);
-
 		if (req.body.reportType == 1) {
 			return res.redirect('/ppm-report?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate);
 		} else if (req.body.reportType == 2) {
@@ -86,7 +70,13 @@ exports.ppmReport = async (req, res) => {
 		res.locals = { title: 'Report', session: req.session };
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
-		
+
+		if (req.query.reportType == 1) {
+			return res.redirect('/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+		} else if (req.query.reportType == 2) {
+			return res.redirect('/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+		}
+
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			startDate: Joi.required(),
@@ -96,42 +86,26 @@ exports.ppmReport = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		console.log(req.query);
+
+		const PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
 
 		const startDate = moment(req.query.startDate, 'DD-MM-YYYY');
 		const endDate   = moment(req.query.endDate, 'DD-MM-YYYY');
 		const range = moment.range(startDate, endDate);
 		const dateRange = Array.from(range.by('days')).map(m => parseInt(m.format('DD')));
 		const dayRange = Array.from(range.by('days')).map(m => m.format('dddd'));
-		// let dateRange2 = Array.from(range.by('day', { step: 2 })); //with 2 day gap
-
-		// console.log(dateRange);
-		console.log(dayRange);
-		
-		// console.log(moment(req.query.endDate, 'DD-MM-YYYY').format('DD'));
-		// console.log(acc);
-		// console.log(dateRange);
-		// console.log(dateRange.find(e => e == 8));
-		// console.log(endDate.diff(startDate, 'months'));
+		const dateMonthRange = Array.from(range.by('days')).map(m => m.format('DD-MM'));
+		// let dateRange2 = Array.from(range.by('year', { step: 2 })); //with bi-annually years list
 
 		let findQuery = { 
 			propertyId: req.query.propertyId, 
-			// status: 1,
-			// createdAt: {
-			// 	$lte: moment(req.query.endDate, 'DD-MM-YYYY'),
-			// },
-			// date: {
-			// 	$in: dateRange
-			// }
+			status: 1,
+			createdAt: {
+				$lte: moment(req.query.endDate, 'DD-MM-YYYY'),
+			}
 		}
-		// if (endDate.diff(startDate, 'months') > 0) {
-		// 	findQuery.date = {
-		// 		$gte: moment(req.query.endDate, 'DD-MM-YYYY').format('DD'),
-		// 		$lte: moment(req.query.endDate, 'DD-MM-YYYY').format('DD')
-		// 	}
-		// }
 
-		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find(findQuery);
+		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find(findQuery).populate({path: 'assignPpmEquipmentId'});
 		let PpmEquipmentAssetAssignDataArray = [];
 
 		for (let i = 0; i < PpmEquipmentAssetAssignData.length; i++) {
@@ -159,42 +133,142 @@ exports.ppmReport = async (req, res) => {
 				}
 			} else if (frequencyEnum[PpmEquipmentAssetAssignData[i].frequency] == frequencyEnum.Quarterly) {
 				// console.log('Quarterly==> ', i);
-				if (dateRange.find(e => e == PpmEquipmentAssetAssignData[i].date)) {
+				let Q1 = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').format('DD-M');
+				let Q2 = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').add(3, 'M').format('DD-M');
+				let Q3 = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').add(6, 'M').format('DD-M');
+				let Q4 = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').add(9, 'M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == Q1) || dateMonthRange.find(e => e == Q2) || dateMonthRange.find(e => e == Q3) || dateMonthRange.find(e => e == Q4)) {
 					PpmEquipmentAssetAssignDataArray.push(element)
 				}
 			}  else if (frequencyEnum[PpmEquipmentAssetAssignData[i].frequency] == frequencyEnum.Annually) {
 				// console.log('Annually==> ', i);
-				if (dateRange.find(e => e == PpmEquipmentAssetAssignData[i].date)) {
+				let dateMonth = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == dateMonth)) {
 					PpmEquipmentAssetAssignDataArray.push(element)
 				}
 			}  else if (frequencyEnum[PpmEquipmentAssetAssignData[i].frequency] == frequencyEnum["Bi-Annually"]) {
 				// console.log('Bi-Annually==> ', i);
-				if (dateRange.find(e => e == PpmEquipmentAssetAssignData[i].date)) {
+				let dateMonth = moment(PpmEquipmentAssetAssignData[i].date +'-'+ (PpmEquipmentAssetAssignData[i].month+1), 'DD-M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == dateMonth)) {
 					PpmEquipmentAssetAssignDataArray.push(element)
 				}
 			}
-
-			
 		}
 
-		// let date1 = EquipmentAssetData.date
-		// let date2 = date1 < 15 ? date1 + 14 : date1 - 14;
-
-		// console.log(PpmEquipmentAssetAssignData);
-
-		// let paramsCategoryId = req.query.search;
-		// let allCategoryData = await CategoryMaster.find({status: 1});
-		// let findQuery = { status: 1 }
-		// if (req.query.search) {
-		// 	findQuery.category_id = req.query.search
-		// }
-		// let CategoryChecklistData = await CategoryFrcMaster.find(findQuery).populate({path: 'category_id'}).sort({createdAt: 'desc'});
-		// let PropertyList = await Property.find({status: 1}).sort({createdAt: 'desc'});
-
-		return res.send(response.success(200, 'success', [{PpmEquipmentAssetAssignData}]));
-
 		return res.render('Admin/Reports/ppm-report', {
-            PpmEquipmentAssetAssignData: PpmEquipmentAssetAssignData,
+			data: req.query,
+			PropertyList: PropertyList,
+            PpmEquipmentAssetAssignData: PpmEquipmentAssetAssignDataArray,
+            message: req.flash('message'),
+            error: req.flash('error'),
+        })
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.frcReport = async (req, res) => {
+	try {
+		res.locals = { title: 'FRC Report', session: req.session };
+		res.locals.error = req.session.error ? req.session.error : '';
+		req.session.error = '';
+
+		if (req.query.reportType == 1) {
+			return res.redirect('/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+		} else if (req.query.reportType == 2) {
+			return res.redirect('/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+		}
+
+		let schema = Joi.object({
+			propertyId: Joi.required(),
+			startDate: Joi.required(),
+			endDate: Joi.required(),
+		});
+		let validation = schema.validate(req.query, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		const PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
+
+		const startDate = moment(req.query.startDate, 'DD-MM-YYYY');
+		const endDate   = moment(req.query.endDate, 'DD-MM-YYYY');
+		const range = moment.range(startDate, endDate);
+		const dateRange = Array.from(range.by('days')).map(m => parseInt(m.format('DD')));
+		const dayRange = Array.from(range.by('days')).map(m => m.format('dddd'));
+		const dateMonthRange = Array.from(range.by('days')).map(m => m.format('DD-MM'));
+		// let dateRange2 = Array.from(range.by('year', { step: 2 })); //for bi-annually years list
+
+		let findQuery = { 
+			propertyId: req.query.propertyId, 
+			status: 1,
+			createdAt: {
+				$lte: moment(req.query.endDate, 'DD-MM-YYYY'),
+			}
+		}
+		let CategoryFrcAssignData = await CategoryFrcAssign.find(findQuery).populate({path: 'assignCategoryId', populate: {path: 'categoryId'}});
+		let CategoryFrcAssignDataArray = [];
+
+		console.log(CategoryFrcAssignData);
+
+		for (let i = 0; i < CategoryFrcAssignData.length; i++) {
+			const element = CategoryFrcAssignData[i];
+
+			if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Daily || frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum["Twice-a-day"] || frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum["Thrice-a-day"]) {
+				// console.log('Daily==> ', i);
+				CategoryFrcAssignDataArray.push(element)
+			} else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Weekly) {
+				// console.log('Weekly==> ', i);
+				if (dayRange.find(e => e == CategoryFrcAssignData[i].day)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			} else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Fortnightly) {
+				// console.log('Fortnightly==> ', i);
+				let date1 = CategoryFrcAssignData[i].date
+				let date2 = date1 < 15 ? date1 + 14 : date1 - 14;
+				if (dateRange.find(e => e == date1) || dateRange.find(e => e == date2)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			} else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Monthly) {
+				// console.log('Monthly==> ', i);
+				if (dateRange.find(e => e == CategoryFrcAssignData[i].date)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			} else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Quarterly) {
+				// console.log('Quarterly==> ', i);
+				let Q1 = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').format('DD-M');
+				let Q2 = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').add(3, 'M').format('DD-M');
+				let Q3 = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').add(6, 'M').format('DD-M');
+				let Q4 = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').add(9, 'M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == Q1) || dateMonthRange.find(e => e == Q2) || dateMonthRange.find(e => e == Q3) || dateMonthRange.find(e => e == Q4)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			}  else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum.Annually) {
+				// console.log('Annually==> ', i);
+				let dateMonth = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == dateMonth)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			}  else if (frequencyEnum[CategoryFrcAssignData[i].frequency] == frequencyEnum["Bi-Annually"]) {
+				// console.log('Bi-Annually==> ', i);
+				let dateMonth = moment(CategoryFrcAssignData[i].date +'-'+ (CategoryFrcAssignData[i].month+1), 'DD-M').format('DD-M');
+
+				if (dateMonthRange.find(e => e == dateMonth)) {
+					CategoryFrcAssignDataArray.push(element)
+				}
+			}
+		}
+
+		return res.render('Admin/Reports/frc-report', {
+			data: req.query,
+			PropertyList: PropertyList,
+            CategoryFrcAssignData: CategoryFrcAssignDataArray,
             message: req.flash('message'),
             error: req.flash('error'),
         })

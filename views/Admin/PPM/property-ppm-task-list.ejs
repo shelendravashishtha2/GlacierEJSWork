@@ -41,11 +41,11 @@
                             <tr>
                                 <th class="text-center">#</th>
                                 <th class="text-center" style="width: 5%">Risk Assessment <br> Status</th>
-                                <th>Equipments Name</th>
-                                <th>Asset Name</th>
-                                <th>Asset Location</th>
-                                <th>Frequency</th>
-                                <th>Vendor Name</th>
+                                <th class="text-center">Equipments Name</th>
+                                <th class="text-center">Asset Name</th>
+                                <th class="text-center">Asset Location</th>
+                                <th class="text-center">Frequency</th>
+                                <th class="text-center">Vendor Name</th>
                                 <th class="text-center">Due date</th>
                                 <th class="text-center">Completion Status</th>
                                 <th class="text-center">Action</th>
@@ -59,13 +59,13 @@
                             <tr>
                                 <td class="text-center" style="width: 7%;"><%= (10*(page-1))+ 1 + i %></td>
                                 <td class="text-center">
-									<div style="border-radius: 50%; width: 25px; height: 25px; margin: auto; background: <%= assignPpmTaskData[i].riskAssessmentAssetStatusColor %>;"></div>
+									<div style="border-radius: 50%; width: 25px; height: 25px; margin: auto; background: <%= assignPpmTaskData[i].riskAssessmentAssetStatusColor ?? 'Green' %>;"></div>
 								</td>
-                                <td><%= assignPpmTaskData[i].assignPpmEquipmentId.ppmEquipmentId.ppmEquipmentName %></td>
-                                <td><%= assignPpmTaskData[i].assetName %></td>
-                                <td><%= assignPpmTaskData[i].assetLocation %></td>
-                                <td><%= assignPpmTaskData[i].assignPpmEquipmentAssetId.frequency %></td>
-                                <td><%= assignPpmTaskData[i].vendorName %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentId?.ppmEquipmentName %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assetName %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assetLocation %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentAssetId?.frequency %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].vendorName %></td>
                                 <td class="text-center"><%= moment(assignPpmTaskData[i].dueDate).format('DD-MM-YYYY') %></td>
                                 <td class="text-center" style="width: 7%;">
 									<% if (assignPpmTaskData[i].completionStatus == 1) { %>

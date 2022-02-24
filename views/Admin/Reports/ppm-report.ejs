@@ -1,9 +1,10 @@
 <%- contentFor('HeaderCss') %>
-<!-- DataTables -->
+<!-- DataTables || Responsive DataTable examples -->
 <link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<!-- Responsive DataTable examples -->
 <link href="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- bootstrap-datepicker -->
+<link href="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
 
 <%- contentFor('breadcrumb') %>
 
@@ -11,11 +12,11 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Report</h4>
+            <h4 class="mb-sm-0 font-size-18">PPM Report</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="#">Report</a></li>
+                    <li class="breadcrumb-item"><a href="#">PPM Report</a></li>
                 </ol>
             </div>
         </div>
@@ -29,12 +30,12 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form class="row gy-2 gx-3 align-items-center">
+                <form class="row gy-2 gx-3 align-items-center" method="get">
 					<div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingSelect">Report for <span class="text-danger">*</span></label>
-								<select name="reportType" class="form-select" id="autoSizingSelect" required disabled>
+								<select name="reportType" class="form-select" id="autoSizingSelect" required>
 									<option value="1" selected>PPM</option>
 									<option value="2">FRC</option>
 								</select>
@@ -46,7 +47,7 @@
 								<select name="propertyId" class="form-select" id="autoSizingSelect">
 									<option selected disabled>Select Property</option>
 									<% for (i = 0; i < PropertyList.length; i++) { %>
-										<option value="<%= PropertyList[i]._id %>"><%= PropertyList[i]._id %></option>
+										<option value="<%= PropertyList[i]._id %>" <%= data.propertyId == PropertyList[i]._id ? 'selected' : '' %>><%= PropertyList[i].property_name %></option>
 									<% } %>
 								</select>
                             </div>
@@ -55,7 +56,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingInput">Start Date <span class="text-danger">*</span></label>
 								<div class="input-group" id="datepicker1">
-									<input type="text" name="startDate" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true">
+									<input type="text" name="startDate" value="<%= data.startDate %>" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true">
 									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 								</div>
                             </div>
@@ -64,25 +65,15 @@
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingInputGroup">End Date <span class="text-danger">*</span></label>
 								<div class="input-group" id="datepicker2">
-									<input type="text" name="endDate" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" required>
+									<input type="text" name="endDate" value="<%= data.endDate %>" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" required>
 									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 								</div>
-                            </div>
-                        </div>
-						<div class="col-md-3">
-                            <div class="mb-3">
-                                <label class="form-label" for="autoSizingSelect">Status </label>
-								<select class="form-select" id="autoSizingSelect">
-									<option selected disabled>Select Status</option>
-									<option value="1">Complete Task</option>
-									<option value="2">Pending Task</option>
-								</select>
                             </div>
                         </div>
                     </div>
 					<div class="row">
 						<div class="col-md-12 text-center">
-							<button type="submit" class="btn btn-warning w-md">Submit</button>
+							<button type="submit" class="btn btn-warning w-md">Search</button>
 						</div>
 					</div>
                 </form>
@@ -92,36 +83,49 @@
 </div> <!-- end row -->
 
 <div class="row">
-	<div class="col-12">
-		<table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
-			<thead>
-			<tr>
-				<th style="text-align: center;">#</th>
-				<th style="text-align: center;">FRC ID</th>
-				<th>Category Name</th>
-				<th>FRC Name</th>
-				<th style="text-align: center;">Type</th>
-				<th style="text-align: center;">Frequency</th>
-				<th style="text-align: center;">Status</th>
-				<th style="width: 10%;text-align: center;">Action</th>
-			</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th style="text-align: center;">#</th>
-					<th style="text-align: center;">FRC ID</th>
-					<th>Category Name</th>
-					<th>FRC Name</th>
-					<th style="text-align: center;">Type</th>
-					<th style="text-align: center;">Frequency</th>
-					<th style="text-align: center;">Status</th>
-					<th style="width: 10%;text-align: center;">Action</th>
-				</tr>
-			</tbody>
-		</table>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+				<div class="row">
+					<div class="col-12">
+						<table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+							<thead>
+							<tr>
+								<th style="text-align: center;">#</th>
+								<th style="text-align: center;">Equipment Name</th>
+								<th style="text-align: center;">Asset Name</th>
+								<th style="text-align: center;">Vendor name</th>
+								<th style="text-align: center;">Frequency</th>
+								<th style="text-align: center;">Day</th>
+								<th style="text-align: center;">Date</th>
+								<th style="text-align: center;">Month</th>
+								<th style="text-align: center;">Year</th>
+								<!-- <th style="width: 10%;text-align: center;">Action</th> -->
+							</tr>
+							</thead>
+							<tbody>
+								<% for( let i = 0; i < PpmEquipmentAssetAssignData?.length; i++ ) { %>
+									<tr>
+										<td style="text-align: center;"><%= i+1 %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].assignPpmEquipmentId?.ppmEquipmentName %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].assetName %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].vendorName %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].frequency %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].day ?? '--' %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].date ?? '--' %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].month ?? '--' %></td>
+										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].year ?? '--' %></td>
+										<!-- <td style="width: 10%;text-align: center;">Action</td> -->
+									</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
 
 <%- contentFor('FooterJs') %>
 <!-- Required dataTable js -->
@@ -130,14 +134,13 @@
 <!-- Buttons examples -->
 <script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-
 <!-- Responsive examples -->
 <script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="<%=process.env.APP_URL%>/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <!-- DataTable init js -->
 <script src="<%=process.env.APP_URL%>/public/assets/js/pages/datatables.init.js"></script>
-
-<script src="public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<!-- bootstrap-datepicker -->
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
 <% if(error.length> 0) { %>
     <script>
