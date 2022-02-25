@@ -330,13 +330,27 @@ exports.ppmTaskList = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			propertyId: Joi.string().min(24).max(24).required(),
+			EquipmentId: Joi.string().min(24).max(24).optional(),
+			Date: Joi.optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let PpmTaskAssignData = await PpmTaskAssign.find({propertyId: ObjectId(req.body.propertyId)});
+		let findQuery = {
+			propertyId: ObjectId(req.body.propertyId)
+		}
+		if (req.body.EquipmentId) {
+			findQuery.assignPpmEquipmentId = ObjectId(req.body.EquipmentId)
+		}
+		if (req.body.Date) {
+			findQuery.dueDate = {
+				$gte: moment(req.body.Date, 'DD-MM-YYYY').startOf('day'),
+				$lte: moment(req.body.Date, 'DD-MM-YYYY').endOf('day')
+			}
+		}
+		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery);
 
 		return res.status(200).send({
 		    "status": true,
