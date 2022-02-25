@@ -68,14 +68,14 @@ router.post('/update-user', isUserAllowed, UserController.userUpdateValidation, 
 router.get('/view-users/:id', isUserAllowed, UserController.userView); //view user details
 router.post('/update-user-status/', isUserAllowed, UserController.updateUserStatus); //view user details
 
-// Task
-router.get('/task', isUserAllowed, TaskController.taskList);
-router.get('/property-task', isUserAllowed, TaskController.propertyUser);
-router.get('/create-task', isUserAllowed, TaskController.createTask);
-router.post('/create-task-submit', isUserAllowed, TaskController.createTaskSubmit);
-router.post('/update-task-submit', isUserAllowed, TaskController.updateTaskSubmit);
-router.get('/edit-task/:id', isUserAllowed, TaskController.editTask);
-router.get('/view-task/:id', isUserAllowed, TaskController.viewTask);
+// Assignment
+router.get('/category-assignment', isUserAllowed, TaskController.categoryAssignment); // task
+router.get('/property-category-list', isUserAllowed, TaskController.propertyCategoryList); // property-task Ajax call
+router.get('/assign-category', isUserAllowed, TaskController.assignCategory); // create-task
+router.post('/assign-category-submit', isUserAllowed, TaskController.assignCategorySubmit); // create-task-submit
+router.get('/edit-assign-category/:id', isUserAllowed, TaskController.editAssignCategory); // edit-task/:id
+router.post('/update-assign-category', isUserAllowed, TaskController.updateAssignCategory); // update-task-submit
+router.get('/view-property-assign-category/:id', isUserAllowed, TaskController.viewPropertyAssignCategory); // view-task/:id
 
 // Manage Rating
 router.get('/manage-rating', isUserAllowed, ManageRatingController.manageRatingList);

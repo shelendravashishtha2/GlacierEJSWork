@@ -13,7 +13,7 @@ const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
 
 // Create Task Page
-exports.taskList = async (req, res) => {
+exports.categoryAssignment = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Assign Task List', session: req.session };
@@ -46,7 +46,7 @@ exports.taskList = async (req, res) => {
 }
 
 // Task List Page
-exports.propertyUser = async (req, res) => {
+exports.propertyCategoryList = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
@@ -85,7 +85,7 @@ exports.propertyUser = async (req, res) => {
 	}
 }
 
-exports.createTaskSubmit = async (req, res) => {
+exports.assignCategorySubmit = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
@@ -108,14 +108,15 @@ exports.createTaskSubmit = async (req, res) => {
 					categoryId: req.body.categoryId[i],
 					operationTeamId: req.body.operationTeamId,
 				})
+
 			} else {
 				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
 				})
 			}
-
 		}
-		return res.redirect("/task?message=Task Assign Successfully");
+		// return res.redirect("/category-assignment?message=Task Assign Successfully");
+		return res.redirect("/category-assignment");
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";
@@ -124,7 +125,7 @@ exports.createTaskSubmit = async (req, res) => {
 	}
 }
 
-exports.createTask = async (req, res) => {
+exports.assignCategory = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Task List', session: req.session };
@@ -135,9 +136,9 @@ exports.createTask = async (req, res) => {
 			query = {_id: {$nin: taskData}}
 		}
 		let propertyData = await Property.find(query, { property_name: 1 });
-		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 })
-		return res.render('Admin/Task/create', { data: propertyData, allCategory: allCategory });
+		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 });
 
+		return res.render('Admin/Task/create', { data: propertyData, allCategory: allCategory });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";
@@ -147,7 +148,7 @@ exports.createTask = async (req, res) => {
 }
 
 // Edit Task Page
-exports.updateTaskSubmit = async (req, res) => {
+exports.updateAssignCategory = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Task List', session: req.session };
@@ -180,7 +181,7 @@ exports.updateTaskSubmit = async (req, res) => {
 			}
 
 		}
-		return res.redirect("/task?message=Task Assign Successfully");
+		return res.redirect("/category-assignment?message=Task Assign Successfully");
 
 		// let schema = Joi.object({
 		// 	taskId: Joi.required(),
@@ -201,7 +202,7 @@ exports.updateTaskSubmit = async (req, res) => {
 		// 	supervisorId: req.body.supervisorId?req.body.supervisorId:[],
 
 		// })
-		// return res.redirect("/edit-task/"+req.body.taskId+"?message=Task Updated Successfully")
+		// return res.redirect("/edit-assign-category/"+req.body.taskId+"?message=Task Updated Successfully")
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -210,19 +211,19 @@ exports.updateTaskSubmit = async (req, res) => {
 		return res.redirect('back');
 	}
 }
-exports.editTask = async (req, res) => {
+exports.editAssignCategory = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Edit Task', session: req.session };
 
 		let taskData = await CategoryAssign.findOne({ propertyId: req.params.id });
 		if (!taskData) {
-			return res.redirect('/task');
+			return res.redirect('/category-assignment');
 		}
 
 		let propertyData = await Property.findOne({ _id: req.params.id }, { property_name: 1 });
 		if (!propertyData) {
-			return res.redirect('/task');
+			return res.redirect('/category-assignment');
 		}
 
 		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 }).lean();
@@ -272,7 +273,7 @@ exports.editTask = async (req, res) => {
 }
 
 // Vew Task Page
-exports.viewTask = async (req, res) => {
+exports.viewPropertyAssignCategory = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'View Task', session: req.session };

@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/task" id="form">
+                <form method="GET" action="<%= process.env.APP_URL %>/category-assignment" id="form">
                 <div class="row mb-2">
                    <!-- start searching -->
                    <div class="col-sm-3">
@@ -41,7 +41,7 @@
                     <!-- end searching -->
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <a href="<%= process.env.APP_URL %>/create-task" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ASSIGN TASK</b></a>
+                            <a href="<%= process.env.APP_URL %>/assign-category" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"><b>ASSIGN TASK</b></a>
                         </div>
                     </div>
                 </div>
@@ -65,8 +65,8 @@
                                 <td class="text-center" style="width:7%"><%= propertyData.pagingCounter + i %></td>
                                 <td><%= propertyData.docs[i].property_name %></td>
                                 <td class="text-center" style="width:7%">
-                                    <a href="edit-task/<%= propertyData.docs[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
-                                    <a href="view-task/<%= propertyData.docs[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+                                    <a href="/edit-assign-category/<%= propertyData.docs[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <a href="/view-property-assign-category/<%= propertyData.docs[i]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
                                 </td>
                             </tr>     
                             <%  } %>
