@@ -141,10 +141,15 @@ router.get('/ppm-report', isUserAllowed, ReportController.ppmReport);
 router.get('/frc-report', isUserAllowed, ReportController.frcReport);
 
 // History 
-router.get('/history', isUserAllowed, HistoryController.historyList);
-router.get('/category-history/:id', isUserAllowed, HistoryController.categoryHistory);
-router.get('/category-checklist-history', isUserAllowed, HistoryController.categoryChecklistHistory);
-router.get('/view-checklist-history', isUserAllowed, HistoryController.viewChecklistHistory);
+// router.get('/history', isUserAllowed, HistoryController.historyList);
+// router.get('/category-history/:id', isUserAllowed, HistoryController.categoryHistory);
+// router.get('/category-checklist-history', isUserAllowed, HistoryController.categoryChecklistHistory);
+// router.get('/view-checklist-history', isUserAllowed, HistoryController.viewChecklistHistory);
+
+// router.get('/history', isUserAllowed, ReportController.index);
+// router.post('/history', isUserAllowed, ReportController.indexFilter);
+// router.get('/ppm-history', isUserAllowed, ReportController.ppmReport);
+// router.get('/frc-history', isUserAllowed, ReportController.frcReport);
 
 // Setting 
 router.get('/setting', isUserAllowed, SettingController.settingList);
