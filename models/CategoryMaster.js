@@ -14,7 +14,9 @@ const CategoryMasterSchema = new mongoose.Schema({
 		min: [0,'invalid status'],
     	max: [1,'invalid status'],
 		default: 1,
-	}
+	},
+	createdAt: {type: Date, select: false},
+	updatedAt: {type: Date, select: false}
 },{
 	timestamps: true,
 	versionKey: false

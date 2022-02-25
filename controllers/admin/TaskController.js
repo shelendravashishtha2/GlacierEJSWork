@@ -11,6 +11,9 @@ const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
+const CategoryFrcMaster = require("../../models/CategoryFrcMaster");
+const CategoryFrcAssign = require("../../models/CategoryFrcAssign");
+const { capitalizeFirstLetter } = require("../../helper/commonHelpers");
 
 // Create Task Page
 exports.categoryAssignment = async (req, res) => {
@@ -91,23 +94,38 @@ exports.assignCategorySubmit = async (req, res) => {
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			categoryId: Joi.required(),
-			operationTeamId: Joi.required(),
-			managerId: Joi.optional(),
-			supervisorId: Joi.optional(),
+			operationTeamId: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-
+		let {propertyId, categoryId, operationTeamId} = req.body;
 		for (let i = 0; i < req.body.categoryId.length; i++) {
 			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
 			if (!alreadyExists) {
-				await CategoryAssign.create({
+				let created = await CategoryAssign.create({
 					propertyId: req.body.propertyId,
 					categoryId: req.body.categoryId[i],
 					operationTeamId: req.body.operationTeamId,
 				})
+				let categoryFrc = await CategoryFrcMaster.find({categoryId: req.body.categoryId[i]});
+				let frcAssigns = []
+				categoryFrc.map((item)=>{
+					frcAssigns.push({
+						propertyId: propertyId,
+						assignCategoryId: created._id,
+						checklist_id: item.checklist_id,
+						checklist_name: item.checklist_name,
+						type: item.type,
+						form: item.form,
+						frequency: item.frequency,
+						month: item.month,
+						date: item.date,
+						day: capitalizeFirstLetter(item.day)
+					})
+				})
+				await CategoryFrcAssign.insertMany(frcAssigns);
 
 			} else {
 				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
