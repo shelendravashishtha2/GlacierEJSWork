@@ -7,6 +7,13 @@ const SettingPpmRiskAssessmentColorSchema = new mongoose.Schema({
 		required:true,
 		trim: true,
 	},
+
+	status: {
+		type: Number, //0=Inactive, 1=Active
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 1, select: false
+	},
+	createdAt: {type: Date, select: false},
+	updatedAt: {type: Date, select: false}
 },{
 	timestamps: true,
 	versionKey: false

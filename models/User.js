@@ -91,6 +91,8 @@ const userSchema = new mongoose.Schema({
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
 	},
+	createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false},
+	updatedBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}
 },{

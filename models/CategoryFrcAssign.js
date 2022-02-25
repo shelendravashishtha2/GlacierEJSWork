@@ -68,8 +68,7 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 
 	status: {
 		type: Number, //0=Inactive, 1=active
-		min: [0,'invalid status'], max: [1,'invalid status'],
-		default: 1,
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
 	},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}
