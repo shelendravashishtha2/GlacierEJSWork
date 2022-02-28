@@ -111,9 +111,9 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script src="public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
-<script src="public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/@chenfengyuan/datepicker/datepicker.min.js"></script>
 <script>
     function pagination(i){
         $("#page").val(i);

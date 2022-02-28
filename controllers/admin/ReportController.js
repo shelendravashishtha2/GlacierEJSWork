@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const MomentRange = require('moment-range');
 const response = require("../../helper/response");
 const { errorLog } = require("../../helper/consoleLog");
+const MomentRange = require('moment-range');
 const PropertyResource = require('../resources/PropertyResource');
 const PpmEquipment = require("../../models/PpmEquipmentMaster");
 const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");

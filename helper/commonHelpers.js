@@ -46,9 +46,6 @@ function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-let a = [123, 456];
-console.log(typeof a);
-
 function convertObjValuesToString(myObj){
 	if (Array.isArray(myObj)) {myObj = myObj;}
 	else if (typeof myObj == 'object') {

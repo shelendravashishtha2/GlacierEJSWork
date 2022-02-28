@@ -54,7 +54,7 @@ router.post('/update-checklist-details', isUserAllowed, CategoriesController.upd
 
 router.get('/create-checklist-multi-form/:id', isUserAllowed, CategoriesController.createChecklistMultiForm); //create checklist multi form page
 router.get('/view-checklist-multi-form/:id', isUserAllowed, CategoriesController.viewChecklistMultiForm); //create checklist multi form page
-router.post('/update-form-create', isUserAllowed, CategoriesController.updateFormCreate); //create checklist multi form page
+router.post('/update-form-create', CategoriesController.updateFormCreate); //create checklist multi form page
 // router.get('/store-checklist-form', isUserAllowed, CategoriesController.storeChecklistForm); //store checklist multi form
 // router.get('/edit-checklist-form', isUserAllowed, CategoriesController.editChecklistForm); //edit checklist page
 // router.get('/update-checklist-form', isUserAllowed, CategoriesController.updateChecklistForm); //update checklist multiform page
@@ -148,8 +148,8 @@ router.get('/frc-report', isUserAllowed, ReportController.frcReport);
 
 // router.get('/history', isUserAllowed, ReportController.index);
 // router.post('/history', isUserAllowed, ReportController.indexFilter);
-// router.get('/ppm-history', isUserAllowed, ReportController.ppmReport);
-// router.get('/frc-history', isUserAllowed, ReportController.frcReport);
+// router.get('/ppm-history', isUserAllowed, ReportController.ppmHistory);
+// router.get('/frc-history', isUserAllowed, ReportController.frcHistory);
 
 // Setting 
 router.get('/setting', isUserAllowed, SettingController.settingList);

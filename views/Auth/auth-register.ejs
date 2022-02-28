@@ -9,7 +9,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="public/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon.ico">
 
     <%- include ('../Partials/HeaderStyle') %>
 
@@ -31,7 +31,7 @@
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
-                                    <img src="public/assets/images/profile-img.png" alt="" class="img-fluid">
+                                    <img src="<%=process.env.APP_URL%>/public/assets/images/profile-img.png" alt="" class="img-fluid">
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                                 <a href="<%= process.env.APP_URL %>/">
                                     <div class="avatar-md profile-user-wid mb-4">
                                         <span class="avatar-title rounded-circle bg-light">
-                                            <img src="public/assets/images/logo.svg" alt="" class="rounded-circle"
+                                            <img src="<%=process.env.APP_URL%>/public/assets/images/logo.svg" alt="" class="rounded-circle"
                                                 height="34">
                                         </span>
                                     </div>
@@ -142,10 +142,10 @@
     <%- include ('../Partials/FooterScript') %>
 
         <!-- validation init -->
-        <script src="public/assets/js/pages/validation.init.js"></script>
+        <script src="<%=process.env.APP_URL%>/public/assets/js/pages/validation.init.js"></script>
 
         <!-- App js -->
-        <script src="public/assets/js/app.js"></script>
+        <script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
 
 </body>
 

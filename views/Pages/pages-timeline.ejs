@@ -1,9 +1,9 @@
 <%- contentFor('HeaderCss') %>
 
 <!-- owl.carousel css -->
-<link rel="stylesheet" href="public/assets/libs/owl.carousel/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="<%=process.env.APP_URL%>/public/assets/libs/owl.carousel/assets/owl.carousel.min.css">
 
-<link rel="stylesheet" href="public/assets/libs/owl.carousel/assets/owl.theme.default.min.css">
+<link rel="stylesheet" href="<%=process.env.APP_URL%>/public/assets/libs/owl.carousel/assets/owl.theme.default.min.css">
 
 <%- contentFor('breadcrumb') %>
 <!-- start page title -->
@@ -223,9 +223,9 @@
 <%- contentFor('FooterJs') %>
 
 <!-- owl.carousel js -->
-<script src="public/assets/libs/owl.carousel/owl.carousel.min.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/libs/owl.carousel/owl.carousel.min.js"></script>
 
 <!-- timeline init js -->
-<script src="public/assets/js/pages/timeline.init.js"></script>
+<script src="<%=process.env.APP_URL%>/public/assets/js/pages/timeline.init.js"></script>
 
 <%- contentFor('BottomJs') %>

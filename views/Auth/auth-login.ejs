@@ -8,7 +8,7 @@
     <meta content="<%=process.env.APP_NAME%>" name="description" />
     <meta content="<%=process.env.APP_NAME%>" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="public/assets/images/favicon-logo.png">
+    <link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png">
     <%- include ('../Partials/HeaderStyle') %>
 </head>
 
@@ -27,7 +27,7 @@
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
-                                    <img src="public/assets/images/profile-img.png" alt="" class="img-fluid">
+                                    <img src="<%=process.env.APP_URL%>/public/assets/images/profile-img.png" alt="" class="img-fluid">
                                 </div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                             <div class="auth-logo">
                                 <div class="avatar-md profile-user-wid mb-4">
                                     <span class="avatar-title rounded-circle bg-light">
-                                        <img src="public/assets/images/favicon-logo.png" alt="" class="rounded-circle"
+                                        <img src="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png" alt="" class="rounded-circle"
                                             height="34">
                                     </span>
                                 </div>
@@ -98,6 +98,6 @@
     <!-- end account-pages -->
     <%- include ('../Partials/FooterScript') %>
         <!-- App js -->
-        <script src="public/assets/js/app.js"></script>
+        <script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
 </body>
 </html>

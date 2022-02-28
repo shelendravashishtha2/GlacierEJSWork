@@ -155,18 +155,22 @@ exports.storeSop = async (req,res) => {
 					
 					if (Array.isArray(sub_category_files)) {
 						sub_category_files.forEach(sub_category_file => {
-							if (sub_category_file.mimetype !== "application/pdf"){
-								return res.send(response.error(400, 'File format should be PDF', []));
+							if (sub_category_file != undefined) {
+								if (sub_category_file.mimetype !== "application/pdf"){
+									return res.send(response.error(400, 'File format should be PDF', []));
+								}
 							}
 						});
 						sub_category_files.forEach(sub_category_file => {
-							fileName = sub_category_file.name.trim().split(" ").join("_");
-							sub_category_file.mv(uploadPath + fileName, function(err) {
-								if (err){
-									return res.send(response.error(400, 'Image uploading failed', []));
-								}
-							});
-							sub_category_files_array.push(fileName);
+							if (sub_category_file != undefined) {
+								fileName = sub_category_file.name.trim().split(" ").join("_");
+								sub_category_file.mv(uploadPath + fileName, function(err) {
+									if (err){
+										return res.send(response.error(400, 'Image uploading failed', []));
+									}
+								});
+								sub_category_files_array.push(fileName);
+							}
 						});
 					}
 					let sub_category_name = req.body.sub_category_name[i];
@@ -289,6 +293,7 @@ exports.updateSop = async (req,res) => {
 		let SOPData = await SOP.findOne({_id: req.body.id});
 		SOPData.category_name = req.body.category_name;
 		SOPData.single_category_files = SOPData.level == 1 ? SOPData.single_category_files.concat(single_category_files_array) : [];
+		await SOPData.save();
 
 		req.flash('message', 'SOP is updated!');
 		return res.redirect('/sop');
