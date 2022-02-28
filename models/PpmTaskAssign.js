@@ -73,7 +73,7 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 	},
 	riskAssessmentAssetStatusColor: {
 		type: String,
-		default: 'Green'
+		default: ''
 	},
 
 	status: {

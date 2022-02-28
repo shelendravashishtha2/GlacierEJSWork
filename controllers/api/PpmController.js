@@ -7,6 +7,7 @@ const Joi = require("joi");
 const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
 const PpmTaskAssign = require("../../models/PpmTaskAssign");
+const { convertObjValuesToString } = require("../../helper/commonHelpers");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
@@ -376,16 +377,11 @@ exports.ppmTaskDetails = async (req, res) => {
 
 		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)}).populate({path: 'propertyId', select: ['property_name']}).lean();
 
-		function replace(myObj){
-			Object.keys(myObj).forEach(function(key){
-			  	typeof myObj[key] == 'object' ? replace(myObj[key]) : myObj[key]= String(myObj[key]);
-			});
-			return myObj
-		}
 		let responseArray = [PpmTaskAssignData].map((obj) => {
+			obj.hasOwnProperty('completionBy') ? '' : obj.completionBy = ''
 			obj.hasOwnProperty('completionDate') ? '' : obj.completionDate = ''
-			obj.hasOwnProperty('riskAssessmentAssetStatusColor') ? '' : obj.riskAssessmentAssetStatusColor = ''
-			return replace(obj)
+			obj.hasOwnProperty('riskAssessmentAssetStatusColor') ? '' : obj.riskAssessmentAssetStatusColor = '#4ee020'
+			return convertObjValuesToString(obj)
 		})
 
 		return res.status(200).send({

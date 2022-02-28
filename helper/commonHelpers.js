@@ -35,18 +35,36 @@ const getAge = (birthDate) => {
 	const age = Math.floor((new Date() - new Date(birthDate).getTime()) / 31557600000);
 	return isNaN(age) ? 0 : age;
 }
+
 function prependToArray(value, array) {
 	var newArray = array.slice();
 	newArray.unshift(value);
 	return newArray;
-  }
+}
 
-  function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+}
+
+let a = [123, 456];
+console.log(typeof a);
+
+function convertObjValuesToString(myObj){
+	if (Array.isArray(myObj)) {myObj = myObj;}
+	else if (typeof myObj == 'object') {
+		Object.keys(myObj).forEach(function(key){
+			typeof myObj[key] == 'object' ? convertObjValuesToString(myObj[key]) : myObj[key]= String(myObj[key]);
+	  	});
+	} else {
+		myObj = ''
+	}
+	return myObj
+}
+
 module.exports = {
     userProfilePer,
 	getAge,
 	prependToArray,
-	capitalizeFirstLetter
+	capitalizeFirstLetter,
+	convertObjValuesToString
 };
