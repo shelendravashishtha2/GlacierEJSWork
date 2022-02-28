@@ -1,17 +1,20 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const Property = require("./Property");
+const PpmEquipmentAssign = require("./PpmEquipmentAssign");
+const PpmEquipmentAssetAssign = require("./PpmEquipmentAssetAssign");
 
 const PpmTaskAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
+		type: mongoose.Schema.Types.ObjectId, ref: Property,
 		required:true
 	},
 	assignPpmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Assign',
+		type: mongoose.Schema.Types.ObjectId, ref: PpmEquipmentAssign,
 		required:true,
 	},
 	assignPpmEquipmentAssetId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Asset_Assign',
+		type: mongoose.Schema.Types.ObjectId, ref: PpmEquipmentAssetAssign,
 		required:true,
 	},
 
@@ -23,31 +26,38 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 	assetLocation: {
 		type: String,
 		trim: true,
+		default: ''
 	},
 	vendorName: {
 		type: String,
 		trim: true,
+		default: ''
 	},
 	frequency: {
 		type: String,
 		trim: true,
+		default: ''
 	},
 	dueDate: {
 		type: Date,
+		default: ''
 	},
 	completionDate: {
 		type: Date,
+		default: ''
 	},
 	completionBy: {
 		type: String,
 		trim: true,
+		default: ''
 	},
 	completionStatus: {
 		type: Number, //1=pending, 2=In-progress 3=completed 4=incomplete
 		min: [1,'invalid status'], max: [4,'invalid status'], default: 1,
 	},
 	remark: {
-		type: String
+		type: String,
+		default: ''
 	},
 	attachPhotos: {
 		type: [String]
@@ -62,7 +72,8 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 		default: 1,
 	},
 	riskAssessmentAssetStatusColor: {
-		type: String
+		type: String,
+		default: 'Green'
 	},
 
 	status: {

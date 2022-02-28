@@ -374,13 +374,25 @@ exports.ppmTaskDetails = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)});
+		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)}).populate({path: 'propertyId', select: ['property_name']}).lean();
+
+		function replace(myObj){
+			Object.keys(myObj).forEach(function(key){
+			  	typeof myObj[key] == 'object' ? replace(myObj[key]) : myObj[key]= String(myObj[key]);
+			});
+			return myObj
+		}
+		let responseArray = [PpmTaskAssignData].map((obj) => {
+			obj.hasOwnProperty('completionDate') ? '' : obj.completionDate = ''
+			obj.hasOwnProperty('riskAssessmentAssetStatusColor') ? '' : obj.riskAssessmentAssetStatusColor = ''
+			return replace(obj)
+		})
 
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
             "message": "PPM task details",
-			data: [PpmTaskAssignData]
+			data: responseArray
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
