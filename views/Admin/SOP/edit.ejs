@@ -165,8 +165,8 @@
         });
 	}
 	$(document).ready(function(){
-		let old = <%= data.sub_category.length %>;
-		old = old > 0 ? old - 1 : old
+		let old = parseInt('<%= data.sub_category.length %>');
+		old = old > 0 && old != NaN ? old - 1 : old
 		let i = 1 + old;
 		// add row
 		$("#addRow").click(function () {

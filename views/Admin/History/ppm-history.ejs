@@ -35,7 +35,7 @@
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingSelect">Report for <span class="text-danger">*</span></label>
-								<select name="reportType" class="form-select" id="autoSizingSelect" required>
+								<select name="historyType" class="form-select" id="autoSizingSelect" required>
 									<option value="1" selected>PPM</option>
 									<option value="2">FRC</option>
 								</select>
@@ -92,30 +92,34 @@
 							<thead>
 							<tr>
 								<th style="text-align: center;">#</th>
+								<th style="text-align: center;">riskAssessment Color</th>
 								<th style="text-align: center;">Equipment Name</th>
 								<th style="text-align: center;">Asset Name</th>
 								<th style="text-align: center;">Vendor name</th>
 								<th style="text-align: center;">Frequency</th>
-								<th style="text-align: center;">Day</th>
 								<th style="text-align: center;">Date</th>
-								<th style="text-align: center;">Month</th>
-								<th style="text-align: center;">Year</th>
-								<!-- <th style="width: 10%;text-align: center;">Action</th> -->
+								<th style="text-align: center;">completion Status</th>
+								<th style="text-align: center;">completion By</th>
+								<th style="text-align: center;">completionDate</th>
+								<th style="text-align: center;">riskAssessment Status</th>
+								<th style="width: 10%;text-align: center;">Action</th>
 							</tr>
 							</thead>
 							<tbody>
-								<% for( let i = 0; i < PpmEquipmentAssetAssignData.length; i++ ) { %>
+								<% for( let i = 0; i < PpmTaskAssignData.length; i++ ) { %>
 									<tr>
 										<td style="text-align: center;"><%= i+1 %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].assignPpmEquipmentId != null && PpmEquipmentAssetAssignData[i].assignPpmEquipmentId.ppmEquipmentName != undefined ? PpmEquipmentAssetAssignData[i].assignPpmEquipmentId.ppmEquipmentName : '--' %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].assetName %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].vendorName %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].frequency %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].day ? PpmEquipmentAssetAssignData[i].day : '--' %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].date ? PpmEquipmentAssetAssignData[i].date : '--' %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].month ? PpmEquipmentAssetAssignData[i].month : '--' %></td>
-										<td style="text-align: center;"><%= PpmEquipmentAssetAssignData[i].year ? PpmEquipmentAssetAssignData[i].year : '--' %></td>
-										<!-- <td style="width: 10%;text-align: center;">Action</td> -->
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].riskAssessmentAssetStatusColor ? PpmTaskAssignData[i].riskAssessmentAssetStatusColor : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].assignPpmEquipmentId != null && PpmTaskAssignData[i].assignPpmEquipmentId.ppmEquipmentName != undefined ? PpmTaskAssignData[i].assignPpmEquipmentId.ppmEquipmentName : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].assetName ? PpmTaskAssignData[i].assetName : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].vendorName ? PpmTaskAssignData[i].vendorName : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].assignPpmEquipmentAssetId != null && PpmTaskAssignData[i].assignPpmEquipmentAssetId.frequency != undefined ? PpmTaskAssignData[i].assignPpmEquipmentAssetId.frequency : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].dueDate ? moment(PpmTaskAssignData[i].dueDate).format('DD-MM-YYYY') : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].completionStatus ? PpmTaskAssignData[i].completionStatus : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].completionBy ? PpmTaskAssignData[i].completionBy : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].completionDate ? moment(PpmTaskAssignData[i].completionDate).format('DD-MM-YYYY') : '--' %></td>
+										<td style="text-align: center;"><%= PpmTaskAssignData[i].riskAssessmentStatus ? PpmTaskAssignData[i].riskAssessmentStatus : '--' %></td>
+										<td style="width: 10%;text-align: center;"> <a href="#" class="btn btn-secondary">View</a> </td>
 									</tr>
 								<% } %>
 							</tbody>

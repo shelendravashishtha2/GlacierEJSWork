@@ -146,10 +146,11 @@ router.get('/frc-report', isUserAllowed, ReportController.frcReport);
 // router.get('/category-checklist-history', isUserAllowed, HistoryController.categoryChecklistHistory);
 // router.get('/view-checklist-history', isUserAllowed, HistoryController.viewChecklistHistory);
 
-// router.get('/history', isUserAllowed, ReportController.index);
-// router.post('/history', isUserAllowed, ReportController.indexFilter);
-// router.get('/ppm-history', isUserAllowed, ReportController.ppmHistory);
-// router.get('/frc-history', isUserAllowed, ReportController.frcHistory);
+router.get('/history', isUserAllowed, HistoryController.index);
+router.post('/history', isUserAllowed, HistoryController.indexFilter);
+router.get('/ppm-history', isUserAllowed, HistoryController.ppmHistory);
+// router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
+// router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
 
 // Setting 
 router.get('/setting', isUserAllowed, SettingController.settingList);
