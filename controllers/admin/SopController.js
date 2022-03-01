@@ -148,6 +148,7 @@ exports.storeSop = async (req,res) => {
 			}
 			
 			if (req.files['sub_category_files[0]'] && req.body.category_level == 2) {
+				req.body.sub_category_name = Array.isArray(req.body.sub_category_name) ? req.body.sub_category_name : [req.body.sub_category_name]
 				for (let i = 0; i < req.body.sub_category_name.length; i++) {
 					let sub_category_files_array = [];
 					let sub_category_files = req.files['sub_category_files['+i+']'];
@@ -216,27 +217,12 @@ exports.updateSop = async (req,res) => {
 	try {
 		res.locals = { title: 'Update Sop', session: req.session};
 
-		let arrayFields = ["sub_category_name"];
-		let regexString = `^(${arrayFields.join("|")})\\[\\d+\\]`;
-		let regex = new RegExp(regexString);
-		let subCategoryNameObj = Object.keys(req.body)
-			.filter(aKey => regex.test(aKey))
-			.reduce((combinedObj, aKey) => {
-				let keyName = aKey.match(regex)[1];
-				if (!combinedObj[keyName]) {
-					combinedObj[keyName] = [];
-				}
-				combinedObj[keyName].push(req.body[aKey]);
-				return combinedObj;
-			}, {});
-
 		let single_category_files_array = [];
 		let sub_category_array = [];
 		const uploadPath = __basedir + '/public/images/sop_files/';
 
-		if (req.files) {
-			//for category_level= 1
-			if (req.body.category_level == 1 && req.files.single_category_files) {
+		if (req.body.category_level == 1) { //for category_level= 1
+			if (req.files && req.files.single_category_files) {
 				let single_category_files = req.files.single_category_files;
 				single_category_files = Array.isArray(single_category_files) ? single_category_files : [single_category_files];
 				if (Array.isArray(single_category_files)) {
@@ -255,45 +241,78 @@ exports.updateSop = async (req,res) => {
 						single_category_files_array.push(fileName);
 					});
 				}
+			} else {
 			}
-			//for category_level= 2
-			if (req.body.category_level == 2) {
-				for (let i = 0; i < subCategoryNameObj.sub_category_name.length; i++) {
-					let sub_category_files_array = [];
+
+			let SOPData = await SOP.findOne({_id: req.body.id});
+			SOPData.category_name = req.body.category_name;
+			SOPData.single_category_files = SOPData.level == 1 ? SOPData.single_category_files.concat(single_category_files_array) : [];
+			await SOPData.save();
+
+			console.log("Level 1 SOP updated: ", SOPData);
+
+		} else if (req.body.category_level == 2) { //for category_level= 2
+			let arrayFields = ["sub_category_name"];
+			let regexString = `^(${arrayFields.join("|")})\\[\\d+\\]`;
+			let regex = new RegExp(regexString);
+			let subCategoryNameObj = Object.keys(req.body)
+				.filter(aKey => regex.test(aKey))
+				.reduce((combinedObj, aKey) => {
+					let keyName = aKey.match(regex)[1];
+					if (!combinedObj[keyName]) {
+						combinedObj[keyName] = [];
+					}
+					combinedObj[keyName].push(req.body[aKey]);
+					return combinedObj;
+				}, {});
+
+			for (let i = 0; i < subCategoryNameObj.sub_category_name.length; i++) {
+				let sub_category_files_array = [];
+				let sub_category_id = req.body['sub_category_id['+i+']'];
+				let sub_category_name = req.body['sub_category_name['+i+']'];
+
+				if (req.files && req.files['sub_category_files['+i+']'] != undefined) {
 					let sub_category_files = req.files['sub_category_files['+i+']'];
 
-					if (sub_category_files != undefined) {
-						sub_category_files = Array.isArray(sub_category_files) ? sub_category_files : [sub_category_files];
-						if (Array.isArray(sub_category_files)) {
-							sub_category_files.forEach(sub_category_file => {
-								if (sub_category_file.mimetype !== "application/pdf"){
-									return res.send(response.error(400, 'File format should be PDF', []));
+					sub_category_files = Array.isArray(sub_category_files) ? sub_category_files : [sub_category_files];
+					if (Array.isArray(sub_category_files)) {
+						sub_category_files.forEach(sub_category_file => {
+							if (sub_category_file.mimetype !== "application/pdf"){
+								return res.send(response.error(400, 'File format should be PDF', []));
+							}
+						});
+						sub_category_files.forEach(sub_category_file => {
+							fileName = sub_category_file.name.trim().split(" ").join("_");
+							sub_category_file.mv(uploadPath + fileName, function(err) {
+								if (err){
+									return res.send(response.error(400, 'Image uploading failed', []));
 								}
 							});
-							sub_category_files.forEach(sub_category_file => {
-								fileName = sub_category_file.name.trim().split(" ").join("_");
-								sub_category_file.mv(uploadPath + fileName, function(err) {
-									if (err){
-										return res.send(response.error(400, 'Image uploading failed', []));
-									}
-								});
-								sub_category_files_array.push(fileName);
-							});
-						}
-						let sub_category_name = req.body['sub_category_name['+i+']'];
-						if (sub_category_name != null && sub_category_files_array != null && sub_category_name != '' && sub_category_files_array != '') {
-							sub_category_array.push({sub_category_name: sub_category_name, sub_category_files: sub_category_files_array});
-						}
+							sub_category_files_array.push(fileName);
+						});
 					}
-					
+					if (sub_category_name != null && sub_category_files_array != null && sub_category_name != '' && sub_category_files_array != '') {
+						sub_category_array.push({_id: sub_category_id, sub_category_name: sub_category_name, sub_category_files: sub_category_files_array});
+					}
+				} else {
+					sub_category_array.push({_id: sub_category_id, sub_category_name: sub_category_name, sub_category_files: []});
 				}
 			}
-		}
 
-		let SOPData = await SOP.findOne({_id: req.body.id});
-		SOPData.category_name = req.body.category_name;
-		SOPData.single_category_files = SOPData.level == 1 ? SOPData.single_category_files.concat(single_category_files_array) : [];
-		await SOPData.save();
+			let SOPData = await SOP.findOne({_id: req.body.id});
+			SOPData.category_name = req.body.category_name;
+			for (let i = 0; i < sub_category_array.length; i++) {
+				for (let j = 0; j < SOPData.sub_category.length; j++) {
+					if (String(sub_category_array[i]._id) == String(SOPData.sub_category[j]._id)) {
+						sub_category_array[i].sub_category_files = [...SOPData.sub_category[j].sub_category_files, ...sub_category_array[i].sub_category_files]
+					}
+				}
+			}
+			SOPData.sub_category = sub_category_array;
+			await SOPData.save();
+
+			// console.log("Level 2 SOP updated: ", SOPData);
+		}
 
 		req.flash('message', 'SOP is updated!');
 		return res.redirect('/sop');

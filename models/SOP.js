@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const User = require("./User");
 
 const SubCategorySchema = new mongoose.Schema({ 
 	sub_category_name: {
@@ -34,8 +35,8 @@ const SOPSchema = new mongoose.Schema({
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
 	},
-	createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false},
-	updatedBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false},
+	createdBy: {type: mongoose.Schema.Types.ObjectId, ref: User, select: false},
+	updatedBy: {type: mongoose.Schema.Types.ObjectId, ref: User, select: false},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}
 },{
