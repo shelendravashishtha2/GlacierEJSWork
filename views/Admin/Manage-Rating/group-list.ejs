@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">Group List & Add</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/manage-rating">Manage Rating</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/manage-rating">Manage Rating</a></li>
                     <li class="breadcrumb-item active">Group List</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-            <form method="GET" action="<%= process.env.APP_URL %>/group-list" id="form">
+            <form method="GET" action="<%=APP_URL%>/group-list" id="form">
                 <div class="row mb-2">
                    <!-- start searching -->
                    <div class="col-sm-3">
@@ -73,7 +73,7 @@
                                     <label for="switch<%= i %>" data-on-label="Yes" data-off-label="No"></label>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
-                                    <a href="<%= process.env.APP_URL %>/edit-group-name/<%= data[i]._id %>" type="button" class="btn btn-outline-warning"><b>Edit</b></a>
+                                    <a href="<%=APP_URL%>/edit-group-name/<%= data[i]._id %>" type="button" class="btn btn-outline-warning"><b>Edit</b></a>
                                 </td>
                             </tr>
                               <% } %>
@@ -174,7 +174,7 @@
                 <h5 class="modal-title" id="orderdetailsModalLabel">Add Checklist</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<%= process.env.APP_URL %>/add-group" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <form action="<%=APP_URL%>/add-group" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <input type="hidden" name="groupName" id="finalGroupName">
                 <input type="hidden" name="topicName" id="finalTopicName">
@@ -237,7 +237,7 @@ $('.status').on('change', function(e) {
         [return][Terminate function - don't do anything else] */
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
-        $.post("<%=process.env.APP_URL%>/update-group-status", {
+        $.post("<%=APP_URL%>/update-group-status", {
             grpId: $(this).val()
             }, function(data, status){
             toastr.success(data.message);
@@ -278,14 +278,5 @@ $("#submitTopic").click(function(){
     }
 })
 </script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

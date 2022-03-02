@@ -9,7 +9,8 @@ const { Validator } = require('node-input-validator');
 // Setting Page
 exports.settingList = async (req,res) => {
 	try {
-		res.locals = { title: 'Manage Rating', session: req.session};
+		res.locals.title = 'Setting';
+		res.locals.session = req.session;
 		res.locals.errors = req.session.errors ? req.session.errors : '';
 		req.session.errors = '';
 
@@ -19,7 +20,7 @@ exports.settingList = async (req,res) => {
 		return res.render('Admin/Setting/index',{ 
 			data: SettingRatingData, 
 			SettingPpmRiskAssessmentColorData: SettingPpmRiskAssessmentColorData,
-			message: req.flash('message'), error: req.flash('error')});
+			message: req.flash('success'), error: req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.flash('error', 'Something want wrong');
@@ -30,7 +31,8 @@ exports.settingList = async (req,res) => {
 // Store Rating Setting
 exports.storeSetting = async (req,res) => {
 	try {
-		res.locals = { title: 'Setting', session: req.session};
+		res.locals.title = 'Setting';
+		res.locals.session = req.session;
 
 		await SettingRating.deleteMany();
 
@@ -41,7 +43,7 @@ exports.storeSetting = async (req,res) => {
 				max_rating: parseFloat(req.body.max_rating[i]).toFixed(2),
 			});
 		}
-		req.flash('message', 'Rating is added & updated!');
+		req.flash('success', 'Rating is added & updated!');
 		return res.redirect('/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -53,7 +55,8 @@ exports.storeSetting = async (req,res) => {
 // store Ppm Risk Assessment Color
 exports.storePpmRiskAssessmentColor = async (req, res) => {
 	try {
-		res.locals = { title: 'Setting', session: req.session};
+		res.locals.title = 'Setting';
+		res.locals.session = req.session;
 
 		const validate = new Validator(req.body, {
 			color_name: 'required'
@@ -71,7 +74,7 @@ exports.storePpmRiskAssessmentColor = async (req, res) => {
 			});
 		}
 
-		req.flash('message', 'Add color successfully');
+		req.flash('success', 'Add color successfully');
 		return res.redirect('/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -83,7 +86,8 @@ exports.storePpmRiskAssessmentColor = async (req, res) => {
 // delete Ppm Risk Assessment Color
 exports.deletePpmRiskAssessmentColor = async (req, res) => {
 	try {
-		res.locals = { title: 'Setting', session: req.session};
+		res.locals.title = 'Setting';
+		res.locals.session = req.session;
 
 		const validate = new Validator(req.params, {
 			id: 'required'
@@ -101,7 +105,7 @@ exports.deletePpmRiskAssessmentColor = async (req, res) => {
 		}
 		await SettingPpmRiskAssessmentColor.deleteOne({_id: req.params.id});
 
-		req.flash('message', 'Add color successfully');
+		req.flash('success', 'Add color successfully');
 		return res.redirect('/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

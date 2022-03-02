@@ -18,8 +18,8 @@ const { capitalizeFirstLetter } = require("../../helper/commonHelpers");
 // Create Task Page
 exports.categoryAssignment = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Assign Task List', session: req.session };
+		res.locals.title = 'Assign Task List';
+		res.locals.session = req.session;
 
 		let propertyIds = await CategoryAssign.distinct('propertyId');
 
@@ -51,7 +51,6 @@ exports.categoryAssignment = async (req, res) => {
 // Task List Page
 exports.propertyCategoryList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required()
 		});
@@ -90,7 +89,6 @@ exports.propertyCategoryList = async (req, res) => {
 
 exports.assignCategorySubmit = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			categoryId: Joi.required(),
@@ -145,8 +143,8 @@ exports.assignCategorySubmit = async (req, res) => {
 
 exports.assignCategory = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Task List', session: req.session };
+		res.locals.title = 'Task List';
+		res.locals.session = req.session;
 
 		let taskData = await CategoryAssign.distinct("propertyId", {});
 		let query = {};
@@ -168,10 +166,9 @@ exports.assignCategory = async (req, res) => {
 // Edit Task Page
 exports.updateAssignCategory = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Task List', session: req.session };
+		res.locals.title = 'Task List';
+		res.locals.session = req.session;
 
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			categoryId: Joi.required(),
@@ -231,8 +228,8 @@ exports.updateAssignCategory = async (req, res) => {
 }
 exports.editAssignCategory = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Edit Task', session: req.session };
+		res.locals.title = 'Edit Task';
+		res.locals.session = req.session;
 
 		let taskData = await CategoryAssign.findOne({ propertyId: req.params.id });
 		if (!taskData) {
@@ -293,8 +290,8 @@ exports.editAssignCategory = async (req, res) => {
 // Vew Task Page
 exports.viewPropertyAssignCategory = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'View Task', session: req.session };
+		res.locals.title = 'View Task';
+		res.locals.session = req.session;
 
 		let property = await Property.findOne({ _id: req.params.id }, { property_name: 1 });
 		let categoryIds = await CategoryAssign.find({ propertyId: req.params.id }).distinct("categoryId");

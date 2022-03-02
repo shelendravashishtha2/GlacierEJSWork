@@ -46,12 +46,12 @@
                                         <%= error %>
                                     </div>
                                 <% } %>
-                                <% if(message.length> 0) { %>
+                                <% if(success.length> 0) { %>
                                     <div class="alert alert-success text-center mb-4 flash" role="alert">
-                                        <%= message %>
+                                        <%= success %>
                                     </div>
                                 <% } %>
-                                <form class="form-horizontal" method="post" action="<%= process.env.APP_URL %>/post-login">
+                                <form class="form-horizontal" method="post" action="<%=APP_URL%>/post-login">
 
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>
@@ -77,7 +77,7 @@
                                     </div>
 
                                     <div class="mt-4 text-center">
-                                        <a href="<%= process.env.APP_URL %>/forgot-password" class="text-muted"><i class="mdi mdi-lock me-1"></i>Forgot your password?</a>
+                                        <a href="<%=APP_URL%>/forgot-password" class="text-muted"><i class="mdi mdi-lock me-1"></i>Forgot your password?</a>
                                     </div>
                                 </form>
                             </div>

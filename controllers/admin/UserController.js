@@ -9,7 +9,7 @@ const {errorLog} = require("../../helper/consoleLog");
 const UserResource = require('../resources/UserResource');
 const Joi = require("joi");
 const Property = require('../../models/Property');
-var toastr = require('express-toastr');
+const toastr = require('express-toastr');
 const UserProperty = require('../../models/UserProperty');
 const { check, validationResult, matchedData } = require('express-validator');
 
@@ -89,8 +89,8 @@ exports.supervisorAdd = async (req, res) => {
 // User Create Page
 exports.userCreate = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Create User', session:req.session};
+		res.locals.title = 'Create User';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 
 		let UserData = await User.find({position: 5});
@@ -203,7 +203,7 @@ exports.userAdd = async (req, res) => {
 				await UserPropertyData.save();
 			}
 		}
-		req.flash('message', 'User is added!');
+		req.flash('success', 'User is added!');
 		res.redirect('/users');
 	} catch (error) {
 		let errorMessage = '';
@@ -222,8 +222,9 @@ exports.userAdd = async (req, res) => {
 // Supervisor list page
 exports.supervisorList = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Users', session:req.session};
+		res.locals.title = 'Users';
+		res.locals.session = req.session;
+
 		let UserData = await User.find({position: 5});
 		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
 	} catch (error) {
@@ -236,9 +237,10 @@ exports.supervisorList = async (req,res) => {
 // Users list page
 exports.userList = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Users', session: req.session};
+		res.locals.title = 'Users';
+		res.locals.session = req.session;
 		req.session.error =  '';
+
 		let condition;
 		if(req.session.user.position_id == 1){
 			condition = {"$match": {position_id: {$in:[2,3,4,5]}}};
@@ -282,7 +284,7 @@ exports.userList = async (req,res) => {
         };
 		let UserData = await User.aggregate([condition,search,sort,skip,limit,project]);
 
-		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.session.error = {errorMessage: "Something want wrong"};
@@ -293,7 +295,8 @@ exports.userList = async (req,res) => {
 // User edit Page
 exports.userEdit = async (req,res) => {
 	try {
-		res.locals = { title: 'Update User', session: req.session };
+		res.locals.title = 'Update User';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 		
 		let UserData = await User.findOne({_id: req.params.id});
@@ -321,9 +324,11 @@ exports.userUpdateValidation = [
 // User update
 exports.userUpdate = async (req,res) => {
 	try {
+		res.locals.title = 'Update User';
+		res.locals.session = req.session;
+
 		req.body.property_id = Array.isArray(req.body['property_id[]']) ? req.body['property_id[]'] : [req.body['property_id[]']];
 
-		res.locals = { title: 'Update User', session: req.session};
 		let oldUserData = await User.findOne({_id: req.body._id});
 		
 		const errors= validationResult(req);
@@ -403,7 +408,7 @@ exports.userUpdate = async (req,res) => {
 				await UserPropertyData.save();
 			}
 		}
-		req.flash('message', 'User is updated!');
+		req.flash('success', 'User is updated!');
 		return res.redirect('/users');
 	} catch (error) {
 		let errorMessage = '';
@@ -422,7 +427,8 @@ exports.userUpdate = async (req,res) => {
 // User View Page
 exports.userView = async (req,res) => {
 	try {
-		res.locals = { title: 'View User', session: req.session};
+		res.locals.title = 'View User';
+		res.locals.session = req.session;
 
 		let UserData = await User.findOne({ _id: req.params.id, position: 5});
 		let UserPropertyData = await UserProperty.find({ userId: req.params.id}).populate({path: 'propertyId'}).lean();
@@ -507,8 +513,8 @@ exports.deleteUser = async (req, res) => {
 // Page Not Found
 exports.pageNotFound = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Users', session:req.session};
+		res.locals.title = 'Users';
+		res.locals.session = req.session;
 
 		let UserData = await User.find({position: 5});
 		return res.render('Pages/pages-404',{'data':UserResource(UserData)});

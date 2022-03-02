@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">History</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">History</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/history" id="form">
+                <form method="GET" action="<%=APP_URL%>/history" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -60,7 +60,7 @@
                                 <td style="width: 5%;text-align: center;"><%= (10*(page-1))+ 1 + i %></td>
                                 <td><%= data[i].property_name %></td>
                                 <td style="width: 10%;text-align: center;">
-                                    <a href="<%= process.env.APP_URL %>/category-history/<%= data[i]._id %>">
+                                    <a href="<%=APP_URL%>/category-history/<%= data[i]._id %>">
                                         <i class="fas fa-chevron-circle-right" style="font-size: 20px;"></i>
                                     </a>
                                 </td>

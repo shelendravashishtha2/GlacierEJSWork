@@ -11,7 +11,7 @@
             <h4 class="mb-sm-0 font-size-18">History</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="#">History</a></li>
                 </ol>
             </div>
@@ -94,14 +94,5 @@
 
 <script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

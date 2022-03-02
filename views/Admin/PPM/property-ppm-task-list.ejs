@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">View PPM (property name)</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/ppm">PPM</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/ppm">PPM</a></li>
                     <li class="breadcrumb-item active">View PPM</li>
                 </ol>
             </div>
@@ -79,7 +79,7 @@
 									<% } %>
                                 </td>
                                 <td class="text-center" style="width: 7%;">
-                                    <a href="<%= process.env.APP_URL %>/view-properties-ppm-task-details/<%= assignPpmTaskData[i]._id %>" class="btn btn-outline-warning">View</a>
+                                    <a href="<%=APP_URL%>/view-properties-ppm-task-details/<%= assignPpmTaskData[i]._id %>" class="btn btn-outline-warning">View</a>
                                 </td>
                             </tr>
                             <% } %>
@@ -101,7 +101,7 @@ $('.status').on('change', function(e) {
     if (!changed) {
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     } else {
-        $.post("<%=process.env.APP_URL%>/update-assign-ppm-equipment-asset-status", {
+        $.post("<%=APP_URL%>/update-assign-ppm-equipment-asset-status", {
 			assignPpmEquipmentAssetId: assignPpmEquipmentAssetId
 		}, function(data, status){
 			toastr.success(data.message);
@@ -109,14 +109,5 @@ $('.status').on('change', function(e) {
     }
 });
 </script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

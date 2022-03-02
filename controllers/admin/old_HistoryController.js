@@ -13,8 +13,9 @@ const Joi = require("joi");
 // History List Page
 exports.historyList = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'History List', session: req.session};
+		res.locals.title = 'History List';
+		res.locals.session = req.session;
+
 		let page = 1;
 		if(req.query.page != undefined){
 			page = req.query.page;
@@ -51,8 +52,9 @@ exports.historyList = async (req,res) => {
 // Category History Page
 exports.categoryHistory = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Category History List', session: req.session};
+		res.locals.title = 'Category History List';
+		res.locals.session = req.session;
+
 		let propertyData = await Property.find({});
 		return res.render('Admin/History/category-history',{'data':PropertyResource(propertyData)});
 
@@ -65,8 +67,9 @@ exports.categoryHistory = async (req,res) => {
 // Category Checklist History Page
 exports.categoryChecklistHistory = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Category Checklist History List', session: req.session};
+		res.locals.title = 'Category Checklist History List';
+		res.locals.session = req.session;
+
 		let propertyData = await Property.find({});
 		return res.render('Admin/History/category-checklist-history',{'data':PropertyResource(propertyData)});
 
@@ -79,8 +82,9 @@ exports.categoryChecklistHistory = async (req,res) => {
 // View Checklist History Page
 exports.viewChecklistHistory = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'View Checklist List', session: req.session};
+		res.locals.title = 'View Checklist List';
+		res.locals.session = req.session;
+
 		let propertyData = await Property.find({});
 		return res.render('Admin/History/view-checklist-history',{'data':PropertyResource(propertyData)});
 

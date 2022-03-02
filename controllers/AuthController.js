@@ -1,10 +1,10 @@
-var express = require('express');
+const express = require('express');
 const bcrypt = require("bcryptjs");
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const {errorLog,consoleLog} = require("../helper/consoleLog");
+const { errorLog, consoleLog } = require("../helper/consoleLog");
 const { encrypt, decrypt } = require('../helper/crypto');
-var urlencodeParser = bodyParser.urlencoded({ extended: false });
+const urlencodeParser = bodyParser.urlencoded({ extended: false });
 const AuthController = require('../controllers/admin/AuthController');
 const User = require("../models/User");
 
@@ -12,10 +12,29 @@ module.exports = function (app) {
 
 	const baseUrl = process.env.BASE_URL || "/"; // Default
 
+	app.all('/', (req, res, next) => {
+		if (req.session.user) {
+			if (req.session.user.position_id == 1) {
+				return res.redirect(baseUrl + 'admin/');
+			} else if (req.session.user.position_id == 2) {
+				return res.redirect(baseUrl + 'opt/');
+			} else {
+				return res.redirect(baseUrl + '');
+			}
+		} else {
+			res.redirect(baseUrl + 'login');
+		}
+	});
+
+	app.use(function (req, res, next) { //auth middleware
+		res.locals.APP_URL = process.env.APP_URL + req.baseUrl;
+		next();
+	})
+
 	app.get(baseUrl + 'register', function (req, res) {
 		if (req.user) { res.redirect('Dashboard/index'); }
 		else {
-			res.render('Auth/auth-register', { 'message': req.flash('message'), 'error': req.flash('error') });
+			res.render('Auth/auth-register', { 'message': req.flash('success'), 'error': req.flash('error') });
 		}
 	});
 
@@ -31,8 +50,18 @@ module.exports = function (app) {
 	});
 
 	app.get(baseUrl + 'login', function (req, res) {
-		res.locals = { title: 'Login' };
-		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
+		res.locals.title = 'Login';
+		if (req.session.user) {
+			if (req.session.user.position_id == 1) {
+				return res.redirect(baseUrl + 'admin/');
+			} else if (req.session.user.position_id == 2) {
+				return res.redirect(baseUrl + 'opt/');
+			} else {
+				return res.redirect(baseUrl + '');
+			}
+		} else {
+			return res.render('Auth/auth-login', { 'message': req.flash('success'), 'error': req.flash('error') });
+		}
 	});
 
 	app.post(baseUrl + 'post-login', urlencodeParser, async function (req, res) {
@@ -46,9 +75,17 @@ module.exports = function (app) {
 			const isMatch = await bcrypt.compare(password, userData.password);
 			if (isMatch) {
 				// Assign value in session
-				sess = req.session;
-				sess.user = userData;
-				res.redirect(baseUrl + '');	
+				req.session.user = userData;
+
+				if (req.session.user.position_id == 1) {
+					console.log('is admin');
+					res.redirect(baseUrl + 'admin/');
+				} else if (req.session.user.position_id == 2) {
+					console.log('is operation team');
+					res.redirect(baseUrl + 'opt/');
+				} else {
+					res.redirect(baseUrl + '');
+				}
 			}else{
 				req.flash('error', 'Incorrect password!');
 				res.redirect(baseUrl + 'login');
@@ -60,7 +97,7 @@ module.exports = function (app) {
 	});
 
 	app.get(baseUrl + 'forgot-password', function (req, res) {
-		res.render('Auth/auth-forgot-password', { 'message': req.flash('message'), 'error': req.flash('error') });
+		res.render('Auth/auth-forgot-password', { 'message': req.flash('success'), 'error': req.flash('error') });
 	});
 
 	app.post(baseUrl + 'post-forgot-password', urlencodeParser, async function (req, res) {
@@ -100,7 +137,7 @@ module.exports = function (app) {
 				});
 				await User.findByIdAndUpdate(userData._id, {reset_password_status: 1}, {new : true, runValidators: true} );
 				// return res.send(response.success(200, 'Email Send Successfully', [] ));
-				req.flash('message', 'We have e-mailed your password reset link!');
+				req.flash('success', 'We have e-mailed your password reset link!');
 				res.redirect(baseUrl + 'forgot-password');
 			} else {
 				req.flash('error', 'Email Not Found!!');
@@ -115,8 +152,7 @@ module.exports = function (app) {
 
 	app.get(baseUrl + 'logout', function (req, res) {
 		// Assign null value in session
-		sess = req.session;
-		sess.user = null;
+		req.session.user = null;
 		res.redirect(baseUrl + 'login');
 	});
 

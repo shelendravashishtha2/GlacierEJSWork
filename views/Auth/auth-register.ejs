@@ -37,7 +37,7 @@
                         </div>
                         <div class="card-body pt-0">
                             <div>
-                                <a href="<%= process.env.APP_URL %>/">
+                                <a href="<%=APP_URL%>/">
                                     <div class="avatar-md profile-user-wid mb-4">
                                         <span class="avatar-title rounded-circle bg-light">
                                             <img src="<%=process.env.APP_URL%>/public/assets/images/logo.svg" alt="" class="rounded-circle"
@@ -52,12 +52,12 @@
                                         <%= error %>
                                     </div>
                                 <% } %>
-                                <% if(message.length> 0) { %>
+                                <% if(success.length> 0) { %>
                                     <div class="alert alert-success text-center mb-4 flash" role="alert">
-                                        <%= message %>
+                                        <%= success %>
                                     </div>
                                 <% } %>
-                                <form class="form-horizontal" method="post" action="<%= process.env.APP_URL %>/post-register">
+                                <form class="form-horizontal" method="post" action="<%=APP_URL%>/post-register">
 
                                     <div class="mb-3">
                                         <label for="useremail" class="form-label">Email</label>
@@ -128,7 +128,7 @@
                     <div class="mt-5 text-center">
 
                         <div>
-                            <p>Already have an account ? <a href="<%= process.env.APP_URL %>/login" class="fw-medium text-primary"> Login</a> </p>
+                            <p>Already have an account ? <a href="<%=APP_URL%>/login" class="fw-medium text-primary"> Login</a> </p>
                             <p>© <%- new Date().getFullYear(); %> Skote. Crafted with <i
                                         class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
                         </div>

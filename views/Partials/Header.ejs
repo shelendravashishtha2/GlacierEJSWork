@@ -3,7 +3,7 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="<%= process.env.APP_URL %>/" class="logo logo-dark">
+                <a href="<%=APP_URL%>/" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
                     </span>
@@ -12,7 +12,7 @@
                     </span>
                 </a>
 
-                <a href="<%= process.env.APP_URL %>/" class="logo logo-light">
+                <a href="<%=APP_URL%>/" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="<%=process.env.APP_URL%>/public/assets/images/favicon-logo.png" alt="" height="22">
                     </span>
@@ -39,7 +39,7 @@
                     <form class="p-3">
                         <div class="form-group m-0">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="<%=translation.Search%> ..." aria-label="Recipient's username">
+                                <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
                                 </div>
@@ -61,10 +61,10 @@
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h6 class="m-0" key="t-notifications"> <%=translation.Notifications%> </h6>
+                                <h6 class="m-0" key="t-notifications"> Notifications </h6>
                             </div>
                             <div class="col-auto">
-                                <a href="#!" class="small" key="t-view-all"> <%=translation.View_All%></a>
+                                <a href="#!" class="small" key="t-view-all"> View_All</a>
                             </div>
                         </div>
                     </div>
@@ -77,10 +77,10 @@
                                     </span>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mt-0 mb-1" key="t-your-order"><%=translation.Your_order_is_placed%></h6>
+                                    <h6 class="mt-0 mb-1" key="t-your-order">Your_order_is_placed</h6>
                                     <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-grammer"><%=translation.If_several_languages_the_grammar%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago"><%=translation.min_ago%></span></p>
+                                        <p class="mb-1" key="t-grammer">If_several_languages_the_grammar</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">min_ago</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -92,8 +92,8 @@
                                 <div class="flex-grow-1">
                                     <h6 class="mt-0 mb-1">James Lemire</h6>
                                     <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-simplified"><%=translation.It_will_seem_like_simplified_English%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-hours-ago"><%=translation.hours_ago%></span></p>
+                                        <p class="mb-1" key="t-simplified">It_will_seem_like_simplified_English</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-hours-ago">hours_ago</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -106,10 +106,10 @@
                                     </span>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mt-0 mb-1" key="t-shipped"><%=translation.Your_item_is_shipped%></h6>
+                                    <h6 class="mt-0 mb-1" key="t-shipped">Your_item_is_shipped</h6>
                                     <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-grammer"><%=translation.If_several_languages_the_grammar%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago"><%=translation.min_ago%></span></p>
+                                        <p class="mb-1" key="t-grammer">If_several_languages_the_grammar</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">min_ago</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -122,8 +122,8 @@
                                 <div class="flex-grow-1">
                                     <h6 class="mt-0 mb-1">Salena Layfield</h6>
                                     <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-occidental"><%=translation.As_a_skeptical_Cambridge_friend_of_mine_occidental%></p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-hours-ago"><%=translation.hours_ago%></span></p>
+                                        <p class="mb-1" key="t-occidental">As_a_skeptical_Cambridge_friend_of_mine_occidental</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-hours-ago">hours_ago</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                     </div>
                     <div class="p-2 border-top d-grid">
                         <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                            <i class="mdi mdi-arrow-right-circle me-1"></i> <span key="t-view-more"><%=translation.View_More%></span> 
+                            <i class="mdi mdi-arrow-right-circle me-1"></i> <span key="t-view-more">View_More</span> 
                         </a>
                     </div>
                 </div>
@@ -154,8 +154,8 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile"><%=translation.Profile%></span></a>
-                    <a class="dropdown-item text-danger" href="<%= process.env.APP_URL %>/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout"><%=translation.Logout%></span></a>
+                    <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
+                    <a class="dropdown-item text-danger" href="<%=process.env.APP_URL%>/logout"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Logout</span></a>
                 </div>
             </div>
         </div>

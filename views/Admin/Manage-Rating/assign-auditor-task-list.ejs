@@ -10,8 +10,8 @@
             <h4 class="mb-sm-0 font-size-18">View Rating</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/manage-rating">Manage Rating</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/manage-rating">Manage Rating</a></li>
                     <li class="breadcrumb-item active">View Rating</li>
                 </ol>
             </div>
@@ -65,7 +65,7 @@
 										<td class="text-center"><%= MngRatingTopicAssignData[i].topicIds[j].point %></td>
 										<td class="text-center"><%= assignPropertyGroupData.auditorId.full_name %> </td>
 										<td class="text-center" style="width: 7%;">
-											<a href="<%= process.env.APP_URL %>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= MngRatingTopicAssignData[i].groupId._id %>&&topicId=<%= MngRatingTopicAssignData[i].topicIds[j]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
+											<a href="<%=APP_URL%>/view-assign-task-checklist?propertyId=<%= data.propertyId %>&&groupId=<%= MngRatingTopicAssignData[i].groupId._id %>&&topicId=<%= MngRatingTopicAssignData[i].topicIds[j]._id %>" class="btn btn-outline-secondary"><b>View</b></a>
 										</td>
 									</tr>
 								<% } %>
@@ -80,16 +80,6 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%#= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%#= message %>');
-    </script>
-<% } %>
 
 <script>
     function pagination(i){
@@ -99,11 +89,11 @@
 
 	function changeGroupId(selectObject) {
 		var value = selectObject.value; 
-		window.location.href = "<%=process.env.APP_URL%>/view-group-assign-task?propertyId=<%= data.propertyId %>&&groupId="+value+"";
+		window.location.href = "<%=APP_URL%>/view-group-assign-task?propertyId=<%= data.propertyId %>&&groupId="+value+"";
 
 		// $.ajax({
         //     type: "GET",
-        //     url: "<%#=process.env.APP_URL%>/view-group-assign-task?propertyId=<%#= data.propertyId %>&&groupId="+value+"",
+        //     url: "<%#=APP_URL%>/view-group-assign-task?propertyId=<%#= data.propertyId %>&&groupId="+value+"",
         //     // data: {
         //     //     'search_text' : $(this).val(),
         //     //     'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()

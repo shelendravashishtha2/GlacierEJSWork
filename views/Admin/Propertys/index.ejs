@@ -12,7 +12,7 @@
             <h4 class="mb-sm-0 font-size-18">Propertys</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Propertys</li>
                 </ol>
             </div>
@@ -25,7 +25,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Propertys Record <a href="<%= process.env.APP_URL %>/create-propertys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><b>ADD PROPERTY</b></button></a></h4>
+                <h4 class="card-title">Propertys Record <a href="<%=APP_URL%>/create-propertys"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light" style="float: right;"><b>ADD PROPERTY</b></button></a></h4>
                 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                     <thead>
                     <tr>
@@ -46,8 +46,8 @@
                             <td style="width: 10%;text-align: center;">30-09-2021</td>
                             <td style="width: 10%;text-align: center;"><input type="checkbox" id="switch<%=i+1%>" switch="warning" checked />
                                 <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
-                            <td style="width: 10%;text-align: center;"><a href="<%= process.env.APP_URL %>/edit-propertys"> <button class="btn btn-outline-primary">Edit</button></a>
-                                <a href="<%= process.env.APP_URL %>/view-propertys/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
+                            <td style="width: 10%;text-align: center;"><a href="<%=APP_URL%>/edit-propertys"> <button class="btn btn-outline-primary">Edit</button></a>
+                                <a href="<%=APP_URL%>/view-propertys/<%= data[i]._id %>"><button class="btn btn-outline-secondary">View</button></a></td>
                         </tr>
                         <% } %>
                     </tbody>

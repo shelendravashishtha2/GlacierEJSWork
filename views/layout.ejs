@@ -1,47 +1,52 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title><%- title %> | Crest Property Solution</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta content="Crest Property Solution" name="description" />
-  <meta content="Crest Property Solution" name="Crest Property Solution" />
-  <!-- App favicon -->
-  <link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon.ico">
-
-  <%- HeaderCss %>
-  <%- include ('./Partials/HeaderStyle')  %>
-
+	<meta charset="utf-8" />
+	<title><%- title %> | Crest Property Solution</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="Crest Property Solution" name="description" />
+	<meta content="Crest Property Solution" name="Crest Property Solution" />
+	<!-- App favicon -->
+	<link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon.ico">  
+	<%- HeaderCss %>
+	<%- include ('./Partials/HeaderStyle')  %>
 </head>
 
 <body data-sidebar="dark">
+	<!-- Begin page -->
+	<div id="layout-wrapper">
+		<%- include ('./Partials/Header')  %>
+		<%- include ('./Partials/Sidebar')  %>
+		<div class="main-content ">
+		<div class="page-content min-vh-100">
+			<div class="container-fluid">
+				<%- breadcrumb %>
+				<%- body %>
+			</div>
+		</div>
+		<%- include ('./Partials/Footer') %>
+		</div>
+	</div>
 
-  <!-- Begin page -->
-  <div id="layout-wrapper">
+	<%- include ('./Partials/Rightbar')  %>
+	<%- include ('./Partials/FooterScript')  %>
 
-    <%- include ('./Partials/Header')  %>
-    <%- include ('./Partials/Sidebar')  %>
+	<%- FooterJs %>
 
-    <div class="main-content ">
-      <div class="page-content min-vh-100">
-        <div class="container-fluid">
+	<script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
 
-          <%- breadcrumb %>
-          <%- body %>
-        </div>
-      </div>
-      <%- include ('./Partials/Footer') %>
-    </div>
-  </div>
+  	<%- BottomJs %>
 
-  <%- include ('./Partials/Rightbar')  %>
-  <%- include ('./Partials/FooterScript')  %>
-
-  <%- FooterJs %>
-
-  <script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
-
-  <%- BottomJs %>
+	<% if(success.length > 0) { %>
+		<script>
+			toastr.success('<%= success %>');
+		</script>
+	<% } %>
+	<% if(error.length > 0) { %>
+		<script>
+			toastr.error('<%= error %>');
+		</script>
+	<% } %>
+	
 </body>
-
 </html>

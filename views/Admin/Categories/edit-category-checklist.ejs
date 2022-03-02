@@ -12,8 +12,8 @@
             <h4 class="mb-sm-0 font-size-18">Edit Category</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/categories">Master Category</a></li>
                     <li class="breadcrumb-item active">Edit Category</li>
                 </ol>
             </div>
@@ -26,7 +26,7 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <form action="<%= process.env.APP_URL %>/update-categories" method="POST" class="custom-validation">
+                <form action="<%=APP_URL%>/update-categories" method="POST" class="custom-validation">
 					<input type="hidden" name="category_id" value="<%= CategoryData._id %>" required>
                     <div class="row">
                         <div class="col-md-4">
@@ -51,7 +51,7 @@
             <div class="card-body">
                 <h4 class="card-title">
 					List Of Check List
-					<!-- <a href="<%= process.env.APP_URL %>/create-category-checklist/<%= CategoryData._id %> ">
+					<!-- <a href="<%=APP_URL%>/create-category-checklist/<%= CategoryData._id %> ">
 						<button type="button" class="btn btn-warning btn-rounded waves-effect waves-light" style="float: right;">
 							<b><i class="fa fa-plus"></i> ADD CHECKLIST </b>
 						</button>
@@ -94,7 +94,7 @@
 							<input type="checkbox" id="switch<%=i+1%>" switch="warning" class="status" value="<%= data[i]._id %>" <%= data[i].status == 1 ? 'checked' : '' %> />
                             <label for="switch<%=i+1%>" data-on-label="Yes" data-off-label="No"></label></td>
                         <!-- <td style="width: 10%;text-align: center;">
-                            <a href="<%= process.env.APP_URL %>/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a></td> -->
+                            <a href="<%=APP_URL%>/edit-checklist-details/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a></td> -->
                     </tr>
                     <% } %>
                     </tbody>
@@ -130,7 +130,7 @@ $('.status').on('change', function(e) {
         [return][Terminate function - don't do anything else] */
         return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
     }else{
-        $.post("<%=process.env.APP_URL%>/change-checklist-status", {
+        $.post("<%=APP_URL%>/change-checklist-status", {
             _id: $(this).val()
             }, function(data, status){
             toastr.success(data.message);
@@ -138,14 +138,5 @@ $('.status').on('change', function(e) {
     }
 });
 </script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

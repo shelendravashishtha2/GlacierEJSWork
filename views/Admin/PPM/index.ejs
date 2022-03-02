@@ -17,7 +17,7 @@
             <h4 class="mb-sm-0 font-size-18">PPM</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">PPM</li>
                 </ol>
             </div>
@@ -30,7 +30,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/ppm" id="form">
+                <form method="GET" action="<%=APP_URL%>/ppm" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -48,8 +48,8 @@
                     <!-- end searching -->
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                            <a href="<%= process.env.APP_URL %>/view-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>VIEW PPM</b></a>
-                            <a href="<%= process.env.APP_URL %>/assign-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>ASSIGN PPM</b></a>
+                            <a href="<%=APP_URL%>/view-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>VIEW PPM</b></a>
+                            <a href="<%=APP_URL%>/assign-ppm" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2"> <b>ASSIGN PPM</b></a>
                             <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">
                                 <i class="mdi mdi-plus me-1"></i><b>ADD</b> </button>
                             <button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target=".addtopic" hidden id="addTopic"> Add Topic </button>
@@ -83,7 +83,7 @@
                                 </td>
                                 <td style="text-align: center;width: 10%;">
                                     <button type="button" onclick="detailTask('<%= i %>',-1)" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target=".addTaskModal"><i class="mdi mdi-plus me-1"></i> <b>Add Task</b> </button>
-                                    <!-- <a href="<%= process.env.APP_URL %>/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a> -->
+                                    <!-- <a href="<%=APP_URL%>/edit-ppm/<%= data[i]._id %>" class="btn btn-outline-warning"><b>Edit</b></a> -->
                                     <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" onclick="setEquipmentName('<%= data[i].ppmEquipmentName %>','<%= data[i]._id %>')" data-bs-target=".equipmentNameEditModal"><b>Edit</b></button>
                                 </td>
                             </tr>
@@ -163,7 +163,7 @@
 </div>
 <!-- end row -->
 <!-- add Equipments Name Modal -->
-<form action="<%= process.env.APP_URL %>/create-ppm" method="POST" enctype="multipart/form-data" class="custom-validation">
+<form action="<%=APP_URL%>/create-ppm" method="POST" enctype="multipart/form-data" class="custom-validation">
     <div class="modal fade orderdetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -282,7 +282,7 @@
                 <h5 class="modal-title" id="taskDetailModalLabel">Add Equipment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<%= process.env.APP_URL %>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <form action="<%=APP_URL%>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -349,7 +349,7 @@
                 <h5 class="modal-title" id="equipmentNameEditModal">Add Equipment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<%= process.env.APP_URL %>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
+            <form action="<%=APP_URL%>/update-ppm-task" method="POST" enctype="multipart/form-data" class="custom-validation">
             <div class="modal-body">
                 <div class="row">
                             <label for="example-text-input" class="col-md-5 col-form-label">Equipment Name:-</label>
@@ -385,7 +385,7 @@
     }
     function ppmEquipmentNameChange(){
         if($("#ppmEquipmentNameEdit").val().trim() != ""){
-          $.post("<%=process.env.APP_URL%>/update-ppm-name",
+          $.post("<%=APP_URL%>/update-ppm-name",
           {
             ppmId: $("#ppmEquipmentIdEdit").val(),
             ppmEquipmentName: $("#ppmEquipmentNameEdit").val().trim()
@@ -606,7 +606,7 @@ $('.status').on('change', function(e) {
             [return][Terminate function - don't do anything else] */
             return checked ? $(this).prop('checked', false) : $(this).prop('checked', true);
         }else{
-            $.post("<%=process.env.APP_URL%>/update-ppm-task-status", {
+            $.post("<%=APP_URL%>/update-ppm-task-status", {
                 ppmId: ppmId,
                 assetId: assetId
                 }, function(data, status){
@@ -616,14 +616,5 @@ $('.status').on('change', function(e) {
     });
     </script>
 <!-- end modal -->
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

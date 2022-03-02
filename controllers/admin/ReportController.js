@@ -17,7 +17,8 @@ const CategoryFrcAssign = require('../../models/CategoryFrcAssign');
 // index
 exports.index = async (req, res) => {
 	try {
-		res.locals = { title: 'Report', session: req.session };
+		res.locals.title = 'Report';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -25,7 +26,7 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/Reports/index', {
             PropertyList: PropertyList,
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -37,7 +38,9 @@ exports.index = async (req, res) => {
 // index filter
 exports.indexFilter = async (req, res) => {
 	try {
-		res.locals = { title: 'Report', session: req.session };
+		res.locals.title = 'Report Filter';
+		res.locals.session = req.session;
+
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -67,7 +70,8 @@ exports.indexFilter = async (req, res) => {
 
 exports.ppmReport = async (req, res) => {
 	try {
-		res.locals = { title: 'Report', session: req.session };
+		res.locals.title = 'PPM Report';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -162,7 +166,7 @@ exports.ppmReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmEquipmentAssetAssignData: PpmEquipmentAssetAssignDataArray,
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -173,7 +177,8 @@ exports.ppmReport = async (req, res) => {
 
 exports.frcReport = async (req, res) => {
 	try {
-		res.locals = { title: 'FRC Report', session: req.session };
+		res.locals.title = 'FRC Report';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -269,7 +274,7 @@ exports.frcReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             CategoryFrcAssignData: CategoryFrcAssignDataArray,
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {

@@ -8,7 +8,9 @@ const PpmTaskAssign = require("../../models/PpmTaskAssign");
 // index
 exports.index = async (req, res) => {
 	try {
-		res.locals = { title: 'History', session: req.session };
+		res.locals.title = 'History';
+		res.locals.session = req.session;
+
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -16,7 +18,7 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/History/index', {
             PropertyList: PropertyList,
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -28,7 +30,9 @@ exports.index = async (req, res) => {
 // index filter
 exports.indexFilter = async (req, res) => {
 	try {
-		res.locals = { title: 'History', session: req.session };
+		res.locals.title = 'History Filter';
+		res.locals.session = req.session;
+
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -61,7 +65,62 @@ exports.indexFilter = async (req, res) => {
 
 exports.ppmHistory = async (req, res) => {
 	try {
-		res.locals = { title: 'PPM History', session: req.session };
+		res.locals.title = 'PPM History';
+		res.locals.session = req.session;
+
+		res.locals.error = req.session.error ? req.session.error : '';
+		req.session.error = '';
+
+		if (req.query.historyType == 1) {
+			return res.redirect('/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+		} else if (req.query.historyType == 2) {
+			return res.redirect('/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+		} else if (req.query.historyType == 3) {
+			return res.redirect('/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+		}
+
+		let schema = Joi.object({
+			propertyId: Joi.required(),
+			startDate: Joi.required(),
+			endDate: Joi.required(),
+			status: Joi.optional()
+		});
+		let validation = schema.validate(req.query, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		const PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
+
+		const startDate = moment(req.query.startDate, 'DD-MM-YYYY');
+		const endDate   = moment(req.query.endDate, 'DD-MM-YYYY');
+
+		let findQuery = { 
+			propertyId: req.query.propertyId, 
+			status: 1,
+		}
+		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId'}).populate({path: 'assignPpmEquipmentAssetId'});
+
+		// console.log(PpmTaskAssignData);
+
+		return res.render('Admin/History/ppm-history', {
+			data: req.query,
+			PropertyList: PropertyList,
+            PpmTaskAssignData: PpmTaskAssignData,
+            message: req.flash('success'),
+            error: req.flash('error'),
+        })
+	} catch (error) {
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.frcHistory = async (req, res) => {
+	try {
+		res.locals.title = 'FRC History';
+		res.locals.session = req.session;
+
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
@@ -102,58 +161,7 @@ exports.ppmHistory = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmTaskAssignData: PpmTaskAssignData,
-            message: req.flash('message'),
-            error: req.flash('error'),
-        })
-	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-exports.frcHistory = async (req, res) => {
-	try {
-		res.locals = { title: 'FRC History', session: req.session };
-		res.locals.error = req.session.error ? req.session.error : '';
-		req.session.error = '';
-
-		if (req.query.historyType == 1) {
-			return res.redirect('/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
-		} else if (req.query.historyType == 2) {
-			return res.redirect('/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
-		} else if (req.query.historyType == 3) {
-			return res.redirect('/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
-		}
-
-		let schema = Joi.object({
-			propertyId: Joi.required(),
-			startDate: Joi.required(),
-			endDate: Joi.required(),
-			status: Joi.optional()
-		});
-		let validation = schema.validate(req.query, __joiOptions);
-		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, []));
-		}
-
-		const PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
-
-		const startDate = moment(req.query.startDate, 'DD-MM-YYYY');
-		const endDate   = moment(req.query.endDate, 'DD-MM-YYYY');
-
-		let findQuery = { 
-			propertyId: req.query.propertyId, 
-			status: 1,
-		}
-		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId'}).populate({path: 'assignPpmEquipmentAssetId'});
-
-		// console.log(PpmTaskAssignData);
-
-		return res.render('Admin/History/ppm-history', {
-			data: req.query,
-			PropertyList: PropertyList,
-            PpmTaskAssignData: PpmTaskAssignData,
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {

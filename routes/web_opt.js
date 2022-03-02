@@ -16,6 +16,8 @@ const baseUrl = process.env.BASE_URL || "/";
 
 function isUserAllowed(req, res, next) {
 	if (req.session.user) {
+		res.locals.user = req.session.user;
+		res.locals.APP_URL = process.env.APP_URL + req.baseUrl;
 		next();
 	} else {
 		res.redirect(baseUrl + 'login');
@@ -36,6 +38,8 @@ router.post('/update-property-wings-status', isUserAllowed, PropertyController.u
 router.post('/delete-property-image', isUserAllowed, PropertyController.deletePropertyImage);
 router.get('/view-properties/:id', isUserAllowed, PropertyController.propertyView);
 router.get('/edit-properties/:id', isUserAllowed, PropertyController.propertyEdit);
+router.post("/property-add", PropertyController.propertyAddValidation,PropertyController.propertyAdd); // property add (admin route)
+router.post('/property-update', PropertyController.propertyUpdateValidation,PropertyController.propertyUpdate); // property add (admin route)
 
 // Categories Module
 router.get('/categories', isUserAllowed, CategoriesController.categoryList); //category list

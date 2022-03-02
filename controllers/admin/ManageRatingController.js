@@ -21,23 +21,8 @@ const SettingRating = require("../../models/SettingRating");
 // Manage Rating List Page
 exports.manageRatingList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Manage Rating', session: req.session };
-
-		// let propertyData = await Property.find({status:1});
-
-		// let findQuery = { status: 1 }
-		// if (req.query.search) {
-		// 	findQuery.property_name = { $regex: new RegExp(req.query.search, 'i') }
-		// };
-		// const options = {
-		// 	page: req.query.page ? Math.max(1, req.query.page) : 1,
-		// 	limit: 10
-		// };
-		// let propertyData = await Property.paginate(findQuery, options);
-
-		// let propertyIds = await MngRatingGroupAssign.distinct('propertyId');
-		// let propertyData = await MngRatingGroupAssign.find({status:1}).populate({path: 'propertyId'}).populate({path: 'auditorId'});
+		res.locals.title = 'Manage Rating';
+		res.locals.session = req.session;
 
 		let findQuery = { status: 1 }
 		if (req.query.search) {
@@ -60,14 +45,16 @@ exports.manageRatingList = async (req, res) => {
 			let MngRatingAssignChecklistPointData = await MngRatingAssignChecklistPoint.find({propertyId: propertyDetails.propertyId._id}).sort({createdAt: -1});
 
 			for (let j = 0; j < MngRatingChecklistAssignData.length; j++) {
-				for (let k = 0; k < MngRatingChecklistAssignData[j].checklistIds.length; k++) {
-					const element = MngRatingChecklistAssignData[k].checklistIds[k];
-					if (element) {
-						totalWeightage = totalWeightage + element.weightage;
-						for (let l = 0; l < MngRatingAssignChecklistPointData.length; l++) {
-							const element2 = MngRatingAssignChecklistPointData[l];
-							if (String(element2.checklistId) == String(MngRatingChecklistAssignData[k].checklistIds[k]._id)) {
-								totalPoint = totalPoint + element2.point;
+				if (MngRatingChecklistAssignData[j].checklistIds == undefined) {
+					for (let k = 0; k < MngRatingChecklistAssignData[j].checklistIds.length; k++) {
+						const element = MngRatingChecklistAssignData[k].checklistIds[k];
+						if (element) {
+							totalWeightage = totalWeightage + element.weightage;
+							for (let l = 0; l < MngRatingAssignChecklistPointData.length; l++) {
+								const element2 = MngRatingAssignChecklistPointData[l];
+								if (String(element2.checklistId) == String(MngRatingChecklistAssignData[k].checklistIds[k]._id)) {
+									totalPoint = totalPoint + element2.point;
+								}
 							}
 						}
 					}
@@ -88,7 +75,7 @@ exports.manageRatingList = async (req, res) => {
 		return res.render('Admin/Manage-Rating/index', {
 			propertyData: propertyData,
 			search: req.query.search,
-			message: req.flash('message'),
+			message: req.flash('success'),
 			error: req.flash('error'),
 		})
 	} catch (error) {
@@ -100,8 +87,8 @@ exports.manageRatingList = async (req, res) => {
 // Add new group
 exports.addGroup = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Group Add', session: req.session };
+		res.locals.title = 'Group Add';
+		res.locals.session = req.session;
 
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -129,7 +116,7 @@ exports.addGroup = async (req, res) => {
 		});
 		await groupChecklist.save();
 
-		req.flash('message', 'Group is added!');
+		req.flash('success', 'Group is added!');
 		return res.redirect('/group-list');
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -146,8 +133,8 @@ exports.addGroup = async (req, res) => {
 
 exports.addTopic = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Topic Add', session: req.session };
+		res.locals.title = 'Topic Add';
+		res.locals.session = req.session;
 
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -172,7 +159,7 @@ exports.addTopic = async (req, res) => {
 		});
 		await groupChecklist.save();
 
-		req.flash('message', 'Topic is added!');
+		req.flash('success', 'Topic is added!');
 		return res.redirect('/edit-group-name/' + req.body.groupId);
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -189,8 +176,8 @@ exports.addTopic = async (req, res) => {
 
 exports.addTopicChecklist = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Topic Checklist Add', session: req.session };
+		res.locals.title = 'Topic Checklist Add';
+		res.locals.session = req.session;
 
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -219,7 +206,7 @@ exports.addTopicChecklist = async (req, res) => {
 			await topicChecklist.save();
 			message = "Topic checklist is is addeed!";
 		}
-		req.flash('message', message);
+		req.flash('success', message);
 		return res.redirect('/edit-topic/' + req.body.ratingTopicId);
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -236,8 +223,8 @@ exports.addTopicChecklist = async (req, res) => {
 
 exports.assignAuditor = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Assign Auditor - Manage Rating', session: req.session };
+		res.locals.title = 'Assign Auditor - Manage Rating';
+		res.locals.session = req.session;
 
 		let assignedPropertyIds = await MngRatingGroupAssign.find({}).distinct('propertyId');
 		let propertyData = await Property.find({_id: {$nin: assignedPropertyIds}});
@@ -258,8 +245,8 @@ exports.assignAuditor = async (req, res) => {
 
 exports.storeAssignAuditor = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Store Assign Auditor', session: req.session };
+		res.locals.title = 'Store Assign Auditor';
+		res.locals.session = req.session;
 
 		req.body.groupId = Array.isArray(req.body.groupId) ? req.body.groupId : [req.body.groupId];
 
@@ -310,7 +297,7 @@ exports.storeAssignAuditor = async (req, res) => {
 		}
 		
 		message = "Group is assigned";
-		req.flash('message', message);
+		req.flash('success', message);
 		return res.redirect('/manage-rating');
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -327,8 +314,8 @@ exports.storeAssignAuditor = async (req, res) => {
 
 exports.groupList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Manage Group', session: req.session };
+		res.locals.title = 'Manage Group';
+		res.locals.session = req.session;
 
 		let page = 1;
 		if (req.query.page != undefined) {
@@ -358,7 +345,7 @@ exports.groupList = async (req, res) => {
 
 		let groupData = await MngRatingGroupMaster.aggregate([search, sort, skip, limit, project]);
 
-		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('message'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('success'), 'error': req.flash('error') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -368,8 +355,8 @@ exports.groupList = async (req, res) => {
 
 exports.editGroup = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Edit Assign Group', session: req.session };
+		res.locals.title = 'Edit Assign Group';
+		res.locals.session = req.session;
 
 		let propertyData = await Property.findOne({_id: req.query.propertyId});
 		let allGroupList = await MngRatingGroupMaster.find({ status: 1 });
@@ -390,8 +377,8 @@ exports.editGroup = async (req, res) => {
 
 exports.updateAssignGroups = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Store Assign Auditor', session: req.session };
+		res.locals.title = 'Store Assign Auditor';
+		res.locals.session = req.session;
 
 		req.body.groupId = Array.isArray(req.body.groupId) ? req.body.groupId : [req.body.groupId];
 
@@ -451,7 +438,7 @@ exports.updateAssignGroups = async (req, res) => {
 		
 		message = "Group is assigned";
 		
-		req.flash('message', message);
+		req.flash('success', message);
 		return res.redirect('/manage-rating');
 	} catch (error) {
 		if (error.name == "ValidationError") {
@@ -468,8 +455,8 @@ exports.updateAssignGroups = async (req, res) => {
 
 exports.editGroupName = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Edit Group Name & Topic Name', session: req.session };
+		res.locals.title = 'Edit Group Name & Topic Name';
+		res.locals.session = req.session;
 
 		let condition = { "$match": { ratingGroupId: ObjectId(req.params.id) } };
 		let page = 1;
@@ -499,7 +486,7 @@ exports.editGroupName = async (req, res) => {
 		};
 		let topicData = await MngRatingTopicMaster.aggregate([condition, search, sort, skip, limit, project]);
 		const groupDetails = await MngRatingGroupMaster.findOne({ _id: ObjectId(req.params.id) });
-		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('message'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('success'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -508,8 +495,8 @@ exports.editGroupName = async (req, res) => {
 
 exports.editTopic = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Edit Topic & Checklists', session: req.session };
+		res.locals.title = 'Edit Topic & Checklists';
+		res.locals.session = req.session;
 
 		let condition = { "$match": { ratingTopicId: ObjectId(req.params.id) } };
 		let page = 1;
@@ -543,7 +530,7 @@ exports.editTopic = async (req, res) => {
 		};
 		let topicData = await MngRatingChecklistMaster.aggregate([condition, search, sort, skip, limit, project]);
 		let topicDetails = await MngRatingTopicMaster.findOne({ _id: ObjectId(req.params.id) }).populate({ "path": "ratingGroupId" });
-		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('message'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('success'), 'error': req.flash('error') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -554,7 +541,6 @@ exports.editTopic = async (req, res) => {
 // Update group status
 exports.updateGroupStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			grpId: Joi.required()
 		});
@@ -569,6 +555,7 @@ exports.updateGroupStatus = async (req, res) => {
 			ratingGroup.status = 0;
 		}
 		ratingGroup.save();
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -583,7 +570,6 @@ exports.updateGroupStatus = async (req, res) => {
 // Update rating topic status
 exports.updateRatingTopicStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			topicId: Joi.required()
 		});
@@ -598,6 +584,7 @@ exports.updateRatingTopicStatus = async (req, res) => {
 			ratingTopic.status = 0;
 		}
 		ratingTopic.save();
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -611,7 +598,6 @@ exports.updateRatingTopicStatus = async (req, res) => {
 // Update topic checklist status
 exports.updateTopicChecklistStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			topicChecklistId: Joi.required()
 		});
@@ -626,6 +612,7 @@ exports.updateTopicChecklistStatus = async (req, res) => {
 			ratingTopic.status = 0;
 		}
 		ratingTopic.save();
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -647,7 +634,7 @@ exports.updateGroupName = async (req, res) => {
 			req.flash('error', 'Group name already exists!');
 			return res.redirect('back');
 		}
-		req.flash('message', 'Group name is updated!');
+		req.flash('success', 'Group name is updated!');
 		return res.redirect('edit-group-name/' + req.body.group_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -666,7 +653,7 @@ exports.updateTopicName = async (req, res) => {
 			req.flash('error', 'Topic name already exists!');
 			return res.redirect('back');
 		}
-		req.flash('message', 'Topic name is updated!');
+		req.flash('success', 'Topic name is updated!');
 		return res.redirect('edit-topic/' + req.body.topic_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -710,8 +697,6 @@ exports.assignGroupList = async (req, res) => {
 // assign Rating Task
 exports.assignRatingTask = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-
 		let assignPropertyIds = await MngRatingGroupAssign.distinct('propertyId');
 		// assignPropertyIds = assignPropertyIds.map((i) => String(i));
 
@@ -777,7 +762,8 @@ exports.assignRatingTask = async (req, res) => {
 // assign Rating Task
 exports.viewGroupAssignTask = async (req, res) => {
 	try {
-		res.locals = { title: 'Manage Rating', session: req.session};
+		res.locals.title = 'Manage Rating';
+		res.locals.session = req.session;
 
 		let schema = Joi.object({
 			propertyId: Joi.required(),
@@ -882,7 +868,7 @@ exports.viewGroupAssignTask = async (req, res) => {
 			page: 1,
 			totalPages: 1,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('message'),
+			message: req.flash('success'),
 			error: req.flash('error')
 		});
 	} catch (error) {
@@ -897,7 +883,8 @@ exports.viewGroupAssignTask = async (req, res) => {
 // view Assign Task Checklist
 exports.viewAssignTaskChecklist = async (req, res) => {
 	try {
-		res.locals = { title: 'Manage Rating', session: req.session};
+		res.locals.title = 'Manage Rating';
+		res.locals.session = req.session;
 
 		let schema = Joi.object({
 			propertyId: Joi.required(),
@@ -935,7 +922,7 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 			page: 1,
 			totalPage: 1,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('message'),
+			message: req.flash('success'),
 			error: req.flash('error')
 		});
 	} catch (error) {
@@ -949,7 +936,8 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 // view Assign Task Checklist
 exports.storeAssignChecklistPoint = async (req, res) => {
 	try {
-		res.locals = { title: 'Manage Rating', session: req.session};
+		res.locals.title = 'Manage Rating';
+		res.locals.session = req.session;
 
 		// let schema = Joi.object({
 		// 	propertyId: Joi.required(),

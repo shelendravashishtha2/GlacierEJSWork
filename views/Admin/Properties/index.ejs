@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">Master Property</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">Master Property</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/properties" id="form">
+                <form method="GET" action="<%=APP_URL%>/properties" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -43,7 +43,7 @@
                     <% if(session.user.position_id == 1) { %>
                     <div class="col-sm-6">
                         <div class="text-sm-end">
-                                <a href="<%= process.env.APP_URL %>/create-properties"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>ADD PROPERTY</b></button></a>
+                                <a href="<%=APP_URL%>/create-properties"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>ADD PROPERTY</b></button></a>
                         </div>
                     </div>
                     <% } } %>
@@ -82,9 +82,9 @@
                                     <td style="width: 10%;text-align: center;">
                                         <% if(session) { %>
                                         <% if(session.user.position_id == 1) { %>
-                                            <a href="<%= process.env.APP_URL %>/edit-properties/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
+                                            <a href="<%=APP_URL%>/edit-properties/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
                                         <% } } %>
-                                        <a href="<%= process.env.APP_URL %>/view-properties/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a></td>
+                                        <a href="<%=APP_URL%>/view-properties/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a></td>
                                 </tr>
                                 <% } %>
                             </tbody>
@@ -153,14 +153,5 @@ $('.status').on('change', function(e) {
         $("#form").submit();
     }
 </script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

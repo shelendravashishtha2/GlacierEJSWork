@@ -16,7 +16,6 @@ const { prependToArray } = require("../../helper/commonHelpers");
 // PPM List Page 
 exports.updatePpmStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			ppmId: Joi.required()
 		});
@@ -31,6 +30,7 @@ exports.updatePpmStatus = async (req, res) => {
 			ppmDetail.status = 0;
 		}
 		ppmDetail.save();
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -43,7 +43,6 @@ exports.updatePpmStatus = async (req, res) => {
 }
 exports.updatePpmEquipmentName = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			ppmId: Joi.required(),
 			ppmEquipmentName: Joi.required()
@@ -75,7 +74,6 @@ exports.updatePpmEquipmentName = async (req, res) => {
 }
 exports.updatePpmTaskStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			ppmId: Joi.required(),
 			assetId: Joi.required()
@@ -97,6 +95,7 @@ exports.updatePpmTaskStatus = async (req, res) => {
 			ppmDetail.markModified("assets");
 			ppmDetail.save();
 		}
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -109,7 +108,6 @@ exports.updatePpmTaskStatus = async (req, res) => {
 }
 exports.updatePropertyWingStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			wingId: Joi.required()
@@ -131,6 +129,7 @@ exports.updatePropertyWingStatus = async (req, res) => {
 			propertyDetail.markModified("wings");
 			propertyDetail.save();
 		}
+
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
@@ -143,7 +142,6 @@ exports.updatePropertyWingStatus = async (req, res) => {
 }
 exports.createPpm = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			ppmEquipmentName: Joi.required(),
 			month: Joi.optional(),
@@ -179,8 +177,9 @@ exports.createPpm = async (req, res) => {
 					status: 1
 				}]
 		});
-		req.flash('message', "Equipment name is added!");
 		let ppmData = await obj.save();
+		req.flash('success', "Equipment name is added!");
+
 		return res.redirect('/ppm');
 	} catch (error) {
 		let errorMessage = '';
@@ -198,8 +197,9 @@ exports.createPpm = async (req, res) => {
 }
 exports.PpmList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'PPM', session: req.session };
+		res.locals.title = 'PPM';
+		res.locals.session = req.session;
+
 		let page = 1;
 		if (req.query.page != undefined) {
 			page = req.query.page;
@@ -236,7 +236,7 @@ exports.PpmList = async (req, res) => {
             page: page,
             totalPage: totalPage,
             search: req.query.search ? req.query.search : '',
-            message: req.flash('message'),
+            message: req.flash('success'),
             error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
@@ -297,12 +297,12 @@ exports.updatePpmTask = async (req, res) => {
 		} else {
 			ppm.assets.push(obj);
 			message = "Asset name has been added!";
-		// req.flash('message', message);
+		// req.flash('success', message);
 		}
 		ppm.markModified('assets');
 		await ppm.save();
 		
-		req.flash('message', message);
+		req.flash('success', message);
 		return res.redirect('/ppm/');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -312,7 +312,9 @@ exports.updatePpmTask = async (req, res) => {
 
 exports.assignPpmEquipmentAssetList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals.title = 'Edit PPM';
+		res.locals.session = req.session;
+
 		let schema = Joi.object({
 			pid: Joi.required(),
 			id: Joi.required()
@@ -321,7 +323,7 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		res.locals = { title: 'Edit PPM', session: req.session };
+
 		const {pid, id} = req.params;
 		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ propertyId: pid, _id: id }).populate({ "path": "propertyId", "match": { "status": 1 } });
 		let assignPpmEquipmentAssetData = await PpmEquipmentAssetAssign.find({ assignPpmEquipmentId: assignPpmEquipmentData._id });
@@ -339,7 +341,7 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			totalPage: 1,
 			taskData: assignPpmEquipmentAssetData,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('message'),
+			message: req.flash('success'),
 			error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
@@ -353,7 +355,6 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 
 exports.updateAssignPpmEquipmentStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			assignPpmEquipmentId: Joi.required(),
 		});
@@ -384,7 +385,9 @@ exports.updateAssignPpmEquipmentStatus = async (req, res) => {
 /*
 exports.editPpm = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals.title = 'Edit PPM';
+		res.locals.session = req.session;
+
 		let schema = Joi.object({
 			id: Joi.required()
 		});
@@ -392,7 +395,6 @@ exports.editPpm = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		res.locals = { title: 'Edit PPM', session: req.session };
 
 		let page = 1;
 		if (req.query.page != undefined) {
@@ -447,7 +449,7 @@ exports.editPpm = async (req, res) => {
 			totalPage: totalPage,
 			taskData: taskData,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('message'),
+			message: req.flash('success'),
 			error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
@@ -462,8 +464,8 @@ exports.editPpm = async (req, res) => {
 // View PPM List
 exports.viewPpmList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'View PPM List', session: req.session };
+		res.locals.title = 'View PPM List';
+		res.locals.session = req.session;
 
 		let page = 1;
 		if (req.query.page != undefined) {
@@ -508,8 +510,6 @@ exports.viewPpmList = async (req, res) => {
 // Assign Ppm Equipment 
 exports.addPropertyWing = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-
 		// delete data
 		let equipmentIds = await PpmEquipmentAssign.find({propertyId: req.body.propertyId, ppmEquipmentName:{$nin:req.body.ppmNames}}).distinct('_id');
 		await PpmEquipmentAssign.deleteMany({ propertyId: req.body.propertyId, ppmEquipmentName: { "$nin": req.body.ppmNames } });
@@ -558,8 +558,6 @@ exports.addPropertyWing = async (req, res) => {
 
 exports.propertyWingList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-
 		let PpmEquipmentData = await PpmEquipment.find({ status: 1 }, { ppmEquipmentName: 1 });
 		let assignPpmEquipmentData = await PpmEquipmentAssign.find({ propertyId: req.query.propertyId })
 				.populate({path: "propertyId", match: {status: 1} });
@@ -570,7 +568,6 @@ exports.propertyWingList = async (req, res) => {
 			ppm: PpmEquipmentData,
 			assignPpmData: assignPpmEquipmentData
 		});
-
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -579,8 +576,9 @@ exports.propertyWingList = async (req, res) => {
 
 exports.assignPpmList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Assign PPM List', session: req.session };
+		res.locals.title = 'Assign PPM List';
+		res.locals.session = req.session;
+
 		let propertyData = await Property.find({ status: 1 }, { property_name: 1 }).sort({ createdAt: -1 });
 
 		return res.render('Admin/PPM/assign-ppm-list', { 'data': PropertyResource(propertyData) });
@@ -593,7 +591,9 @@ exports.assignPpmList = async (req, res) => {
 // Property Wise PPM List
 exports.propertiesWisePpmList = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals.title = 'Assign PPM List';
+		res.locals.session = req.session;
+
 		let schema = Joi.object({
 			id: Joi.required()
 		});
@@ -601,7 +601,6 @@ exports.propertiesWisePpmList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		res.locals = { title: 'Assign PPM List', session: req.session };
 
 		let page = 1;
 		if (req.query.page != undefined) {
@@ -669,8 +668,9 @@ exports.propertiesWisePpmList = async (req, res) => {
 //  PPM Full Details
 exports.ppmDetails = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
-		res.locals = { title: 'Assign PPM List', session: req.session };
+		res.locals.title = 'Assign PPM List';
+		res.locals.session = req.session;
+
 		let propertyData = await PpmEquipment.find({});
 		return res.render('Admin/PPM/ppm-details', { 'data': PropertyResource(propertyData) });
 
@@ -749,7 +749,7 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 			})
 
 			message = "Equipment Asset is updated!";
-			req.flash('message', message);
+			req.flash('success', message);
 		} else {
 			await PpmEquipmentAssetAssign.create({
 				propertyId: req.body.propertyId,
@@ -764,7 +764,7 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 			})
 
 			message = "Equipment Asset is added!";
-			req.flash('message', message);
+			req.flash('success', message);
 		}
 
 		return res.redirect('assign-ppm-equipment-asset-list/' + req.body.propertyId + '/' + assignPpmEquipmentData._id + '');
@@ -776,7 +776,9 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 
 exports.updateAssignPpmEquipmentAssetStatus = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals.title = 'Assign PPM List';
+		res.locals.session = req.session;
+
 		let schema = Joi.object({
 			assignPpmEquipmentAssetId: Joi.required(),
 		});
@@ -807,7 +809,6 @@ exports.updateAssignPpmEquipmentAssetStatus = async (req, res) => {
 // view Properties Ppm Task
 exports.viewPropertiesPpmTask = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
 		let schema = Joi.object({
 			id: Joi.required()
 		});
@@ -815,7 +816,6 @@ exports.viewPropertiesPpmTask = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		res.locals = { title: 'Assign PPM List', session: req.session };
 
 		let assignPpmTaskData = await PpmTaskAssign.find({ propertyId: req.params.id }).populate({ path: 'assignPpmEquipmentAssetId'}).populate({ path: 'assignPpmEquipmentId'}); // populate: { path: 'ppmEquipmentId' } populate: { path: 'ppmEquipmentId' } 
 
@@ -837,7 +837,9 @@ exports.viewPropertiesPpmTask = async (req, res) => {
 // view Properties Ppm Task details
 exports.viewPropertiesPpmTaskDetails = async (req, res) => {
 	try {
-		if (!req.session.user) { return res.redirect('/login'); }
+		res.locals.title = 'Assign PPM List';
+		res.locals.session = req.session;
+		
 		let schema = Joi.object({
 			id: Joi.required()
 		});
@@ -845,7 +847,6 @@ exports.viewPropertiesPpmTaskDetails = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		res.locals = { title: 'Assign PPM List', session: req.session };
 
 		let assignPpmTaskData = await PpmTaskAssign.findOne({ _id: req.params.id }).populate({ path: 'assignPpmEquipmentId'}); //populate: { path: 'ppmEquipmentId' }
 

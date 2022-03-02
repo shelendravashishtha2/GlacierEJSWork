@@ -25,9 +25,9 @@
             <h4 class="mb-sm-0 font-size-18" id="formTitle"><%#= data.type %></h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-					<li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/categories">Master Category</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/edit-category-checklist/<%= data.category_id._id %>"><%= data.category_id.category_name %> </a></li>
+					<li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/categories">Master Category</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/edit-category-checklist/<%= data.category_id._id %>"><%= data.category_id.category_name %> </a></li>
 					<li class="breadcrumb-item active" id="formTitle1"><%#= data.type %></li>
                 </ol>
             </div>
@@ -87,12 +87,12 @@
 				// console.log(formBuilder.actions.getData());
 				console.log('<%= data._id %>');
 
-				$.post("/update-form-create", {
+				$.post("<%=APP_URL%>/update-form-create", {
 					checklistId: '<%= data._id %>',
 					forms: formBuilder.actions.getData()
 				}, function(data, status){
 					toastr.success(data.message);
-					window.location.href = "<%=process.env.APP_URL%>/master-frc";
+					window.location.href = "<%=APP_URL%>/master-frc";
 					// window.location.href = history.back(-1);
 				});
 				

@@ -33,8 +33,8 @@ exports.changeSOPStatus = async (req,res) => {
 // SOP List Page
 exports.sopList = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Sop List', session:req.session};
+		res.locals.title = 'Sop List';
+		res.locals.session = req.session;
 
 		let page = 1;
 		if(req.query.page != undefined){
@@ -67,7 +67,7 @@ exports.sopList = async (req,res) => {
 		totalPage = Math.ceil(totalProperty/10);
 		let sopData = await SOP.aggregate([search,sort,skip,limit,project]);
 
-		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -77,7 +77,6 @@ exports.sopList = async (req,res) => {
 //Create SOP Page
 exports.deleteSopImage = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
 		let sop = await SOP.findOne({_id:req.body.sopId});
 		if(sop.level == 1){
 			let index = sop.single_category_files.indexOf(req.body.file);
@@ -96,6 +95,7 @@ exports.deleteSopImage = async (req,res) => {
 				
 			})
 		sop.save();
+		
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
@@ -108,8 +108,9 @@ exports.deleteSopImage = async (req,res) => {
 }
 exports.createSop = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'Create Sop', session:req.session};
+		res.locals.title = 'Create Sop';
+		res.locals.session = req.session;
+
 		return res.render('Admin/SOP/create');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -191,7 +192,7 @@ exports.storeSop = async (req,res) => {
 		});
 		await SOPData.save();
 
-		req.flash('message', 'SOP is added!');
+		req.flash('success', 'SOP is added!');
 		return res.redirect('/sop');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -202,7 +203,9 @@ exports.storeSop = async (req,res) => {
 //edit SOP
 exports.editSop = async (req,res) => {
 	try {
-		res.locals = { title: 'Edit Sop', session:req.session};
+		res.locals.title = 'Edit Sop';
+		res.locals.session = req.session;
+
 		let sopData = await SOP.findOne({_id: req.params.id});
 		
 		return res.render('Admin/SOP/edit', { data: sopData });
@@ -215,7 +218,8 @@ exports.editSop = async (req,res) => {
 //update SOP
 exports.updateSop = async (req,res) => {
 	try {
-		res.locals = { title: 'Update Sop', session: req.session};
+		res.locals.title = 'Update Sop';
+		res.locals.session = req.session;
 
 		let single_category_files_array = [];
 		let sub_category_array = [];
@@ -314,7 +318,7 @@ exports.updateSop = async (req,res) => {
 			// console.log("Level 2 SOP updated: ", SOPData);
 		}
 
-		req.flash('message', 'SOP is updated!');
+		req.flash('success', 'SOP is updated!');
 		return res.redirect('/sop');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -325,8 +329,8 @@ exports.updateSop = async (req,res) => {
 // View view Sop Page
 exports.viewSop = async (req,res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
-		res.locals = { title: 'View SOP', session: req.session};
+		res.locals.title = 'View SOP';
+		res.locals.session = req.session;
 
 		let sopData = await SOP.findOne({_id: req.params.id});
 

@@ -8,7 +8,7 @@ const commonHelpers = require("../../helper/commonHelpers");
 const {errorLog,consoleLog} = require("../../helper/consoleLog");
 const UserResource = require('../resources/UserResource');
 
-// Register Form Validatation
+// Register Form Validation
 exports.registerValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),
@@ -135,7 +135,8 @@ exports.forgotPassword = async (req, res) => {
 
 // Reset password (Website)
 exports.resetPasswordWeb = async (req, res) => {
-	res.locals = { title: 'Reset Password'};
+	res.locals.title = 'Reset Password';
+	res.locals.session = req.session;
 
 	const _id = decrypt(req.params.key, req.params.id);
 	const userData = await User.findOne({ _id: _id });

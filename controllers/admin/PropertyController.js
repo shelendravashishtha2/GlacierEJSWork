@@ -26,7 +26,6 @@ exports.propertyAddValidation = [
 // Property add api
 exports.updatePropertyStatus = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required()
 		});
@@ -41,6 +40,7 @@ exports.updatePropertyStatus = async (req, res) => {
 			propertyDetail.status = 0;
 		}
 		propertyDetail.save();
+
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
@@ -53,7 +53,6 @@ exports.updatePropertyStatus = async (req, res) => {
 }
 exports.deletePropertyImage = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			imageIndex: Joi.required()
@@ -66,6 +65,7 @@ exports.deletePropertyImage = async (req, res) => {
 		propertyDetail.property_images.splice(req.body.imageIndex,1);
 		propertyDetail.markModified("property_images");
 		propertyDetail.save();
+
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
@@ -78,7 +78,6 @@ exports.deletePropertyImage = async (req, res) => {
 }
 exports.updatePropertyWingsStatus = async (req, res) => {
 	try {
-		if(!req.session.user){ return res.redirect('/login'); }
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			wingId: Joi.required()
@@ -99,6 +98,7 @@ exports.updatePropertyWingsStatus = async (req, res) => {
 		}
 		propertyDetail.markModified("wings");
 		propertyDetail.save();
+		
 		return res.status(200).send({
 		    "status": true,
 		    "status_code": "200",
@@ -111,7 +111,8 @@ exports.updatePropertyWingsStatus = async (req, res) => {
 }
 exports.propertyAdd = async (req, res) => {
 	try {
-		res.locals = { title: 'Add New Properties', session:req.session};
+		res.locals.title = 'Add New Properties';
+		res.locals.session = req.session;
 
 		const errors= validationResult(req);
         if(!errors.isEmpty()){
@@ -195,7 +196,7 @@ exports.propertyAdd = async (req, res) => {
 			})
 		}
 
-		req.flash('message', 'Property is added!');
+		req.flash('success', 'Property is added!');
 		return res.redirect('/properties');
 
 	} catch (error) {
@@ -223,7 +224,8 @@ exports.propertyUpdateValidation = [
 // Property Update 
 exports.propertyUpdate = async (req,res) => {
 	try {
-		res.locals = { title: 'Update Properties',session: req.session};
+		res.locals.title = 'Update Properties';
+		res.locals.session = req.session;
 
 		const errors= validationResult(req);
         if(!errors.isEmpty()){
@@ -287,7 +289,7 @@ exports.propertyUpdate = async (req,res) => {
 		oldPropertyData.property_images= oldPropertyData.property_images.concat(propertyImageNameArray);
 		oldPropertyData.wings=wingsNameArray;
 		await oldPropertyData.save();
-		req.flash('message', 'Property is updated!');
+		req.flash('success', 'Property is updated!');
 		return res.redirect('/properties');
 
 	} catch (error) {
@@ -308,9 +310,11 @@ exports.propertyUpdate = async (req,res) => {
 // Property List Page
 exports.propertyList = async (req,res) => {
 	try {
-		let message = "Successfully logged in., You're in!";
-		res.locals = { title: 'Properties',session: req.session};
+		let message = "";
+		res.locals.title = 'Properties';
+		res.locals.session = req.session;
 		req.session.error = '';
+
 		let page = 1;
 		if(req.query.page != undefined){
 			page = req.query.page;
@@ -341,7 +345,7 @@ exports.propertyList = async (req,res) => {
 		let totalProperty = await Property.count(query1);
 		totalPage = Math.ceil(totalProperty/10);
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
-		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -352,12 +356,12 @@ exports.propertyList = async (req,res) => {
 // Property List Page
 exports.completedUncompletedCategory = async (req,res) => {
 	try {
-		let message = "Successfully logged in., You're in!";
-		res.locals = { title: 'Properties',session: req.session};
+		let message = "";
+		res.locals.title = 'Properties';
+		res.locals.session = req.session;
 		req.session.error = '';
 
 		let condition = {"$match": {status:1}};
-
 		let page = 1;
 		if(req.query.page != undefined){
 			page = req.query.page;
@@ -390,7 +394,7 @@ exports.completedUncompletedCategory = async (req,res) => {
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
 
 		let propertysList = await Property.aggregate([condition]);
-		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -400,8 +404,9 @@ exports.completedUncompletedCategory = async (req,res) => {
 
 exports.dashboardIndex = async (req,res) => {
 	try {
-		let message = "Successfully logged in., You're in!";
-		res.locals = { title: 'Properties',session: req.session};
+		let message = "";
+		res.locals.title = 'Properties';
+		res.locals.session = req.session;
 		
 		req.session.error = '';
 		let project = {
@@ -416,7 +421,7 @@ exports.dashboardIndex = async (req,res) => {
 		dashboardCount['usersCount'] = await User.count();
 		dashboardCount['propertyCount'] = await Property.count();;
 		dashboardCount['categoryCount'] = await Category.count();
-		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'message': req.flash('message'), 'error': req.flash('error')});
+		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'message': req.flash('success'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -426,7 +431,8 @@ exports.dashboardIndex = async (req,res) => {
 // Property Create Page
 exports.propertyCreate = async (req,res) => {
 	try {
-		res.locals = { title: 'Create Property',session: req.session};
+		res.locals.title = 'Create Property';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
 
 		let project = {
@@ -457,8 +463,10 @@ exports.propertyCreate = async (req,res) => {
 // Property Update Page
 exports.propertyEdit = async (req,res) => {
 	try {
-		res.locals = { title: 'Update Property',session: req.session};
+		res.locals.title = 'Update Property';
+		res.locals.session = req.session;
 		res.locals.error = req.session.error ? req.session.error : '';
+
 		let propertyData = await Property.find({_id:req.params.id});
 		let location = propertyData[0].propertyLatLong;
 		return res.render('Admin/Properties/edit',{'data':PropertyResource(propertyData),'location':location,req: req});
@@ -472,12 +480,14 @@ exports.propertyEdit = async (req,res) => {
 // Property View Page
 exports.propertyView = async (req,res) => {
 	try {
-		res.locals = { title: 'View Propertyd',session: req.session};
+		res.locals.title = 'View Property';
+		res.locals.session = req.session;
+
 		let propertyData = await Property.find({_id:req.params.id});
 		let userPropertyData = await UserProperty.find({ propertyId: req.params.id}).populate({path: 'userId'}).lean();
 		let categoryData = await PropertyTask.find({ propertyId: req.params.id}).populate({path: 'categoryId'}).lean();
+		
 		return res.render('Admin/Properties/view',{'data':PropertyResource(propertyData),'userPropertyData': userPropertyData,'categoryData':categoryData});
-
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

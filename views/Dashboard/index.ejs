@@ -6,7 +6,7 @@
             <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item active">Dashboard</li>
+                    <li class="breadcrumb-item active">Dashboard <%#= user %> </li>
                 </ol>
             </div>
         </div>
@@ -110,7 +110,7 @@
                     <div class="row">
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
+                                <a href="<%=APP_URL%>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-primary me-1"></i>Total Task</p>
                                     <h5>100</h5>
                                 </a>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
+                                <a href="<%=APP_URL%>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-success me-1"></i> Completed Task</p>
                                     <h5>60 (60%)</h5>
                                 </a>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <a href="<%= process.env.APP_URL %>/properties-wise-completed-uncompleted-task">
+                                <a href="<%=APP_URL%>/properties-wise-completed-uncompleted-task">
                                     <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i> Pending Task</p>
                                     <h5>40 (40%)</h5>
                                 </a>
@@ -170,14 +170,5 @@
 </script>
 <!-- Saas dashboard init -->
 <script src="<%=process.env.APP_URL%>/public/assets/js/pages/saas-dashboard.init.js"></script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

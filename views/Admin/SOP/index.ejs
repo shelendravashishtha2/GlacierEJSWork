@@ -10,7 +10,7 @@
             <h4 class="mb-sm-0 font-size-18">SOP</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
                     <li class="breadcrumb-item active">SOP</li>
                 </ol>
             </div>
@@ -24,7 +24,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/sop" id="form">
+                <form method="GET" action="<%=APP_URL%>/sop" id="form">
                 <div class="row mb-2">
                     <!-- start searching -->
                     <div class="col-sm-3">
@@ -44,7 +44,7 @@
                         <div class="text-sm-end">
                         <% if(session) { %>
                         <% if(session.user.position_id == 1) { %>
-                            <a href="<%= process.env.APP_URL %>/create-sop"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>+ ADD SOP</b></button></a>
+                            <a href="<%=APP_URL%>/create-sop"><button type="button" class="btn btn-warning btn-rounded waves-effect waves-light mb-2 me-2" style="float: right;"><b>+ ADD SOP</b></button></a>
                         <% } } %>
                         </div>
                     </div>
@@ -113,9 +113,9 @@
                                 <td style="width: 10%;text-align: center;">
                                     <% if(session) { %>
                                     <% if(session.user.position_id == 1) { %>
-                                    <a href="<%= process.env.APP_URL %>/edit-sop/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
+                                    <a href="<%=APP_URL%>/edit-sop/<%= data[i]._id %>"> <button class="btn btn-outline-warning"><b>Edit</b></button></a>
                                     <% } } %>
-                                    <a href="<%= process.env.APP_URL %>/view-sop/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
+                                    <a href="<%=APP_URL%>/view-sop/<%= data[i]._id %>"><button class="btn btn-outline-secondary"><b>View</b></button></a>
                                 </td>
                             </tr>
                             <% } %>
@@ -176,14 +176,5 @@ $('.status').on('change', function(e) {
     }
 });
 </script>
-<% if(error.length> 0) { %>
-    <script>
-        toastr.error('<%= error %>');
-    </script>
-<% } %>
-<% if(message.length> 0) { %>
-    <script>
-        toastr.success('<%= message %>');
-    </script>
-<% } %>
+
 <%- contentFor('BottomJs') %>

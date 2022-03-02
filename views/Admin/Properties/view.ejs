@@ -11,8 +11,8 @@
             <h4 class="mb-sm-0 font-size-18">Property Details</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/properties">Master Property</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<%=APP_URL%>/properties">Master Property</a></li>
                     <li class="breadcrumb-item active">Property Details</li>
                 </ol>
             </div>
@@ -78,7 +78,7 @@
                                     </td>
                                     <td> 
                                         <% if(categoryData[i].categoryId) { %>
-                                        <a href="<%= process.env.APP_URL %>/edit-category-checklist/<%= categoryData[i].categoryId._id %>">
+                                        <a href="<%=APP_URL%>/edit-category-checklist/<%= categoryData[i].categoryId._id %>">
                                             <i class="fas fa-chevron-circle-right" style="font-size: 20px;"></i>
                                         </a>
                                         <% } %>
