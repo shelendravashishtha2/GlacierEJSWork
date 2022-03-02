@@ -4,7 +4,12 @@ const daysEnum = require("../enum/daysEnum");
 const { prependToArray } = require("../helper/commonHelpers");
 
 let daysArr = Object.keys(daysEnum);
+const frequencyEnum = require("../enum/frequencyEnum");
 let days = prependToArray('',daysArr);
+let frequencyArr = Object.keys(frequencyEnum);
+let frequency = prependToArray('None',frequencyArr);
+
+
 const CategoryFrcAssignSchema = new mongoose.Schema({
 	propertyId: {
 		type:  mongoose.Schema.Types.ObjectId, 
@@ -44,7 +49,7 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 	},
 	frequency: {
 		type: String,
-		enum: ['none','daily','monthly','quarterly','annually','bi-annually','weekly'],
+		enum: frequency,
 		required:true,
 		trim: true,
 	},
@@ -65,7 +70,10 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 		enum: days,
 		trim: true,
 	},
-
+	deleted: {
+		type: Number, //0=Not Deleted, 1=deleted
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 0,
+	},
 	status: {
 		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
