@@ -5,7 +5,6 @@ const frequencyEnum = require("../enum/frequencyEnum");
 const { prependToArray } = require("../helper/commonHelpers");
 
 let daysArr = Object.keys(daysEnum);
-const frequencyEnum = require("../enum/frequencyEnum");
 let days = prependToArray('',daysArr);
 let frequencyArr = Object.keys(frequencyEnum);
 let frequency = prependToArray('None',frequencyArr);
