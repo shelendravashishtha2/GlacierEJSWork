@@ -38,7 +38,7 @@ exports.categoryAssignment = async (req, res) => {
 		return res.render('Admin/Task/index', {
 			propertyData: propertyData,
 			search: req.query.search ? req.query.search : "",
-			message: req.query.message ? req.query.message : ""
+			message: req.flash('message'),
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -172,52 +172,77 @@ exports.updateAssignCategory = async (req, res) => {
 		let schema = Joi.object({
 			propertyId: Joi.required(),
 			categoryId: Joi.required(),
-			operationTeamId: Joi.required(),
-			managerId: Joi.optional(),
-			supervisorId: Joi.optional(),
+			operationTeamId: Joi.required()
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-
+		let {propertyId, categoryId, operationTeamId} = req.body;
+		await CategoryAssign.updateMany({propertyId: req.body.propertyId},{status:0});
+		await CategoryFrcAssign.updateMany({propertyId: req.body.propertyId},{deleted:1});
 		for (let i = 0; i < req.body.categoryId.length; i++) {
-			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
+			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: categoryId[i] });
 			if (!alreadyExists) {
 				await CategoryAssign.create({
 					propertyId: req.body.propertyId,
 					categoryId: req.body.categoryId[i],
 					operationTeamId: req.body.operationTeamId,
 				})
-			} else {
-				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
-					operationTeamId: req.body.operationTeamId,
+				let categoryFrc = await CategoryFrcMaster.find({categoryId: categoryId[i]});
+				let frcAssigns = []
+				categoryFrc.map((item)=>{
+					frcAssigns.push({
+						propertyId: propertyId,
+						assignCategoryId: created._id,
+						checklist_id: item.checklist_id,
+						checklist_name: item.checklist_name,
+						type: item.type,
+						form: item.form,
+						frequency: item.frequency,
+						month: item.month,
+						date: item.date,
+						day: capitalizeFirstLetter(item.day)
+					})
 				})
+				await CategoryFrcAssign.insertMany(frcAssigns);
+			} else {
+				let assignCategory = await CategoryAssign.findOneAndUpdate({ propertyId: propertyId, categoryId: categoryId[i] }, {
+					operationTeamId: req.body.operationTeamId,
+					status: 1
+				},{ new: true,runValidators: true });
+
+				let categoryFrc = await CategoryFrcMaster.find({categoryId: categoryId[i]});
+				let frcAssigns = [];
+					for(let j=0; j < categoryFrc.length; j++ ){
+						let item = categoryFrc[j];
+						let categoryFrcAssignExists = await CategoryFrcAssign.exists({ propertyId: propertyId, assignCategoryId: assignCategory._id, checklist_id: item.checklist_id });
+						if(!categoryFrcAssignExists){
+							frcAssigns.push({
+								propertyId: propertyId,
+								assignCategoryId: assignCategory._id,
+								checklist_id: item.checklist_id,
+								checklist_name: item.checklist_name,
+								type: item.type,
+								form: item.form,
+								frequency: capitalizeFirstLetter(item.frequency),
+								month: item.month,
+								date: item.date,
+								day: capitalizeFirstLetter(item.day)
+							})
+						}else{
+							await CategoryFrcAssign.updateOne({ propertyId: propertyId, checklist_id: item.checklist_id, assignCategoryId: assignCategory._id },{deleted: 0});
+						}
+				}
+				if(frcAssigns.length > 0){
+					await CategoryFrcAssign.insertMany(frcAssigns);
+				}
+				
 			}
 
 		}
-		return res.redirect("/category-assignment?message=Task Assign Successfully");
-
-		// let schema = Joi.object({
-		// 	taskId: Joi.required(),
-		// 	categoryId: Joi.required(),
-		// 	operationTeamId: Joi.required(),
-		// 	managerId: Joi.optional(),
-		// 	supervisorId: Joi.optional(),
-		// });
-		// let validation = schema.validate(req.body, __joiOptions);
-		// if (validation.error) {
-		// 	return res.send(response.error(400, validation.error.details[0].message, [] ));
-		// }
-
-		// let taskData = await CategoryAssign.updateOne({_id:req.body.taskId},{
-		// 	categoryId: req.body.categoryId?req.body.categoryId:[],
-		// 	operationTeamId: req.body.operationTeamId?req.body.operationTeamId:[],
-		// 	managerId: req.body.managerId?req.body.managerId:[],
-		// 	supervisorId: req.body.supervisorId?req.body.supervisorId:[],
-
-		// })
-		// return res.redirect("/edit-assign-category/"+req.body.taskId+"?message=Task Updated Successfully")
+		req.flash('message', 'Task Assign Successfully');
+		return res.redirect("/category-assignment");
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -249,7 +274,7 @@ exports.editAssignCategory = async (req, res) => {
 			let status = false;
 			for (let j = 0; j < assignCategory.length; j++) {
 				const assignCategoryData = assignCategory[j];
-				if (String(allCategoryData._id) == String(assignCategoryData.categoryId)) {
+				if (String(allCategoryData._id) == String(assignCategoryData.categoryId) && assignCategoryData.status==1) {
 					status = true;
 				}
 			}

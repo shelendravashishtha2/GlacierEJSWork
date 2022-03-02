@@ -111,4 +111,9 @@
     }
 </script>
 <%- contentFor('FooterJs') %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>
