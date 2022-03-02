@@ -20,7 +20,7 @@ exports.settingList = async (req,res) => {
 		return res.render('Admin/Setting/index',{ 
 			data: SettingRatingData, 
 			SettingPpmRiskAssessmentColorData: SettingPpmRiskAssessmentColorData,
-			message: req.flash('success'), error: req.flash('error')});
+			success: req.flash('success'), error: req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.flash('error', 'Something want wrong');

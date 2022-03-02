@@ -75,7 +75,7 @@ exports.manageRatingList = async (req, res) => {
 		return res.render('Admin/Manage-Rating/index', {
 			propertyData: propertyData,
 			search: req.query.search,
-			message: req.flash('success'),
+			success: req.flash('success'),
 			error: req.flash('error'),
 		})
 	} catch (error) {
@@ -345,7 +345,7 @@ exports.groupList = async (req, res) => {
 
 		let groupData = await MngRatingGroupMaster.aggregate([search, sort, skip, limit, project]);
 
-		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'message': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'success': req.flash('success'), 'error': req.flash('error') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -486,7 +486,7 @@ exports.editGroupName = async (req, res) => {
 		};
 		let topicData = await MngRatingTopicMaster.aggregate([condition, search, sort, skip, limit, project]);
 		const groupDetails = await MngRatingGroupMaster.findOne({ _id: ObjectId(req.params.id) });
-		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -530,7 +530,7 @@ exports.editTopic = async (req, res) => {
 		};
 		let topicData = await MngRatingChecklistMaster.aggregate([condition, search, sort, skip, limit, project]);
 		let topicDetails = await MngRatingTopicMaster.findOne({ _id: ObjectId(req.params.id) }).populate({ "path": "ratingGroupId" });
-		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'message': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success'), 'error': req.flash('error') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -868,7 +868,7 @@ exports.viewGroupAssignTask = async (req, res) => {
 			page: 1,
 			totalPages: 1,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('success'),
+			success: req.flash('success'),
 			error: req.flash('error')
 		});
 	} catch (error) {
@@ -922,7 +922,7 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 			page: 1,
 			totalPage: 1,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('success'),
+			success: req.flash('success'),
 			error: req.flash('error')
 		});
 	} catch (error) {

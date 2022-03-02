@@ -26,7 +26,7 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/Reports/index', {
             PropertyList: PropertyList,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -166,7 +166,7 @@ exports.ppmReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmEquipmentAssetAssignData: PpmEquipmentAssetAssignDataArray,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -274,7 +274,7 @@ exports.frcReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             CategoryFrcAssignData: CategoryFrcAssignDataArray,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {

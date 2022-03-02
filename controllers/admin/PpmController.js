@@ -236,7 +236,7 @@ exports.PpmList = async (req, res) => {
             page: page,
             totalPage: totalPage,
             search: req.query.search ? req.query.search : '',
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
@@ -341,7 +341,7 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			totalPage: 1,
 			taskData: assignPpmEquipmentAssetData,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('success'),
+			success: req.flash('success'),
 			error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
@@ -449,7 +449,7 @@ exports.editPpm = async (req, res) => {
 			totalPage: totalPage,
 			taskData: taskData,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('success'),
+			success: req.flash('success'),
 			error: req.flash('error'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr

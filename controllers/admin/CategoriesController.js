@@ -105,7 +105,7 @@ exports.categoryList = async (req, res) => {
             page: page,
             totalPage: totalPage,
             search: req.query.search ? req.query.search : '',
-            // message: req.flash('success'),
+            // success: req.flash('success'),
             // error: req.flash('error'),
         })
 	} catch (error) {
@@ -312,7 +312,7 @@ exports.checklist = async (req, res) => {
 		let CategoryData = await CategoryMaster.findOne({ _id: req.params.id });
 		let CategoryChecklistData = await CategoryFrcMaster.find({ category_id: req.params.id });
 
-		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryChecklistData, CategoryData: CategoryData, 'message': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryChecklistData, CategoryData: CategoryData, 'success': req.flash('success'), 'error': req.flash('error') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -402,7 +402,7 @@ exports.frcChecklist = async (req, res) => {
             data: CategoryChecklistData,
             categoryData: allCategoryData,
             paramsCategoryId: paramsCategoryId,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -469,7 +469,7 @@ exports.editChecklistDetails = async (req, res) => {
             months: monthsArr,
 			daysArr: daysArr,
 			frequencyArr: frequencyArr,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {

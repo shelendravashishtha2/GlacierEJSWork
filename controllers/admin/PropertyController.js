@@ -345,7 +345,7 @@ exports.propertyList = async (req,res) => {
 		let totalProperty = await Property.count(query1);
 		totalPage = Math.ceil(totalProperty/10);
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
-		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -394,7 +394,7 @@ exports.completedUncompletedCategory = async (req,res) => {
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
 
 		let propertysList = await Property.aggregate([condition]);
-		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -421,7 +421,7 @@ exports.dashboardIndex = async (req,res) => {
 		dashboardCount['usersCount'] = await User.count();
 		dashboardCount['propertyCount'] = await Property.count();;
 		dashboardCount['categoryCount'] = await Category.count();
-		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'message': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'success': req.flash('success'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

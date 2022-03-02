@@ -28,13 +28,15 @@ module.exports = function (app) {
 
 	app.use(function (req, res, next) { //auth middleware
 		res.locals.APP_URL = process.env.APP_URL + req.baseUrl;
+		res.locals.success = req.flash('success');
+		res.locals.error = req.flash('error');
 		next();
 	})
 
 	app.get(baseUrl + 'register', function (req, res) {
 		if (req.user) { res.redirect('Dashboard/index'); }
 		else {
-			res.render('Auth/auth-register', { 'message': req.flash('success'), 'error': req.flash('error') });
+			res.render('Auth/auth-register', { 'success': req.flash('success'), 'error': req.flash('error') });
 		}
 	});
 
@@ -60,7 +62,7 @@ module.exports = function (app) {
 				return res.redirect(baseUrl + '');
 			}
 		} else {
-			return res.render('Auth/auth-login', { 'message': req.flash('success'), 'error': req.flash('error') });
+			return res.render('Auth/auth-login', { 'success': req.flash('success'), 'error': req.flash('error') });
 		}
 	});
 
@@ -97,7 +99,7 @@ module.exports = function (app) {
 	});
 
 	app.get(baseUrl + 'forgot-password', function (req, res) {
-		res.render('Auth/auth-forgot-password', { 'message': req.flash('success'), 'error': req.flash('error') });
+		res.render('Auth/auth-forgot-password', { 'success': req.flash('success'), 'error': req.flash('error') });
 	});
 
 	app.post(baseUrl + 'post-forgot-password', urlencodeParser, async function (req, res) {

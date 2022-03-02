@@ -18,7 +18,7 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/History/index', {
             PropertyList: PropertyList,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -107,7 +107,7 @@ exports.ppmHistory = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmTaskAssignData: PpmTaskAssignData,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {
@@ -161,7 +161,7 @@ exports.frcHistory = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmTaskAssignData: PpmTaskAssignData,
-            message: req.flash('success'),
+            success: req.flash('success'),
             error: req.flash('error'),
         })
 	} catch (error) {

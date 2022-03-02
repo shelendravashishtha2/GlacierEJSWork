@@ -67,7 +67,7 @@ exports.sopList = async (req,res) => {
 		totalPage = Math.ceil(totalProperty/10);
 		let sopData = await SOP.aggregate([search,sort,skip,limit,project]);
 
-		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'message': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
