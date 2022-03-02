@@ -9,6 +9,7 @@ const { errorLog } = require("../../helper/consoleLog");
 const CategoryResource = require('../resources/CategoryResource');
 const daysEnum = require("../../enum/daysEnum");
 const frequencyEnum = require("../../enum/frequencyEnum");
+const monthsEnum = require("../../enum/monthsEnum");
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 var toastr = require('express-toastr');
 const Joi = require("joi");
@@ -154,7 +155,9 @@ exports.editChecklistForm = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }
 		res.locals = { title: 'Edit Checklist Multi Form', session: req.session };
+
 		let categoryData = await CategoryMaster.find({});
+
 		return res.render('Admin/Categories/edit-checklist-multi-form', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -178,7 +181,6 @@ exports.createChecklist = async (req, res) => {
 			uniqueId = setting.uniqueId;
 		}
 		uniqueId = uniqueId.toString().padStart(8, "0");
-		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 		let condition = { "$match": { status: 1 } };
 
@@ -188,16 +190,18 @@ exports.createChecklist = async (req, res) => {
 			}
 		}
 		let categoryData = await CategoryMaster.aggregate([condition, project]);
+
 		let daysArr = Object.keys(daysEnum);
 		let frequencyArr = Object.keys(frequencyEnum);
+		let monthsArr = Object.keys(monthsEnum);
+
 		return res.render('Admin/Categories/create-check-list', { 
-			'months': monthsList, 
+			months: monthsArr, 
 			uniqueId: uniqueId, 
 			category_id: req.params.id, 
 			categoryData: categoryData,
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
- 
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -255,6 +259,7 @@ exports.storeChecklist = async (req, res) => {
 
 		return res.redirect('create-checklist-multi-form/' + CategoryChecklistData._id);
 	} catch (error) {
+		console.log(error);
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
@@ -425,9 +430,19 @@ exports.editChecklistDetails = async (req, res) => {
 		res.locals = { title: 'Edit checklist page', session: req.session };
 
 		let CategoryChecklistData = await CategoryFrcMaster.findOne({ _id: req.params.id });
-		let monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-		return res.render('Admin/Categories/edit-check-list', { data: CategoryChecklistData, months: monthsList, 'message': req.flash('message'), 'error': req.flash('error') });
+		let daysArr = Object.keys(daysEnum);
+		let frequencyArr = Object.keys(frequencyEnum);
+		let monthsArr = Object.keys(monthsEnum);
+
+		return res.render('Admin/Categories/edit-check-list', {
+            data: CategoryChecklistData,
+            months: monthsArr,
+			daysArr: daysArr,
+			frequencyArr: frequencyArr,
+            message: req.flash('message'),
+            error: req.flash('error'),
+        })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -461,6 +476,7 @@ exports.updateChecklistDetails = async (req, res) => {
 			month: req.body.month,
 			date: req.body.date,
 		}, { new: true });
+		
 		req.flash('message', 'Category checklist is updated!');
 		return res.redirect('master-frc');
 	} catch (error) {
@@ -489,14 +505,18 @@ exports.updateFormCreate = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
+
 		let categoryChecklistData = await CategoryFrcMaster.findOne({ _id: req.body.checklistId });
 		categoryChecklistData.form = req.body.forms;
 		await categoryChecklistData.save();
+
 		return res.send(response.success(200, 'Form update Successfully'));
 	} catch (error) {
-
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 exports.createChecklistMultiForm = async (req, res) => {
 	try {
 		if (!req.session.user) { return res.redirect('/login'); }

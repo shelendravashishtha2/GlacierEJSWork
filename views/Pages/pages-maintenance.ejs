@@ -9,7 +9,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="public/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon.ico">
 
     <%- include ('../Partials/HeaderStyle')  %>
 
@@ -27,8 +27,8 @@
                     <div class="home-wrapper">
                         <div class="mb-5">
                             <a href="<%= process.env.APP_URL %>/" class="d-block auth-logo">
-                                <img src="public/assets/images/logo-dark.png" alt="" height="20" class="auth-logo-dark mx-auto">
-                                <img src="public/assets/images/logo-light.png" alt="" height="20" class="auth-logo-light mx-auto">
+                                <img src="<%=process.env.APP_URL%>/public/assets/images/logo-dark.png" alt="" height="20" class="auth-logo-dark mx-auto">
+                                <img src="<%=process.env.APP_URL%>/public/assets/images/logo-light.png" alt="" height="20" class="auth-logo-light mx-auto">
                             </a>
                         </div>
                         
@@ -36,7 +36,7 @@
                         <div class="row justify-content-center">
                             <div class="col-sm-4">
                                 <div class="maintenance-img">
-                                    <img src="public/assets/images/maintenance.svg" alt="" class="img-fluid mx-auto d-block">
+                                    <img src="<%=process.env.APP_URL%>/public/assets/images/maintenance.svg" alt="" class="img-fluid mx-auto d-block">
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
     
     <%- include ('../Partials/FooterScript')  %>
 
-    <script src="public/assets/js/app.js"></script>
+    <script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
 
 </body>
 </html>

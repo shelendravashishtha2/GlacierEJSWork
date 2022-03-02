@@ -55,14 +55,11 @@
                             <div class="mb-3">
                                 <label class="form-label">Frequency<span class="required">*</span></label>
                                 <select class="form-control" name="frequency" onchange="changeFrequency(this)" required>
-                                    <option value="">Select Frequency</option>
-                                    <option value="none" <% if (data.frequency == "none") { %> selected <% } %> >None</option>
-                                    <option value="daily" <% if (data.frequency == "daily") { %> selected <% } %> >Daily</option>
-                                    <option value="weekly" <% if (data.frequency == "weekly") { %> selected <% } %> >Weekly</option>
-                                    <option value="monthly" <% if (data.frequency == "monthly") { %> selected <% } %> >Monthly</option>
-                                    <option value="quarterly" <% if (data.frequency == "quarterly") { %> selected <% } %> >Quarterly</option>
-                                    <option value="annually" <% if (data.frequency == "annually") { %> selected <% } %> >Annually</option>
-                                    <option value="bi-annually" <% if (data.frequency == "bi-annually") { %> selected <% } %> >Bi-Annually</option>
+                                    <option value="" disabled hidden>Choose here</option>
+                                    <option value="none">None</option>
+                                    <% for (j = 0; j < frequencyArr.length; j++) { %>
+                                        <option value="<%=frequencyArr[j]%>" <% if (frequencyArr[j] == data.frequency) { %> selected <% } %>> <%=frequencyArr[j]%> </option>
+                                    <% } %>
                                 </select>
                             </div>
                         </div>
@@ -70,14 +67,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Day<span class="required">*</span></label>
                                 <select class="form-select checklist_day" name="day" required>
-                                    <option value="">Select Day</option>
-									<option value="monday" <% if (data.day == "monday") { %> selected <% } %> >Monday</option>
-									<option value="tuesday" <% if (data.day == "tuesday") { %> selected <% } %> >Tuesday</option>
-									<option value="wednesday" <% if (data.day == "wednesday") { %> selected <% } %> >Wednesday</option>
-									<option value="thursday" <% if (data.day == "thursday") { %> selected <% } %> >Thursday</option>
-									<option value="friday" <% if (data.day == "friday") { %> selected <% } %> >Friday</option>
-									<option value="saturday" <% if (data.day == "saturday") { %> selected <% } %> >Saturday</option>
-									<option value="sunday" <% if (data.day == "sunday") { %> selected <% } %> >Sunday</option>
+                                    <option value="" selected hidden disabled>Select Day</option>
+									<% for (j = 0; j < daysArr.length; j++) { %>
+                                        <option value="<%=daysArr[j]%>" <%= data.day == daysArr[j] ? 'selected' : '' %>> <%=daysArr[j]%> </option>
+                                    <% } %>
                                 </select>
                                 <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.day!='undefined' )? errors.day.msg:''%></p>
                             </div>
@@ -86,9 +79,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Month<span class="required">*</span></label>
                                 <select class="form-control checklist_month" name="month" required>
-                                    <option value="">Select Month</option>
+                                    <option value="" selected hidden disabled>Select Month</option>
                                     <% for(m = 0; m < months.length; m++) { %>
-                                    	<option value="<%= m+1 %>" <% if (data.month == m) { %> selected <% } %> ><%= months[m] %></option>
+                                    	<option value="<%= m+1 %>" <%= data.month == m ? 'selected' : '' %>> <%= months[m] %> </option>
                                     <% } %>
                                 </select>
                             </div>
@@ -97,9 +90,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Date<span class="required">*</span></label>
                                 <select class="form-control checklist_date" name="date" required>
-                                    <option value="">Select Date</option>
+                                    <option value="" selected hidden disabled>Select Date</option>
                                     <% for (i = 1; i < 32; i++) { %>
-                                    	<option value="<%=i%>" <% if (data.date == i) { %> selected <% } %> ><%=i%></option>
+                                    	<option value="<%=i%>" <%= data.date == i ? 'selected' : '' %>> <%= i %> </option>
                                     <% } %>
                                 </select>
                             </div>
@@ -130,17 +123,17 @@
   		$('.checklist_date').hide().prop('required',false);
 
 		let frequency = '<%= data.frequency %>';
-		if(frequency == 'weekly'){
+		if(frequency == 'Weekly'){
   			$('.checklist_day').show();
-		} else if(frequency == 'monthly') {
+		} else if(frequency == 'Fortnightly' || frequency == 'Monthly') {
 			$('.checklist_date').show();
-		}  else if(frequency == 'quarterly') {
+		}  else if(frequency == 'Quarterly') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(frequency == 'annually') {
+		}  else if(frequency == 'Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(frequency == 'bi_annually') {
+		}  else if(frequency == 'Bi-annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
 		}
@@ -151,21 +144,18 @@
 		$('.checklist_month').hide().prop('required',false);
 		$('.checklist_date').hide().prop('required',false);
 
-		let optionValue = $(event).val();
-
-        if(optionValue == 'daily'){
-		}
-		else if(optionValue == 'weekly'){
+		let frequency = $(event).val();
+		if(frequency == 'Weekly'){
 			$('.checklist_day').show();
-		} else if(optionValue == 'monthly') {
+		} else if(frequency == 'Monthly') {
 			$('.checklist_date').show();
-		}  else if(optionValue == 'quarterly') {
+		}  else if(frequency == 'Quarterly') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'annually') {
+		}  else if(frequency == 'Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'bi_annually') {
+		}  else if(frequency == 'Bi-Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
 		}

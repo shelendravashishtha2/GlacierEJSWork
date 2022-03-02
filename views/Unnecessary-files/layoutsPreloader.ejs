@@ -9,7 +9,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="public/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="<%=process.env.APP_URL%>/public/assets/images/favicon.ico">
 
     <%- HeaderCss %>
     <%- include ('./Partials/HeaderStyle')  %>
@@ -68,7 +68,7 @@
 
     <%- FooterJs %>
 
-    <script src="public/assets/js/app.js"></script>
+    <script src="<%=process.env.APP_URL%>/public/assets/js/app.js"></script>
     <%- BottomJs %>
 </body>
 

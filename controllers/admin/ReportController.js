@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const MomentRange = require('moment-range');
 const response = require("../../helper/response");
 const { errorLog } = require("../../helper/consoleLog");
+const MomentRange = require('moment-range');
 const PropertyResource = require('../resources/PropertyResource');
 const PpmEquipment = require("../../models/PpmEquipmentMaster");
 const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
@@ -21,7 +21,7 @@ exports.index = async (req, res) => {
 		res.locals.error = req.session.error ? req.session.error : '';
 		req.session.error = '';
 
-		let PropertyList = await Property.find({status: 1}).sort({createdAt: 'desc'});
+		let PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
 
 		return res.render('Admin/Reports/index', {
             PropertyList: PropertyList,
@@ -213,7 +213,7 @@ exports.frcReport = async (req, res) => {
 		let CategoryFrcAssignData = await CategoryFrcAssign.find(findQuery).populate({path: 'assignCategoryId', populate: {path: 'categoryId'}});
 		let CategoryFrcAssignDataArray = [];
 
-		console.log(CategoryFrcAssignData);
+		// console.log(CategoryFrcAssignData);
 
 		for (let i = 0; i < CategoryFrcAssignData.length; i++) {
 			const element = CategoryFrcAssignData[i];

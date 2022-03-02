@@ -64,17 +64,45 @@
     };
 	let formBuilder = $(fbEditor).formBuilder(options)
 
-	//form render(view form)
-	// var container = document.getElementById('fb-rendered-form');
-	// // let formData = <%#- JSON.stringify(data.form) %>;
-	// var formRenderOpts = {
-	// 	formData,
-	// 	dataType: 'json'
+	// jQuery($ => {
+	// 	// const fbEditor = document.getElementById("build-wrap");
+	// 	// const formBuilder = $(fbEditor).formBuilder();
+
+	// 	document
+	// 		.getElementsByClassName("saveData")
+	// 		.addEventListener("click", () => formBuilder.actions.save());
+	// });
+
+
+	// var saveBtn = document.querySelector('.saveData');
+	// console.log('saveBtn=> ', saveBtn);
+	// saveBtn.onclick = function() {
+	// 	console.log('Form Saved');
+	// 	// window.sessionStorage.setItem('formData', $fbEditor.data('formBuilder').formData);
 	// };
-	// $(container).formRender(formRenderOpts);
 
+    setTimeout(function(){
+		document.getElementsByClassName("save-template")[0].addEventListener("click", function() {
+			if(formBuilder.actions.getData().length > 0){
+				// console.log(formBuilder.actions.getData());
+				console.log('<%= data._id %>');
 
-    if(formData.length > 0){
+				$.post("/update-form-create", {
+					checklistId: '<%= data._id %>',
+					forms: formBuilder.actions.getData()
+				}, function(data, status){
+					toastr.success(data.message);
+					window.location.href = "<%=process.env.APP_URL%>/master-frc";
+					// window.location.href = history.back(-1);
+				});
+				
+			}else{
+				
+			}
+		});
+    },1500)
+
+	if(formData.length > 0){
         $("#formTitle").html("Edit Form");
         $("#formTitle1").html("Edit Form");
         $("#formTitle2").html("Edit Form");
@@ -83,24 +111,4 @@
         $("#formTitle1").html("Add Form");
         $("#formTitle2").html("Add Form");
     }
-
-    setTimeout(function(){
-            document.getElementsByClassName("save-template")[0].addEventListener("click", function() {
-                if(formBuilder.actions.getData().length > 0){
-                  $.post("<%=process.env.APP_URL%>/update-form-create",
-                  {
-                    checklistId: '<%= data._id %>',
-                    forms: formBuilder.actions.getData()
-                  },
-                  function(data, status){
-                        toastr.success(data.message);
-                        // window.location.href = "<%#=process.env.APP_URL%>/master-frc";
-                        window.location.href = history.back(-1);
-                  });
-                  
-                }else{
-                  
-                }
-            });
-    },1500)
 </script>

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
 const daysEnum = require("../enum/daysEnum");
+const frequencyEnum = require("../enum/frequencyEnum");
 const { prependToArray } = require("../helper/commonHelpers");
 
 let daysArr = Object.keys(daysEnum);

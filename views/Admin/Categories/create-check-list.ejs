@@ -73,13 +73,6 @@
                                     <% for (j = 0; j < frequencyArr.length; j++) { %>
                                         <option value="<%=frequencyArr[j]%>"><%=frequencyArr[j]%></option>
                                     <% } %>
-
-                                    <!-- <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="quarterly">Quarterly</option>
-                                    <option value="annually">Annually</option>
-                                    <option value="bi_annually">Bi-Annually</option> -->
                                 </select>
                                 <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.frequency!='undefined' )? errors.frequency.msg:''%></p>
                             </div>
@@ -88,13 +81,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Day<span class="required">*</span></label>
                                 <select class="form-select checklist_day" name="day" required>
-                                    <option value="monday" selected>Monday</option>
-									<option value="tuesday">Tuesday</option>
-									<option value="wednesday">Wednesday</option>
-									<option value="thursday">Thursday</option>
-									<option value="friday">Friday</option>
-									<option value="saturday">Saturday</option>
-									<option value="sunday">Sunday</option>
+									<% for (j = 0; j < daysArr.length; j++) { %>
+                                        <option value="<%=daysArr[j]%>"> <%=daysArr[j]%> </option>
+                                    <% } %>
                                 </select>
                                 <p style="color: red;"><%=(typeof errors!='undefined' && typeof errors.month!='undefined' )? errors.month.msg:''%></p>
                             </div>
@@ -155,20 +144,18 @@
 		$('.checklist_month').hide().prop('required',false);
   		$('.checklist_date').hide().prop('required',false);
 
-        let optionValue = $("#frequency").val();
-        if(optionValue == 'daily'){
-		}
-		else if(optionValue == 'Weekly'){
+        let frequency = $("#frequency").val();
+        if(frequency == 'Weekly'){
   			$('.checklist_day').show();
-		} else if(optionValue == 'Monthly') {
+		} else if(frequency == 'Fortnightly' || frequency == 'Monthly') {
 			$('.checklist_date').show();
-		}  else if(optionValue == 'Quarterly') {
+		}  else if(frequency == 'Quarterly') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'Annually') {
+		}  else if(frequency == 'Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
-		}  else if(optionValue == 'Bi_annually') {
+		}  else if(frequency == 'Bi-Annually') {
 			$('.checklist_month').show();
 			$('.checklist_date').show();
 		}

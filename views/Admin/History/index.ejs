@@ -1,8 +1,9 @@
 <%- contentFor('HeaderCss') %>
+
+<link href="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
+
 <%- contentFor('breadcrumb') %>
-<style>
-    .text-center{text-align: center;}
-</style>
+
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
@@ -11,7 +12,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="<%= process.env.APP_URL %>/">Dashboard</a></li>
-                    <li class="breadcrumb-item active">History</li>
+                    <li class="breadcrumb-item"><a href="#">History</a></li>
                 </ol>
             </div>
         </div>
@@ -20,86 +21,87 @@
 <!-- end page title -->
 
 <%- contentFor('body') %>
+
 <div class="row">
-    <div class="col-12">
+    <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form method="GET" action="<%= process.env.APP_URL %>/history" id="form">
-                <div class="row mb-2">
-                    <!-- start searching -->
-                    <div class="col-sm-3">
-                        <div class="search-box">
-                            <div class="position-relative">
-                                <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search..."><i class="bx bx-search-alt search-icon"></i>
-                                <input type="hidden" name="page" id="page" value="<%= page %>">
+                <form class="row gy-2 gx-3 align-items-center" method="post" action="">
+					<div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">History for <span class="text-danger">*</span></label>
+								<select name="historyType" class="form-select" id="autoSizingSelect" required>
+									<option value="" selected disabled>Select History type</option>
+									<option value="1">PPM</option>
+									<option value="2">FRC</option>
+									<option value="2">Rating</option>
+								</select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">Property <span class="text-danger">*</span></label>
+								<select name="propertyId" class="form-select" id="autoSizingSelect" required>
+									<option value="" selected disabled>Select Property</option>
+									<% for (i = 0; i < PropertyList.length; i++) { %>
+										<option value="<%= PropertyList[i]._id %>"><%= PropertyList[i].property_name %></option>
+									<% } %>
+								</select>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingInput">Start Date <span class="text-danger">*</span></label>
+								<div class="input-group" id="datepicker1">
+									<input type="text" name="startDate" class="form-control" id="autoSizingInput" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-provide="datepicker" data-date-autoClose="true" data-date-end-date="new Date()" required>
+									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+								</div>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingInputGroup">End Date <span class="text-danger">*</span></label>
+								<div class="input-group" id="datepicker2">
+									<input type="text" name="endDate" class="form-control" id="autoSizingInputGroup" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-date-container='#datepicker2' data-provide="datepicker" data-date-autoClose="true" data-date-end-date="new Date()" required>
+									<span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+								</div>
+                            </div>
+                        </div>
+						<div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="autoSizingSelect">Status </label>
+								<select name="status" class="form-select" id="autoSizingSelect">
+									<option selected disabled>Select Status</option>
+									<option value="1">Complete Task</option>
+									<option value="2">Pending Task</option>
+								</select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-8" style="padding: 0px;">
-                        <button type="button" onclick="pagination(1)" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="bx bx-search-alt search-icon"></i> Search</button>
-                    </div>
-                    <!-- end searching -->
-                </div>
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button type="submit" class="btn btn-warning w-md">Search</button>
+						</div>
+					</div>
                 </form>
-                <hr>
-                <div class="table-responsive">
-                    <table class="table align-middle table-nowrap table-check">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th>Property Name</th>
-                                <th class="text-center">Select Property</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if(data.length ==0) { %>
-                                <tr><td colspan="3" class="text-center">No data found</td></tr>
-                            <% } %>
-                            <% for (i = 0; i < data.length; i++) { %>
-                            <tr>
-                                <td style="width: 5%;text-align: center;"><%= (10*(page-1))+ 1 + i %></td>
-                                <td><%= data[i].property_name %></td>
-                                <td style="width: 10%;text-align: center;">
-                                    <a href="<%= process.env.APP_URL %>/category-history/<%= data[i]._id %>">
-                                        <i class="fas fa-chevron-circle-right" style="font-size: 20px;"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-                 <!-- start pagination -->
-                 <ul class="pagination pagination-rounded justify-content-end mb-2">
-                    <% if(page > 1){ %>
-                        <li class="page-item">
-                            <a class="page-link" href="#" onclick="pagination(<%=(Number(page)-1)%>)" aria-label="Previous">
-                                <i class="mdi mdi-chevron-left"></i>
-                            </a>
-                        </li>
-                    <% } %>
-                    <% for (i = 1; i <= totalPage; i++) { %>
-                        <li class="page-item  <% if(page == i){ %> active <% } %>"><a class="page-link"  href="#" onclick="pagination(<%=i%>)"><%=i%></a></li>
-                    <% } %>
-                    <% if(page < totalPage){ %>
-                    <li class="page-item">
-                        <a class="page-link"  href="#" onclick="pagination(<%=(Number(page)+1)%>)" aria-label="Next">
-                            <i class="mdi mdi-chevron-right"></i>
-                        </a>
-                    </li>
-                    <% } %>
-                </ul>
-                <!-- end pagination -->
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    function pagination(i){
-        $("#page").val(i);
-        $("#form").submit();
-    }
-</script>
-<!-- end row -->
+            </div> <!-- end card body -->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
 <%- contentFor('FooterJs') %>
+
+<script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
+<% if(error.length> 0) { %>
+    <script>
+        toastr.error('<%= error %>');
+    </script>
+<% } %>
+<% if(message.length> 0) { %>
+    <script>
+        toastr.success('<%= message %>');
+    </script>
+<% } %>
 <%- contentFor('BottomJs') %>
