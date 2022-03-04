@@ -40,6 +40,7 @@
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
                                 <input type="hidden" class="form-select" id="propertyId" name="propertyId" value="<%= propertyData._id %>" readonly>
                                 <input type="text" class="form-select"  value="<%= propertyData.property_name %>" disabled>
+                                <!-- <p style="color: red;"><%=(typeof errors != 'undefined' && typeof errors.propertId.errMsg != 'undefined') ? errors.errMsg.propertId.errMsg: ''%></p> -->
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -80,13 +81,14 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-md-4 col-form-label">Select Operations Team *</label>
+                            <label class="col-md-4 col-form-label">Select Operations Team</label>
                             <div class="col-md-7" style="padding-right:0px;padding-left:0px;">
-                                <select class="select2 form-control select2-multiple" name="operationTeamId[]" id="operationTeamId" multiple="multiple" data-placeholder="Choose Operations Team..." required>
+                                <select class="select2 form-control select2-multiple" name="operationTeamId[]" id="operationTeamId" multiple="multiple" data-placeholder="Choose Operations Team...">
 									<% for( let i = 0; i < allOperationTeam.length; i++ ) { %>
 										<option value="<%= allOperationTeam[i]._id %>" <%= allOperationTeam[i].status ? 'selected' : '' %>><%= allOperationTeam[i].full_name %></option>
 									<% } %>
                                 </select>
+                                <!-- <p style="color: red;"><%=(typeof errors != 'undefined' && typeof errors.operationTeamId.errMsg != 'undefined') ? errors.errMsg.operationTeamId.errMsg: ''%></p> -->
                             </div>
                         </div>
                     </div>
@@ -106,11 +108,7 @@
 </div>
 <!-- end row -->
 <%- contentFor('FooterJs') %>
-<script>
-    <% if(message){ %>
-        toastr.success('<%= message %>');
-    <% } %>
-</script>
+
 <script src="<%=process.env.APP_URL%>/public/assets/libs/select2/js/select2.min.js"></script>
 <!-- form advanced init -->
 <script src="<%=process.env.APP_URL%>/public/assets/js/pages/form-advanced.init.js"></script>
