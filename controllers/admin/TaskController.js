@@ -127,6 +127,7 @@ exports.assignCategorySubmit = async (req, res) => {
 			} else {
 				await CategoryAssign.updateOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
+					deleted: 0
 				})
 			}
 		}
@@ -178,7 +179,7 @@ exports.updateAssignCategory = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 		let {propertyId, categoryId, operationTeamId} = req.body;
-		await CategoryAssign.updateMany({propertyId: req.body.propertyId},{status:0});
+		await CategoryAssign.updateMany({propertyId: req.body.propertyId},{deleted:0});
 		await CategoryFrcAssign.updateMany({propertyId: req.body.propertyId},{deleted:1});
 		for (let i = 0; i < req.body.categoryId.length; i++) {
 			let alreadyExists = await CategoryAssign.exists({ propertyId: req.body.propertyId, categoryId: categoryId[i] });
@@ -208,7 +209,7 @@ exports.updateAssignCategory = async (req, res) => {
 			} else {
 				let assignCategory = await CategoryAssign.findOneAndUpdate({ propertyId: propertyId, categoryId: categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
-					status: 1
+					deleted: 1
 				},{ new: true,runValidators: true });
 
 				let categoryFrc = await CategoryFrcMaster.find({categoryId: categoryId[i]});
