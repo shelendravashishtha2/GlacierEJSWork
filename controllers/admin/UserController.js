@@ -6,7 +6,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
+const UserResource = require('../api/resources/UserResource');
 const Joi = require("joi");
 const Property = require('../../models/Property');
 const toastr = require('express-toastr');
@@ -203,8 +203,8 @@ exports.userAdd = async (req, res) => {
 				await UserPropertyData.save();
 			}
 		}
-		req.flash('success', 'User is added!');
-		res.redirect('/users');
+		req.flash('success_msg', 'User is added!');
+		res.redirect(req.baseUrl+'/users');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
@@ -284,7 +284,7 @@ exports.userList = async (req,res) => {
         };
 		let UserData = await User.aggregate([condition,search,sort,skip,limit,project]);
 
-		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		req.session.error = {errorMessage: "Something want wrong"};
@@ -408,8 +408,8 @@ exports.userUpdate = async (req,res) => {
 				await UserPropertyData.save();
 			}
 		}
-		req.flash('success', 'User is updated!');
-		return res.redirect('/users');
+		req.flash('success_msg', 'User is updated!');
+		return res.redirect(req.baseUrl+'/users');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {

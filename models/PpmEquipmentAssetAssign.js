@@ -3,6 +3,8 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const daysEnum = require("../enum/daysEnum");
 const frequencyEnum = require("../enum/frequencyEnum");
 const { prependToArray } = require("../helper/commonHelpers");
+const Property = require("./Property");
+const PpmEquipmentAssign = require("./PpmEquipmentAssign");
 
 let daysArr = Object.keys(daysEnum);
 let days = prependToArray('',daysArr);
@@ -10,15 +12,15 @@ let frequencyArr = Object.keys(frequencyEnum);
 
 const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Property',
+		type: mongoose.Schema.Types.ObjectId, ref: Property,
 		required:true
 	},
 	// ppmEquipmentId: {
-	// 	type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Master',
+	// 	type: mongoose.Schema.Types.ObjectId, ref: PpmEquipmentMaster,
 	// 	required:true,
 	// },
 	assignPpmEquipmentId: {
-		type: mongoose.Schema.Types.ObjectId, ref: 'Ppm_Equipment_Assign',
+		type: mongoose.Schema.Types.ObjectId, ref: PpmEquipmentAssign,
 		required:true,
 	},
 
@@ -73,6 +75,8 @@ const PpmEquipmentAssetAssignSchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+PpmEquipmentAssetAssignSchema.plugin(mongoosePaginate);
 
 const PpmEquipmentAssetAssign = new mongoose.model("Ppm_Equipment_Asset_Assign", PpmEquipmentAssetAssignSchema);
 module.exports = PpmEquipmentAssetAssign;

@@ -8,7 +8,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
+const PropertyResource = require('../api/resources/PropertyResource');
 const { check, validationResult } = require('express-validator');
 const Joi = require("joi");
 
@@ -89,7 +89,7 @@ exports.updatePropertyWingsStatus = async (req, res) => {
 		let propertyDetail = await Property.findOne({_id:req.body.propertyId});
 		let index = propertyDetail.wings.findIndex((x)=> String(x._id) == req.body.wingId);
 		if(index == -1){
-			return res.redirect('/ppm');
+			return res.redirect(req.baseUrl+'/ppm');
 		}
 		if(propertyDetail.wings[index].status == 0){
 			propertyDetail.wings[index].status = 1;
@@ -196,8 +196,8 @@ exports.propertyAdd = async (req, res) => {
 			})
 		}
 
-		req.flash('success', 'Property is added!');
-		return res.redirect('/properties');
+		req.flash('success_msg', 'Property is added!');
+		return res.redirect(req.baseUrl+'/properties');
 
 	} catch (error) {
 		let errorMessage = '';
@@ -289,8 +289,8 @@ exports.propertyUpdate = async (req,res) => {
 		oldPropertyData.property_images= oldPropertyData.property_images.concat(propertyImageNameArray);
 		oldPropertyData.wings=wingsNameArray;
 		await oldPropertyData.save();
-		req.flash('success', 'Property is updated!');
-		return res.redirect('/properties');
+		req.flash('success_msg', 'Property is updated!');
+		return res.redirect(req.baseUrl+'/properties');
 
 	} catch (error) {
 		let errorMessage = '';
@@ -302,7 +302,7 @@ exports.propertyUpdate = async (req,res) => {
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
-		req.flash('error', errorMessage);
+		req.flash('error_msg', errorMessage);
 		return res.redirect('back');
 	}
 }
@@ -345,7 +345,7 @@ exports.propertyList = async (req,res) => {
 		let totalProperty = await Property.count(query1);
 		totalPage = Math.ceil(totalProperty/10);
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
-		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -394,7 +394,7 @@ exports.completedUncompletedCategory = async (req,res) => {
 		let propertyData = await Property.aggregate([search,sort,skip,limit,project]);
 
 		let propertysList = await Property.aggregate([condition]);
-		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -421,7 +421,7 @@ exports.dashboardIndex = async (req,res) => {
 		dashboardCount['usersCount'] = await User.count();
 		dashboardCount['propertyCount'] = await Property.count();;
 		dashboardCount['categoryCount'] = await Category.count();
-		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'success': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -451,8 +451,8 @@ exports.propertyCreate = async (req,res) => {
 		if(req.session.user.position_id == 1){
 			return res.render('Admin/Properties/create',{'categoryData':categoryData,req: req});
 		}else{
-			req.flash('error', 'Sorry you have no any right!');
-			res.redirect('/');
+			req.flash('error_msg', 'Sorry you have no any right!');
+			res.redirect(req.baseUrl+'/');
 		}
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

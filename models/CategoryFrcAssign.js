@@ -3,27 +3,26 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const daysEnum = require("../enum/daysEnum");
 const frequencyEnum = require("../enum/frequencyEnum");
 const { prependToArray } = require("../helper/commonHelpers");
+const CategoryAssign = require("./CategoryAssign");
+const Property = require("./Property");
+const User = require("./User");
 
 let daysArr = Object.keys(daysEnum);
 let days = prependToArray('',daysArr);
 let frequencyArr = Object.keys(frequencyEnum);
 let frequency = prependToArray('None',frequencyArr);
 
-
 const CategoryFrcAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
 	},
 	assignCategoryId: {
-		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Category_Assign',
+		type:  mongoose.Schema.Types.ObjectId, ref: CategoryAssign,
 		required: true
 	},
 	supervisorId: {
-		type:  [mongoose.Schema.Types.ObjectId], 
-		ref: 'User',
+		type:  [mongoose.Schema.Types.ObjectId], ref: User,
 		default: []
 	},
 	
@@ -84,6 +83,8 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+CategoryFrcAssignSchema.plugin(mongoosePaginate);
 
 const CategoryFrcAssign = new mongoose.model("Category_Frc_Assign", CategoryFrcAssignSchema);
 module.exports = CategoryFrcAssign;

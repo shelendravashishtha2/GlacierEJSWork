@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const MngRatingGroupMaster = require("./MngRatingGroupMaster");
+const MngRatingTopicMaster = require("./MngRatingTopicMaster");
 
 const MngRatingChecklistMasterSchema = new mongoose.Schema({
 	ratingGroupId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingGroupMaster,
 		required: true
 	},
 	ratingTopicId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Mng_Rating_Topic_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingTopicMaster,
 		required: true
 	},
 	checklistTitle: {
@@ -39,6 +39,7 @@ const MngRatingChecklistMasterSchema = new mongoose.Schema({
 	timestamps: true
 });
 
+MngRatingChecklistMasterSchema.plugin(mongoosePaginate);
 
 const MngRatingChecklistMaster = new mongoose.model("Mng_Rating_Checklist_Master", MngRatingChecklistMasterSchema);
 module.exports = MngRatingChecklistMaster;

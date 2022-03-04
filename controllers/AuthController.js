@@ -28,15 +28,15 @@ module.exports = function (app) {
 
 	app.use(function (req, res, next) { //auth middleware
 		res.locals.APP_URL = process.env.APP_URL + req.baseUrl;
-		res.locals.success = req.flash('success');
-		res.locals.error = req.flash('error');
+		res.locals.success_msg = req.flash('success_msg');
+		res.locals.error_msg = req.flash('error_msg');
 		next();
 	})
 
 	app.get(baseUrl + 'register', function (req, res) {
-		if (req.user) { res.redirect('Dashboard/index'); }
+		if (req.user) { res.redirect(req.baseUrl+'Dashboard/index'); }
 		else {
-			res.render('Auth/auth-register', { 'success': req.flash('success'), 'error': req.flash('error') });
+			res.render('Auth/auth-register', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 		}
 	});
 
@@ -62,7 +62,7 @@ module.exports = function (app) {
 				return res.redirect(baseUrl + '');
 			}
 		} else {
-			return res.render('Auth/auth-login', { 'success': req.flash('success'), 'error': req.flash('error') });
+			return res.render('Auth/auth-login', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 		}
 	});
 
@@ -89,17 +89,17 @@ module.exports = function (app) {
 					res.redirect(baseUrl + '');
 				}
 			}else{
-				req.flash('error', 'Incorrect password!');
+				req.flash('error_msg', 'Incorrect password!');
 				res.redirect(baseUrl + 'login');
 			}
 		} else {
-			req.flash('error', 'Incorrect email or password!');
+			req.flash('error_msg', 'Incorrect email or password!');
 			res.redirect(baseUrl + 'login');
 		}
 	});
 
 	app.get(baseUrl + 'forgot-password', function (req, res) {
-		res.render('Auth/auth-forgot-password', { 'success': req.flash('success'), 'error': req.flash('error') });
+		res.render('Auth/auth-forgot-password', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	});
 
 	app.post(baseUrl + 'post-forgot-password', urlencodeParser, async function (req, res) {
@@ -139,15 +139,15 @@ module.exports = function (app) {
 				});
 				await User.findByIdAndUpdate(userData._id, {reset_password_status: 1}, {new : true, runValidators: true} );
 				// return res.send(response.success(200, 'Email Send Successfully', [] ));
-				req.flash('success', 'We have e-mailed your password reset link!');
+				req.flash('success_msg', 'We have e-mailed your password reset link!');
 				res.redirect(baseUrl + 'forgot-password');
 			} else {
-				req.flash('error', 'Email Not Found!!');
+				req.flash('error_msg', 'Email Not Found!!');
 				res.redirect(baseUrl + 'forgot-password');
 			}
 		} catch (error) {
 			console.log(error);
-			req.flash('error', 'Something want wrong!!');
+			req.flash('error_msg', 'Something want wrong!!');
 			res.redirect(baseUrl + 'forgot-password');
 		}
 	});

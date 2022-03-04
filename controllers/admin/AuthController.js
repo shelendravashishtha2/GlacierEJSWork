@@ -4,9 +4,8 @@ const nodemailer = require('nodemailer');
 const { encrypt, decrypt } = require('../../helper/crypto');
 const Joi = require("joi");
 const response = require("../../helper/response");
-const commonHelpers = require("../../helper/commonHelpers");
 const {errorLog,consoleLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
+const UserResource = require('../api/resources/UserResource');
 
 // Register Form Validation
 exports.registerValidation = async (req, res, next) => {

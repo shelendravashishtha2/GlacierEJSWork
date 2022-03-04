@@ -1,14 +1,14 @@
-const PpmEquipmentMaster = require("../../models/PpmEquipmentMaster");
+const PpmEquipmentMaster = require("../../../models/PpmEquipmentMaster");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const response = require("../../helper/response");
-const {errorLog} = require("../../helper/consoleLog");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
-const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
-const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
-const PpmTaskAssign = require("../../models/PpmTaskAssign");
-const { convertObjValuesToString, prependToArray } = require("../../helper/commonHelpers");
-const daysEnum = require("../../enum/daysEnum");
+const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
+const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");
+const PpmTaskAssign = require("../../../models/PpmTaskAssign");
+const { convertObjValuesToString, prependToArray } = require("../../../helper/commonHelpers");
+const daysEnum = require("../../../enum/daysEnum");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {

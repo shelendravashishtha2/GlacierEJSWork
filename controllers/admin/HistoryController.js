@@ -18,8 +18,8 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/History/index', {
             PropertyList: PropertyList,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -49,13 +49,13 @@ exports.indexFilter = async (req, res) => {
 		}
 
 		if (req.body.historyType == 1) {
-			return res.redirect('/ppm-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
+			return res.redirect(req.baseUrl+'/ppm-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
 		} else if (req.body.historyType == 2) {
-			return res.redirect('/frc-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
+			return res.redirect(req.baseUrl+'/frc-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
 		} else if (req.body.historyType == 3) {
-			return res.redirect('/rating-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
+			return res.redirect(req.baseUrl+'/rating-history?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate+'&&status='+req.body.status);
 		} else {
-			return res.redirect('/history');
+			return res.redirect(req.baseUrl+'/history');
 		}
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -72,11 +72,11 @@ exports.ppmHistory = async (req, res) => {
 		req.session.error = '';
 
 		if (req.query.historyType == 1) {
-			return res.redirect('/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		} else if (req.query.historyType == 2) {
-			return res.redirect('/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		} else if (req.query.historyType == 3) {
-			return res.redirect('/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		}
 
 		let schema = Joi.object({
@@ -107,8 +107,8 @@ exports.ppmHistory = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmTaskAssignData: PpmTaskAssignData,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -125,11 +125,11 @@ exports.frcHistory = async (req, res) => {
 		req.session.error = '';
 
 		if (req.query.historyType == 1) {
-			return res.redirect('/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/ppm-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		} else if (req.query.historyType == 2) {
-			return res.redirect('/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/frc-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		} else if (req.query.historyType == 3) {
-			return res.redirect('/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
+			return res.redirect(req.baseUrl+'/rating-history?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate+'&&status='+req.query.status);
 		}
 
 		let schema = Joi.object({
@@ -161,8 +161,8 @@ exports.frcHistory = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmTaskAssignData: PpmTaskAssignData,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

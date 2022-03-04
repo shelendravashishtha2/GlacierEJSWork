@@ -20,5 +20,7 @@ const CategoryMasterSchema = new mongoose.Schema({
 	versionKey: false
 });
 
+CategoryMasterSchema.plugin(mongoosePaginate);
+
 const CategoryMaster = new mongoose.model("Category_Master", CategoryMasterSchema);
 module.exports = CategoryMaster;

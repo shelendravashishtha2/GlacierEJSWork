@@ -6,57 +6,13 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
-const CategoryResource = require('../resources/CategoryResource');
+const CategoryResource = require('../api/resources/CategoryResource');
 const daysEnum = require("../../enum/daysEnum");
 const frequencyEnum = require("../../enum/frequencyEnum");
 const monthsEnum = require("../../enum/monthsEnum");
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 const toastr = require('express-toastr');
 const Joi = require("joi");
-
-exports.categoryAddValidationForm = [
-	// Category name validation
-	check('category_name').trim().notEmpty().withMessage('Category name required')
-		.isLength({ min: 2 }).withMessage('must be at least 2 chars long')
-		.custom(value => {
-			return CategoryMaster.findOne({ category_name: value }).then((data) => { if (data) { return Promise.reject('category name already exists') } })
-		}),
-];
-
-// Category add api
-exports.categoryAdd = async (req, res) => {
-	try {
-		res.locals.title = 'Category Add';
-		res.locals.session = req.session;
-
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			let errMsg = errors.mapped();
-			req.session.error = { errMsg: errMsg, inputData: req.body };
-			return res.redirect('back');
-		} else {
-			req.session.error = '';
-		}
-
-		let CategoryData = new CategoryMaster({
-			category_name: req.body.category_name,
-		});
-		await CategoryData.save();
-		
-		req.flash('success', 'Category is added!');
-		return res.redirect('categories');
-	} catch (error) {
-		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
-			return res.redirect('categories');
-		} else {
-			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
-			return res.redirect('categories');
-		}
-	}
-}
 
 // Category List Page
 exports.categoryList = async (req, res) => {
@@ -89,15 +45,7 @@ exports.categoryList = async (req, res) => {
 				createdAt: -1
 			}
 		};
-
 		let categoryData = await CategoryMaster.aggregate([search, sort, skip, limit, project]);
-
-		// req.toastr.success('Successfully.', "You're in!");
-		// req.toastr.success(message, title = 'Successfully', options = {})
-		// res.locals.message = req.flash('success');
-		// res.locals.error = req.flash('error');
-		// console.log(res.locals.message, 'res.locals.message');
-		// console.log(res.locals.error, 'res.locals.error');
 
 		return res.render('Admin/Categories/index', {
 			req: req,
@@ -105,8 +53,8 @@ exports.categoryList = async (req, res) => {
             page: page,
             totalPage: totalPage,
             search: req.query.search ? req.query.search : '',
-            // success: req.flash('success'),
-            // error: req.flash('error'),
+            // success: req.flash('success_msg'),
+            // error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -152,6 +100,51 @@ exports.categoryCreate = async (req, res) => {
 	}
 }
 
+exports.categoryAddValidationForm = [
+	// Category name validation
+	check('category_name').trim().notEmpty().withMessage('Category name required')
+		.isLength({ min: 2 }).withMessage('must be at least 2 chars long')
+		.custom(value => {
+			return CategoryMaster.findOne({ category_name: value }).then((data) => { if (data) { return Promise.reject('category name already exists') } })
+		}),
+];
+
+// Category add api
+exports.categoryAdd = async (req, res) => {
+	try {
+		res.locals.title = 'Category Add';
+		res.locals.session = req.session;
+
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			let errMsg = errors.mapped();
+			req.session.error = { errMsg: errMsg, inputData: req.body };
+			req.flash('error_msg', 'Category is not added!');
+			return res.redirect('back');
+		} else {
+			req.session.error = '';
+		}
+
+		let CategoryData = new CategoryMaster({
+			category_name: req.body.category_name,
+		});
+		await CategoryData.save();
+		
+		req.flash('success_msg', 'Category is added!');
+		return res.redirect(req.baseUrl+'/categories');
+	} catch (error) {
+		if (error.name == "ValidationError") {
+			const errorMessage = error.errors[Object.keys(error.errors)[0]]
+			req.flash('error_msg', errorMessage.message);
+			return res.redirect(req.baseUrl+'/categories');
+		} else {
+			errorLog(__filename, req.originalUrl, error);
+			req.flash('error_msg', 'Something want wrong');
+			return res.redirect(req.baseUrl+'/categories');
+		}
+	}
+}
+
 // Checklist Multi Form
 exports.checklistMultiForm = async (req, res) => {
 	try {
@@ -186,6 +179,8 @@ exports.createChecklist = async (req, res) => {
 	try {
 		res.locals.title = 'Add Check List Category';
 		res.locals.session = req.session;
+
+		console.log('controller>>>>>',res.locals);
 
 		let setting = await Setting.findOne({});
 		let uniqueId = 0;
@@ -251,10 +246,10 @@ exports.storeChecklist = async (req, res) => {
 
 		const alreadyExistsId = await CategoryFrcMaster.findOne({checklist_id: req.body.checklist_id})
 		if (alreadyExistsId) {
+			console.log('alreadyExistsId');
 			let errMsg = "already Exists Checklist Id";
 			req.session.error = { errMsg: errMsg, inputData: req.body };
-
-			//redirect with toster message
+			req.flash('error_msg', 'Checklist Id already Exists!---->>>>>');
 			return res.redirect('back');
 		}
 
@@ -284,7 +279,7 @@ exports.storeChecklist = async (req, res) => {
 		});
 		await CategoryChecklistData.save();
 
-		return res.redirect('create-checklist-multi-form/' + CategoryChecklistData._id);
+		return res.redirect(req.baseUrl+'/create-checklist-multi-form/' + CategoryChecklistData._id);
 	} catch (error) {
 		console.log(error);
 		let errorMessage = '';
@@ -312,7 +307,7 @@ exports.checklist = async (req, res) => {
 		let CategoryData = await CategoryMaster.findOne({ _id: req.params.id });
 		let CategoryChecklistData = await CategoryFrcMaster.find({ category_id: req.params.id });
 
-		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryChecklistData, CategoryData: CategoryData, 'success': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryChecklistData, CategoryData: CategoryData, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -402,8 +397,8 @@ exports.frcChecklist = async (req, res) => {
             data: CategoryChecklistData,
             categoryData: allCategoryData,
             paramsCategoryId: paramsCategoryId,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -440,14 +435,14 @@ exports.updateCategory = async (req, res) => {
 		if (!CategoryData) {
 			let CategoryData = await CategoryMaster.updateOne({ _id: req.body.category_id }, { category_name: req.body.category_name });
 		} else {
-			req.flash('error', 'Category name already exists!');
+			req.flash('error_msg', 'Category name already exists!');
 			return res.redirect('back');
 		}
-		req.flash('success', 'Category is updated!');
-		return res.redirect('edit-category-checklist/' + req.body.category_id);
+		req.flash('success_msg', 'Category is updated!');
+		return res.redirect(req.baseUrl+'/edit-category-checklist/' + req.body.category_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -469,8 +464,8 @@ exports.editChecklistDetails = async (req, res) => {
             months: monthsArr,
 			daysArr: daysArr,
 			frequencyArr: frequencyArr,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -506,8 +501,8 @@ exports.updateChecklistDetails = async (req, res) => {
 			date: req.body.date,
 		}, { new: true });
 		
-		req.flash('success', 'Category checklist is updated!');
-		return res.redirect('master-frc');
+		req.flash('success_msg', 'Category checklist is updated!');
+		return res.redirect(req.baseUrl+'/master-frc');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {

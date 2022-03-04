@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const SettingRatingSchema = new mongoose.Schema({
 	rating_name: {
@@ -29,6 +30,8 @@ const SettingRatingSchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+SettingRatingSchema.plugin(mongoosePaginate);
 
 const SettingRating = new mongoose.model("Setting_Rating", SettingRatingSchema);
 module.exports = SettingRating;

@@ -19,5 +19,7 @@ const SettingPpmRiskAssessmentColorSchema = new mongoose.Schema({
 	versionKey: false
 });
 
+SettingPpmRiskAssessmentColorSchema.plugin(mongoosePaginate);
+
 const SettingPpmRiskAssessmentColor = new mongoose.model("Setting_Ppm_Risk_Assessment_Color", SettingPpmRiskAssessmentColorSchema);
 module.exports = SettingPpmRiskAssessmentColor;

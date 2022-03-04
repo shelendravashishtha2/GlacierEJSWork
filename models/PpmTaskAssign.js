@@ -87,5 +87,7 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 	versionKey: false
 });
 
+PpmTaskAssignSchema.plugin(mongoosePaginate);
+
 const PpmTaskAssign = new mongoose.model("Ppm_Task_Assign", PpmTaskAssignSchema);
 module.exports = PpmTaskAssign;

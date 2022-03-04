@@ -1,14 +1,17 @@
-const Property = require("../../models/Property");
-const SettingRating = require("../../models/SettingRating");
+const Property = require("../../../models/Property");
+const SettingRating = require("../../../models/SettingRating");
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
-const response = require("../../helper/response");
+const response = require("../../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
+const {errorLog} = require("../../../helper/consoleLog");
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
+const UserProperty = require('../../../models/UserProperty');
+const CategoryAssign = require('../../../models/CategoryAssign');
+const CategoryFrcAssign = require('../../../models/CategoryFrcAssign');
 
 exports.propertyList = async (req, res) => {
 	try {
@@ -41,7 +44,7 @@ exports.propertyList = async (req, res) => {
 		    "status": true,
 		    "status_code": "200",
 		    "message": "Property list with rating",
-		    data:propertyList
+		    data: propertyList
 		});
 	} catch (error) {
 		console.log(error);
@@ -59,7 +62,7 @@ exports.propertyDetail = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let property = await Property.findOne({_id:req.body.propertyId})
+		let property = await Property.findOne({_id: req.body.propertyId})
 		if(!property){
 			return res.send(response.error(400, 'Property Not Found', []));
 		}
@@ -69,20 +72,45 @@ exports.propertyDetail = async (req, res) => {
 				wings.push(property.wings[i].wings_name);
 			}
 		}
+
+		let UserPropertyData = await UserProperty.find({propertyId: req.body.propertyId}).populate({path: 'userId', select: ['full_name', 'position_id']});
+		let CategoryAssignData = await CategoryAssign.find({propertyId: req.body.propertyId}).populate({path: 'categoryId', select: ['category_name']});
+		let CategoryFrcAssignData = await CategoryFrcAssign.find({propertyId: req.body.propertyId}).select(['checklist_name']);
+
+		const UserData = UserPropertyData.filter(item => item.userId != null).map((item) => item.userId)
+		const OperationTeam = UserData.filter((item) => item.position_id == 2)
+		const Auditor = UserData.filter((item) => item.position_id == 3)
+		const Manager = UserData.filter((item) => item.position_id == 4)
+		const Supervisor = UserData.filter((item) => item.position_id == 5)
+
+		const CategoryData = CategoryAssignData.map((item) => item.categoryId)
+
+		let responseArray = [{
+			PropertyDetails: {
+				property_name: property.property_name,
+		    	name_of_owner: property.name_of_owner,
+		    	square_feet: property.square_feet,
+		    	area_name: property.area_name,
+		    	property_images: property.property_images,
+		    	address: property.address,
+		    	wings: wings.join(","),
+			},
+			UsersDetails: {
+				OperationTeam : OperationTeam,
+				Auditor : Auditor,
+				Manager : Manager,
+				Supervisor : Supervisor,
+			},
+			Category: CategoryData,
+			FrcList: CategoryFrcAssignData
+		}]
+
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
 			"message": "Property details",
 			"urlPath": process.env.APP_URL,
-		    data: [{
-		    	property_name:property.property_name,
-		    	name_of_owner:property.name_of_owner,
-		    	square_feet:property.square_feet,
-		    	area_name:property.area_name,
-		    	property_images:property.property_images,
-		    	address:property.address,
-		    	wings:wings.join(","),
-		    }]
+		    data: responseArray
 		});
 	} catch (error) {
 		console.log(error);

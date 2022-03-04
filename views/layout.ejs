@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title><%- title %> | Crest Property Solution</title>
+	<title><%#- title == undefined ? title : '' %> | Crest Property Solution</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta content="Crest Property Solution" name="description" />
 	<meta content="Crest Property Solution" name="Crest Property Solution" />
@@ -37,14 +37,15 @@
 
   	<%- BottomJs %>
 
-	<% if(success.length > 0) { %>
+	  <!-- toster notification -->
+	<% if(success_msg.length > 0) { %>
 		<script>
-			toastr.success('<%= success %>');
+			toastr.success('<%= success_msg %>');
 		</script>
 	<% } %>
-	<% if(error.length > 0) { %>
+	<% if(error_msg.length > 0) { %>
 		<script>
-			toastr.error('<%= error %>');
+			toastr.error('<%= error_msg %>');
 		</script>
 	<% } %>
 	

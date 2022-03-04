@@ -7,7 +7,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
+const PropertyResource = require('../api/resources/PropertyResource');
 const Joi = require("joi");
 const daysEnum = require("../../enum/daysEnum");
 const frequencyEnum = require("../../enum/frequencyEnum");
@@ -85,7 +85,7 @@ exports.updatePpmTaskStatus = async (req, res) => {
 		let ppmDetail = await PpmEquipment.findOne({ _id: req.body.ppmId });
 		let index = ppmDetail.assets.findIndex((x) => String(x._id) == String(req.body.assetId));
 		if (index == -1) {
-			return res.redirect('/edit-ppm/' + req.body.ppmId);
+			return res.redirect(req.baseUrl+'/edit-ppm/' + req.body.ppmId);
 		} else {
 			if (ppmDetail.assets[index].status == 0) {
 				ppmDetail.assets[index].status = 1;
@@ -119,7 +119,7 @@ exports.updatePropertyWingStatus = async (req, res) => {
 		let propertyDetail = await Property.findOne({ _id: req.body.propertyId, status: 1 });
 		let index = propertyDetail.wings.findIndex((x) => String(x._id) == String(req.body.wingId));
 		if (index == -1) {
-			return res.redirect('/assign-ppm');
+			return res.redirect(req.baseUrl+'/assign-ppm');
 		} else {
 			if (propertyDetail.wings[index].status == 0) {
 				propertyDetail.wings[index].status = 1;
@@ -153,12 +153,12 @@ exports.createPpm = async (req, res) => {
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			req.flash('error', validation.error.details[0].message);
+			req.flash('error_msg', validation.error.details[0].message);
 		}
 
 		const existsUser = await PpmEquipment.findOne({ ppmEquipmentName: req.body.ppmEquipmentName });
 		if (existsUser) {
-			req.flash('error', "PPM name already exists!");
+			req.flash('error_msg', "PPM name already exists!");
 			return res.redirect('back');
 		}
 		let obj = new PpmEquipment({
@@ -178,9 +178,9 @@ exports.createPpm = async (req, res) => {
 				}]
 		});
 		let ppmData = await obj.save();
-		req.flash('success', "Equipment name is added!");
+		req.flash('success_msg', "Equipment name is added!");
 
-		return res.redirect('/ppm');
+		return res.redirect(req.baseUrl+'/ppm');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
@@ -190,7 +190,7 @@ exports.createPpm = async (req, res) => {
 			errorLog(__filename, req.originalUrl, error);
 			errorMessage = "Something want wrong";
 		}
-		req.flash('error', { errorMessage: errorMessage });
+		req.flash('error_msg', { errorMessage: errorMessage });
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
 	}
@@ -236,8 +236,8 @@ exports.PpmList = async (req, res) => {
             page: page,
             totalPage: totalPage,
             search: req.query.search ? req.query.search : '',
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
 			
@@ -266,12 +266,12 @@ exports.updatePpmTask = async (req, res) => {
 		}
 		let ppm = await PpmEquipment.findOne({ _id: req.body.ppmId });
 		if (!ppm) {
-			return res.redirect('/ppm');
+			return res.redirect(req.baseUrl+'/ppm');
 		}
 		let alreadyIndex = ppm.assets.findIndex((x) => String(x.assetName) == req.body.assetName && String(x._id) != req.body.assetId);
 		if (alreadyIndex != -1) {
-			req.flash('error', 'Asset name is already exist!');
-			return res.redirect('/edit-ppm/' + req.body.ppmId);
+			req.flash('error_msg', 'Asset name is already exist!');
+			return res.redirect(req.baseUrl+'/edit-ppm/' + req.body.ppmId);
 		}
 		let message = "";
 
@@ -297,13 +297,13 @@ exports.updatePpmTask = async (req, res) => {
 		} else {
 			ppm.assets.push(obj);
 			message = "Asset name has been added!";
-		// req.flash('success', message);
+		// req.flash('success_msg', message);
 		}
 		ppm.markModified('assets');
 		await ppm.save();
 		
-		req.flash('success', message);
-		return res.redirect('/ppm/');
+		req.flash('success_msg', message);
+		return res.redirect(req.baseUrl+'/ppm/');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -341,8 +341,8 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 			totalPage: 1,
 			taskData: assignPpmEquipmentAssetData,
 			search: req.query.search ? req.query.search : "",
-			success: req.flash('success'),
-			error: req.flash('error'),
+			success: req.flash('success_msg'),
+			error: req.flash('error_msg'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
 
@@ -434,7 +434,7 @@ exports.editPpm = async (req, res) => {
 		};
 		let ppmData = await PpmEquipment.aggregate([aggregateQuery, unwind, group]);
 		if (ppmData.length == 0) {
-			return res.redirect('/ppm');
+			return res.redirect(req.baseUrl+'/ppm');
 		} else {
 			ppmData = ppmData[0];
 		}
@@ -449,8 +449,8 @@ exports.editPpm = async (req, res) => {
 			totalPage: totalPage,
 			taskData: taskData,
 			search: req.query.search ? req.query.search : "",
-			success: req.flash('success'),
-			error: req.flash('error'),
+			success: req.flash('success_msg'),
+			error: req.flash('error_msg'),
 			daysArr: daysArr,
 			frequencyArr: frequencyArr
 		});
@@ -643,7 +643,7 @@ exports.propertiesWisePpmList = async (req, res) => {
 		};
 		let ppmData = await PpmEquipment.aggregate([aggregateQuery, unwind, group]);
 		if (ppmData.length == 0) {
-			return res.redirect('/ppm');
+			return res.redirect(req.baseUrl+'/ppm');
 		} else {
 			ppmData = ppmData[0];
 		}
@@ -702,7 +702,7 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 
 		let assignPpmEquipmentData = await PpmEquipmentAssign.findOne({ _id: req.body.assignPpmEquipmentId, status: 1 });
 		if (!assignPpmEquipmentData) {
-			return res.redirect('/assign-ppm');
+			return res.redirect(req.baseUrl+'/assign-ppm');
 		}
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
@@ -749,7 +749,7 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 			})
 
 			message = "Equipment Asset is updated!";
-			req.flash('success', message);
+			req.flash('success_msg', message);
 		} else {
 			await PpmEquipmentAssetAssign.create({
 				propertyId: req.body.propertyId,
@@ -764,10 +764,10 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 			})
 
 			message = "Equipment Asset is added!";
-			req.flash('success', message);
+			req.flash('success_msg', message);
 		}
 
-		return res.redirect('assign-ppm-equipment-asset-list/' + req.body.propertyId + '/' + assignPpmEquipmentData._id + '');
+		return res.redirect(req.baseUrl+'/assign-ppm-equipment-asset-list/' + req.body.propertyId + '/' + assignPpmEquipmentData._id + '');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -809,6 +809,8 @@ exports.updateAssignPpmEquipmentAssetStatus = async (req, res) => {
 // view Properties Ppm Task
 exports.viewPropertiesPpmTask = async (req, res) => {
 	try {
+		res.locals.title = 'view Ppm Task';
+
 		let schema = Joi.object({
 			id: Joi.required()
 		});

@@ -7,7 +7,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
+const PropertyResource = require('../api/resources/PropertyResource');
 const Joi = require("joi");
 
 // History List Page

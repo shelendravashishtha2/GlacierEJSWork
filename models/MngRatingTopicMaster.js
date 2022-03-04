@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const MngRatingGroupMaster = require("./MngRatingGroupMaster");
 
 const MngRatingTopicMasterSchema = new mongoose.Schema({
 	ratingGroupId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingGroupMaster,
 		required: true
 	},
 	topicName: {
@@ -24,6 +24,7 @@ const MngRatingTopicMasterSchema = new mongoose.Schema({
 	timestamps: true
 });
 
+MngRatingTopicMasterSchema.plugin(mongoosePaginate);
 
 const MngRatingTopicMaster = new mongoose.model("Mng_Rating_Topic_Master", MngRatingTopicMasterSchema);
 module.exports = MngRatingTopicMaster;

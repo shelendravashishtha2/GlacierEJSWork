@@ -11,7 +11,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {errorLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
+const UserResource = require('./resources/UserResource');
 const Joi = require("joi");
 
 exports.changePasswordValidation = async (req, res, next) => {
@@ -480,6 +480,7 @@ exports.dashboardSliderImage = async (req,res) => {
 
 		let sliderImages = [{'_id':'6176f59d8617dfecff47c259','image':'/public/images/property/property-image-163670891146540.jpg'},
 		{'_id':'6177f11fc350e7eebd3d4222','image':'/public/images/property/property-image-16367089114651.jpg'}];
+		
 		return res.status(200).send({
 			"status": true,
 		    "status_code": "200",

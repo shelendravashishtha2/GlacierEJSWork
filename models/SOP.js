@@ -44,5 +44,7 @@ const SOPSchema = new mongoose.Schema({
 	versionKey: false
 });
 
+SOPSchema.plugin(mongoosePaginate);
+
 const SOP = new mongoose.model("sop", SOPSchema);
 module.exports = SOP;

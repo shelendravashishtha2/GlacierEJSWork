@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const Property = require("./Property");
+const User = require("./User");
+const MngRatingChecklistMaster = require("./MngRatingChecklistMaster");
 
 const MngRatingAssignChecklistPointSchema = new mongoose.Schema({
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
     },
 	auditorId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		type:  mongoose.Schema.Types.ObjectId, ref: User,
 		required: true
 	},
 	checklistId: {
-		type:  mongoose.Schema.Types.ObjectId, 
-		ref: 'Mng_Rating_Checklist_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingChecklistMaster,
 		required: true
 	},
 	weightage: {

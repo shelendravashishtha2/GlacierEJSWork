@@ -10,7 +10,7 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
+const PropertyResource = require('../api/resources/PropertyResource');
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 const Joi = require("joi");
 const { Validator } = require('node-input-validator');
@@ -75,8 +75,8 @@ exports.manageRatingList = async (req, res) => {
 		return res.render('Admin/Manage-Rating/index', {
 			propertyData: propertyData,
 			search: req.query.search,
-			success: req.flash('success'),
-			error: req.flash('error'),
+			success: req.flash('success_msg'),
+			error: req.flash('error_msg'),
 		})
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -116,17 +116,17 @@ exports.addGroup = async (req, res) => {
 		});
 		await groupChecklist.save();
 
-		req.flash('success', 'Group is added!');
-		return res.redirect('/group-list');
+		req.flash('success_msg', 'Group is added!');
+		return res.redirect(req.baseUrl+'/group-list');
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
-			return res.redirect('/group-list');
+			req.flash('error_msg', errorMessage.message);
+			return res.redirect(req.baseUrl+'/group-list');
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
-			return res.redirect('/group-list');
+			req.flash('error_msg', 'Something want wrong');
+			return res.redirect(req.baseUrl+'/group-list');
 		}
 	}
 }
@@ -159,16 +159,16 @@ exports.addTopic = async (req, res) => {
 		});
 		await groupChecklist.save();
 
-		req.flash('success', 'Topic is added!');
-		return res.redirect('/edit-group-name/' + req.body.groupId);
+		req.flash('success_msg', 'Topic is added!');
+		return res.redirect(req.baseUrl+'/edit-group-name/' + req.body.groupId);
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
+			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
+			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
 	}
@@ -206,16 +206,16 @@ exports.addTopicChecklist = async (req, res) => {
 			await topicChecklist.save();
 			message = "Topic checklist is is addeed!";
 		}
-		req.flash('success', message);
-		return res.redirect('/edit-topic/' + req.body.ratingTopicId);
+		req.flash('success_msg', message);
+		return res.redirect(req.baseUrl+'/edit-topic/' + req.body.ratingTopicId);
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
+			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
+			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
 	}
@@ -297,16 +297,16 @@ exports.storeAssignAuditor = async (req, res) => {
 		}
 		
 		message = "Group is assigned";
-		req.flash('success', message);
-		return res.redirect('/manage-rating');
+		req.flash('success_msg', message);
+		return res.redirect(req.baseUrl+'/manage-rating');
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
+			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
+			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
 	}
@@ -345,7 +345,7 @@ exports.groupList = async (req, res) => {
 
 		let groupData = await MngRatingGroupMaster.aggregate([search, sort, skip, limit, project]);
 
-		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'success': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -438,16 +438,16 @@ exports.updateAssignGroups = async (req, res) => {
 		
 		message = "Group is assigned";
 		
-		req.flash('success', message);
-		return res.redirect('/manage-rating');
+		req.flash('success_msg', message);
+		return res.redirect(req.baseUrl+'/manage-rating');
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
-			req.flash('error', errorMessage.message);
+			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
 			errorLog(__filename, req.originalUrl, error);
-			req.flash('error', 'Something want wrong');
+			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
 	}
@@ -486,7 +486,7 @@ exports.editGroupName = async (req, res) => {
 		};
 		let topicData = await MngRatingTopicMaster.aggregate([condition, search, sort, skip, limit, project]);
 		const groupDetails = await MngRatingGroupMaster.findOne({ _id: ObjectId(req.params.id) });
-		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -530,7 +530,7 @@ exports.editTopic = async (req, res) => {
 		};
 		let topicData = await MngRatingChecklistMaster.aggregate([condition, search, sort, skip, limit, project]);
 		let topicDetails = await MngRatingTopicMaster.findOne({ _id: ObjectId(req.params.id) }).populate({ "path": "ratingGroupId" });
-		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success'), 'error': req.flash('error') });
+		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -631,14 +631,14 @@ exports.updateGroupName = async (req, res) => {
 		if (!groupNameData) {
 			let groupNameData = await MngRatingGroupMaster.updateOne({ _id: req.body.group_id }, { groupName: req.body.group_name });
 		} else {
-			req.flash('error', 'Group name already exists!');
+			req.flash('error_msg', 'Group name already exists!');
 			return res.redirect('back');
 		}
-		req.flash('success', 'Group name is updated!');
-		return res.redirect('edit-group-name/' + req.body.group_id);
+		req.flash('success_msg', 'Group name is updated!');
+		return res.redirect(req.baseUrl+'/edit-group-name/' + req.body.group_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -650,14 +650,14 @@ exports.updateTopicName = async (req, res) => {
 		if (!topicNameData) {
 			let topicNameData = await MngRatingTopicMaster.updateOne({ _id: req.body.topic_id }, { topicName: req.body.topic_name });
 		} else {
-			req.flash('error', 'Topic name already exists!');
+			req.flash('error_msg', 'Topic name already exists!');
 			return res.redirect('back');
 		}
-		req.flash('success', 'Topic name is updated!');
-		return res.redirect('edit-topic/' + req.body.topic_id);
+		req.flash('success_msg', 'Topic name is updated!');
+		return res.redirect(req.baseUrl+'/edit-topic/' + req.body.topic_id);
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -868,8 +868,8 @@ exports.viewGroupAssignTask = async (req, res) => {
 			page: 1,
 			totalPages: 1,
 			search: req.query.search ? req.query.search : "",
-			success: req.flash('success'),
-			error: req.flash('error')
+			success: req.flash('success_msg'),
+			error: req.flash('error_msg')
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -922,8 +922,8 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 			page: 1,
 			totalPage: 1,
 			search: req.query.search ? req.query.search : "",
-			success: req.flash('success'),
-			error: req.flash('error')
+			success: req.flash('success_msg'),
+			error: req.flash('error_msg')
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

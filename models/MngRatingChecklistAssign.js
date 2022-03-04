@@ -1,25 +1,25 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const Property = require("./Property");
+const MngRatingGroupMaster = require("./MngRatingGroupMaster");
+const MngRatingTopicMaster = require("./MngRatingTopicMaster");
+const MngRatingChecklistMaster = require("./MngRatingChecklistMaster");
 
 const MngRatingChecklistAssignSchema = new mongoose.Schema({
     propertyId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
     },
 	ratingGroupId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingGroupMaster,
 		required: true
 	},
 	ratingTopicId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Mng_Rating_Topic_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingTopicMaster,
 		required: true
 	},
 	checklistIds: {
-		type:  [mongoose.Schema.Types.ObjectId],
-		ref: 'Mng_Rating_Checklist_Master',
+		type:  [mongoose.Schema.Types.ObjectId], ref: MngRatingChecklistMaster,
 		required: true
 	},
 	

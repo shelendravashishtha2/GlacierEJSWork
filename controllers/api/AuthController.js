@@ -6,25 +6,7 @@ const Joi = require("joi");
 const response = require("../../helper/response");
 const commonHelpers = require("../../helper/commonHelpers");
 const {errorLog,consoleLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
-
-// Register Form Validatation
-exports.registerValidation = async (req, res, next) => {
-	const schema = Joi.object({
-		full_name: Joi.string().min(3).max(150).required(),
-		email: Joi.string().min(6).max(100).required().email(),
-		mobile_no: Joi.string().min(6).max(12).required(),
-		password: Joi.string().min(6).max(30).required(),
-		position:Joi.string().min(1).required(),
-	});
-	console.log(req.body);
-	const validation = schema.validate(req.body, __joiOptions);
-	if (validation.error) {
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
-	} else {
-		next();
-	}
-}
+const UserResource = require('./resources/UserResource');
 
 exports.update = async (req, res) => {
 	try {
@@ -90,6 +72,19 @@ exports.update = async (req, res) => {
 // Register Api 
 exports.register = async (req, res) => {
 	try {
+		const schema = Joi.object({
+			full_name: Joi.string().min(3).max(150).required(),
+			email: Joi.string().min(6).max(100).required().email(),
+			mobile_no: Joi.string().min(6).max(12).required(),
+			password: Joi.string().min(6).max(30).required(),
+			// position: Joi.string().min(2).max(5).required(),
+			position: Joi.string().valid('2','3','4','5').required(),
+		});
+		const validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
 		const existsUser = await User.findOne({ email: req.body.email });
 		if(existsUser) {
 			return res.send(response.error(400, 'email id already exists', [] ));

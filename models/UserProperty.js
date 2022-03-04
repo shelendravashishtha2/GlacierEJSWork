@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const User = require('./User');
+const Property = require('./Property');
 
 const UserPropertySchema = new mongoose.Schema({
 	userId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		type:  mongoose.Schema.Types.ObjectId, ref: User,
 		required: true,
 		trim: true
 	},
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true,
 		trim: true
 	},
@@ -25,6 +25,8 @@ const UserPropertySchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+UserPropertySchema.plugin(mongoosePaginate);
 
 const UserProperty = new mongoose.model("User_Property", UserPropertySchema);
 module.exports = UserProperty;

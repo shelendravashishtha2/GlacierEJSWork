@@ -19,6 +19,7 @@ const MngRatingGroupMasterSchema = new mongoose.Schema({
 	timestamps: true
 });
 
+MngRatingGroupMasterSchema.plugin(mongoosePaginate);
 
 const MngRatingGroupMaster = new mongoose.model("Mng_Rating_Group_Master", MngRatingGroupMasterSchema);
 module.exports = MngRatingGroupMaster;

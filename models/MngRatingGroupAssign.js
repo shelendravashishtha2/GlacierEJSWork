@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const MngRatingGroupMaster = require("./MngRatingGroupMaster");
+const Property = require("./Property");
+const User = require("./User");
 
 const MngRatingGroupAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
     },
     groupIds: {
-		type:  [mongoose.Schema.Types.ObjectId],
-		ref: 'Mng_Rating_Group_Master',
+		type:  [mongoose.Schema.Types.ObjectId], ref: MngRatingGroupMaster,
 		required: true
 	},
 	auditorId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		type:  mongoose.Schema.Types.ObjectId, ref: User,
 		required: true
 	},
 	

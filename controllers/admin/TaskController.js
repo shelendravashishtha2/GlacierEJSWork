@@ -9,7 +9,6 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { errorLog } = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
 const CategoryFrcMaster = require("../../models/CategoryFrcMaster");
 const CategoryFrcAssign = require("../../models/CategoryFrcAssign");
@@ -38,7 +37,7 @@ exports.categoryAssignment = async (req, res) => {
 		return res.render('Admin/Task/index', {
 			propertyData: propertyData,
 			search: req.query.search ? req.query.search : "",
-			message: req.flash('message'),
+			message: req.flash('success_msg'),
 		});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -131,8 +130,8 @@ exports.assignCategorySubmit = async (req, res) => {
 				})
 			}
 		}
-		// return res.redirect("/category-assignment?message=Task Assign Successfully");
-		return res.redirect("/category-assignment");
+		// return res.redirect(req.baseUrl+'/category-assignment?message=Task Assign Successfully');
+		return res.redirect(req.baseUrl+'/category-assignment');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		errorMessage = "Something want wrong";
@@ -241,8 +240,8 @@ exports.updateAssignCategory = async (req, res) => {
 			}
 
 		}
-		req.flash('message', 'Task Assign Successfully');
-		return res.redirect("/category-assignment");
+		req.flash('success_msg', 'Task Assign Successfully');
+		return res.redirect(req.baseUrl+'/category-assignment');
 
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -258,12 +257,12 @@ exports.editAssignCategory = async (req, res) => {
 
 		let taskData = await CategoryAssign.findOne({ propertyId: req.params.id });
 		if (!taskData) {
-			return res.redirect('/category-assignment');
+			return res.redirect(req.baseUrl+'/category-assignment');
 		}
 
 		let propertyData = await Property.findOne({ _id: req.params.id }, { property_name: 1 });
 		if (!propertyData) {
-			return res.redirect('/category-assignment');
+			return res.redirect(req.baseUrl+'/category-assignment');
 		}
 
 		let allCategory = await CategoryMaster.find({ "status": 1 }, { category_name: 1 }).lean();

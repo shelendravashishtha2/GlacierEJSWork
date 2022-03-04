@@ -5,7 +5,6 @@ const path = require('path');
 const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const {errorLog} = require("../../helper/consoleLog");
-const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
 const SOP = require('../../models/SOP');
 
@@ -67,7 +66,7 @@ exports.sopList = async (req,res) => {
 		totalPage = Math.ceil(totalProperty/10);
 		let sopData = await SOP.aggregate([search,sort,skip,limit,project]);
 
-		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success'), 'error': req.flash('error')});
+		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -192,8 +191,8 @@ exports.storeSop = async (req,res) => {
 		});
 		await SOPData.save();
 
-		req.flash('success', 'SOP is added!');
-		return res.redirect('/sop');
+		req.flash('success_msg', 'SOP is added!');
+		return res.redirect(req.baseUrl+'/sop');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));
@@ -318,8 +317,8 @@ exports.updateSop = async (req,res) => {
 			// console.log("Level 2 SOP updated: ", SOPData);
 		}
 
-		req.flash('success', 'SOP is updated!');
-		return res.redirect('/sop');
+		req.flash('success_msg', 'SOP is updated!');
+		return res.redirect(req.baseUrl+'/sop');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
 		return res.send(response.error(500, 'Something want wrong', []));

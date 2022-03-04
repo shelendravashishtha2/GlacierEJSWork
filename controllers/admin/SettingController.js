@@ -20,10 +20,10 @@ exports.settingList = async (req,res) => {
 		return res.render('Admin/Setting/index',{ 
 			data: SettingRatingData, 
 			SettingPpmRiskAssessmentColorData: SettingPpmRiskAssessmentColorData,
-			success: req.flash('success'), error: req.flash('error')});
+			success: req.flash('success_msg'), error: req.flash('error_msg')});
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -43,11 +43,11 @@ exports.storeSetting = async (req,res) => {
 				max_rating: parseFloat(req.body.max_rating[i]).toFixed(2),
 			});
 		}
-		req.flash('success', 'Rating is added & updated!');
-		return res.redirect('/setting');
+		req.flash('success_msg', 'Rating is added & updated!');
+		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -74,11 +74,11 @@ exports.storePpmRiskAssessmentColor = async (req, res) => {
 			});
 		}
 
-		req.flash('success', 'Add color successfully');
-		return res.redirect('/setting');
+		req.flash('success_msg', 'Add color successfully');
+		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }
@@ -100,16 +100,16 @@ exports.deletePpmRiskAssessmentColor = async (req, res) => {
 
 		const existsData = await SettingPpmRiskAssessmentColor.exists({_id: req.params.id});
 		if (!existsData) {
-			req.flash('error', 'color not exists');
-			return res.redirect('/setting');
+			req.flash('error_msg', 'color not exists');
+			return res.redirect(req.baseUrl+'/setting');
 		}
 		await SettingPpmRiskAssessmentColor.deleteOne({_id: req.params.id});
 
-		req.flash('success', 'Add color successfully');
-		return res.redirect('/setting');
+		req.flash('success_msg', 'Add color successfully');
+		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
-		req.flash('error', 'Something want wrong');
+		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
 }

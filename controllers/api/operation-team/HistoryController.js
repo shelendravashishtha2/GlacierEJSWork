@@ -1,10 +1,10 @@
-const Category = require("../../models/CategoryMaster");
-const CategoryChecklist = require("../../models/CategoryFrcMaster");
-const Form = require("../../models/Form");
+const Category = require("../../../models/CategoryMaster");
+const CategoryChecklist = require("../../../models/CategoryFrcMaster");
+const Form = require("../../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const response = require("../../helper/response");
-const {errorLog} = require("../../helper/consoleLog");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
 
 exports.historyList = async (req, res) => {

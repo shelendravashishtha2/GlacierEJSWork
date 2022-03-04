@@ -48,5 +48,7 @@ const formSchema = new mongoose.Schema({
 	versionKey: false
 });
 
+formSchema.plugin(mongoosePaginate);
+
 const Form = new mongoose.model("form", formSchema);
 module.exports = Form;

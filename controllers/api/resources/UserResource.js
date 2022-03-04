@@ -1,4 +1,4 @@
-const {getAge} = require('../../helper/commonHelpers');
+const {getAge} = require('../../../helper/commonHelpers');
 
 const UserResource = (res) => {
 	Array.isArray(res) ? res : res=[res];

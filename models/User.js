@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 	},
 	position_id: {
-		type: Number, // 1=Admin, 2=Operation Team, 3=Auditor 4=Manager 5=Supervisor.
+		type: Number, // 1=Admin, 2=Operation-Team, 3=Auditor 4=Manager 5=Supervisor.
 		min: [1,'invalid user type'],
     	max: [8,'invalid user type'],
 		trim: true,
@@ -65,25 +65,21 @@ const userSchema = new mongoose.Schema({
 	},
 	device_type: {
 		type: Number, // 1=web, 2=ios, 3=android
-		min: [1,'invalid device type'],
-    	max: [3,'invalid device type']
+		min: [1,'invalid device type'], max: [3,'invalid device type']
 	},
 	email_verified_status: {
 		type: Number, // 1=Verified, 0=Pending
-		min: [0,'invalid status'],
-    	max: [1,'invalid status'],
+		min: [0,'invalid status'], max: [1,'invalid status'],
 		default: 0,
 	},
 	registration_status: {
 		type: Number, // 1=Success, 0=Pending
-		min: [0,'invalid status'],
-    	max: [1,'invalid status'],
+		min: [0,'invalid status'], max: [1,'invalid status'],
 		default: 0,
 	},
 	reset_password_status: {
 		type: Number, //0=Inactive, 1=active
-		min: [0,'invalid status'],
-    	max: [1,'invalid status'],
+		min: [0,'invalid status'], max: [1,'invalid status'],
 		default: 0,
 	},
 
@@ -142,6 +138,8 @@ userSchema.pre("findOneAndUpdate", async function(next) {
 		return next(error);
 	}
 });
+
+userSchema.plugin(mongoosePaginate);
 
 const User = new mongoose.model("User", userSchema);
 module.exports = User;

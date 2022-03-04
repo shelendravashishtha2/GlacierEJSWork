@@ -16,10 +16,12 @@ const baseUrl = process.env.BASE_URL || "/";
 
 function isUserAllowed(req, res, next) {
 	if (req.session.user) {
+		res.locals.title = "Crest Property Solution"; //default
+		res.locals.session = req.session;
 		res.locals.user = req.session.user;
 		res.locals.APP_URL = process.env.APP_URL + req.baseUrl;
-		res.locals.success = req.flash('success');
-		res.locals.error = req.flash('error');
+		res.locals.success_msg = req.flash('success_msg');
+    	res.locals.error_msg = req.flash('error_msg');
 
 		next();
 	} else {

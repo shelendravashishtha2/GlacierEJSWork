@@ -1,12 +1,12 @@
 const bcrypt = require("bcryptjs");
-const User = require("../../models/User");
+const User = require("../models/User");
 const nodemailer = require('nodemailer');
-const { encrypt, decrypt } = require('../../helper/crypto');
+const { encrypt, decrypt } = require('../helper/crypto');
 const Joi = require("joi");
-const response = require("../../helper/response");
-const commonHelpers = require("../../helper/commonHelpers");
-const {errorLog,consoleLog} = require("../../helper/consoleLog");
-const UserResource = require('../resources/UserResource');
+const response = require("../helper/response");
+const commonHelpers = require("../helper/commonHelpers");
+const {errorLog,consoleLog} = require("../helper/consoleLog");
+const UserResource = require('./api/resources/UserResource');
 
 exports.registerValidation = async (req, res, next) => {
 	const schema = Joi.object({

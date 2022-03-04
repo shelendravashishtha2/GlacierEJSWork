@@ -4,7 +4,6 @@ const Joi = require("joi");
 const response = require("../../helper/response");
 const { errorLog } = require("../../helper/consoleLog");
 const MomentRange = require('moment-range');
-const PropertyResource = require('../resources/PropertyResource');
 const PpmEquipment = require("../../models/PpmEquipmentMaster");
 const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
@@ -26,8 +25,8 @@ exports.index = async (req, res) => {
 
 		return res.render('Admin/Reports/index', {
             PropertyList: PropertyList,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -56,11 +55,11 @@ exports.indexFilter = async (req, res) => {
 		}
 
 		if (req.body.reportType == 1) {
-			return res.redirect('/ppm-report?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate);
+			return res.redirect(req.baseUrl+'/ppm-report?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate);
 		} else if (req.body.reportType == 2) {
-			return res.redirect('/frc-report?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate);
+			return res.redirect(req.baseUrl+'/frc-report?propertyId='+req.body.propertyId+'&&startDate='+req.body.startDate+'&&endDate='+req.body.endDate);
 		} else {
-			return res.redirect('/report');
+			return res.redirect(req.baseUrl+'/report');
 		}
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -76,9 +75,9 @@ exports.ppmReport = async (req, res) => {
 		req.session.error = '';
 
 		if (req.query.reportType == 1) {
-			return res.redirect('/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+			return res.redirect(req.baseUrl+'/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
 		} else if (req.query.reportType == 2) {
-			return res.redirect('/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+			return res.redirect(req.baseUrl+'/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
 		}
 
 		let schema = Joi.object({
@@ -166,8 +165,8 @@ exports.ppmReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             PpmEquipmentAssetAssignData: PpmEquipmentAssetAssignDataArray,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);
@@ -183,9 +182,9 @@ exports.frcReport = async (req, res) => {
 		req.session.error = '';
 
 		if (req.query.reportType == 1) {
-			return res.redirect('/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+			return res.redirect(req.baseUrl+'/ppm-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
 		} else if (req.query.reportType == 2) {
-			return res.redirect('/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
+			return res.redirect(req.baseUrl+'/frc-report?propertyId='+req.query.propertyId+'&&startDate='+req.query.startDate+'&&endDate='+req.query.endDate);
 		}
 
 		let schema = Joi.object({
@@ -274,8 +273,8 @@ exports.frcReport = async (req, res) => {
 			data: req.query,
 			PropertyList: PropertyList,
             CategoryFrcAssignData: CategoryFrcAssignDataArray,
-            success: req.flash('success'),
-            error: req.flash('error'),
+            success: req.flash('success_msg'),
+            error: req.flash('error_msg'),
         })
 	} catch (error) {
 		errorLog(__filename, req.originalUrl, error);

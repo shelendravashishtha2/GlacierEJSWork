@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const MngRatingChecklistMaster = require("./MngRatingChecklistMaster");
+const MngRatingGroupMaster = require("./MngRatingGroupMaster");
+const MngRatingTopicMaster = require("./MngRatingTopicMaster");
+const Property = require("./Property");
+const User = require("./User");
 
 const checklistSchema = new mongoose.Schema({ 
 	checklistId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Checklist_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingChecklistMaster,
 		required: true
 	},
 	weightage: {
@@ -26,7 +31,7 @@ const checklistSchema = new mongoose.Schema({
 
 const topicSchema = new mongoose.Schema({ 
 	topicId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Topic_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingTopicMaster,
 		required: true
 	},
 	assignChecklists: [checklistSchema],
@@ -34,7 +39,7 @@ const topicSchema = new mongoose.Schema({
 
 const groupSchema = new mongoose.Schema({ 
 	groupId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: 'Mng_Rating_Group_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: MngRatingGroupMaster,
 		required: true
 	},
 	assignTopics: [topicSchema],
@@ -43,13 +48,11 @@ const groupSchema = new mongoose.Schema({
 
 const MngRatingTaskAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Property',
+		type:  mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
     },
 	auditorId: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		type:  mongoose.Schema.Types.ObjectId, ref: User,
 		required: true
 	},
 

@@ -3,6 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const daysEnum = require("../enum/daysEnum");
 const frequencyEnum = require("../enum/frequencyEnum");
 const { prependToArray } = require("../helper/commonHelpers");
+const CategoryMaster = require("./CategoryMaster");
 
 let daysArr = Object.keys(daysEnum);
 let days = prependToArray('',daysArr);
@@ -11,8 +12,7 @@ frequencyArr = prependToArray('none', frequencyArr);
 
 const CategoryFrcMasterSchema = new mongoose.Schema({
 	category_id: {
-		type:  mongoose.Schema.Types.ObjectId,
-		ref: 'Category_Master',
+		type:  mongoose.Schema.Types.ObjectId, ref: CategoryMaster,
 		required: true,
 		trim: true,
 	},
@@ -70,6 +70,8 @@ const CategoryFrcMasterSchema = new mongoose.Schema({
 	timestamps: true,
 	versionKey: false
 });
+
+CategoryFrcMasterSchema.plugin(mongoosePaginate);
 
 const CategoryFrcMaster = new mongoose.model("Category_Frc_Master", CategoryFrcMasterSchema);
 module.exports = CategoryFrcMaster;

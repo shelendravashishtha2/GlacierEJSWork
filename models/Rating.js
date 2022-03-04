@@ -36,5 +36,7 @@ const ratingSchema = new mongoose.Schema({
 	versionKey: false
 })
 
+ratingSchema.plugin(mongoosePaginate);
+
 const Rating = new mongoose.model("rating", ratingSchema);
 module.exports = Rating;

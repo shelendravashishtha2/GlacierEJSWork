@@ -47,10 +47,10 @@ app.use(session({
     }),
 );
 app.use(flash());
-app.use(toastr());
+// app.use(toastr());
 
 app.use(function (req, res, next) {
-    res.locals.toasts = req.toastr.render();
+    // res.locals.toasts = req.toastr.render();
     next();
 });
 
