@@ -18,12 +18,6 @@ const formSchema = new mongoose.Schema({
 		required:true,
 		trim: true,
 	},
-	status: {
-		type: Number, //0=Inactive, 1=Active
-		min: [0,'invalid status'],
-    	max: [1,'invalid status'],
-		default: 0,
-	},
 	completeDate: {
 		type: Date,
 		default: null,

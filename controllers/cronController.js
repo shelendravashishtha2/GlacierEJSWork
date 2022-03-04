@@ -1,10 +1,11 @@
 const PropertyTask = require('../models/CategoryAssign');
 const CategoryChecklist = require('../models/CategoryFrcMaster');
-const Form = require('../models/Form');
+const Form = require('../models/CategoryFrcAssignTask');
 const PpmEquipmentAssetAssign = require('../models/PpmEquipmentAssetAssign');
 const PpmTaskAssign = require('../models/PpmTaskAssign');
 const daysEnum = require('../enum/daysEnum');
 const frequencyEnum = require('../enum/frequencyEnum');
+// const CategoryFrcAssignTask = require('../models/CategoryFrcAssignTask')
 
 exports.formCron = async (req, res) => {
     try {

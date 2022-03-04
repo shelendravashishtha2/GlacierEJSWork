@@ -1,79 +1,83 @@
 const Category = require("../../../models/CategoryMaster");
 const CategoryChecklist = require("../../../models/CategoryFrcMaster");
-const Form = require("../../../models/Form");
+const Form = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
 const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
+const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 
 exports.historyList = async (req, res) => {
 	try {
-		let condition = {"$match": {userId: ObjectId(req.user._id)}};
-		let group = {
-			$group:{
-				_id:"$categories._id",
-				category_name: {$first:"$categories.category_name"},
-				percentage: { $avg: "$percentage" }
-			}
-		}
-		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$categoryId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
-                                    {
-                                        $eq: [false, "$$isDeleted"]
-                                    }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
+		// let condition = {"$match": {userId: ObjectId(req.user._id)}};
+		// let group = {
+		// 	$group:{
+		// 		_id:"$categories._id",
+		// 		category_name: {$first:"$categories.category_name"},
+		// 		percentage: { $avg: "$percentage" }
+		// 	}
+		// }
+		// let lookup = {
+        // 	$lookup: {
+        //         from: 'categories',
+        //         let: {
+        //             id: "$categoryId"
+        //         },
+        //         pipeline: [{
+        //                 $match: {
+        //                     $expr: {
+        //                         $and: [{
+        //                                 $eq: ["$_id", "$$id"]
+        //                             }/*,
+        //                             {
+        //                                 $eq: [false, "$$isDeleted"]
+        //                             }*/
+        //                         ]
+        //                     }
+        //                 }
+        //             },
+        //             {
+        //                 $project: {
+        //                     _id:1,
+        //                     category_name: 1
+        //                 }
+        //             }
+        //         ],
+        //         as: 'categories',
+        //     }
+        // }
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let start_date = null
-        let end_date = null;
-        let filter = {$match:{}}
-        if(req.body.start_date){
-        	start_date = new Date(req.body.start_date);
-            //start_date = start_date.setHours(0, 0, 0, 0);
-            start_date = new Date(start_date);
-        }
-        if(req.body.end_date){
-            end_date = new Date(req.body.end_date);
-            //end_date = end_date.setHours(23, 59, 59, 999);
-            end_date = new Date(end_date);
-        }
-        if(req.body.start_date && req.body.end_date){
-        	filter = { "$match": { "createdAt": { $gte: start_date, $lt: end_date } } };
-        }else if(req.body.start_date){
-        	filter = { "$match": { "createdAt": { $lt: end_date } } };
-        }else if(req.body.end_date){
-        	filter = { "$match": { "createdAt": { $gte: start_date} } };
-        }
-		let history = await Form.aggregate([condition,filter,lookup,unwind,group]);
+        // let unwind = {
+        //     $unwind: {
+        //         path: "$categories",
+        //         preserveNullAndEmptyArrays: true
+        //     }
+        // }
+        // let start_date = null
+        // let end_date = null;
+        // let filter = {$match:{}}
+        // if(req.body.start_date){
+        // 	start_date = new Date(req.body.start_date);
+        //     //start_date = start_date.setHours(0, 0, 0, 0);
+        //     start_date = new Date(start_date);
+        // }
+        // if(req.body.end_date){
+        //     end_date = new Date(req.body.end_date);
+        //     //end_date = end_date.setHours(23, 59, 59, 999);
+        //     end_date = new Date(end_date);
+        // }
+        // if(req.body.start_date && req.body.end_date){
+        // 	filter = { "$match": { "createdAt": { $gte: start_date, $lt: end_date } } };
+        // }else if(req.body.start_date){
+        // 	filter = { "$match": { "createdAt": { $lt: end_date } } };
+        // }else if(req.body.end_date){
+        // 	filter = { "$match": { "createdAt": { $gte: start_date} } };
+        // }
+		// let history = await Form.aggregate([condition,filter,lookup,unwind,group]);
+
+		let FrcTaskHistoryData = await CategoryFrcAssignTask.find({});
+
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",

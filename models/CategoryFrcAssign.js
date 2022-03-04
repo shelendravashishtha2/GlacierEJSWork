@@ -14,15 +14,15 @@ let frequency = prependToArray('None',frequencyArr);
 
 const CategoryFrcAssignSchema = new mongoose.Schema({
 	propertyId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: Property,
+		type: mongoose.Schema.Types.ObjectId, ref: Property,
 		required: true
 	},
 	assignCategoryId: {
-		type:  mongoose.Schema.Types.ObjectId, ref: CategoryAssign,
+		type: mongoose.Schema.Types.ObjectId, ref: CategoryAssign,
 		required: true
 	},
 	supervisorId: {
-		type:  [mongoose.Schema.Types.ObjectId], ref: User,
+		type: [mongoose.Schema.Types.ObjectId], ref: User,
 		default: []
 	},
 	

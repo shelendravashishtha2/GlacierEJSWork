@@ -21,7 +21,7 @@ const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const logger = require('morgan');
 const methodOverride = require('method-override');
-compress = require('compression');
+const compress = require('compression');
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name

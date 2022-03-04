@@ -12,9 +12,9 @@ const auth = async (req, res, next) => {
 			const verifyUser = jwt.verify(token, "d32a72ad744f1a806846c2f57ff0df48e3380f7eaa0295e726dd4642a656");
 
 			let user = await User.findOne({_id: verifyUser._id, status: 1}).lean();
-			// if (!user) {
-			// 	return res.send(response.error(401, 'User is Inactive', [] ));
-			// }
+			if (!user) {
+				return res.send(response.error(401, 'User is Inactive', [] ));
+			}
 
 			//token compare and check in database
 			const tokenExists = user.tokens.some(t => t.token === token);
