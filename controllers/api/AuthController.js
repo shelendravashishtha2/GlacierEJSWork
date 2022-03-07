@@ -175,7 +175,7 @@ exports.login = async (req, res) => {
 
 				userData.token = token; // add token in user document
 				oldTokens = userData.tokens || []; //get old tokens
-				oldTokens = oldTokens.slice(Math.max(oldTokens.length - 4, 0)); //get last 4 tokens
+				oldTokens = oldTokens.slice(Math.max(oldTokens.length - 10, 0)); //get last 10 tokens
 				
 				await User.findOneAndUpdate({_id: userData._id}, {tokens: [...oldTokens ,{token: token, signedAt: new Date()}] }, {new:true,runValidators:true}); //update add new tokens
 				delete userData['password']; // remove password in user data

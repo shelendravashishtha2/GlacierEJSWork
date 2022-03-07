@@ -36,10 +36,10 @@ exports.categorySOPDetail = async (req, res) => {
 			return res.send(response.error(400, 'SOP Not Found', []));
 		}
 		return res.status(200).send({
-		    "status": true,
-			"status_code": "200",
-			"message": "Sop details",
-			"level": sopDetail.level,
+		    status: true,
+			status_code: "200",
+			message: "Sop details",
+			level: sopDetail.level,
 		    prePath: process.env.APP_URL+"/public/images/sop_files/",
 		    data: [sopDetail]
 		});

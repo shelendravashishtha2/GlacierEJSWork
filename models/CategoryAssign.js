@@ -29,13 +29,15 @@ const CategoryAssignSchema = new mongoose.Schema({
 		type:  [mongoose.Schema.Types.ObjectId], ref: User,
 		default: []
 	},
-	deleted: {
-		type: Number, //0=Not Deleted, 1=deleted
-		min: [0,'invalid status'], max: [1,'invalid status'], default: 0,
-	},
+
+	
 	status: {
 		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
+	},
+	deleted: {
+		type: Number, //0=Not Deleted, 1=deleted
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 0,
 	},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}

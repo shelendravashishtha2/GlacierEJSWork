@@ -58,7 +58,7 @@ app.get(baseUrl + '/layouts/', function (req, res) {
     res.render('view');
 });
 
-// AuthController(app); // for auth routes
+AuthController(app); // for web auth routes
 
 //For set layouts of html view
 const expressLayouts = require('express-ejs-layouts');
@@ -82,7 +82,7 @@ app.use(methodOverride());
 
 // Define All Routes
 app.use(baseUrl + 'api', require("./routes/api"));
-AuthController(app); // for web auth routes
+// AuthController(app); // for web auth routes
 app.use(baseUrl + "admin", require("./routes/web_admin"));
 app.use(baseUrl + "opt", require("./routes/web_opt"));
 

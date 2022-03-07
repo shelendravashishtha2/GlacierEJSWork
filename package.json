@@ -43,6 +43,7 @@
     "moment-range": "^4.0.2",
     "mongoose": "^6.0.9",
     "mongoose-paginate-v2": "^1.5.0",
+    "mongoose-softdelete": "^1.2.0",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.0",
     "node-input-validator": "^4.5.0",

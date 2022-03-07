@@ -1,7 +1,7 @@
 const User = require("../../../models/User");
 const CategoryAssign = require("../../../models/CategoryAssign");
 const CategoryChecklist = require("../../../models/CategoryFrcMaster");
-const Form = require("../../../models/Form");
+const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
@@ -89,7 +89,7 @@ exports.categoryChecklist = async (req, res) => {
 		let categoryChecklistData = await CategoryChecklist.aggregate([condition/*,lookup,unwind*/,project]);
 		categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
 		for(let i=0;i<categoryChecklistData.length;i++){
-			let form = await Form.findOne({categoryChecklistId:categoryChecklistData[i]._id,userId:req.user._id}).sort({createdAt:-1});
+			let form = await CategoryFrcAssignTask.findOne({categoryChecklistId: categoryChecklistData[i]._id, userId: req.user._id}).sort({createdAt: -1});
 			if(form){
 				categoryChecklistData[i].percentage = form.percentage;
 			}else{
@@ -137,7 +137,7 @@ exports.formDetail = async (req, res) => {
 	}
 }
 
-exports.getFormSubmitedDetail = async (req, res) => {
+exports.getFormSubmittedDetail = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			formId: Joi.string().min(24).max(24).required()
@@ -146,7 +146,7 @@ exports.getFormSubmitedDetail = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let formDetail = await Form.findOne({_id:req.body.formId})
+		let formDetail = await CategoryFrcAssignTask.findOne({_id:req.body.formId})
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
@@ -173,11 +173,11 @@ exports.formSubmit = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let formDetail = await Form.findOne({_id:req.body.formId})
+		let formDetail = await CategoryFrcAssignTask.findOne({_id:req.body.formId})
 		if(formDetail){
-			formDetail = await Form.findOne({_id:req.body.formId})
+			formDetail = await CategoryFrcAssignTask.findOne({_id:req.body.formId})
 		}else{
-			formDetail = new Form;
+			formDetail = new CategoryFrcAssignTask;
 			formDetail.categoryId = req.body.categoryId;
 			formDetail.categoryChecklistId = req.body.categoryChecklistId;
 			formDetail.userId = req.body.userId;
@@ -218,7 +218,7 @@ exports.formList = async (req, res) => {
 		//const startDate = new Date(req.body.startDate)
 		//const endDate = new Date(req.body.endDate)
 
-		const list = await Form.find({$and:[{createdAt:{$gte: startDate}},{endDate:{$lte: endDate}}]})
+		const list = await CategoryFrcAssignTask.find({$and:[{createdAt:{$gte: startDate}},{endDate:{$lte: endDate}}]})
 		if (!list) {
 			return res.send(response.error(400, "FormList not found", [] ))
 		}

@@ -73,9 +73,17 @@ exports.changeCategoryStatus = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
+		
+
+		// let data = await CategoryMaster.findOne({ _id: req.body._id });
+		// data.status == 0 ? data.status = 1 : data.status = 0;
+		// data.save();
+
 		let data = await CategoryMaster.findOne({ _id: req.body._id });
-		data.status == 0 ? data.status = 1 : data.status = 0;
-		data.save();
+		await data.restore();
+
+		let data1 = await CategoryMaster.findOne({ _id: req.body._id });
+		console.log(data1);
 
 		return res.send(response.success(200, 'Status update Successfully', data.status));
 	} catch (error) {

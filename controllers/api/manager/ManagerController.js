@@ -1,18 +1,21 @@
-const User = require("../../models/User");
-const Task = require("../../models/CategoryAssign");
-const PPM = require("../../models/PpmEquipmentMaster");
-const Category = require("../../models/CategoryMaster");
-const CategoryChecklist = require("../../models/CategoryFrcMaster");
-const Property = require("../../models/Property");
-const Form = require("../../models/Form");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const response = require("../../helper/response");
-const SOP = require('../../models/SOP');
-const SettingRating = require("../../models/SettingRating");
-const Rating = require("../../models/Rating");
-const {errorLog} = require("../../helper/consoleLog");
 const Joi = require("joi");
+const { errorLog } = require("../../../helper/consoleLog");
+const response = require("../../../helper/response");
+const User = require("../../../models/User");
+const PpmEquipmentMaster = require("../../../models/PpmEquipmentMaster");
+const CategoryMaster = require("../../../models/CategoryMaster");
+const CategoryFrcMaster = require("../../../models/CategoryFrcMaster");
+const Property = require("../../../models/Property");
+const CategoryAssign = require("../../../models/CategoryAssign");
+const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
+const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
+const SOP = require('../../../models/SOP');
+const SettingRating = require("../../../models/SettingRating");
+const Rating = require("../../../models/Rating");
+const UserProperty = require("../../../models/UserProperty");
+const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 
 exports.ppmTaskDetail = async (req, res) => {
 	try {
@@ -22,36 +25,36 @@ exports.ppmTaskDetail = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let ppmTaskList = await PPM.findOne({_id:req.query.ppmId,status:1});
-		if(!ppmTaskList){
+		let ppmTaskList = await PpmEquipmentMaster.findOne({ _id: req.query.ppmId, status: 1 });
+		if (!ppmTaskList) {
 			return res.send(response.error(400, 'PPM Not Found', []));
 		}
 		let index;
-		for(let i=0;i<ppmTaskList.tasks.length;i++){
-			if(String(ppmTaskList.tasks[i]._id) == String(req.query.taskId)){
+		for (let i = 0; i < ppmTaskList.tasks.length; i++) {
+			if (String(ppmTaskList.tasks[i]._id) == String(req.query.taskId)) {
 				index = i;
 			}
 		}
-		if(index == -1){
+		if (index == -1) {
 			return res.send(response.error(400, 'PPM Task Not Found', []));
 		}
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    ppmTaskDetail: {
-		    	_id:ppmTaskList._id,
-		    	ppmEquipmentName:ppmTaskList.ppmEquipmentName,
-		    	task:{
-		    		assetName: ppmTaskList.tasks[index].assetName,
-		    		vendorName: ppmTaskList.tasks[index].vendorName,
-		    		frequency: ppmTaskList.tasks[index].frequency,
+			"status": true,
+			"status_code": "200",
+			ppmTaskDetail: {
+				_id: ppmTaskList._id,
+				ppmEquipmentName: ppmTaskList.ppmEquipmentName,
+				task: {
+					assetName: ppmTaskList.tasks[index].assetName,
+					vendorName: ppmTaskList.tasks[index].vendorName,
+					frequency: ppmTaskList.tasks[index].frequency,
 					day: ppmTaskList.tasks[index].day,
 					date: ppmTaskList.tasks[index].date,
 					month: ppmTaskList.tasks[index].month,
-		    	},
-		    }
+				},
+			}
 		});
 	} catch (error) {
 		console.log(error);
@@ -66,37 +69,41 @@ exports.ppmTaskList = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let condition = {"$match": {_id: ObjectId(req.query.ppmId),status:1}};
-		let condition1 = {"$match": {"tasks.status":1}};
-		let group = {
-			$group:{
-				_id:"$_id",
-				ppmEquipmentName:{$first:"$ppmEquipmentName"},
-				tasks:{
-					$push:{
-						assetName: "$tasks.assetName",
-						frequency: "$tasks.frequency",
-						day: "$tasks.day",
-						date: "$tasks.date",
-						vendorName: "$tasks.vendorName",
-						month: "$tasks.month",
-					}
-				}
-			}
-		}
-		let unwind = {
-            $unwind: {
-                path: "$tasks",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-		let ppmTaskList = await PPM.aggregate([condition,unwind,condition1,group])
+
+		// let condition = { "$match": { _id: ObjectId(req.query.ppmId), status: 1 } };
+		// let condition1 = { "$match": { "tasks.status": 1 } };
+		// let group = {
+		// 	$group: {
+		// 		_id: "$_id",
+		// 		ppmEquipmentName: { $first: "$ppmEquipmentName" },
+		// 		tasks: {
+		// 			$push: {
+		// 				assetName: "$tasks.assetName",
+		// 				frequency: "$tasks.frequency",
+		// 				day: "$tasks.day",
+		// 				date: "$tasks.date",
+		// 				vendorName: "$tasks.vendorName",
+		// 				month: "$tasks.month",
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// let unwind = {
+		// 	$unwind: {
+		// 		path: "$tasks",
+		// 		preserveNullAndEmptyArrays: true
+		// 	}
+		// }
+		// let ppmTaskList = await PpmEquipmentMaster.aggregate([condition, unwind, condition1, group])
+
+		let ppmTaskList = await PpmTaskAssign.find({propertyId: propertyId})
+
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    ppmTaskList: ppmTaskList
+			"status": true,
+			"status_code": "200",
+			ppmTaskList: ppmTaskList
 		});
 	} catch (error) {
 		console.log(error);
@@ -106,19 +113,19 @@ exports.ppmTaskList = async (req, res) => {
 }
 exports.ppmList = async (req, res) => {
 	try {
-		let condition = {"$match": {status:1}};
+		let condition = { "$match": { status: 1 } };
 		let project = {
-			$project:{
-				ppmEquipmentName:"$ppmEquipmentName"
+			$project: {
+				ppmEquipmentName: "$ppmEquipmentName"
 			}
 		}
-		
-		let ppmList = await PPM.aggregate([condition,project])
-		
+
+		let ppmList = await PpmEquipmentMaster.aggregate([condition, project])
+
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    ppmList: ppmList
+			"status": true,
+			"status_code": "200",
+			ppmList: ppmList
 		});
 	} catch (error) {
 		console.log(error);
@@ -126,6 +133,7 @@ exports.ppmList = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 exports.propertyDetail = async (req, res) => {
 	try {
 		let schema = Joi.object({
@@ -133,30 +141,31 @@ exports.propertyDetail = async (req, res) => {
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let property = await Property.findOne({_id:req.query.propertyId})
-		if(!property){
+
+		let property = await Property.findOne({ _id: req.query.propertyId })
+		if (!property) {
 			return res.send(response.error(400, 'Property Not Found', []));
 		}
 		let wings = [];
-		for(let i=0;i<property.wings.length;i++){
-			if(property.wings[i].status == 1){
+		for (let i = 0; i < property.wings.length; i++) {
+			if (property.wings[i].status == 1) {
 				wings.push(property.wings[i].wings_name);
 			}
 		}
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    property: {
-		    	property_name:property.property_name,
-		    	name_of_owner:property.name_of_owner,
-		    	square_feet:property.square_feet,
-		    	area_name:property.area_name,
-		    	property_images:property.property_images,
-		    	address:property.address,
-		    	wings:wings.join(","),
-		    }
+			"status": true,
+			"status_code": "200",
+			property: {
+				property_name: property.property_name,
+				name_of_owner: property.name_of_owner,
+				square_feet: property.square_feet,
+				area_name: property.area_name,
+				property_images: property.property_images,
+				address: property.address,
+				wings: wings.join(","),
+			}
 		});
 	} catch (error) {
 		console.log(error);
@@ -167,35 +176,35 @@ exports.propertyDetail = async (req, res) => {
 exports.propertyWingList = async (req, res) => {
 	try {
 		let propertyIds = [];
-		for(let i=0;i < req.user.property_id.length;i++){
+		for (let i = 0; i < req.user.property_id.length; i++) {
 			propertyIds.push(ObjectId(req.user.property_id[i]));
 		}
-		let condition = {"$match": {_id: {$in:propertyIds} , status:1}};
+		let condition = { "$match": { _id: { $in: propertyIds }, status: 1 } };
 		//let condition = {"$match": {_id: ObjectId(req.query.propertyId) , status:1}};
-		let wingCondition = {"$match": {"wings.status": {$ne:0}}};
+		let wingCondition = { "$match": { "wings.status": { $ne: 0 } } };
 		let unwind = {
-            $unwind: {
-                path: "$wings",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let group = {
-			$group:{
-				_id:"$_id",
-				property_name:{$first:"$property_name"},
-				wings:{
-					$push:{
-						_id:"$wings._id",
-						wingsName:"$wings.wings_name",
+			$unwind: {
+				path: "$wings",
+				preserveNullAndEmptyArrays: true
+			}
+		}
+		let group = {
+			$group: {
+				_id: "$_id",
+				property_name: { $first: "$property_name" },
+				wings: {
+					$push: {
+						_id: "$wings._id",
+						wingsName: "$wings.wings_name",
 					}
 				}
 			}
 		}
-		let wingsData = await Property.aggregate([condition,unwind,wingCondition,group]);
+		let wingsData = await Property.aggregate([condition, unwind, wingCondition, group]);
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    wingsData: wingsData
+			"status": true,
+			"status_code": "200",
+			wingsData: wingsData
 		});
 	} catch (error) {
 		console.log(error);
@@ -206,34 +215,34 @@ exports.propertyWingList = async (req, res) => {
 exports.propertyListWithRating = async (req, res) => {
 	try {
 		let propertyIds = [];
-		for(let i=0;i < req.user.property_id.length;i++){
+		for (let i = 0; i < req.user.property_id.length; i++) {
 			propertyIds.push(ObjectId(req.user.property_id[i]));
 		}
-		let condition = {"$match": {_id: {$in:propertyIds}}};
+		let condition = { "$match": { _id: { $in: propertyIds } } };
 		let project = {
-			$project:{
-				property_name:"$property_name",
-				rating:{ $ifNull: [ "$rating", 0 ] }
+			$project: {
+				property_name: "$property_name",
+				rating: { $ifNull: ["$rating", 0] }
 			}
 		}
-		let propertyList = await Property.aggregate([condition,project]);
+		let propertyList = await Property.aggregate([condition, project]);
 		let settingRatingData = await SettingRating.find({});
-		for(let i=0;i<propertyList.length;i++){
-			if(propertyList[i].rating != 0){
-				let index = settingRatingData.findIndex((x)=> propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
-				if(index != -1){
-					propertyList[i].rating = settingRatingData[i].rating_name; 
-				}else{
+		for (let i = 0; i < propertyList.length; i++) {
+			if (propertyList[i].rating != 0) {
+				let index = settingRatingData.findIndex((x) => propertyList[i].rating >= x.min_rating && propertyList[i].rating <= x.max_rating)
+				if (index != -1) {
+					propertyList[i].rating = settingRatingData[i].rating_name;
+				} else {
 					propertyList[i].rating = "E";
 				}
-			}else{
+			} else {
 				propertyList[i].rating = "Not Given";
 			}
 		}
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    propertyList:propertyList
+			"status": true,
+			"status_code": "200",
+			propertyList: propertyList
 		});
 	} catch (error) {
 		console.log(error);
@@ -244,57 +253,58 @@ exports.propertyListWithRating = async (req, res) => {
 exports.assignTaskList = async (req, res) => {
 	try {
 		let propertyIds = [];
-		for(let i=0;i < req.user.property_id.length;i++){
+		for (let i = 0; i < req.user.property_id.length; i++) {
 			propertyIds.push(ObjectId(req.user.property_id[i]));
 		}
-		let condition = {"$match": {propertyId: {$in:propertyIds}}};
+		let condition = { "$match": { propertyId: { $in: propertyIds } } };
 		let project = {
-			$project:{
-				category_name:"$categories.category_name",
-				createdAt:"$categories.createdAt"
+			$project: {
+				category_name: "$categories.category_name",
+				createdAt: "$categories.createdAt"
 			}
 		}
 		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$categoryId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
+			$lookup: {
+				from: 'categories',
+				let: {
+					id: "$categoryId"
+				},
+				pipeline: [{
+					$match: {
+						$expr: {
+							$and: [{
+								$eq: ["$_id", "$$id"]
+							}/*,
                                     {
                                         $eq: [false, "$$isDeleted"]
                                     }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
+							]
+						}
+					}
+				},
+				{
+					$project: {
+						_id: 1,
+						category_name: 1
+					}
+				}
+				],
+				as: 'categories',
+			}
+		}
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-		let taskData = await Task.aggregate([condition,lookup,unwind,project]);
+		let unwind = {
+			$unwind: {
+				path: "$categories",
+				preserveNullAndEmptyArrays: true
+			}
+		}
+		let taskData = await CategoryAssign.aggregate([condition, lookup, unwind, project]);
+
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    taskData: taskData
+			"status": true,
+			"status_code": "200",
+			taskData: taskData
 		});
 	} catch (error) {
 		console.log(error);
@@ -304,62 +314,75 @@ exports.assignTaskList = async (req, res) => {
 }
 exports.categoryList = async (req, res) => {
 	try {
-		
-		//let categoryData = await Category.find({status:1},{category_name:1});
-		let propertyIds = [];
-		for(let i=0;i < req.user.property_id.length;i++){
-			propertyIds.push(ObjectId(req.user.property_id[i]));
-		}
-		let condition = {"$match": {propertyId: {$in:propertyIds}}};
-		let project = {
-			$project:{
-				category_id:"$categories._id",
-				category_name:"$categories.category_name",
-				createdAt:"$categories.createdAt"
-			}
-		}
-		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$categoryId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
-                                    {
-                                        $eq: [false, "$$isDeleted"]
-                                    }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-		let categoryData = await Task.aggregate([condition,lookup,unwind,project]);
+		//let categoryData = await CategoryMaster.find({status:1},{category_name:1});
+		// let propertyIds = [];
+		// for (let i = 0; i < req.user.property_id.length; i++) {
+		// 	propertyIds.push(ObjectId(req.user.property_id[i]));
+		// }
+		// let condition = { "$match": { propertyId: { $in: propertyIds } } };
+		// let project = {
+		// 	$project: {
+		// 		category_id: "$categories._id",
+		// 		category_name: "$categories.category_name",
+		// 		createdAt: "$categories.createdAt"
+		// 	}
+		// }
+		// let lookup = {
+		// 	$lookup: {
+		// 		from: 'categories',
+		// 		let: {
+		// 			id: "$categoryId"
+		// 		},
+		// 		pipeline: [{
+		// 			$match: {
+		// 				$expr: {
+		// 					$and: [{
+		// 						$eq: ["$_id", "$$id"]
+		// 					}/*,
+        //                             {
+        //                                 $eq: [false, "$$isDeleted"]
+        //                             }*/
+		// 					]
+		// 				}
+		// 			}
+		// 		},
+		// 		{
+		// 			$project: {
+		// 				_id: 1,
+		// 				category_name: 1
+		// 			}
+		// 		}
+		// 		],
+		// 		as: 'categories',
+		// 	}
+		// }
+
+		// let unwind = {
+		// 	$unwind: {
+		// 		path: "$categories",
+		// 		preserveNullAndEmptyArrays: true
+		// 	}
+		// }
+		// let categoryData = await CategoryAssign.aggregate([condition, lookup, unwind, project]);
+
+		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+
+		let categoryData = await CategoryAssign.find({propertyId: PropertyData._id, managerId: req.user._id})
+				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
+
+		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
+			let data = {
+				assignCategoryId: item._id,
+				categoryName: item.categoryId.category_name
+			}
+			return data
+		})
 
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    categoryData: categoryData
+			"status": true,
+			"status_code": "200",
+			categoryData: categoryData
 		});
 	} catch (error) {
 		console.log(error);
@@ -367,72 +390,91 @@ exports.categoryList = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
 exports.categoryChecklist = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			categoryId: Joi.string().min(24).max(24).required()
+			categoryId: Joi.string().min(24).max(24).optional(),
+			date: Joi.string().optional()
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
-		}
-		let condition = {"$match": {category_id: ObjectId(req.query.categoryId),status:1}};
-		let lookup = {
-        	$lookup: {
-                from: 'forms',
-                let: {
-                    id: "$_id"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$categoryChecklistId", "$$id"]
-                                    },
-                                    {
-                                        $eq: [ObjectId(req.user._id), "$userId"]
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            percentage: 1
-                        }
-                    }
-                ],
-                as: 'percentage',
-            }
-        }
-        let unwind = {
-            $unwind: {
-                path: "$percentage",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let project = {
-			$project:{
-				checklist_name:"$checklist_name",
-				//percentage:{ $ifNull: [ "$percentage.percentage", 0 ] }
-			}
-		}
-		let categoryChecklistData = await CategoryChecklist.aggregate([condition/*,lookup,unwind*/,project]);
-		categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
-		for(let i=0;i<categoryChecklistData.length;i++){
-			let form = await Form.findOne({categoryChecklistId:categoryChecklistData[i]._id,userId:req.user._id}).sort({createdAt:-1});
-			if(form){
-				categoryChecklistData[i].percentage = form.percentage;
-			}else{
-				categoryChecklistData[i].percentage = 0;
-			}
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
+		// let condition = { "$match": { category_id: ObjectId(req.query.categoryId), status: 1 } };
+		// let lookup = {
+		// 	$lookup: {
+		// 		from: 'forms',
+		// 		let: {
+		// 			id: "$_id"
+		// 		},
+		// 		pipeline: [{
+		// 			$match: {
+		// 				$expr: {
+		// 					$and: [{
+		// 						$eq: ["$categoryChecklistId", "$$id"]
+		// 					},
+		// 					{
+		// 						$eq: [ObjectId(req.user._id), "$userId"]
+		// 					}
+		// 					]
+		// 				}
+		// 			}
+		// 		}, {
+		// 			$project: {
+		// 				_id: 1,
+		// 				percentage: 1
+		// 			}
+		// 		} ],
+		// 		as: 'percentage',
+		// 	}
+		// }
+		// let unwind = {
+		// 	$unwind: {
+		// 		path: "$percentage",
+		// 		preserveNullAndEmptyArrays: true
+		// 	}
+		// }
+		// let project = {
+		// 	$project: {
+		// 		checklist_name: "$checklist_name",
+		// 		//percentage:{ $ifNull: [ "$percentage.percentage", 0 ] }
+		// 	}
+		// }
+		// let categoryChecklistData = await CategoryFrcMaster.aggregate([condition/*,lookup,unwind*/, project]);
+		// categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
+
+		// for (let i = 0; i < categoryChecklistData.length; i++) {
+		// 	let form = await CategoryFrcAssignTask.findOne({ categoryChecklistId: categoryChecklistData[i]._id, userId: req.user._id })
+		// 		.sort({ createdAt: -1 });
+		// 	if (form) {
+		// 		categoryChecklistData[i].percentage = form.percentage;
+		// 	} else {
+		// 		categoryChecklistData[i].percentage = 0;
+		// 	}
+		// }
+
+		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+
+		let findQuery = {
+			propertyId: PropertyData._id
+		}
+		if (req.query.categoryId) {
+			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
+		}
+		if (req.query.date) {
+			findQuery.dueDate = {
+				$gte: moment(req.query.date, 'DD-MM-YYYY').startOf('day'),
+				$lte: moment(req.query.date, 'DD-MM-YYYY').endOf('day')
+			}
+		}
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery);
+
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    categoryChecklistData: categoryChecklistData
+			"status": true,
+			"status_code": "200",
+			categoryFrcData: categoryFrcData
 		});
 	} catch (error) {
 		console.log(error);
@@ -440,21 +482,61 @@ exports.categoryChecklist = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-exports.supervisorList = async (req, res) => {
+
+exports.incompleteCategoryChecklist = async (req, res) => {
 	try {
-		let userData = await User.findOne({_id:req.user._id});
-		let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:5}};
-		let project = {
-			$project : {
-				"full_name" : "$full_name",
-				"profile_image" : "$profile_image",
+		let schema = Joi.object({
+			categoryId: Joi.string().min(24).max(24).optional(),
+			date: Joi.string().optional()
+		});
+		let validation = schema.validate(req.query, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+
+		let findQuery = {
+			propertyId: PropertyData._id
+		}
+		if (req.query.categoryId) {
+			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
+		}
+		if (req.query.date) {
+			findQuery.dueDate = {
+				$gte: moment(req.query.date, 'DD-MM-YYYY').startOf('day'),
+				$lte: moment(req.query.date, 'DD-MM-YYYY').endOf('day')
 			}
 		}
-		let supervisorList = await User.aggregate([condition,project])
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery);
+
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    supervisorList: supervisorList
+			"status": true,
+			"status_code": "200",
+			categoryFrcData: categoryFrcData
+		});
+	} catch (error) {
+		console.log(error);
+		errorLog(__filename, req.originalUrl, error);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.supervisorList = async (req, res) => {
+	try {
+		let userData = await User.findOne({ _id: req.user._id });
+		let condition = { "$match": { property_id: { $in: userData.property_id }, status: 1, position_id: 5 } };
+		let project = {
+			$project: {
+				"full_name": "$full_name",
+				"profile_image": "$profile_image",
+			}
+		}
+		let supervisorList = await User.aggregate([condition, project])
+		return res.status(200).send({
+			"status": true,
+			"status_code": "200",
+			supervisorList: supervisorList
 		});
 	} catch (error) {
 		console.log(error);
@@ -469,46 +551,46 @@ exports.userDetail = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let userData = await User.findOne({_id:req.query.userId},{full_name:1,profile_image:1,mobile_no:1,email:1,property_id:1});
-		if(!userData){
+		let userData = await User.findOne({ _id: req.query.userId }, { full_name: 1, profile_image: 1, mobile_no: 1, email: 1, property_id: 1 });
+		if (!userData) {
 			return res.send(response.error(400, 'User Not Found', []));
 		}
-		let condition = {"$match": {_id: {$in:userData.property_id} , status:1}};
-		let wingCondition = {"$match": {"wings.status": {$ne:0}}};
+		let condition = { "$match": { _id: { $in: userData.property_id }, status: 1 } };
+		let wingCondition = { "$match": { "wings.status": { $ne: 0 } } };
 		let unwind = {
-            $unwind: {
-                path: "$wings",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let group = {
-			$group:{
-				_id:"$_id",
-				property_name:{$first:"$property_name"},
-				wings:{
-					$push:{
-						_id:"$wings._id",
-						wingsName:"$wings.wings_name",
+			$unwind: {
+				path: "$wings",
+				preserveNullAndEmptyArrays: true
+			}
+		}
+		let group = {
+			$group: {
+				_id: "$_id",
+				property_name: { $first: "$property_name" },
+				wings: {
+					$push: {
+						_id: "$wings._id",
+						wingsName: "$wings.wings_name",
 					}
 				}
 			}
 		}
-		let wingsData = await Property.aggregate([condition,unwind,wingCondition,group]);
-		let usedCategory = await Task.distinct( "categoryId", { managerId:req.query.userId });
+		let wingsData = await Property.aggregate([condition, unwind, wingCondition, group]);
+		let usedCategory = await CategoryAssign.distinct("categoryId", { managerId: req.query.userId });
 		userData = JSON.parse(JSON.stringify(userData));
 		let allCategory = [];
-		if(usedCategory.length > 0){
-			allCategory = await Category.find({_id: {$in: usedCategory},status:1},{category_name:1});
+		if (usedCategory.length > 0) {
+			allCategory = await CategoryMaster.find({ _id: { $in: usedCategory }, status: 1 }, { category_name: 1 });
 		}
 		delete userData.property_id;
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    category: allCategory,
-		    userData: userData,
-		    wingsData:wingsData
+			"status": true,
+			"status_code": "200",
+			category: allCategory,
+			userData: userData,
+			wingsData: wingsData
 		});
 	} catch (error) {
 		console.log(error);
@@ -516,17 +598,17 @@ exports.userDetail = async (req, res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
-exports.getFormSubmitedDetail = async (req, res) => {
+exports.getFormSubmittedDetail = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			formId: Joi.string().min(24).max(24).required()
 		});
 		let validation = schema.validate(req.query, __joiOptions);
-		let formDetail = await Form.findOne({_id:req.query.formId})
+		let formDetail = await CategoryFrcAssignTask.findOne({ _id: req.query.formId })
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    formDetail: formDetail
+			"status": true,
+			"status_code": "200",
+			formDetail: formDetail
 		});
 	} catch (error) {
 		console.log(error);
@@ -541,16 +623,16 @@ exports.formDetail = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let formDetail = await CategoryChecklist.findOne({_id:req.query.CategoryChecklistId},{form:1});
+		let formDetail = await CategoryFrcMaster.findOne({ _id: req.query.CategoryChecklistId }, { form: 1 });
 		if (!formDetail) {
-			return res.send(response.error(400, "Category Checklist not found", [] ));
+			return res.send(response.error(400, "Category Checklist not found", []));
 		}
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    formDetail: formDetail
+			"status": true,
+			"status_code": "200",
+			formDetail: formDetail
 		});
 	} catch (error) {
 		console.log(error);
@@ -569,36 +651,37 @@ exports.formSubmit = async (req, res) => {
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 		let formDetail;
-		if(req.body.formId){
-			formDetail = await Form.findOne({_id:req.body.formId})
-		}else{
-			formDetail = new Form;
+		if (req.body.formId) {
+			formDetail = await CategoryFrcAssignTask.findOne({ _id: req.body.formId })
+		} else {
+			formDetail = new CategoryFrcAssignTask;
 			formDetail.categoryId = req.body.categoryId;
 			formDetail.categoryChecklistId = req.body.categoryChecklistId;
 			formDetail.userId = req.body.userId;
 		}
 		formDetail.form = req.body.form;
 		let percentage = 0;
-		let array = ["button","paragraph","header"];
+		let array = ["button", "paragraph", "header"];
 		let count = 0;
 		let completeCount = 0;
-		for(let i=0;i<req.body.form.length;i++){
-			if(array.indexOf(req.body.form[i].type) == -1){
+		for (let i = 0; i < req.body.form.length; i++) {
+			if (array.indexOf(req.body.form[i].type) == -1) {
 				count++;
-				if(req.body.form[i].value && req.body.form[i].value.length > 0){d
+				if (req.body.form[i].value && req.body.form[i].value.length > 0) {
+					d
 					completeCount++;
 				}
 			}
 		}
-		formDetail.percentage = Math.ceil((completeCount * 100)/count);
+		formDetail.percentage = Math.ceil((completeCount * 100) / count);
 		await formDetail.save()
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    formDetail: formDetail
+			"status": true,
+			"status_code": "200",
+			formDetail: formDetail
 		});
 	} catch (error) {
 		console.log(error);
@@ -615,25 +698,25 @@ exports.assignSupervisor = async (req, res) => {
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		for(let i=0;i<req.body.categoryId.length;i++){
-			let alreadyTask = await Task.findOne({propertyId:req.body.propertyId,categoryId:req.body.categoryId[i]});
-			if(!alreadyTask){
-				alreadyTask = new Task; 
+		for (let i = 0; i < req.body.categoryId.length; i++) {
+			let alreadyTask = await CategoryAssign.findOne({ propertyId: req.body.propertyId, categoryId: req.body.categoryId[i] });
+			if (!alreadyTask) {
+				alreadyTask = new CategoryAssign;
 				alreadyTask.propertyId = req.body.propertyId;
 				alreadyTask.categoryId = req.body.categoryId[i];
 				alreadyTask.supervisorId = [];
 			}
-			for(let j=0;j<req.body.supervisorId.length;j++){
+			for (let j = 0; j < req.body.supervisorId.length; j++) {
 				let index = alreadyTask.supervisorId.indexOf(ObjectId(req.body.supervisorId[j]))
-				if(index == -1){
-					alreadyTask.supervisorId.push(ObjectId(req.body.supervisorId[j]));		
+				if (index == -1) {
+					alreadyTask.supervisorId.push(ObjectId(req.body.supervisorId[j]));
 				}
 			}
 			await alreadyTask.save();
 		}
-		return res.send(response.success(200, 'Supervisor Assign Successfully' ));
+		return res.send(response.success(200, 'Supervisor Assign Successfully'));
 	} catch (error) {
 		console.log(error);
 		errorLog(__filename, req.originalUrl, error);
@@ -643,75 +726,75 @@ exports.assignSupervisor = async (req, res) => {
 
 exports.historyList = async (req, res) => {
 	try {
-		let condition = {"$match": {userId: ObjectId(req.user._id)}};
+		let condition = { "$match": { userId: ObjectId(req.user._id) } };
 		let group = {
-			$group:{
-				_id:"$categories._id",
-				category_name: {$first:"$categories.category_name"},
+			$group: {
+				_id: "$categories._id",
+				category_name: { $first: "$categories.category_name" },
 				percentage: { $avg: "$percentage" }
 			}
 		}
 		let lookup = {
-        	$lookup: {
-                from: 'categories',
-                let: {
-                    id: "$categoryId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
+			$lookup: {
+				from: 'categories',
+				let: {
+					id: "$categoryId"
+				},
+				pipeline: [{
+					$match: {
+						$expr: {
+							$and: [{
+								$eq: ["$_id", "$$id"]
+							}/*,
                                     {
                                         $eq: [false, "$$isDeleted"]
                                     }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            category_name: 1
-                        }
-                    }
-                ],
-                as: 'categories',
-            }
-        }
+							]
+						}
+					}
+				},
+				{
+					$project: {
+						_id: 1,
+						category_name: 1
+					}
+				}
+				],
+				as: 'categories',
+			}
+		}
 
-        let unwind = {
-            $unwind: {
-                path: "$categories",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let start_date = null
-        let end_date = null;
-        let filter = {$match:{}}
-        if(req.body.start_date){
-        	start_date = new Date(req.body.start_date);
-            //start_date = start_date.setHours(0, 0, 0, 0);
-            start_date = new Date(start_date);
-        }
-        if(req.body.end_date){
-            end_date = new Date(req.body.end_date);
-            //end_date = end_date.setHours(23, 59, 59, 999);
-            end_date = new Date(end_date);
-        }
-        if(req.body.start_date && req.body.end_date){
-        	filter = { "$match": { "createdAt": { $gte: start_date, $lt: end_date } } };
-        }else if(req.body.start_date){
-        	filter = { "$match": { "createdAt": { $lt: end_date } } };
-        }else if(req.body.end_date){
-        	filter = { "$match": { "createdAt": { $gte: start_date} } };
-        }
-		let history = await Form.aggregate([condition,filter,lookup,unwind,group]);
+		let unwind = {
+			$unwind: {
+				path: "$categories",
+				preserveNullAndEmptyArrays: true
+			}
+		}
+		let start_date = null
+		let end_date = null;
+		let filter = { $match: {} }
+		if (req.body.start_date) {
+			start_date = new Date(req.body.start_date);
+			//start_date = start_date.setHours(0, 0, 0, 0);
+			start_date = new Date(start_date);
+		}
+		if (req.body.end_date) {
+			end_date = new Date(req.body.end_date);
+			//end_date = end_date.setHours(23, 59, 59, 999);
+			end_date = new Date(end_date);
+		}
+		if (req.body.start_date && req.body.end_date) {
+			filter = { "$match": { "createdAt": { $gte: start_date, $lt: end_date } } };
+		} else if (req.body.start_date) {
+			filter = { "$match": { "createdAt": { $lt: end_date } } };
+		} else if (req.body.end_date) {
+			filter = { "$match": { "createdAt": { $gte: start_date } } };
+		}
+		let history = await CategoryFrcAssignTask.aggregate([condition, filter, lookup, unwind, group]);
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    history:history
+			"status": true,
+			"status_code": "200",
+			history: history
 		});
 	} catch (error) {
 		console.log(error);
@@ -726,59 +809,59 @@ exports.historyDetailList = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let condition = {"$match": {userId: ObjectId(req.user._id),categoryId: ObjectId(req.query.categoryId)}};
+		let condition = { "$match": { userId: ObjectId(req.user._id), categoryId: ObjectId(req.query.categoryId) } };
 		let lookup = {
-        	$lookup: {
-                from: 'category_check_lists',
-                let: {
-                    id: "$categoryChecklistId"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$_id", "$$id"]
-                                    }/*,
+			$lookup: {
+				from: 'category_check_lists',
+				let: {
+					id: "$categoryChecklistId"
+				},
+				pipeline: [{
+					$match: {
+						$expr: {
+							$and: [{
+								$eq: ["$_id", "$$id"]
+							}/*,
                                     {
                                         $eq: [false, "$$isDeleted"]
                                     }*/
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            checklist_name: 1,
-                            type: 1
-                        }
-                    }
-                ],
-                as: 'category_check_lists',
-            }
-        }
+							]
+						}
+					}
+				},
+				{
+					$project: {
+						_id: 1,
+						checklist_name: 1,
+						type: 1
+					}
+				}
+				],
+				as: 'category_check_lists',
+			}
+		}
 
-        let unwind = {
-            $unwind: {
-                path: "$category_check_lists",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let project = {
-			$project:{
-				_id:1,
+		let unwind = {
+			$unwind: {
+				path: "$category_check_lists",
+				preserveNullAndEmptyArrays: true
+			}
+		}
+		let project = {
+			$project: {
+				_id: 1,
 				category_check_lists: 1,
 				percentage: 1,
 				status: 1
 			}
 		}
-        let historyDetailList = await Form.aggregate([condition,lookup,unwind,project]);
+		let historyDetailList = await CategoryFrcAssignTask.aggregate([condition, lookup, unwind, project]);
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    historyDetailList:historyDetailList
+			"status": true,
+			"status_code": "200",
+			historyDetailList: historyDetailList
 		});
 	} catch (error) {
 		console.log(error);
@@ -793,31 +876,31 @@ exports.historyDetail = async (req, res) => {
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let form = await Form.findOne({_id:req.query.formId});
-		if(!form) {
-			return res.send(response.error(400, "Form not found", [] ));
+		let form = await CategoryFrcAssignTask.findOne({ _id: req.query.formId });
+		if (!form) {
+			return res.send(response.error(400, "Form not found", []));
 		}
-		let category = await Category.findOne({_id:form.categoryId});
-		if(!category) {
-			return res.send(response.error(400, "Category not found", [] ));
+		let category = await CategoryMaster.findOne({ _id: form.categoryId });
+		if (!category) {
+			return res.send(response.error(400, "Category not found", []));
 		}
-		let checklist = await CategoryChecklist.findOne({_id:form.categoryChecklistId});
-		if(!checklist) {
-			return res.send(response.error(400, "Category Checklist not found", [] ));
+		let checklist = await CategoryFrcMaster.findOne({ _id: form.categoryChecklistId });
+		if (!checklist) {
+			return res.send(response.error(400, "Category Checklist not found", []));
 		}
 		return res.status(200).send({
-		    "status": true,
-		    "status_code": "200",
-		    historyDetail:{
-		    	categoryName: category.category_name,
-		    	checklistName: checklist.checklist_name,
-		    	completeDate: form.completeDate,
-		    	percentage: form.percentage,
-		    	status: form.status,
-		    	type: checklist.type,
-		    }
+			"status": true,
+			"status_code": "200",
+			historyDetail: {
+				categoryName: category.category_name,
+				checklistName: checklist.checklist_name,
+				completeDate: form.completeDate,
+				percentage: form.percentage,
+				status: form.status,
+				type: checklist.type,
+			}
 		});
 	} catch (error) {
 		console.log(error);
@@ -836,22 +919,22 @@ exports.formList = async (req, res) => {
 		console.log(startDate, endDate)
 
 		let query = {
-			createdAt:{$gte: startDate,$lte: endDate},
-			userId:req.user._id
+			createdAt: { $gte: startDate, $lte: endDate },
+			userId: req.user._id
 		}
-		if(req.body.status && req.body.status !== undefined){
+		if (req.body.status && req.body.status !== undefined) {
 			query["status"] = req.body.status
 		}
-		
-		const list = await Form.find(query)
+
+		const list = await CategoryFrcAssignTask.find(query)
 		if (!list) {
-			return res.send(response.error(400, "FormList not found", [] ))
+			return res.send(response.error(400, "FormList not found", []))
 		}
 		return res.status(200).send({
 			"status": true,
 			"status_code": "200",
 			"formList": list
-		});		
+		});
 	} catch (error) {
 		console.log(error);
 		errorLog(__filename, req.originalUrl, error);
@@ -862,13 +945,13 @@ exports.formList = async (req, res) => {
 exports.updateRating = async (req, res) => {
 	try {
 		const property_id = req.body.propertyId
-		const property = await Property.findOne({_id: property_id})
+		const property = await Property.findOne({ _id: property_id })
 		const rating = req.body.rating;
-    const old_rate = property.rating;
-    const old_rate_count = property.rate_count;
-    const new_rate_counter = (old_rate_count + 1);
-    const new_rate = ((old_rate * old_rate_count) + rating) / new_rate_counter;
-		await Property.updateOne({_id: property_id}, {rating: new_rate, rate_count: new_rate_counter})
+		const old_rate = property.rating;
+		const old_rate_count = property.rate_count;
+		const new_rate_counter = (old_rate_count + 1);
+		const new_rate = ((old_rate * old_rate_count) + rating) / new_rate_counter;
+		await Property.updateOne({ _id: property_id }, { rating: new_rate, rate_count: new_rate_counter })
 		let obj = {
 			userId: req.user._id,
 			property_id: property_id,
@@ -877,9 +960,9 @@ exports.updateRating = async (req, res) => {
 			comment: req.body.comment
 		}
 		// const data = await Rating.findOne({property_id: category.category_id, userId: req.user._id})
-    // if(!data) {
-    //   await Rating.create(obj)    
-    // }
+		// if(!data) {
+		//   await Rating.create(obj)    
+		// }
 		await Rating.create(obj)
 		return res.status(200).send({
 			"status": true,

@@ -7,7 +7,7 @@ const response = require("../../../helper/response");
 const {errorLog,consoleLog} = require("../../../helper/consoleLog");
 const UserResource = require('../../api/resources/UserResource');
 
-// Register Form Validation
+// Register form Validation
 exports.registerValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),

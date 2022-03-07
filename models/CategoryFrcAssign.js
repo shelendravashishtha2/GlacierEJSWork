@@ -54,21 +54,18 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 	},
 	month: {
 		type: Number,
-		min: [1,'invalid status'],
-    	max: [12,'invalid status'],
-		trim: true,
+		min: [1,'invalid status'], max: [12,'invalid status'],
 	},
 	date: {
 		type: Number,
-		min: [1,'invalid status'],
-    	max: [31,'invalid status'],
-		trim: true,
+		min: [1,'invalid status'], max: [31,'invalid status'],
 	},
 	day: {
 		type: String,
 		enum: days,
 		trim: true,
 	},
+	
 	deleted: {
 		type: Number, //0=Not Deleted, 1=deleted
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 0,

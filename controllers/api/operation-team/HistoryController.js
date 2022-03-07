@@ -1,12 +1,11 @@
 const Category = require("../../../models/CategoryMaster");
 const CategoryChecklist = require("../../../models/CategoryFrcMaster");
-const Form = require("../../../models/CategoryFrcAssignTask");
+const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
 const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
-const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 
 exports.historyList = async (req, res) => {
 	try {
@@ -74,7 +73,7 @@ exports.historyList = async (req, res) => {
         // }else if(req.body.end_date){
         // 	filter = { "$match": { "createdAt": { $gte: start_date} } };
         // }
-		// let history = await Form.aggregate([condition,filter,lookup,unwind,group]);
+		// let history = await CategoryFrcAssignTask.aggregate([condition,filter,lookup,unwind,group]);
 
 		let FrcTaskHistoryData = await CategoryFrcAssignTask.find({});
 
@@ -82,7 +81,7 @@ exports.historyList = async (req, res) => {
 		    "status": true,
             "status_code": "200",
             "message": "History list",
-		    data:history
+		    data: FrcTaskHistoryData
 		});
 	} catch (error) {
 		console.log(error);
@@ -145,7 +144,7 @@ exports.historyDetailList = async (req, res) => {
 				status: 1
 			}
 		}
-        let historyDetailList = await Form.aggregate([condition,lookup,unwind,project]);
+        let historyDetailList = await CategoryFrcAssignTask.aggregate([condition,lookup,unwind,project]);
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
@@ -167,9 +166,9 @@ exports.historyDetail = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let form = await Form.findOne({_id:req.body.formId});
+		let form = await CategoryFrcAssignTask.findOne({_id:req.body.formId});
 		if(!form) {
-			return res.send(response.error(400, "Form not found", [] ));
+			return res.send(response.error(400, "CategoryFrcAssignTask not found", [] ));
 		}
 		let category = await Category.findOne({_id:form.categoryId});
 		if(!category) {

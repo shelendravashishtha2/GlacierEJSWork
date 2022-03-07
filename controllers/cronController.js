@@ -1,6 +1,6 @@
 const PropertyTask = require('../models/CategoryAssign');
 const CategoryChecklist = require('../models/CategoryFrcMaster');
-const Form = require('../models/CategoryFrcAssignTask');
+const CategoryFrcAssignTask = require('../models/CategoryFrcAssignTask');
 const PpmEquipmentAssetAssign = require('../models/PpmEquipmentAssetAssign');
 const PpmTaskAssign = require('../models/PpmTaskAssign');
 const daysEnum = require('../enum/daysEnum');
@@ -40,16 +40,16 @@ exports.formCron = async (req, res) => {
 								percentage: 0,
 							};
 							if (category.type === 'register') {
-								const data = await Form.findOne({
+								const data = await CategoryFrcAssignTask.findOne({
 									category_id:
 										category.category_id,
 									userId: manager,
 								});
 								if (!data) {
-									await Form.create(obj);
+									await CategoryFrcAssignTask.create(obj);
 									console.log(12333);
 								} else {
-									// await Form.create(obj);
+									// await CategoryFrcAssignTask.create(obj);
 									console.log(1233344444);
 								}
 							}
@@ -67,15 +67,15 @@ exports.formCron = async (req, res) => {
 								percentage: 0,
 							};
 							if (category.type === 'register') {
-								const data = await Form.findOne({
+								const data = await CategoryFrcAssignTask.findOne({
 									category_id: category.category_id,
 									userId: supervisor,
 								});
 								if (!data) {
-									await Form.create(obj);
+									await CategoryFrcAssignTask.create(obj);
 									console.log(12333);
 								} else {
-									// await Form.create(obj);
+									// await CategoryFrcAssignTask.create(obj);
 									console.log(1233344444);
 								}
 							}
@@ -97,15 +97,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -123,15 +123,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -156,15 +156,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id:  category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -182,15 +182,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -215,15 +215,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -241,15 +241,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -274,15 +274,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -300,15 +300,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -329,15 +329,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: manager,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }
@@ -355,15 +355,15 @@ exports.formCron = async (req, res) => {
                                     percentage: 0,
                                 };
                                 if (category.type === 'register') {
-                                    const data = await Form.findOne({
+                                    const data = await CategoryFrcAssignTask.findOne({
                                         category_id: category.category_id,
                                         userId: supervisor,
                                     });
                                     if (!data) {
-                                        await Form.create(obj);
+                                        await CategoryFrcAssignTask.create(obj);
 										console.log(12333);
                                     } else {
-                                        // await Form.create(obj);
+                                        // await CategoryFrcAssignTask.create(obj);
 										console.log(1233344444);
                                     }
                                 }

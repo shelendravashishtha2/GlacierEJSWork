@@ -64,6 +64,10 @@ const CategoryFrcMasterSchema = new mongoose.Schema({
 		type: Number, //0=Inactive, 1=active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
 	},
+	isDeleted: {
+		type: Number, //0=not-Deleted, 1=Deleted
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 0
+	},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}
 },{

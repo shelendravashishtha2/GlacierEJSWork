@@ -12,37 +12,46 @@ const CategoryFrcAssignTaskSchema = new mongoose.Schema({
 	},
 	assignCategoryId: {
 		type:  mongoose.Schema.Types.ObjectId, ref: CategoryAssign,
-		required:true,
+		required: true,
 	},
 	assignCategoryFrcId: {
 		type:  mongoose.Schema.Types.ObjectId, ref: CategoryFrcAssign,
-		required:true,
+		required: true,
+	},
+
+	form: {
+		type: Array,
+		default: [],
+	},
+	dueDate: { //task created Date
+		type: Date,
+		// default: '',
+		required: true,
 	},
 	completionBy: {
 		type:  mongoose.Schema.Types.ObjectId, ref: User,
-		// required: true,
 		default: '',
 	},
 	completionDate: {
 		type: Date,
 		default: '',
 	},
-	form: {
-		type: Array,
-		default: [],
-	},
 	percentage:{
 		type: Number,
 		default: 0
 	},
+	completionStatus: {
+		type: Number, //1=pending, 2=incomplete, 3=completed
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
+	},
 
 	status: {
 		type: Number, //0=Inactive, 1=Active
-		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 1, select: false
 	},
-	isDeleted: { // deleted
+	isDeleted: {
 		type: Number, //0=not-Deleted, 1=Deleted
-		min: [0,'invalid status'], max: [1,'invalid status'], default: 0
+		min: [0,'invalid status'], max: [1,'invalid status'], default: 0, select: false
 	},
 	createdAt: {type: Date, select: false},
 	updatedAt: {type: Date, select: false}

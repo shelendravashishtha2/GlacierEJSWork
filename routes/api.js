@@ -10,9 +10,9 @@ const CategoryController = require('../controllers/api/operation-team/CategoryCo
 const PpmController = require('../controllers/api/operation-team/PpmController');
 const HistoryController = require('../controllers/api/operation-team/HistoryController');
 
-// const ManagerController = require('../controllers/api/manager/ManagerController');
+const ManagerController = require('../controllers/api/manager/ManagerController');
 
-// const SupervisorController = require('../controllers/api/supervisor/SupervisorController');
+const SupervisorController = require('../controllers/api/supervisor/SupervisorController');
 
 
 // -----------------------------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ router.post("/sop-category-list", auth, SopController.sopCategoryList); // prope
 router.post("/sop-category-detail", auth, SopController.categorySOPDetail);
 
 
-// <<<--------------------------------------------- Operation Routes --------------------------------------------->>>
+// <<<--------------------------------------------- Operation-team Routes --------------------------------------------->>>
 // router.post("/opt/logout", auth, AuthController.logout); // user login
 // router.post("/opt/update", auth, AuthController.update); // user update
 // router.post("/opt/dashboard", auth, AuthController.dashboard); // user dashboard
@@ -57,7 +57,7 @@ router.post("/opt/category-list", auth, CategoryController.categoryList);
 router.post("/opt/category-wise-check-list", auth, CategoryController.categoryChecklist);
 router.post("/opt/form-detail", auth, CategoryController.formDetail);
 router.post("/opt/form-submit", auth, CategoryController.formSubmit);
-router.post("/opt/form-submit-detail", auth, CategoryController.getFormSubmitedDetail);
+router.post("/opt/form-submit-detail", auth, CategoryController.getFormSubmittedDetail);
 router.post("/opt/form-list", auth, CategoryController.formList);
 
 // --- PPM Module ---
@@ -87,12 +87,13 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 
 // router.get("/manager/assign-task-list", auth, ManagerController.assignTaskList);
 // router.get("/manager/property-wing-list", auth, ManagerController.propertyWingList);
-// router.get("/manager/category-list", auth, ManagerController.categoryList);
-// router.get("/manager/category-check-list", auth, ManagerController.categoryCheckList);
-// router.get("/manager/ppm-task-list", auth, ManagerController.ppmTaskList);
+router.get("/manager/category-list", auth, ManagerController.categoryList);
+router.get("/manager/category-frc-today-task-list", auth, ManagerController.categoryChecklist);
+// router.get("/manager/category-frc-incomplete-task-list", auth, ManagerController.incompleteCategoryChecklist);
+router.get("/manager/ppm-task-list", auth, ManagerController.ppmTaskList);
 // router.get("/manager/ppm-task-detail", auth, ManagerController.ppmTaskDetail);
 // router.get("/manager/ppm-list", auth, ManagerController.ppmList);
-// router.get("/manager/property-detail", auth, ManagerController.propertyDetail);
+router.get("/manager/property-detail", auth, ManagerController.propertyDetail);
 // router.get("/manager/supervisor-list", auth, ManagerController.supervisorList);
 // router.get("/manager/user-detail", auth, ManagerController.userDetail);
 // router.get("/manager/form-detail", auth, ManagerController.formDetail);
@@ -103,7 +104,7 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 // router.get("/manager/history-detail", auth, ManagerController.historyDetail);
 // router.post("/manager/assign-supervisor", auth, ManagerController.assignSupervisor);
 // router.post("/manager/form-submit", auth, ManagerController.formSubmit);
-// router.get("/manager/form-submit-detail", auth, ManagerController.getFormSubmitedDetail);
+// router.get("/manager/form-submit-detail", auth, ManagerController.getFormSubmittedDetail);
 // router.get("/manager/property-list-with-rating", auth, ManagerController.propertyListWithRating);
 // router.get("/manager/formList", ManagerController.formList);
 // router.post("/manager/updateRating", auth, ManagerController.updateRating)
@@ -115,7 +116,7 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 // router.get("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
 // router.get("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);
 // router.get("/supervisor/category-list", auth, SupervisorController.categoryList);
-// router.get("/supervisor/category-check-list", auth, SupervisorController.categoryCheckList);
+// router.get("/supervisor/category-check-list", auth, SupervisorController.categoryChecklist);
 // router.get("/supervisor/ppm-task-list", auth, SupervisorController.ppmTaskList);
 // router.get("/supervisor/ppm-task-detail", auth, SupervisorController.ppmTaskDetail);
 // router.get("/supervisor/ppm-list", auth, SupervisorController.ppmList);
@@ -129,7 +130,7 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 // router.get("/supervisor/history-detail-list", auth, SupervisorController.historyDetailList);
 // router.get("/supervisor/history-detail", auth, SupervisorController.historyDetail);
 // router.post("/supervisor/form-submit", auth, SupervisorController.formSubmit);
-// router.get("/supervisor/form-submit-detail", auth, SupervisorController.getFormSubmitedDetail);
+// router.get("/supervisor/form-submit-detail", auth, SupervisorController.getFormSubmittedDetail);
 // router.get("/supervisor/property-list-with-rating", auth, SupervisorController.propertyListWithRating);
 // router.get("/supervisor/formList", SupervisorController.formList);
 // router.post("/supervisor/updateRating", auth, SupervisorController.updateRating)

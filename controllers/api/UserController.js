@@ -1,7 +1,7 @@
 const User = require("../../models/User");
 const Property = require("../../models/Property");
 const UserProperty = require('../../models/UserProperty');
-const Task = require("../../models/CategoryAssign");
+const CategoryAssign = require("../../models/CategoryAssign");
 const Category = require("../../models/CategoryMaster");
 const CategoryChecklist = require("../../models/CategoryFrcMaster");
 const fs = require('fs')
@@ -27,7 +27,7 @@ exports.changePasswordValidation = async (req, res, next) => {
 	}
 }
 
-// Supervisor add Form Validatation
+// Supervisor add form Validation
 exports.userAddValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		full_name: Joi.string().min(3).max(150).required(),
@@ -528,7 +528,7 @@ exports.userDetail = async (req, res) => {
 			}
 		}
 		let wingsData = await Property.aggregate([condition,unwind,wingCondition,group]);
-		let usedCategory = await Task.distinct( "categoryId", { managerId:req.body.userId });
+		let usedCategory = await CategoryAssign.distinct( "categoryId", { managerId:req.body.userId });
 		userData = JSON.parse(JSON.stringify(userData));
 		let allCategory = [];
 		if(usedCategory.length > 0){
