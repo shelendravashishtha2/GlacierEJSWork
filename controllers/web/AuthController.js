@@ -2,11 +2,10 @@ const express = require('express');
 const bcrypt = require("bcryptjs");
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const { errorLog, consoleLog } = require("../helper/consoleLog");
-const { encrypt, decrypt } = require('../helper/crypto');
-const urlencodeParser = bodyParser.urlencoded({ extended: false });
-const AuthController = require('../controllers/admin/AuthController');
-const User = require("../models/User");
+const { errorLog, consoleLog } = require("../../helper/consoleLog");
+const { encrypt, decrypt } = require('../../helper/crypto');
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const User = require("../../models/User");
 
 module.exports = function (app) {
 
@@ -40,7 +39,7 @@ module.exports = function (app) {
 		}
 	});
 
-	app.post(baseUrl + 'post-register', urlencodeParser, function (req, res) {
+	app.post(baseUrl + 'post-register', urlencodedParser, function (req, res) {
 		let tempUser = { username: req.body.username, email: req.body.email, password: req.body.password };
 		users.push(tempUser);
 
@@ -66,7 +65,7 @@ module.exports = function (app) {
 		}
 	});
 
-	app.post(baseUrl + 'post-login', urlencodeParser, async function (req, res) {
+	app.post(baseUrl + 'post-login', urlencodedParser, async function (req, res) {
 
 		const email = req.body.email;
 		const password = req.body.password;
@@ -102,7 +101,7 @@ module.exports = function (app) {
 		res.render('Auth/auth-forgot-password', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	});
 
-	app.post(baseUrl + 'post-forgot-password', urlencodeParser, async function (req, res) {
+	app.post(baseUrl + 'post-forgot-password', urlencodedParser, async function (req, res) {
 		try {
 			const email = req.body.email;
 			const userData = await User.findOne({ email: email });
@@ -158,7 +157,48 @@ module.exports = function (app) {
 		res.redirect(baseUrl + 'login');
 	});
 
-	app.get("/reset-password/:key/:id", AuthController.resetPasswordWeb); // Reset Password web page
-	app.post("/reset-password/:key/:id", urlencodeParser, AuthController.resetPassword); // Reset Password
-	app.get("/reset-password-success/", AuthController.resetPasswordSuccess); // success message
+	// Reset Password web page
+	app.get("/reset-password/:key/:id", async function (req, res) {
+		res.locals.title = 'Reset Password';
+		res.locals.session = req.session;
+
+		const _id = decrypt(req.params.key, req.params.id);
+		const userData = await User.findOne({ _id: _id });
+		
+		if (userData && userData.reset_password_status == 1) {
+			return res.render('Auth/resetPassword', { key: req.params.key, id: req.params.id });
+		} else {
+			return res.render('Pages/pages-404',{ code: 400, errorMessage: 'Data Not found'});
+		}
+	});
+
+	// Reset Password
+	app.post("/reset-password/:key/:id", urlencodedParser, async function (req, res) {
+		try {
+			if (req.body.password !== req.body.confirm_password) {
+				return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: "password are not match" })
+			}
+			const _id = decrypt(req.params.key, req.params.id);
+			const userData = await User.findOne({ _id: _id });
+			if (userData && userData.reset_password_status == 1) {
+				await User.findByIdAndUpdate(_id, {password: req.body.password, reset_password_status: 0}, {new : true, runValidators: true} );
+				return res.redirect('/reset-password-success');
+			} else {
+				return res.render('Pages/pages-404',{ code: 404, errorMessage: 'Data Not found'})
+			}
+		} catch (error) {
+			if (error.name == "ValidationError") {
+				const errorMessage = error.errors[Object.keys(error.errors)[0]];
+				return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: errorMessage.message })
+			} else {
+				errorLog(__filename, req.originalUrl, error);
+				return res.render('Pages/pages-404',{ code: 500, errorMessage: 'Something want wrong. Please try again.'})
+			}
+		}
+	});
+
+	// success message
+	app.get("/reset-password-success/", async function (req, res) {
+		return res.render('auth/resetPasswordSuccess');
+	});
 };

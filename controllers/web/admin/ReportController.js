@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const response = require("../../helper/response");
-const { errorLog } = require("../../helper/consoleLog");
 const MomentRange = require('moment-range');
-const PpmEquipment = require("../../models/PpmEquipmentMaster");
-const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
-const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
-const Property = require("../../models/Property");
-const PpmTaskAssign = require("../../models/PpmTaskAssign");
-const daysEnum = require("../../enum/daysEnum");
-const frequencyEnum = require("../../enum/frequencyEnum");
-const CategoryFrcAssign = require('../../models/CategoryFrcAssign');
+const response = require("../../../helper/response");
+const { errorLog } = require("../../../helper/consoleLog");
+const PpmEquipment = require("../../../models/PpmEquipmentMaster");
+const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
+const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");
+const Property = require("../../../models/Property");
+const PpmTaskAssign = require("../../../models/PpmTaskAssign");
+const daysEnum = require("../../../enum/daysEnum");
+const frequencyEnum = require("../../../enum/frequencyEnum");
+const CategoryFrcAssign = require('../../../models/CategoryFrcAssign');
 
 // index
 exports.index = async (req, res) => {

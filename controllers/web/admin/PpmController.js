@@ -1,17 +1,17 @@
-const PpmEquipment = require("../../models/PpmEquipmentMaster");
-const PpmEquipmentAssign = require("../../models/PpmEquipmentAssign");
-const PpmEquipmentAssetAssign = require("../../models/PpmEquipmentAssetAssign");
-const Property = require("../../models/Property");
-const PpmTaskAssign = require("../../models/PpmTaskAssign");
-const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const { errorLog } = require("../../helper/consoleLog");
-const PropertyResource = require('../api/resources/PropertyResource');
 const Joi = require("joi");
-const daysEnum = require("../../enum/daysEnum");
-const frequencyEnum = require("../../enum/frequencyEnum");
-const { prependToArray } = require("../../helper/commonHelpers");
+const PpmEquipment = require("../../../models/PpmEquipmentMaster");
+const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
+const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");
+const Property = require("../../../models/Property");
+const PpmTaskAssign = require("../../../models/PpmTaskAssign");
+const response = require("../../../helper/response");
+const { errorLog } = require("../../../helper/consoleLog");
+const PropertyResource = require('../../api/resources/PropertyResource');
+const daysEnum = require("../../../enum/daysEnum");
+const frequencyEnum = require("../../../enum/frequencyEnum");
+const { prependToArray } = require("../../../helper/commonHelpers");
 
 // PPM List Page 
 exports.updatePpmStatus = async (req, res) => {

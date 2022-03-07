@@ -1,10 +1,10 @@
-const SettingRating = require("../../models/SettingRating");
-const response = require("../../helper/response");
+const { Validator } = require('node-input-validator');
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
-const SettingPpmRiskAssessmentColor = require('../../models/SettingPpmRiskAssessmentColor');
-const { Validator } = require('node-input-validator');
+const SettingRating = require("../../../models/SettingRating");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
+const SettingPpmRiskAssessmentColor = require('../../../models/SettingPpmRiskAssessmentColor');
 
 // Setting Page
 exports.settingList = async (req,res) => {

@@ -1,17 +1,16 @@
-const User = require("../../models/User");
+const { check, validationResult, matchedData } = require('express-validator');
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
-const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
-const UserResource = require('../api/resources/UserResource');
 const Joi = require("joi");
-const Property = require('../../models/Property');
-const toastr = require('express-toastr');
-const UserProperty = require('../../models/UserProperty');
-const { check, validationResult, matchedData } = require('express-validator');
+const User = require("../../../models/User");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
+const UserResource = require('../../api/resources/UserResource');
+const Property = require('../../../models/Property');
+const UserProperty = require('../../../models/UserProperty');
 
 // Supervisor add Form Validation
 exports.supervisorAddValidation = async (req, res, next) => {

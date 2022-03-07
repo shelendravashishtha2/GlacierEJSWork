@@ -1,21 +1,20 @@
-const User = require("../../models/User");
-const Property = require("../../models/Property");
-const CategoryAssign = require("../../models/CategoryAssign");
-const CategoryMaster = require("../../models/CategoryMaster");
+const { assert } = require("console");
+const { Validator } = require('node-input-validator');
 const fs = require('fs')
 const path = require('path');
 const bcrypt = require("bcryptjs");
-const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const { errorLog } = require("../../helper/consoleLog");
 const Joi = require("joi");
-const CategoryFrcMaster = require("../../models/CategoryFrcMaster");
-const CategoryFrcAssign = require("../../models/CategoryFrcAssign");
-const { capitalizeFirstLetter } = require("../../helper/commonHelpers");
-const niv = require('node-input-validator');
-const { assert } = require("console");
-const { Validator } = require('node-input-validator');
+const User = require("../../../models/User");
+const Property = require("../../../models/Property");
+const CategoryAssign = require("../../../models/CategoryAssign");
+const CategoryMaster = require("../../../models/CategoryMaster");
+const response = require("../../../helper/response");
+const { errorLog } = require("../../../helper/consoleLog");
+const CategoryFrcMaster = require("../../../models/CategoryFrcMaster");
+const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
+const { capitalizeFirstLetter } = require("../../../helper/commonHelpers");
 
 // Create Task Page
 exports.categoryAssignment = async (req, res) => {

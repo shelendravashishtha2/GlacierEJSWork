@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const response = require("../../helper/response");
-const Property = require("../../models/Property");
-const PpmTaskAssign = require("../../models/PpmTaskAssign");
+const response = require("../../../helper/response");
+const Property = require("../../../models/Property");
+const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 
 // index
 exports.index = async (req, res) => {

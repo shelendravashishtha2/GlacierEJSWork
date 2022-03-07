@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const PropertyController = require("../controllers/admin/PropertyController");
-const UserController = require("../controllers/admin/UserController");
-const ManageRatingController = require("../controllers/admin/ManageRatingController");
-const PpmController = require("../controllers/admin/PpmController");
-const TaskController = require("../controllers/admin/TaskController");
-const SopController = require("../controllers/admin/SopController");
-const HistoryController = require("../controllers/admin/HistoryController");
-const CategoriesController = require("../controllers/admin/CategoriesController");
-const SettingController = require("../controllers/admin/SettingController");
-const ReportController = require("../controllers/admin/ReportController");
+const PropertyController = require("../controllers/web/admin/PropertyController");
+const UserController = require("../controllers/web/admin/UserController");
+const ManageRatingController = require("../controllers/web/admin/ManageRatingController");
+const PpmController = require("../controllers/web/admin/PpmController");
+const TaskController = require("../controllers/web/admin/TaskController");
+const SopController = require("../controllers/web/admin/SopController");
+const HistoryController = require("../controllers/web/admin/HistoryController");
+const CategoriesController = require("../controllers/web/admin/CategoriesController");
+const SettingController = require("../controllers/web/admin/SettingController");
+const ReportController = require("../controllers/web/admin/ReportController");
 
 const baseUrl = process.env.BASE_URL || "/";
 

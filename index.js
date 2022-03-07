@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 require('./config/dbConn');
 
-const AuthController = require('./controllers/AuthController');
+const AuthController = require('./controllers/web/AuthController');
 const { formCron, ppmCron } = require('./controllers/cronController');
 const fileUpload = require('express-fileupload');
 const path = require('path');
@@ -58,7 +58,7 @@ app.get(baseUrl + '/layouts/', function (req, res) {
     res.render('view');
 });
 
-AuthController(app); // for auth routes
+// AuthController(app); // for auth routes
 
 //For set layouts of html view
 const expressLayouts = require('express-ejs-layouts');
@@ -82,6 +82,7 @@ app.use(methodOverride());
 
 // Define All Routes
 app.use(baseUrl + 'api', require("./routes/api"));
+AuthController(app); // for web auth routes
 app.use(baseUrl + "admin", require("./routes/web_admin"));
 app.use(baseUrl + "opt", require("./routes/web_opt"));
 

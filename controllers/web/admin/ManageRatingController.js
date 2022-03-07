@@ -1,22 +1,22 @@
-const User = require("../../models/User");
-const Property = require("../../models/Property");
-const MngRatingGroupMaster = require("../../models/MngRatingGroupMaster");
-const MngRatingTopicMaster = require("../../models/MngRatingTopicMaster");
-const MngRatingChecklistMaster = require("../../models/MngRatingChecklistMaster");
-const MngRatingGroupAssign = require("../../models/MngRatingGroupAssign");
-const MngRatingTopicAssign = require("../../models/MngRatingTopicAssign");
-const MngRatingChecklistAssign = require("../../models/MngRatingChecklistAssign");
-const response = require("../../helper/response");
-const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
-const { errorLog } = require("../../helper/consoleLog");
-const PropertyResource = require('../api/resources/PropertyResource');
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
 const Joi = require("joi");
 const { Validator } = require('node-input-validator');
-const MngRatingTaskAssign = require("../../models/MngRatingTaskAssign");
-const MngRatingAssignChecklistPoint = require("../../models/MngRatingAssignChecklistPoint");
-const SettingRating = require("../../models/SettingRating");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
+const User = require("../../../models/User");
+const Property = require("../../../models/Property");
+const MngRatingGroupMaster = require("../../../models/MngRatingGroupMaster");
+const MngRatingTopicMaster = require("../../../models/MngRatingTopicMaster");
+const MngRatingChecklistMaster = require("../../../models/MngRatingChecklistMaster");
+const MngRatingGroupAssign = require("../../../models/MngRatingGroupAssign");
+const MngRatingTopicAssign = require("../../../models/MngRatingTopicAssign");
+const MngRatingChecklistAssign = require("../../../models/MngRatingChecklistAssign");
+const response = require("../../../helper/response");
+const { errorLog } = require("../../../helper/consoleLog");
+const PropertyResource = require('../../api/resources/PropertyResource');
+const MngRatingTaskAssign = require("../../../models/MngRatingTaskAssign");
+const MngRatingAssignChecklistPoint = require("../../../models/MngRatingAssignChecklistPoint");
+const SettingRating = require("../../../models/SettingRating");
 
 // Manage Rating List Page
 exports.manageRatingList = async (req, res) => {

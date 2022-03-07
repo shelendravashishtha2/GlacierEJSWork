@@ -1,13 +1,12 @@
 const { check, validationResult } = require('express-validator');
-const Property = require("../../models/Property");
+const Joi = require("joi");
 const fs = require('fs')
 const path = require('path');
-const response = require("../../helper/response");
 const mongoose = require("mongoose");
-const {errorLog} = require("../../helper/consoleLog");
-const Joi = require("joi");
-const SOP = require('../../models/SOP');
-
+const Property = require("../../../models/Property");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
+const SOP = require('../../../models/SOP');
 
 exports.changeSOPStatus = async (req,res) => {
 	try {

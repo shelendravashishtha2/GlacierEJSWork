@@ -1,18 +1,18 @@
-const User = require("../../models/User");
-const Property = require("../../models/Property");
-const UserProperty = require('../../models/UserProperty');
-const PropertyTask = require("../../models/CategoryAssign");
-const Category = require("../../models/CategoryMaster");
-const path = require('path');
-const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
-const PropertyResource = require('../api/resources/PropertyResource');
 const { check, validationResult } = require('express-validator');
 const Joi = require("joi");
+const path = require('path');
+const User = require("../../../models/User");
+const Property = require("../../../models/Property");
+const UserProperty = require('../../../models/UserProperty');
+const PropertyTask = require("../../../models/CategoryAssign");
+const Category = require("../../../models/CategoryMaster");
+const response = require("../../../helper/response");
+const {errorLog} = require("../../../helper/consoleLog");
+const PropertyResource = require('../../api/resources/PropertyResource');
 
-// Property add form validatation
+// Property add form validation
 exports.propertyAddValidation = [
 	check('address').trim().notEmpty().withMessage('Address is required'),
 	check('latitude').trim().notEmpty().withMessage('Latitude is required'),
