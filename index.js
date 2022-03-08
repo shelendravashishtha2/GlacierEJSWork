@@ -58,8 +58,6 @@ app.get(baseUrl + '/layouts/', function (req, res) {
     res.render('view');
 });
 
-AuthController(app); // for web auth routes
-
 //For set layouts of html view
 const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
@@ -82,7 +80,7 @@ app.use(methodOverride());
 
 // Define All Routes
 app.use(baseUrl + 'api', require("./routes/api"));
-// AuthController(app); // for web auth routes
+AuthController(app); // for web auth routes
 app.use(baseUrl + "admin", require("./routes/web_admin"));
 app.use(baseUrl + "opt", require("./routes/web_opt"));
 
@@ -97,9 +95,15 @@ cron.schedule('*/10 * * * * *', async () => { //for testing
 	// await ppmCron();
 });
 
-app.all(baseUrl + 'api/*', (req, res) => {
-    return res.send( response.error(404, 'API Request not found!', []), []);
-});
+app.all(baseUrl + 'api', (req,res) => {
+	return res.send(response.error(404, 'API Request not found!', [] ));
+})
+app.all(baseUrl + 'api/*', (req,res) => {
+	return res.send(response.error(404, 'API Request not found!', [] ));
+})
+app.all(baseUrl + '*', (req,res) => {
+	return res.render('Pages/pages-404',{layout: false, code: 404, errorMessage: 'The page you requested was not found!'})
+})
 
 app.use(errorHandler()); // Error Handler
 

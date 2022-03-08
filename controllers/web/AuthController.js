@@ -35,7 +35,7 @@ module.exports = function (app) {
 	app.get(baseUrl + 'register', function (req, res) {
 		if (req.user) { res.redirect(req.baseUrl+'Dashboard/index'); }
 		else {
-			res.render('Auth/auth-register', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
+			res.render('Auth/auth-register', {layout: false, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 		}
 	});
 
@@ -61,7 +61,7 @@ module.exports = function (app) {
 				return res.redirect(baseUrl + '');
 			}
 		} else {
-			return res.render('Auth/auth-login', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
+			return res.render('Auth/auth-login', {layout: false, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 		}
 	});
 
@@ -79,10 +79,10 @@ module.exports = function (app) {
 				req.session.user = userData;
 
 				if (req.session.user.position_id == 1) {
-					console.log('is admin');
+					// console.log('is admin');
 					res.redirect(baseUrl + 'admin/');
 				} else if (req.session.user.position_id == 2) {
-					console.log('is operation team');
+					// console.log('is operation team');
 					res.redirect(baseUrl + 'opt/');
 				} else {
 					res.redirect(baseUrl + '');
@@ -98,7 +98,7 @@ module.exports = function (app) {
 	});
 
 	app.get(baseUrl + 'forgot-password', function (req, res) {
-		res.render('Auth/auth-forgot-password', { 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
+		res.render('Auth/auth-forgot-password', {layout: false, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	});
 
 	app.post(baseUrl + 'post-forgot-password', urlencodedParser, async function (req, res) {
@@ -166,9 +166,9 @@ module.exports = function (app) {
 		const userData = await User.findOne({ _id: _id });
 		
 		if (userData && userData.reset_password_status == 1) {
-			return res.render('Auth/resetPassword', { key: req.params.key, id: req.params.id });
+			return res.render('Auth/resetPassword', {layout: false, key: req.params.key, id: req.params.id });
 		} else {
-			return res.render('Pages/pages-404',{ code: 400, errorMessage: 'Data Not found'});
+			return res.render('Pages/pages-404',{layout: false, code: 400, errorMessage: 'Data Not found'});
 		}
 	});
 
@@ -176,7 +176,7 @@ module.exports = function (app) {
 	app.post("/reset-password/:key/:id", urlencodedParser, async function (req, res) {
 		try {
 			if (req.body.password !== req.body.confirm_password) {
-				return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: "password are not match" })
+				return res.render('auth/resetPassword', {layout: false, key: req.params.key, id: req.params.id, error: "password are not match" })
 			}
 			const _id = decrypt(req.params.key, req.params.id);
 			const userData = await User.findOne({ _id: _id });
@@ -184,21 +184,21 @@ module.exports = function (app) {
 				await User.findByIdAndUpdate(_id, {password: req.body.password, reset_password_status: 0}, {new : true, runValidators: true} );
 				return res.redirect('/reset-password-success');
 			} else {
-				return res.render('Pages/pages-404',{ code: 404, errorMessage: 'Data Not found'})
+				return res.render('Pages/pages-404',{layout: false, code: 404, errorMessage: 'Data Not found'})
 			}
 		} catch (error) {
 			if (error.name == "ValidationError") {
 				const errorMessage = error.errors[Object.keys(error.errors)[0]];
-				return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: errorMessage.message })
+				return res.render('auth/resetPassword', {layout: false, key: req.params.key, id: req.params.id, error: errorMessage.message })
 			} else {
 				errorLog(__filename, req.originalUrl, error);
-				return res.render('Pages/pages-404',{ code: 500, errorMessage: 'Something want wrong. Please try again.'})
+				return res.render('Pages/pages-404',{layout: false, code: 500, errorMessage: 'Something want wrong. Please try again.'})
 			}
 		}
 	});
 
 	// success message
 	app.get("/reset-password-success/", async function (req, res) {
-		return res.render('auth/resetPasswordSuccess');
+		return res.render('auth/resetPasswordSuccess', {layout: false});
 	});
 };

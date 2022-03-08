@@ -85,54 +85,60 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 // router.post("/manager/update", auth, AuthController.update); // user login
 // router.post("/manager/dashboard", auth, AuthController.dashboard); // user dashboard
 
-// router.get("/manager/assign-task-list", auth, ManagerController.assignTaskList);
-// router.get("/manager/property-wing-list", auth, ManagerController.propertyWingList);
-router.get("/manager/category-list", auth, ManagerController.categoryList);
-router.get("/manager/category-frc-today-task-list", auth, ManagerController.categoryChecklist);
-// router.get("/manager/category-frc-incomplete-task-list", auth, ManagerController.incompleteCategoryChecklist);
-router.get("/manager/ppm-task-list", auth, ManagerController.ppmTaskList);
-// router.get("/manager/ppm-task-detail", auth, ManagerController.ppmTaskDetail);
-// router.get("/manager/ppm-list", auth, ManagerController.ppmList);
-router.get("/manager/property-detail", auth, ManagerController.propertyDetail);
-// router.get("/manager/supervisor-list", auth, ManagerController.supervisorList);
-// router.get("/manager/user-detail", auth, ManagerController.userDetail);
-// router.get("/manager/form-detail", auth, ManagerController.formDetail);
-// router.get("/manager/history-list", auth, ManagerController.historyList);
-// router.get("/manager/category-sop-list", auth, ManagerController.categorySOPList);
-// router.get("/manager/category-sop-detail", auth, ManagerController.categorySOPDetail);
-// router.get("/manager/history-detail-list", auth, ManagerController.historyDetailList);
-// router.get("/manager/history-detail", auth, ManagerController.historyDetail);
+router.post("/manager/category-list", auth, ManagerController.categoryList);
+router.post("/manager/category-frc-today-task-list", auth, ManagerController.categoryChecklist);
+router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.incompleteCategoryChecklist);
+router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
+// router.post("/manager/assign-task-list", auth, ManagerController.assignTaskList);
+// router.post("/manager/property-wing-list", auth, ManagerController.propertyWingList);
+// router.post("/manager/ppm-task-list", auth, ManagerController.ppmTaskList);
+// router.post("/manager/ppm-task-detail", auth, ManagerController.ppmTaskDetail);
+// router.post("/manager/ppm-list", auth, ManagerController.ppmList);
+// router.post("/manager/property-detail", auth, ManagerController.propertyDetail);
+// router.post("/manager/supervisor-list", auth, ManagerController.supervisorList);
+// router.post("/manager/user-detail", auth, ManagerController.userDetail);
+// router.post("/manager/form-detail", auth, ManagerController.formDetail);
+// router.post("/manager/history-list", auth, ManagerController.historyList);
+// router.post("/manager/category-sop-list", auth, ManagerController.categorySOPList);
+// router.post("/manager/category-sop-detail", auth, ManagerController.categorySOPDetail);
+// router.post("/manager/history-detail-list", auth, ManagerController.historyDetailList);
+// router.post("/manager/history-detail", auth, ManagerController.historyDetail);
 // router.post("/manager/assign-supervisor", auth, ManagerController.assignSupervisor);
 // router.post("/manager/form-submit", auth, ManagerController.formSubmit);
-// router.get("/manager/form-submit-detail", auth, ManagerController.getFormSubmittedDetail);
-// router.get("/manager/property-list-with-rating", auth, ManagerController.propertyListWithRating);
-// router.get("/manager/formList", ManagerController.formList);
+// router.post("/manager/form-submit-detail", auth, ManagerController.getFormSubmittedDetail);
+// router.post("/manager/property-list-with-rating", auth, ManagerController.propertyListWithRating);
+// router.post("/manager/formList", ManagerController.formList);
 // router.post("/manager/updateRating", auth, ManagerController.updateRating)
 
 
 // <<<--------------------------------------------- Supervisor Routes --------------------------------------------->>>
-// router.post("/supervisor/logout", auth, AuthController.logout); // user login
-// router.post("/supervisor/update", auth, AuthController.update); // user login
-// router.get("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
-// router.get("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);
-// router.get("/supervisor/category-list", auth, SupervisorController.categoryList);
-// router.get("/supervisor/category-check-list", auth, SupervisorController.categoryChecklist);
-// router.get("/supervisor/ppm-task-list", auth, SupervisorController.ppmTaskList);
-// router.get("/supervisor/ppm-task-detail", auth, SupervisorController.ppmTaskDetail);
-// router.get("/supervisor/ppm-list", auth, SupervisorController.ppmList);
-// router.get("/supervisor/property-detail", auth, SupervisorController.propertyDetail);
-// router.get("/supervisor/manager-list", auth, SupervisorController.managerList);
-// router.get("/supervisor/user-detail", auth, SupervisorController.userDetail);
-// router.get("/supervisor/form-detail", auth, SupervisorController.formDetail);
-// router.get("/supervisor/history-list", auth, SupervisorController.historyList);
-// router.get("/supervisor/category-sop-list", auth, SupervisorController.categorySOPList);
-// router.get("/supervisor/category-sop-detail", auth, SupervisorController.categorySOPDetail);
-// router.get("/supervisor/history-detail-list", auth, SupervisorController.historyDetailList);
-// router.get("/supervisor/history-detail", auth, SupervisorController.historyDetail);
+// router.post("/supervisor/logout", auth, AuthController.logout); // user
+// router.post("/supervisor/update", auth, AuthController.update); // user
+
+router.post("/supervisor/category-list", auth, SupervisorController.categoryList);
+router.post("/supervisor/category-frc-today-task-list", auth, SupervisorController.categoryChecklist);
+router.post("/supervisor/category-frc-incomplete-task-list", auth, SupervisorController.incompleteCategoryChecklist);
+router.post("/supervisor/category-frc-list", auth, SupervisorController.categoryFrcList);
+// router.post("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
+// router.post("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);
+// router.post("/supervisor/category-list", auth, SupervisorController.categoryList);
+// router.post("/supervisor/category-check-list", auth, SupervisorController.categoryChecklist);
+// router.post("/supervisor/ppm-task-list", auth, SupervisorController.ppmTaskList);
+// router.post("/supervisor/ppm-task-detail", auth, SupervisorController.ppmTaskDetail);
+// router.post("/supervisor/ppm-list", auth, SupervisorController.ppmList);
+// router.post("/supervisor/property-detail", auth, SupervisorController.propertyDetail);
+// router.post("/supervisor/manager-list", auth, SupervisorController.managerList);
+// router.post("/supervisor/user-detail", auth, SupervisorController.userDetail);
+// router.post("/supervisor/form-detail", auth, SupervisorController.formDetail);
+// router.post("/supervisor/history-list", auth, SupervisorController.historyList);
+// router.post("/supervisor/category-sop-list", auth, SupervisorController.categorySOPList);
+// router.post("/supervisor/category-sop-detail", auth, SupervisorController.categorySOPDetail);
+// router.post("/supervisor/history-detail-list", auth, SupervisorController.historyDetailList);
+// router.post("/supervisor/history-detail", auth, SupervisorController.historyDetail);
 // router.post("/supervisor/form-submit", auth, SupervisorController.formSubmit);
-// router.get("/supervisor/form-submit-detail", auth, SupervisorController.getFormSubmittedDetail);
-// router.get("/supervisor/property-list-with-rating", auth, SupervisorController.propertyListWithRating);
-// router.get("/supervisor/formList", SupervisorController.formList);
+// router.post("/supervisor/form-submit-detail", auth, SupervisorController.getFormSubmittedDetail);
+// router.post("/supervisor/property-list-with-rating", auth, SupervisorController.propertyListWithRating);
+// router.post("/supervisor/formList", SupervisorController.formList);
 // router.post("/supervisor/updateRating", auth, SupervisorController.updateRating)
 
 module.exports = router;
