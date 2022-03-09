@@ -30,7 +30,7 @@ const CategoryFrcAssignTaskSchema = new mongoose.Schema({
 	},
 	completionBy: {
 		type:  mongoose.Schema.Types.ObjectId, ref: User,
-		default: '',
+		default: null,
 	},
 	completionDate: {
 		type: Date,
