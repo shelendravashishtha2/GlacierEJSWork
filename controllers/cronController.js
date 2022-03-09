@@ -141,8 +141,7 @@ exports.formCron = async (req, res) => {
             }
         }
     } catch (error) {
-        console.log(error);
-        errorLog(__filename, 'task cron job', error);
+        errorLog(error, __filename, 'task cron job');
     }
 };
 
@@ -337,7 +336,6 @@ exports.ppmCron = async (req, res) => {
             }
         }
     } catch (error) {
-        console.log(error);
-        errorLog(__filename, 'ppm cron job', error);
+        errorLog(error, __filename, 'ppm cron job');
     }
 }

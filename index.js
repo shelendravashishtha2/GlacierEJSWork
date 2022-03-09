@@ -3,12 +3,8 @@ const express = require('express');
 const app = express();
 require('./config/dbConn');
 
-const AuthController = require('./controllers/web/AuthController');
-const { formCron, ppmCron } = require('./controllers/cronController');
 const fileUpload = require('express-fileupload');
 const path = require('path');
-const response = require('./helper/response');
-const { errorLog } = require('./helper/consoleLog');
 const session = require('express-session');
 const flash = require('connect-flash');
 const toastr = require('express-toastr');
@@ -22,11 +18,17 @@ const lusca = require('lusca');
 const logger = require('morgan');
 const methodOverride = require('method-override');
 const compress = require('compression');
+const AuthController = require('./controllers/web/AuthController');
+const { formCron, ppmCron } = require('./controllers/cronController');
+const response = require('./helper/response');
+const { errorLog, consoleLog } = require('./helper/Log');
 
 global.__basedir = __dirname;
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
 global.moment = moment; // apply moment for global variable
 app.locals.moment = moment; // apply moment for global ejs view page
+global.errorLog = errorLog;
+global.consoleLog = consoleLog;
 
 const baseUrl = process.env.BASE_URL || "/"; // Default
 const port = process.env.APP_PORT || 1000;
@@ -109,7 +111,7 @@ app.use(errorHandler()); // Error Handler
 
 app.listen(port, (error) => {
     if (error) {
-        errorLog(__filename, '--', error);
+        errorLog(error, __filename, '--');
         throw error;
     }
     console.log(`connection is setup at ${port}`);

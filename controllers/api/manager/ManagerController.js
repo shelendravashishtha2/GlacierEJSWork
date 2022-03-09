@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const { errorLog } = require("../../../helper/consoleLog");
 const response = require("../../../helper/response");
 const User = require("../../../models/User");
 const PpmEquipmentMaster = require("../../../models/PpmEquipmentMaster");
@@ -19,9 +18,9 @@ const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 
 exports.categoryList = async (req, res) => {
 	try {
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
 
-		let categoryData = await CategoryAssign.find({propertyId: PropertyData.propertyId, managerId: req.user._id})
+		let categoryData = await CategoryAssign.find({propertyId: userPropertyData.propertyId, managerId: req.user._id})
 				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
 
 		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
@@ -34,27 +33,27 @@ exports.categoryList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-exports.categoryChecklist = async (req, res) => {
+exports.categoryFrcTodayTaskList = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).optional(),
-			date: Joi.string().optional()
+			// date: Joi.string().optional(),
+			frequency: Joi.string().optional(),
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
 
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: userPropertyData.propertyId,
 			dueDate: {
 				$gte: moment().startOf('day'),
 				$lte: moment().endOf('day')
@@ -64,17 +63,17 @@ exports.categoryChecklist = async (req, res) => {
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
 		}
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', select: ['checklist_id','checklist_name','type','frequency']});
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {frequency: req.query.frequency}, select: ['checklist_id','checklist_name','type','frequency']});
+		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
-exports.incompleteCategoryChecklist = async (req, res) => {
+exports.categoryFrcIncompleteTaskList = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).optional(),
@@ -85,10 +84,10 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
 
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: userPropertyData.propertyId,
 			completionStatus: 2
 		}
 		if (req.query.categoryId) {
@@ -104,8 +103,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -121,10 +119,10 @@ exports.categoryFrcList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
+		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
 
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: userPropertyData.propertyId,
 			assignCategoryId: ObjectId(req.body.categoryId),
 			status: 1
 		}
@@ -135,8 +133,7 @@ exports.categoryFrcList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
-const { errorLog } = require("../../../helper/consoleLog");
 const response = require("../../../helper/response");
 const User = require("../../../models/User");
 const PpmEquipmentMaster = require("../../../models/PpmEquipmentMaster");
@@ -57,8 +56,7 @@ exports.ppmTaskDetail = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -107,8 +105,7 @@ exports.ppmTaskList = async (req, res) => {
 			ppmTaskList: ppmTaskList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -130,8 +127,7 @@ exports.ppmList = async (req, res) => {
 			ppmList: ppmList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -170,8 +166,7 @@ exports.propertyDetail = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -210,8 +205,7 @@ exports.propertyWingList = async (req, res) => {
 			wingsData: wingsData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -249,8 +243,7 @@ exports.propertyListWithRating = async (req, res) => {
 			propertyList: propertyList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -312,8 +305,7 @@ exports.assignTaskList = async (req, res) => {
 			taskData: taskData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -387,8 +379,7 @@ exports.categoryList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -421,8 +412,7 @@ exports.categoryChecklist = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -457,8 +447,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -486,8 +475,7 @@ exports.categoryFrcList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -509,8 +497,7 @@ exports.supervisorList = async (req, res) => {
 			supervisorList: supervisorList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -564,8 +551,7 @@ exports.userDetail = async (req, res) => {
 			wingsData: wingsData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -583,8 +569,7 @@ exports.getFormSubmittedDetail = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -608,8 +593,7 @@ exports.formDetail = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -658,8 +642,7 @@ exports.formSubmit = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -693,8 +676,7 @@ exports.assignSupervisor = async (req, res) => {
 		}
 		return res.send(response.success(200, 'Supervisor Assign Successfully'));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -772,8 +754,7 @@ exports.historyList = async (req, res) => {
 			history: history
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -840,8 +821,7 @@ exports.historyDetailList = async (req, res) => {
 			historyDetailList: historyDetailList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -880,8 +860,7 @@ exports.historyDetail = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -913,8 +892,7 @@ exports.formList = async (req, res) => {
 			"formList": list
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -947,8 +925,7 @@ exports.updateRating = async (req, res) => {
 			"rating": obj
 		})
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

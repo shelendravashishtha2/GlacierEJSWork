@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {errorLog} = require("../helper/consoleLog");
 const Joi = require("joi");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
@@ -111,7 +110,7 @@ userSchema.methods.generatingAuthToken = async function (req,res) {
 		const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY, {algorithm: 'HS384'} );
 		return token;
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -134,7 +133,7 @@ userSchema.pre("findOneAndUpdate", async function(next) {
 		}
 		next();
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return next(error);
 	}
 });

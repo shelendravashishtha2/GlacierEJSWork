@@ -22,7 +22,7 @@ exports.index = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -58,7 +58,7 @@ exports.indexFilter = async (req, res) => {
 			return res.redirect(req.baseUrl+'/history');
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -111,7 +111,7 @@ exports.ppmHistory = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -165,7 +165,7 @@ exports.frcHistory = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

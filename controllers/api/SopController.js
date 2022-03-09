@@ -1,8 +1,6 @@
 const SOP = require("../../models/SOP");
 const response = require("../../helper/response");
 const mongoose = require("mongoose");
-const {errorLog} = require("../../helper/consoleLog");
-const console = require("../../helper/console");
 const Joi = require("joi");
 
 exports.sopCategoryList = async (req,res) => {
@@ -15,8 +13,7 @@ exports.sopCategoryList = async (req,res) => {
 		    data: sopList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -44,8 +41,7 @@ exports.categorySOPDetail = async (req, res) => {
 		    data: [sopDetail]
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

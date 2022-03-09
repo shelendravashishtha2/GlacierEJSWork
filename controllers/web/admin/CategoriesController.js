@@ -8,7 +8,6 @@ const CategoryMaster = require("../../../models/CategoryMaster");
 const CategoryFrcMaster = require("../../../models/CategoryFrcMaster");
 const Setting = require("../../../models/Setting");
 const response = require("../../../helper/response");
-const { errorLog } = require("../../../helper/consoleLog");
 const CategoryResource = require('../../api/resources/CategoryResource');
 const daysEnum = require("../../../enum/daysEnum");
 const frequencyEnum = require("../../../enum/frequencyEnum");
@@ -57,7 +56,7 @@ exports.categoryList = async (req, res) => {
             // error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -87,7 +86,7 @@ exports.changeCategoryStatus = async (req, res) => {
 
 		return res.send(response.success(200, 'Status update Successfully', data.status));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.success(500, 'Something want wrong', []));
 	}
 }
@@ -103,7 +102,7 @@ exports.categoryCreate = async (req, res) => {
 
 		return res.render('Admin/Categories/create-category', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -146,7 +145,7 @@ exports.categoryAdd = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect(req.baseUrl+'/categories');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect(req.baseUrl+'/categories');
 		}
@@ -162,7 +161,7 @@ exports.checklistMultiForm = async (req, res) => {
 		let categoryData = await CategoryMaster.find({});
 		return res.render('Admin/Categories/checklist-multi-form', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -177,7 +176,7 @@ exports.editChecklistForm = async (req, res) => {
 
 		return res.render('Admin/Categories/edit-checklist-multi-form', { 'data': CategoryResource(categoryData) });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -224,7 +223,7 @@ exports.createChecklist = async (req, res) => {
 			frequencyArr: frequencyArr
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -289,13 +288,12 @@ exports.storeChecklist = async (req, res) => {
 
 		return res.redirect(req.baseUrl+'/create-checklist-multi-form/' + CategoryChecklistData._id);
 	} catch (error) {
-		console.log(error);
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
@@ -317,7 +315,7 @@ exports.checklist = async (req, res) => {
 
 		return res.render('Admin/Categories/edit-category-checklist', { data: CategoryChecklistData, CategoryData: CategoryData, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -409,7 +407,7 @@ exports.frcChecklist = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -431,7 +429,7 @@ exports.changeChecklistStatus = async (req, res) => {
 
 		return res.send(response.success(200, 'Status update Successfully', data.status));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.success(500, 'Something want wrong', []));
 	}
 }
@@ -449,7 +447,7 @@ exports.updateCategory = async (req, res) => {
 		req.flash('success_msg', 'Category is updated!');
 		return res.redirect(req.baseUrl+'/edit-category-checklist/' + req.body.category_id);
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -476,7 +474,7 @@ exports.editChecklistDetails = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -517,7 +515,7 @@ exports.updateChecklistDetails = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
@@ -543,7 +541,7 @@ exports.updateFormCreate = async (req, res) => {
 
 		return res.send(response.success(200, 'Form update Successfully'));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -557,7 +555,7 @@ exports.createChecklistMultiForm = async (req, res) => {
 
 		return res.render('Admin/Categories/edit-checklist-multi-form', { data: CategoryChecklistData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -571,7 +569,7 @@ exports.viewChecklistMultiForm = async (req, res) => {
 
 		return res.render('Admin/Categories/view-checklist-multi-form', { data: CategoryChecklistData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

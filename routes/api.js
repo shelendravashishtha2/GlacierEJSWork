@@ -11,6 +11,7 @@ const PpmController = require('../controllers/api/operation-team/PpmController')
 const HistoryController = require('../controllers/api/operation-team/HistoryController');
 
 const ManagerController = require('../controllers/api/manager/ManagerController');
+const ManagerPpmController = require('../controllers/api/manager/ManagerPpmController');
 
 const SupervisorController = require('../controllers/api/supervisor/SupervisorController');
 
@@ -81,14 +82,24 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 
 
 // <<<--------------------------------------------- Manager Routes --------------------------------------------->>>
-// router.post("/manager/logout", auth, AuthController.logout); // user login
-// router.post("/manager/update", auth, AuthController.update); // user login
-// router.post("/manager/dashboard", auth, AuthController.dashboard); // user dashboard
-
 router.post("/manager/category-list", auth, ManagerController.categoryList);
-router.post("/manager/category-frc-today-task-list", auth, ManagerController.categoryChecklist);
-router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.incompleteCategoryChecklist);
+router.post("/manager/category-frc-today-task-list", auth, ManagerController.categoryFrcTodayTaskList);
+router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.categoryFrcIncompleteTaskList);
 router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
+
+router.post("/manager/ppm-equipment-list", auth, ManagerPpmController.ppmEquipmentList); // ppm equipment list after select property
+// router.post("/manager/create-ppm-equipment", auth, ManagerPpmController.createPpmEquipment); // ppm equipment list after select property
+// router.post("/manager/update-ppm-equipment", auth, ManagerPpmController.updatePpmEquipment); // ppm equipment list after select property
+// router.post("/manager/ppm-equipment-status-change", auth, ManagerPpmController.ppmEquipmentStatusChange); // Active - Inactive
+// router.post("/manager/ppm-asset-list", auth, ManagerPpmController.ppmAssetList); // ppm asset list after select equipment
+// router.post("/manager/create-ppm-asset", auth, ManagerPpmController.createPpmAsset); // create ppm asset
+// router.post("/manager/ppm-asset-details", auth, ManagerPpmController.ppmAssetDetails); //view details for edit model
+// router.post("/manager/update-ppm-asset", auth, ManagerPpmController.updatePpmAsset); // update ppm asset
+// router.post("/manager/ppm-asset-status-change", auth, ManagerPpmController.ppmAssetStatusChange); // Active - Inactive
+// router.post("/manager/ppm-task-list", auth, ManagerPpmController.ppmTaskList); //
+// router.post("/manager/ppm-task-details", auth, ManagerPpmController.ppmTaskDetails); //
+// router.post("/manager/ppm-task-submit", auth, ManagerPpmController.ppmTaskDetails); //
+
 // router.post("/manager/assign-task-list", auth, ManagerController.assignTaskList);
 // router.post("/manager/property-wing-list", auth, ManagerController.propertyWingList);
 // router.post("/manager/ppm-task-list", auth, ManagerController.ppmTaskList);
@@ -112,13 +123,11 @@ router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcLis
 
 
 // <<<--------------------------------------------- Supervisor Routes --------------------------------------------->>>
-// router.post("/supervisor/logout", auth, AuthController.logout); // user
-// router.post("/supervisor/update", auth, AuthController.update); // user
-
 router.post("/supervisor/category-list", auth, SupervisorController.categoryList);
 router.post("/supervisor/category-frc-today-task-list", auth, SupervisorController.categoryChecklist);
 router.post("/supervisor/category-frc-incomplete-task-list", auth, SupervisorController.incompleteCategoryChecklist);
 router.post("/supervisor/category-frc-list", auth, SupervisorController.categoryFrcList);
+
 // router.post("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
 // router.post("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);
 // router.post("/supervisor/category-list", auth, SupervisorController.categoryList);

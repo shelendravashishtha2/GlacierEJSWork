@@ -7,7 +7,6 @@ const Joi = require("joi");
 const User = require("../../../models/User");
 const Property = require("../../../models/Property");
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const PropertyResource = require('../../api/resources/PropertyResource');
 
 // History List Page
@@ -44,7 +43,7 @@ exports.historyList = async (req,res) => {
 		return res.render('Admin/History/index',{'data':propertyData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:""});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -59,7 +58,7 @@ exports.categoryHistory = async (req,res) => {
 		return res.render('Admin/History/category-history',{'data':PropertyResource(propertyData)});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -74,7 +73,7 @@ exports.categoryChecklistHistory = async (req,res) => {
 		return res.render('Admin/History/category-checklist-history',{'data':PropertyResource(propertyData)});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -89,7 +88,7 @@ exports.viewChecklistHistory = async (req,res) => {
 		return res.render('Admin/History/view-checklist-history',{'data':PropertyResource(propertyData)});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

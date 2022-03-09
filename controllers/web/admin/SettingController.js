@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const SettingRating = require("../../../models/SettingRating");
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const SettingPpmRiskAssessmentColor = require('../../../models/SettingPpmRiskAssessmentColor');
 
 // Setting Page
@@ -22,7 +21,7 @@ exports.settingList = async (req,res) => {
 			SettingPpmRiskAssessmentColorData: SettingPpmRiskAssessmentColorData,
 			success: req.flash('success_msg'), error: req.flash('error_msg')});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -46,7 +45,7 @@ exports.storeSetting = async (req,res) => {
 		req.flash('success_msg', 'Rating is added & updated!');
 		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -77,7 +76,7 @@ exports.storePpmRiskAssessmentColor = async (req, res) => {
 		req.flash('success_msg', 'Add color successfully');
 		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -108,7 +107,7 @@ exports.deletePpmRiskAssessmentColor = async (req, res) => {
 		req.flash('success_msg', 'Add color successfully');
 		return res.redirect(req.baseUrl+'/setting');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}

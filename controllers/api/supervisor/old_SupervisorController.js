@@ -11,7 +11,6 @@ const SOP = require("../../../models/SOP");
 const response = require("../../../helper/response");
 const PPM = require("../../../models/PpmEquipmentMaster");
 const Rating = require("../../../models/Rating");
-const { errorLog } = require("../../../helper/consoleLog");
 
 exports.propertyDetail = async (req, res) => {
 	try {
@@ -47,8 +46,7 @@ exports.propertyDetail = async (req, res) => {
 			}]
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -86,8 +84,7 @@ exports.propertyWingList = async (req, res) => {
 			data: wingsData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -133,8 +130,7 @@ exports.ppmTaskList = async (req, res) => {
 			data: ppmTaskList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -156,8 +152,7 @@ exports.ppmList = async (req, res) => {
 			data: ppmList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -201,8 +196,7 @@ exports.ppmTaskDetail = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -263,8 +257,7 @@ exports.assignTaskList = async (req, res) => {
 			data: taskData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -327,8 +320,7 @@ exports.categoryList = async (req, res) => {
 			data: categoryData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -401,8 +393,7 @@ exports.categoryChecklist = async (req, res) => {
 			data: categoryChecklistData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -463,8 +454,7 @@ exports.userDetail = async (req, res) => {
 			wingsData: wingsData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -487,8 +477,7 @@ exports.formDetail = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -535,8 +524,7 @@ exports.formSubmit = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -613,8 +601,7 @@ exports.historyList = async (req, res) => {
 			history: history
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -651,8 +638,7 @@ exports.propertyListWithRating = async (req, res) => {
 			propertyList: propertyList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -673,8 +659,7 @@ exports.managerList = async (req, res) => {
 			managerList: managerList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -712,8 +697,7 @@ exports.historyDetail = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -779,8 +763,7 @@ exports.historyDetailList = async (req, res) => {
 			historyDetailList: historyDetailList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -797,8 +780,7 @@ exports.getFormSubmittedDetail = async (req, res) => {
 			formDetail: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -829,8 +811,7 @@ exports.formList = async (req, res) => {
 			"formList": list
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -863,8 +844,7 @@ exports.updateRating = async (req, res) => {
 			"rating": obj
 		})
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

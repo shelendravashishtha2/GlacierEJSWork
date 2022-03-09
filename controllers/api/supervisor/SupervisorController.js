@@ -10,7 +10,6 @@ const SOP = require("../../../models/SOP");
 const response = require("../../../helper/response");
 const PPM = require("../../../models/PpmEquipmentMaster");
 const Rating = require("../../../models/Rating");
-const { errorLog } = require("../../../helper/consoleLog");
 const UserProperty = require("../../../models/UserProperty");
 const CategoryAssign = require("../../../models/CategoryAssign");
 const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
@@ -32,8 +31,7 @@ exports.categoryList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -42,7 +40,7 @@ exports.categoryChecklist = async (req, res) => {
 	try {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).optional(),
-			date: Joi.string().optional()
+			frequency: Joi.string().optional(),
 		});
 		let validation = schema.validate(req.query, __joiOptions);
 		if (validation.error) {
@@ -63,14 +61,12 @@ exports.categoryChecklist = async (req, res) => {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
 		}
 		// let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {supervisorId: req.user._id}, select: ['checklist_id','checklist_name','type','frequency']});
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', select: ['checklist_id','checklist_name','type','frequency']});
-
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {frequency: req.query.frequency}, select: ['checklist_id','checklist_name','type','frequency']});
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -107,8 +103,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -139,8 +134,7 @@ exports.categoryFrcList = async (req, res) => {
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

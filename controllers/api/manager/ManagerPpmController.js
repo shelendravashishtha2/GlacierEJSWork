@@ -8,18 +8,15 @@ const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const { convertObjValuesToString, prependToArray } = require("../../../helper/commonHelpers");
 const daysEnum = require("../../../enum/daysEnum");
+const UserProperty = require("../../../models/UserProperty");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
-		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required(),
-		});
-		let validation = schema.validate(req.body, __joiOptions);
-		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
-		}
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
 
-		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: ObjectId(req.body.propertyId)});
+		console.log(UserPropertyData);
+
+		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: UserPropertyData.propertyId});
 
 		return res.status(200).send({
 		    "status": true,

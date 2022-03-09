@@ -7,7 +7,6 @@ const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign
 const Property = require("../../../models/Property");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const response = require("../../../helper/response");
-const { errorLog } = require("../../../helper/consoleLog");
 const PropertyResource = require('../../api/resources/PropertyResource');
 const daysEnum = require("../../../enum/daysEnum");
 const frequencyEnum = require("../../../enum/frequencyEnum");
@@ -37,7 +36,7 @@ exports.updatePpmStatus = async (req, res) => {
 			"message": "Status is updated!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -68,7 +67,7 @@ exports.updatePpmEquipmentName = async (req, res) => {
 			"message": "Equipment is updated!",
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -102,7 +101,7 @@ exports.updatePpmTaskStatus = async (req, res) => {
 			"message": "Asset Status Updated!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -136,7 +135,7 @@ exports.updatePropertyWingStatus = async (req, res) => {
 			"message": "Status update"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -187,7 +186,7 @@ exports.createPpm = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.flash('error_msg', { errorMessage: errorMessage });
@@ -243,7 +242,7 @@ exports.PpmList = async (req, res) => {
 			
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -305,7 +304,7 @@ exports.updatePpmTask = async (req, res) => {
 		req.flash('success_msg', message);
 		return res.redirect(req.baseUrl+'/ppm/');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -348,7 +347,7 @@ exports.assignPpmEquipmentAssetList = async (req, res) => {
 
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -377,7 +376,7 @@ exports.updateAssignPpmEquipmentStatus = async (req, res) => {
 			"message": "Status is update!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -455,7 +454,7 @@ exports.editPpm = async (req, res) => {
 			frequencyArr: frequencyArr
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -502,7 +501,7 @@ exports.viewPpmList = async (req, res) => {
 		return res.render('Admin/PPM/view-ppm-list', { 'data': propertyData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "" });
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -551,7 +550,7 @@ exports.addPropertyWing = async (req, res) => {
 		});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -569,7 +568,7 @@ exports.propertyWingList = async (req, res) => {
 			assignPpmData: assignPpmEquipmentData
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -583,7 +582,7 @@ exports.assignPpmList = async (req, res) => {
 
 		return res.render('Admin/PPM/assign-ppm-list', { 'data': PropertyResource(propertyData) });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -660,7 +659,7 @@ exports.propertiesWisePpmList = async (req, res) => {
             search: req.query.search ? req.query.search : '',
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -675,7 +674,7 @@ exports.ppmDetails = async (req, res) => {
 		return res.render('Admin/PPM/ppm-details', { 'data': PropertyResource(propertyData) });
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -769,7 +768,7 @@ exports.addUpdatePpmEquipmentAsset = async (req, res) => {
 
 		return res.redirect(req.baseUrl+'/assign-ppm-equipment-asset-list/' + req.body.propertyId + '/' + assignPpmEquipmentData._id + '');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -801,7 +800,7 @@ exports.updateAssignPpmEquipmentAssetStatus = async (req, res) => {
 			"message": "Status is update!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -831,7 +830,7 @@ exports.viewPropertiesPpmTask = async (req, res) => {
 			search: req.query.search ? req.query.search : ""
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -862,7 +861,7 @@ exports.viewPropertiesPpmTaskDetails = async (req, res) => {
 			search: req.query.search ? req.query.search : ""
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

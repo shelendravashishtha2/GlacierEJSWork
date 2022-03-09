@@ -7,7 +7,6 @@ const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
 const User = require("../../../models/User");
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const UserResource = require('../../api/resources/UserResource');
 const Property = require('../../../models/Property');
 const UserProperty = require('../../../models/UserProperty');
@@ -77,7 +76,7 @@ exports.supervisorAdd = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -100,7 +99,7 @@ exports.userCreate = async (req,res) => {
             propertyData: propertyData,
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -210,7 +209,7 @@ exports.userAdd = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -227,7 +226,7 @@ exports.supervisorList = async (req,res) => {
 		let UserData = await User.find({position: 5});
 		return res.render('Admin/Users/index',{'data':UserResource(UserData)});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -285,7 +284,7 @@ exports.userList = async (req,res) => {
 
 		return res.render('Admin/Users/index',{data: UserData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -303,7 +302,7 @@ exports.userEdit = async (req,res) => {
 		let propertyData = await Property.find();
 		return res.render('Admin/Users/edit',{ data: UserResource(UserData), propertyData: propertyData, UserPropertyData: UserPropertyData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -415,7 +414,7 @@ exports.userUpdate = async (req,res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -434,7 +433,7 @@ exports.userView = async (req,res) => {
 
 		return res.render('Admin/Users/view',{ data: UserResource(UserData), UserPropertyData: UserPropertyData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -460,7 +459,7 @@ exports.updateUserStatus = async (req, res) => {
 
 		return res.send(response.success(200, 'Status update Successfully', userDetail.status));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.success(500, 'Something want wrong', []));
 	}
 }
@@ -486,7 +485,7 @@ exports.changePassword = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -503,7 +502,7 @@ exports.deleteUser = async (req, res) => {
 			return res.send(response.error(400, 'User not found', []));
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}
@@ -518,7 +517,7 @@ exports.pageNotFound = async (req,res) => {
 		let UserData = await User.find({position: 5});
 		return res.render('Pages/pages-404',{'data':UserResource(UserData)});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
 		return res.redirect('back');
 	}

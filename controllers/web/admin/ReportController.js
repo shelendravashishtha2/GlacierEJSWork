@@ -3,7 +3,6 @@ const ObjectId = mongoose.Types.ObjectId;
 const Joi = require("joi");
 const MomentRange = require('moment-range');
 const response = require("../../../helper/response");
-const { errorLog } = require("../../../helper/consoleLog");
 const PpmEquipment = require("../../../models/PpmEquipmentMaster");
 const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");
@@ -29,7 +28,7 @@ exports.index = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -62,7 +61,7 @@ exports.indexFilter = async (req, res) => {
 			return res.redirect(req.baseUrl+'/report');
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -169,7 +168,7 @@ exports.ppmReport = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -277,7 +276,7 @@ exports.frcReport = async (req, res) => {
             error: req.flash('error_msg'),
         })
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

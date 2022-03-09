@@ -4,7 +4,6 @@ const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
 
 exports.historyList = async (req, res) => {
@@ -84,8 +83,7 @@ exports.historyList = async (req, res) => {
 		    data: FrcTaskHistoryData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -152,8 +150,7 @@ exports.historyDetailList = async (req, res) => {
 		    data:historyDetailList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -192,8 +189,7 @@ exports.historyDetail = async (req, res) => {
 		    }
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

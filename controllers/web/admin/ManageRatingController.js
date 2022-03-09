@@ -12,7 +12,6 @@ const MngRatingGroupAssign = require("../../../models/MngRatingGroupAssign");
 const MngRatingTopicAssign = require("../../../models/MngRatingTopicAssign");
 const MngRatingChecklistAssign = require("../../../models/MngRatingChecklistAssign");
 const response = require("../../../helper/response");
-const { errorLog } = require("../../../helper/consoleLog");
 const PropertyResource = require('../../api/resources/PropertyResource');
 const MngRatingTaskAssign = require("../../../models/MngRatingTaskAssign");
 const MngRatingAssignChecklistPoint = require("../../../models/MngRatingAssignChecklistPoint");
@@ -79,7 +78,7 @@ exports.manageRatingList = async (req, res) => {
 			error: req.flash('error_msg'),
 		})
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -124,7 +123,7 @@ exports.addGroup = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect(req.baseUrl+'/group-list');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect(req.baseUrl+'/group-list');
 		}
@@ -167,7 +166,7 @@ exports.addTopic = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
@@ -214,7 +213,7 @@ exports.addTopicChecklist = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
@@ -238,7 +237,7 @@ exports.assignAuditor = async (req, res) => {
 			auditorData: auditorData,
 		})
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -305,7 +304,7 @@ exports.storeAssignAuditor = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
@@ -348,7 +347,7 @@ exports.groupList = async (req, res) => {
 		return res.render('Admin/Manage-Rating/group-list', { 'data': groupData, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -370,7 +369,7 @@ exports.editGroup = async (req, res) => {
 			auditorList: auditorList,
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -446,7 +445,7 @@ exports.updateAssignGroups = async (req, res) => {
 			req.flash('error_msg', errorMessage.message);
 			return res.redirect('back');
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			req.flash('error_msg', 'Something want wrong');
 			return res.redirect('back');
 		}
@@ -488,7 +487,7 @@ exports.editGroupName = async (req, res) => {
 		const groupDetails = await MngRatingGroupMaster.findOne({ _id: ObjectId(req.params.id) });
 		return res.render('Admin/Manage-Rating/edit-group-name', { 'data': topicData, groupDetails: groupDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -533,7 +532,7 @@ exports.editTopic = async (req, res) => {
 		return res.render('Admin/Manage-Rating/edit-topic', { 'data': topicData, topicDetails: topicDetails, page: page, totalPage: totalPage, search: req.query.search ? req.query.search : "", groupId: req.params.id, 'success': req.flash('success_msg'), 'error': req.flash('error_msg') });
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -562,7 +561,7 @@ exports.updateGroupStatus = async (req, res) => {
 			"message": "Status is updated!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -591,7 +590,7 @@ exports.updateRatingTopicStatus = async (req, res) => {
 			"message": "Status is updated!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -619,7 +618,7 @@ exports.updateTopicChecklistStatus = async (req, res) => {
 			"message": "Status is updated!"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -637,7 +636,7 @@ exports.updateGroupName = async (req, res) => {
 		req.flash('success_msg', 'Group name is updated!');
 		return res.redirect(req.baseUrl+'/edit-group-name/' + req.body.group_id);
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -656,7 +655,7 @@ exports.updateTopicName = async (req, res) => {
 		req.flash('success_msg', 'Topic name is updated!');
 		return res.redirect(req.baseUrl+'/edit-topic/' + req.body.topic_id);
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		req.flash('error_msg', 'Something want wrong');
 		return res.redirect('back');
 	}
@@ -687,7 +686,7 @@ exports.assignGroupList = async (req, res) => {
 			assignedGroupList: assignedGroupList,
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -752,7 +751,7 @@ exports.assignRatingTask = async (req, res) => {
 			data2: data
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -872,7 +871,7 @@ exports.viewGroupAssignTask = async (req, res) => {
 			error: req.flash('error_msg')
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		// return res.status(500).send('123')
@@ -926,7 +925,7 @@ exports.viewAssignTaskChecklist = async (req, res) => {
 			error: req.flash('error_msg')
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -968,7 +967,7 @@ exports.storeAssignChecklistPoint = async (req, res) => {
 		    data: MngRatingAssignChecklistPointData
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

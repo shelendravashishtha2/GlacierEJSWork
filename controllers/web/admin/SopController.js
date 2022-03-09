@@ -5,7 +5,6 @@ const path = require('path');
 const mongoose = require("mongoose");
 const Property = require("../../../models/Property");
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const SOP = require('../../../models/SOP');
 
 exports.changeSOPStatus = async (req,res) => {
@@ -24,7 +23,7 @@ exports.changeSOPStatus = async (req,res) => {
 
 		return res.send(response.success(200, 'Status update successfully', data.status));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.success(500, 'Something want wrong', []));
 	}
 }
@@ -67,7 +66,7 @@ exports.sopList = async (req,res) => {
 
 		return res.render('Admin/SOP/index',{data: sopData,page:page,totalPage:totalPage,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -100,7 +99,7 @@ exports.deleteSopImage = async (req,res) => {
 		    "message": "Deleted successfully"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -111,7 +110,7 @@ exports.createSop = async (req,res) => {
 
 		return res.render('Admin/SOP/create');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -193,7 +192,7 @@ exports.storeSop = async (req,res) => {
 		req.flash('success_msg', 'SOP is added!');
 		return res.redirect(req.baseUrl+'/sop');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -208,7 +207,7 @@ exports.editSop = async (req,res) => {
 		
 		return res.render('Admin/SOP/edit', { data: sopData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -319,7 +318,7 @@ exports.updateSop = async (req,res) => {
 		req.flash('success_msg', 'SOP is updated!');
 		return res.redirect(req.baseUrl+'/sop');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -334,7 +333,7 @@ exports.viewSop = async (req,res) => {
 
 		return res.render('Admin/SOP/view',{ data: sopData });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

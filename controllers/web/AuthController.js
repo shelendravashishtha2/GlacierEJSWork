@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require("bcryptjs");
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const { errorLog, consoleLog } = require("../../helper/consoleLog");
 const { encrypt, decrypt } = require('../../helper/crypto');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const User = require("../../models/User");
@@ -120,7 +119,7 @@ module.exports = function (app) {
 				});
 				const encryptedId = encrypt(""+userData._id+"");
 				const emailVerifyUrl = req.protocol + '://' + req.get('host') + '/reset-password/'+ encryptedId.key + '/' + encryptedId.id;
-				consoleLog(__filename, req.originalUrl, emailVerifyUrl);
+				consoleLog(emailVerifyUrl, __filename, req.originalUrl);
 
 				const mailOptions = {
 					from: process.env.MAIL_FROM_ADDRESS,
@@ -145,7 +144,6 @@ module.exports = function (app) {
 				res.redirect(baseUrl + 'forgot-password');
 			}
 		} catch (error) {
-			console.log(error);
 			req.flash('error_msg', 'Something want wrong!!');
 			res.redirect(baseUrl + 'forgot-password');
 		}
@@ -191,7 +189,7 @@ module.exports = function (app) {
 				const errorMessage = error.errors[Object.keys(error.errors)[0]];
 				return res.render('auth/resetPassword', {layout: false, key: req.params.key, id: req.params.id, error: errorMessage.message })
 			} else {
-				errorLog(__filename, req.originalUrl, error);
+				errorLog(error, __filename, req.originalUrl);
 				return res.render('Pages/pages-404',{layout: false, code: 500, errorMessage: 'Something want wrong. Please try again.'})
 			}
 		}

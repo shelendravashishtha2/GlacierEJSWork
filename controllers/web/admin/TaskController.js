@@ -11,7 +11,6 @@ const Property = require("../../../models/Property");
 const CategoryAssign = require("../../../models/CategoryAssign");
 const CategoryMaster = require("../../../models/CategoryMaster");
 const response = require("../../../helper/response");
-const { errorLog } = require("../../../helper/consoleLog");
 const CategoryFrcMaster = require("../../../models/CategoryFrcMaster");
 const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
 const { capitalizeFirstLetter } = require("../../../helper/commonHelpers");
@@ -42,7 +41,7 @@ exports.categoryAssignment = async (req, res) => {
 			message: req.flash('success_msg'),
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -81,7 +80,7 @@ exports.propertyCategoryList = async (req, res) => {
 			assignOperationTeam: assignOperationTeam,
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -127,7 +126,7 @@ exports.assignCategorySubmit = async (req, res) => {
 		// return res.redirect(req.baseUrl+'/category-assignment?message=Task Assign Successfully');
 		return res.redirect(req.baseUrl + '/category-assignment');
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -149,7 +148,7 @@ exports.assignCategory = async (req, res) => {
 
 		return res.render('Admin/Task/create', { data: propertyData, allCategory: allCategory });
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -272,7 +271,7 @@ exports.updateAssignCategory = async (req, res) => {
 		return res.redirect(req.baseUrl + '/category-assignment');
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -332,7 +331,7 @@ exports.editAssignCategory = async (req, res) => {
 		});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');
@@ -393,7 +392,7 @@ exports.viewPropertyAssignCategory = async (req, res) => {
 		})
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		errorMessage = "Something want wrong";
 		req.session.error = { errorMessage: errorMessage, inputData: req.body };
 		return res.redirect('back');

@@ -9,7 +9,6 @@ const UserProperty = require('../../../models/UserProperty');
 const PropertyTask = require("../../../models/CategoryAssign");
 const Category = require("../../../models/CategoryMaster");
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const PropertyResource = require('../../api/resources/PropertyResource');
 
 // Property add form validation
@@ -47,7 +46,7 @@ exports.updatePropertyStatus = async (req, res) => {
 		    "message": "Status updated successfully"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -72,7 +71,7 @@ exports.deletePropertyImage = async (req, res) => {
 		    "message": "Image deleted successfully"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -105,7 +104,7 @@ exports.updatePropertyWingsStatus = async (req, res) => {
 		    "message": "Status updated successfully"
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -205,7 +204,7 @@ exports.propertyAdd = async (req, res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -298,7 +297,7 @@ exports.propertyUpdate = async (req,res) => {
 			errorMessage = error.errors[Object.keys(error.errors)[0]];
 			errorMessage = errorMessage.message;
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			errorMessage = "Something want wrong";
 		}
 		req.session.error = {errorMessage: errorMessage,inputData: req.body};
@@ -348,7 +347,7 @@ exports.propertyList = async (req,res) => {
 		return res.render('Admin/Properties/index',{'data':propertyData,page:page,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -397,7 +396,7 @@ exports.completedUncompletedCategory = async (req,res) => {
 		return res.render('Admin/Properties/category-wise-completed-incompleted',{'data':propertyData,page:page,propertysList:propertysList,totalPage:totalPage,message:message,search:req.query.search?req.query.search:"",'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -423,7 +422,7 @@ exports.dashboardIndex = async (req,res) => {
 		dashboardCount['categoryCount'] = await Category.count();
 		return res.render('Dashboard/index',{'data':propertyData,message:message,dashboardCount,'success': req.flash('success_msg'), 'error': req.flash('error_msg')});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -455,7 +454,7 @@ exports.propertyCreate = async (req,res) => {
 			res.redirect(req.baseUrl+'/');
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -472,7 +471,7 @@ exports.propertyEdit = async (req,res) => {
 		return res.render('Admin/Properties/edit',{'data':PropertyResource(propertyData),'location':location,req: req});
 
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -489,7 +488,7 @@ exports.propertyView = async (req,res) => {
 		
 		return res.render('Admin/Properties/view',{'data':PropertyResource(propertyData),'userPropertyData': userPropertyData,'categoryData':categoryData});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

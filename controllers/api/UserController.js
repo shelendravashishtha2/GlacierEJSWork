@@ -10,7 +10,6 @@ const bcrypt = require("bcryptjs");
 const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../helper/consoleLog");
 const UserResource = require('./resources/UserResource');
 const Joi = require("joi");
 
@@ -117,7 +116,7 @@ exports.addUsers = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
 			return res.send(response.error(400, errorMessage.message, [] ));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', [] ));
 		}
 	}
@@ -143,8 +142,7 @@ exports.supervisorList = async (req,res) => {
 		    data: supervisorList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -169,8 +167,7 @@ exports.managerList = async (req, res) => {
 		    data: managerList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -188,7 +185,7 @@ exports.userProfile = async (req, res) => {
 		    data: UserResource(UserData)
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -244,7 +241,7 @@ exports.updateUser = async (req, res) => {0
 			const errorMessage = error.errors[Object.keys(error.errors)[0]];
 			return res.send(response.error(400, errorMessage.message, []));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
 	}
@@ -286,7 +283,7 @@ exports.profileImageUpload = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]];
 			return res.send(response.error(400, errorMessage.message, []));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
 	}
@@ -340,7 +337,7 @@ exports.albumImageUpload = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]];
 			return res.send(response.error(400, errorMessage.message, []));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
 	}
@@ -375,7 +372,7 @@ exports.albumImageDelete = async (req, res) => {
 		}
 		
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -400,7 +397,7 @@ exports.changePassword = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]];
 			return res.send(response.error(400, errorMessage.message, []));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
 	}
@@ -415,7 +412,7 @@ exports.deleteUser = async (req, res) => {
 			return res.send(response.error(400, 'User not found', []));
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -438,7 +435,7 @@ exports.updateLocation = async (req,res) => {
 
 		return res.send(response.success(200, 'location update successfully', []));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -451,7 +448,7 @@ exports.allUsersList = async (req,res) => {
 
 		return res.send(response.success(200, 'success', UserResource(UserData))); //UserResource(UserData)
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -461,7 +458,7 @@ exports.languageList = async (req,res) => {
 		let ProfileLanguageData = await ProfileLanguage.find();
 		return res.send(response.success(200, 'success', ProfileLanguageData));
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -489,7 +486,7 @@ exports.dashboardSliderImage = async (req,res) => {
 		    data: sliderImages
 		});
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -545,8 +542,7 @@ exports.userDetail = async (req, res) => {
 		    "wingsData":wingsData}]
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -566,8 +562,7 @@ exports.activeInactiveStatus = async (req, res) => {
 		}
 		return res.send(response.success(200, 'Status changes successfully', []));
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

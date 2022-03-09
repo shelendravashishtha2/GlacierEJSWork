@@ -50,7 +50,6 @@ const CategoryFrcAssignSchema = new mongoose.Schema({
 		type: String,
 		enum: frequency,
 		required:true,
-		trim: true,
 	},
 	month: {
 		type: Number,

@@ -5,7 +5,6 @@ const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
-const {errorLog} = require("../../../helper/consoleLog");
 const Joi = require("joi");
 
 exports.categoryList = async (req, res) => {
@@ -30,8 +29,7 @@ exports.categoryList = async (req, res) => {
 		    data: categoryData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -104,8 +102,7 @@ exports.categoryChecklist = async (req, res) => {
 		    data: categoryChecklistData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -131,8 +128,7 @@ exports.formDetail = async (req, res) => {
 		    data: [formDetail]
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -154,8 +150,7 @@ exports.getFormSubmittedDetail = async (req, res) => {
 		    data: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -204,8 +199,7 @@ exports.formSubmit = async (req, res) => {
 		    data: formDetail
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -228,8 +222,7 @@ exports.formList = async (req, res) => {
 			"formList": list
 		});		
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

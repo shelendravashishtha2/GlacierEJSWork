@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const response = require("../../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const {errorLog} = require("../../../helper/consoleLog");
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
 const UserProperty = require('../../../models/UserProperty');
@@ -47,8 +46,7 @@ exports.propertyList = async (req, res) => {
 		    data: propertyList
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -113,8 +111,7 @@ exports.propertyDetail = async (req, res) => {
 		    data: responseArray
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
@@ -169,8 +166,7 @@ exports.propertyWingList = async (req, res) => {
 		    data: wingsData
 		});
 	} catch (error) {
-		console.log(error);
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }

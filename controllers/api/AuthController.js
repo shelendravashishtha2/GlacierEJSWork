@@ -5,7 +5,6 @@ const { encrypt, decrypt } = require('../../helper/crypto');
 const Joi = require("joi");
 const response = require("../../helper/response");
 const commonHelpers = require("../../helper/commonHelpers");
-const {errorLog,consoleLog} = require("../../helper/consoleLog");
 const UserResource = require('./resources/UserResource');
 
 exports.update = async (req, res) => {
@@ -64,7 +63,7 @@ exports.update = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
 			return res.send(response.error(400, errorMessage.message, [] ));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', [] ));
 		}
 	}
@@ -113,7 +112,7 @@ exports.register = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]
 			return res.send(response.error(400, errorMessage.message, [] ));
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', [] ));
 		}
 	}
@@ -131,7 +130,7 @@ exports.verifyEmailCallback = async (req, res) => {
 			return res.render('errors/main',{ code: 404, errorMessage: 'Data Not found'})
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -193,7 +192,7 @@ exports.login = async (req, res) => {
 			return res.send(response.error(400, 'Login Failed. Incorrect email or password', [] ));
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -217,7 +216,7 @@ exports.forgotPassword = async (req, res) => {
 			});
 			const encryptedId = encrypt(""+userData._id+"");
 			const emailVerifyUrl = req.protocol + '://' + req.get('host') + process.env.BASE_URL + 'reset-password/'+ encryptedId.key + '/' + encryptedId.id;
-			consoleLog(__filename, req.originalUrl, emailVerifyUrl);
+			consoleLog(emailVerifyUrl, __filename, req.originalUrl);
 
 			const mailOptions = {
 				from: process.env.MAIL_FROM_ADDRESS,
@@ -239,7 +238,7 @@ exports.forgotPassword = async (req, res) => {
 			return res.send(response.error(400, 'Email not found', [] ));
 		}
 	} catch (error) {
-		errorLog(__filename, req.originalUrl, error);
+		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', [] ));
 	}
 }
@@ -274,7 +273,7 @@ exports.resetPassword = async (req, res) => {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]];
 			return res.render('auth/resetPassword', { key: req.params.key, id: req.params.id, error: errorMessage.message })
 		} else {
-			errorLog(__filename, req.originalUrl, error);
+			errorLog(error, __filename, req.originalUrl);
 			return res.render('errors/main',{ code: 500, errorMessage: 'Something want wrong. Please try again.'})
 		}
 	}
