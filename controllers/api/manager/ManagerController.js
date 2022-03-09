@@ -113,9 +113,10 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 exports.categoryFrcList = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			categoryId: Joi.string().min(24).max(24).optional(),
+			categoryId: Joi.string().min(24).max(24).required(),
+			frequency: Joi.string().optional(),
 		});
-		let validation = schema.validate(req.query, __joiOptions);
+		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
@@ -124,10 +125,11 @@ exports.categoryFrcList = async (req, res) => {
 
 		let findQuery = {
 			propertyId: PropertyData.propertyId,
+			assignCategoryId: ObjectId(req.body.categoryId),
 			status: 1
 		}
-		if (req.query.categoryId) {
-			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
+		if (req.body.frequency) {
+			findQuery.frequency = req.body.frequency
 		}
 		let categoryFrcData = await CategoryFrcAssign.find(findQuery);
 

@@ -12,7 +12,7 @@ exports.formCron = async (req, res) => {
         console.log('cron running');
         const days = Object.keys(daysEnum);
         days= days.map((day)=>{
-            return day.toLowerCase();    
+            return day.toLowerCase();
         })
 		let date = new Date();
 		// date.setDate(date.getDate() + 7); //add 7 day in currant date
