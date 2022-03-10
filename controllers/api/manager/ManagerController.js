@@ -21,7 +21,7 @@ exports.categoryList = async (req, res) => {
 		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
 
 		let categoryData = await CategoryAssign.find({propertyId: userPropertyData.propertyId, managerId: req.user._id})
-				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
+				.populate({path: 'categoryId', select: ['category_name']});
 
 		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
 			let data = {

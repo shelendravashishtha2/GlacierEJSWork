@@ -46,6 +46,19 @@ exports.categoryList = async (req, res) => {
 		};
 		let categoryData = await CategoryMaster.aggregate([search, sort, skip, limit, project]);
 
+		// let deleteData = await CategoryMaster.find().isDeleted(true);
+		// let deleteData1 = await CategoryMaster.find().isDeleted(false);
+		// let deleteData2 = await CategoryMaster.find().isDeleted();
+		// let deleteData3 = await CategoryMaster.findDeleted();
+
+		// let deleteData = await CategoryMaster.find({});
+		// console.log(deleteData);
+		// deleteData ? deleteData.softDelete() : null;
+
+		// const deleted = await CategoryMaster.softDelete({}, {validateBeforeSave: false});
+		// const restore = await CategoryMaster.restore({}, {validateBeforeSave: false});
+		// console.log(restore);
+
 		return res.render('Admin/Categories/index', {
 			req: req,
             data: categoryData,

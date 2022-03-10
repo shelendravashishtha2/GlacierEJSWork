@@ -12,9 +12,7 @@ const UserProperty = require("../../../models/UserProperty");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-
-		console.log(UserPropertyData);
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id}); //.populate({path: 'propertyId'}).populate({path: 'userId'})
 
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: UserPropertyData.propertyId});
 
