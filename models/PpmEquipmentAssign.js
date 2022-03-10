@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
 const Property = require("./Property");
 const User = require("./User");
-const softDelete = require('./softDelete');
+const softDelete = require('../helper/softDeletePlugin');
 
 const PpmEquipmentAssignSchema = new mongoose.Schema({
 	propertyId: {

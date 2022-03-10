@@ -19,6 +19,7 @@ const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 exports.categoryList = async (req, res) => {
 	try {
 		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
+		// console.log(userPropertyData);
 
 		let categoryData = await CategoryAssign.find({propertyId: userPropertyData.propertyId, managerId: req.user._id})
 				.populate({path: 'categoryId', select: ['category_name']});
@@ -63,7 +64,11 @@ exports.categoryFrcTodayTaskList = async (req, res) => {
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
 		}
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {frequency: req.query.frequency}, select: ['checklist_id','checklist_name','type','frequency']});
+		let findQuery2 = {};
+		if (req.query.frequency) {
+			findQuery2.frequency = req.query.frequency
+		}
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {findQuery2}, select: ['checklist_id','checklist_name','type','frequency']});
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
@@ -88,7 +93,8 @@ exports.categoryFrcIncompleteTaskList = async (req, res) => {
 
 		let findQuery = {
 			propertyId: userPropertyData.propertyId,
-			completionStatus: 2
+			// completionStatus: {$ne: 2}
+			completionStatus: 3
 		}
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)

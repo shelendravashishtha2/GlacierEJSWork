@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
-// const soft_delete = require('mongoose-softdelete');
-const softDelete = require('./softDelete');
+const softDeletePlugin = require('../helper/softDeletePlugin');
 
 const CategoryMasterSchema = new mongoose.Schema({
 	category_name: {
@@ -22,7 +21,7 @@ const CategoryMasterSchema = new mongoose.Schema({
 	versionKey: false
 });
 
-CategoryMasterSchema.plugin(softDelete);
+CategoryMasterSchema.plugin(softDeletePlugin);
 CategoryMasterSchema.plugin(mongoosePaginate);
 
 const CategoryMaster = new mongoose.model("Category_Master", CategoryMasterSchema);

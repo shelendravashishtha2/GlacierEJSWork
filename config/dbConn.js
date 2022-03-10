@@ -11,9 +11,8 @@ mongoose.connect(process.env.MONGO_DB_URL, {
 })
 
 // debug query log
-mongoose.set('debug', true);
-
-// or
-// mongoose.set('debug', function (collectionName, method, query, doc, options) {
-//   //
-// });
+if (process.env.APP_ENV == 'development') {
+	mongoose.set('debug', true);
+	// mongoose.set('debug', function (collectionName, method, query, doc, options) {
+	// });
+}

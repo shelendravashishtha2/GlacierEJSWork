@@ -46,19 +46,6 @@ exports.categoryList = async (req, res) => {
 		};
 		let categoryData = await CategoryMaster.aggregate([search, sort, skip, limit, project]);
 
-		// let deleteData = await CategoryMaster.find().isDeleted(true);
-		// let deleteData1 = await CategoryMaster.find().isDeleted(false);
-		// let deleteData2 = await CategoryMaster.find().isDeleted();
-		// let deleteData3 = await CategoryMaster.findDeleted();
-
-		// let deleteData = await CategoryMaster.find({});
-		// console.log(deleteData);
-		// deleteData ? deleteData.softDelete() : null;
-
-		// const deleted = await CategoryMaster.softDelete({}, {validateBeforeSave: false});
-		// const restore = await CategoryMaster.restore({}, {validateBeforeSave: false});
-		// console.log(restore);
-
 		return res.render('Admin/Categories/index', {
 			req: req,
             data: categoryData,
@@ -85,17 +72,15 @@ exports.changeCategoryStatus = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		
+		let data = await CategoryMaster.findOne({ _id: req.body._id });
+		data.status == 0 ? data.status = 1 : data.status = 0;
+		data.save();
 
 		// let data = await CategoryMaster.findOne({ _id: req.body._id });
-		// data.status == 0 ? data.status = 1 : data.status = 0;
-		// data.save();
+		// await data.restore();
 
-		let data = await CategoryMaster.findOne({ _id: req.body._id });
-		await data.restore();
-
-		let data1 = await CategoryMaster.findOne({ _id: req.body._id });
-		console.log(data1);
+		// let data1 = await CategoryMaster.findOne({ _id: req.body._id });
+		// console.log(data1);
 
 		return res.send(response.success(200, 'Status update Successfully', data.status));
 	} catch (error) {
