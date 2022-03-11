@@ -99,9 +99,9 @@ router.post("/manager/ppm-asset-status-change", auth, ManagerPpmController.ppmAs
 router.post("/manager/ppm-task-list", auth, ManagerPpmController.ppmTaskList); //
 router.post("/manager/ppm-task-details", auth, ManagerPpmController.ppmTaskDetails); //
 // router.post("/manager/ppm-task-submit", auth, ManagerPpmController.ppmTaskDetails); //
-// router.post("/manager/supervisor-list", auth, ManagerPpmController.ppmEquipmentAssignSupervisor); //
-// router.post("/manager/supervisor-ppm-equipment-list", auth, ManagerPpmController.ppmEquipmentAssignSupervisor); //
-// router.post("/manager/ppm-equipment-assign-supervisor", auth, ManagerPpmController.ppmEquipmentAssignSupervisor); //
+router.post("/manager/supervisor-list", auth, ManagerPpmController.supervisorList); //
+router.post("/manager/supervisor-ppm-equipment-list", auth, ManagerPpmController.supervisorPpmEquipmentList); //
+router.post("/manager/store-ppm-equipment-assign-supervisor", auth, ManagerPpmController.storePpmEquipmentAssignSupervisor); //
 
 // router.post("/manager/assign-task-list", auth, ManagerController.assignTaskList);
 // router.post("/manager/property-wing-list", auth, ManagerController.propertyWingList);

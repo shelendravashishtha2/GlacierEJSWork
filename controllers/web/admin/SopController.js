@@ -1,5 +1,6 @@
 const { check, validationResult } = require('express-validator');
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const fs = require('fs')
 const path = require('path');
 const mongoose = require("mongoose");

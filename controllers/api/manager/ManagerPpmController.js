@@ -2,15 +2,19 @@ const PpmEquipmentMaster = require("../../../models/PpmEquipmentMaster");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const { convertObjValuesToString, prependToArray } = require("../../../helper/commonHelpers");
 const daysEnum = require("../../../enum/daysEnum");
+const User = require("../../../models/User");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
+
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: req.user.property_id});
 
 		return res.status(200).send({
@@ -34,6 +38,7 @@ exports.createPpmEquipment = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.create({
 			propertyId: req.user.property_id,
@@ -116,6 +121,7 @@ exports.ppmAssetList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find({propertyId: req.user.property_id, assignPpmEquipmentId: ObjectId(req.body.ppmEquipmentId)});
 
@@ -147,6 +153,7 @@ exports.createPpmAsset = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
@@ -237,6 +244,7 @@ exports.updatePpmAsset = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
@@ -325,6 +333,7 @@ exports.ppmTaskList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let findQuery = {
 			propertyId: req.user.property_id
@@ -383,23 +392,65 @@ exports.ppmTaskDetails = async (req, res) => {
 	}
 }
 
-exports.ppmEquipmentAssignSupervisor = async (req, res) => {
+exports.supervisorList = async (req, res) => {
+	try {
+		let supervisorData = await User.find({property_id: req.user.property_id, position_id: 5}).select(['full_name']).lean();
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			data: supervisorData
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.supervisorPpmEquipmentList = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			ppmTaskId: Joi.string().min(24).max(24).required(),
+			supervisorId: Joi.string().min(24).max(24).required(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)}).populate({path: 'propertyId', select: ['property_name']}).lean();
+		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({supervisorId: req.body.supervisorId}).lean();
 
 		return res.status(200).send({
 		    status: true,
             status_code: "200",
             message: "success",
-			data: responseArray
+			data:  PpmEquipmentAssignData
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.storePpmEquipmentAssignSupervisor = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			supervisorId: Joi.string().min(24).max(24).required(),
+			PpmEquipmentAssignIds: Joi.array().items(Joi.objectId().label('Ppm Equipment id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+		let {supervisorId, PpmEquipmentAssignIds} = req.body;
+
+		let PpmEquipmentAssignData = await PpmEquipmentAssign.updateMany({_id: {$in: PpmEquipmentAssignIds}}, {supervisorId: supervisorId}, {new:true,runValidators:true});
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			data:  []
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const Property = require("../../../models/Property");
 const User = require("../../../models/User");
 const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
@@ -15,6 +16,8 @@ const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
 
 exports.categoryList = async (req, res) => {
 	try {
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
+
 		let categoryData = await CategoryAssign.find({propertyId: req.user.property_id, supervisorId: ObjectId(req.user._id)})
 				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
 
@@ -43,6 +46,7 @@ exports.categoryChecklist = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let findQuery = {
 			propertyId: req.user.property_id,
@@ -80,6 +84,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let findQuery = {
 			propertyId: req.user.property_id,
@@ -115,6 +120,7 @@ exports.categoryFrcList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
+		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let findQuery = {
 			propertyId: req.user.property_id,

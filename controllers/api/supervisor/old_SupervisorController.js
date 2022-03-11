@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const Property = require("../../../models/Property");
 const CategoryAssign = require("../../../models/CategoryAssign");
 const User = require("../../../models/User");

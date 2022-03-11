@@ -12,12 +12,12 @@ const UserResource = (res) => {
 				"email": resData.email ? resData.email : "",
 				"mobile_no": resData.mobile_no ? resData.mobile_no : "",
 				"address": resData.address ? resData.address : "",
-				"position_id": resData.position_id ? resData.position_id.toString() : "",
-				"position_type": resData.position_type ? resData.position_type.toString() : "",
+				"position_id": resData.position_id ? String(resData.position_id) : "",
+				"position_type": resData.position_type ? String(resData.position_type) : "",
 				"profile_image": resData.profile_image ? resData.profile_image : "",
-				"reg_status": resData.registration_status ? resData.registration_status.toString() : "0",
-				"reg_date": resData.created_at ? resData.created_at.toString() : "0",
-				"status": resData.status ? resData.status.toString() : "",
+				"reg_status": resData.registration_status ? String(resData.registration_status) : "0",
+				"reg_date": resData.created_at ? String(resData.created_at) : "0",
+				"status": resData.status ? String(resData.status) : "",
 				"token": resData.token,
 			}
 		);

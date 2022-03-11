@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const userSchema = new mongoose.Schema({

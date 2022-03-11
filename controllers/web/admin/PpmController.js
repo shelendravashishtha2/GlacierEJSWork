@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const PpmEquipment = require("../../../models/PpmEquipmentMaster");
 const PpmEquipmentAssign = require("../../../models/PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign");

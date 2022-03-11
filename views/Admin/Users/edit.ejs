@@ -94,12 +94,12 @@
 															<div class="table-responsive">
 																<table class="table table-nowrap align-middle table-hover mb-0">
 																	<tbody>
-																		<!-- SS old value not selected -->
-																		<% if (typeof error.inputDataSS != 'undefined' && typeof error.inputData.property_id != 'undefined') { %>
+																		<!-- old value not selected -->
+																		<% if (typeof error.inputData != 'undefined' && typeof error.inputData.property_id != 'undefined') { %>
 																			<% for( let i = 0; i < propertyData.length; i++ ) { let matched=0 %>
 																				<% let inputDataProperty_id = Array.isArray(error.inputData.property_id) ? error.inputData.property_id : [error.inputData.property_id] %> 
 																				<% for( let j = 0; j < inputDataProperty_id.length; j++ ) { %>
-																					<% if (propertyData[i]._id.toString() == inputDataProperty_id[j]) { %>
+																					<% if (String(propertyData[i]._id) == inputDataProperty_id[j]) { %>
 																						<% matched = 1 %>
 																						<% break %>
 																					<% } %>
@@ -116,7 +116,7 @@
 																		<% } else { %>
 																			<% for( let i = 0; i < propertyData.length; i++ ) { let matched=0 %>
 																				<% for( let j = 0; j < UserPropertyData.length; j++ ) { %>
-																					<% if (propertyData[i]._id.toString() == UserPropertyData[j].propertyId.toString()) { %>
+																					<% if (String(propertyData[i]._id) == String(UserPropertyData[j]._id)) { %>
 																						<% matched = 1 %>
 																						<% break %>
 																					<% } %>

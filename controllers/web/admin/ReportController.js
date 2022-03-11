@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const MomentRange = require('moment-range');
 const response = require("../../../helper/response");
 const PpmEquipment = require("../../../models/PpmEquipmentMaster");

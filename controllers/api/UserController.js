@@ -10,7 +10,8 @@ const response = require("../../helper/response");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const UserResource = require('./resources/UserResource');
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 
 exports.changePasswordValidation = async (req, res, next) => {
 	const schema = Joi.object({

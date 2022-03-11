@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const { check, validationResult } = require('express-validator');
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const path = require('path');
 const User = require("../../../models/User");
 const Property = require("../../../models/Property");

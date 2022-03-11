@@ -4,7 +4,8 @@ const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 
 exports.historyList = async (req, res) => {
 	try {

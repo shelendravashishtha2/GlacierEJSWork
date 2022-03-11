@@ -1,5 +1,6 @@
 const { check, sanitizeBody, validationResult, matchedData } = require('express-validator');
-const Joi = require("joi");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const { Validator } = require('node-input-validator');
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
