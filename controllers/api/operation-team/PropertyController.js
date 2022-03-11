@@ -8,9 +8,9 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const PropertyResource = require('../resources/PropertyResource');
 const Joi = require("joi");
-const UserProperty = require('../../../models/UserProperty');
 const CategoryAssign = require('../../../models/CategoryAssign');
 const CategoryFrcAssign = require('../../../models/CategoryFrcAssign');
+const User = require("../../../models/User");
 
 exports.propertyList = async (req, res) => {
 	try {
@@ -71,11 +71,10 @@ exports.propertyDetail = async (req, res) => {
 			}
 		}
 
-		let UserPropertyData = await UserProperty.find({propertyId: req.body.propertyId}).populate({path: 'userId', select: ['full_name', 'position_id']});
 		let CategoryAssignData = await CategoryAssign.find({propertyId: req.body.propertyId}).populate({path: 'categoryId', select: ['category_name']});
 		let CategoryFrcAssignData = await CategoryFrcAssign.find({propertyId: req.body.propertyId}).select(['checklist_name']);
 
-		const UserData = UserPropertyData.filter(item => item.userId != null).map((item) => item.userId)
+		const UserData = await User.find({property_id: req.body.propertyId}).select(['full_name', 'position_id'])
 		const OperationTeam = UserData.filter((item) => item.position_id == 2)
 		const Auditor = UserData.filter((item) => item.position_id == 3)
 		const Manager = UserData.filter((item) => item.position_id == 4)

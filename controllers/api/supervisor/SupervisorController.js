@@ -10,15 +10,12 @@ const SOP = require("../../../models/SOP");
 const response = require("../../../helper/response");
 const PPM = require("../../../models/PpmEquipmentMaster");
 const Rating = require("../../../models/Rating");
-const UserProperty = require("../../../models/UserProperty");
 const CategoryAssign = require("../../../models/CategoryAssign");
 const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
 
 exports.categoryList = async (req, res) => {
 	try {
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
-		let categoryData = await CategoryAssign.find({propertyId: PropertyData.propertyId, supervisorId: ObjectId(req.user._id)})
+		let categoryData = await CategoryAssign.find({propertyId: req.user.property_id, supervisorId: ObjectId(req.user._id)})
 				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
 
 		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
@@ -47,10 +44,8 @@ exports.categoryChecklist = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: req.user.property_id,
 			dueDate: {
 				$gte: moment().startOf('day'),
 				$lte: moment().endOf('day')
@@ -86,10 +81,8 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: req.user.property_id,
 			completionStatus: 3
 		}
 		if (req.query.categoryId) {
@@ -123,10 +116,8 @@ exports.categoryFrcList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData.propertyId,
+			propertyId: req.user.property_id,
 			assignCategoryId: ObjectId(req.body.categoryId),
 			// supervisorId: req.user._id,
 			status: 1

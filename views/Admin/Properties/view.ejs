@@ -139,8 +139,8 @@
                                 <th scope="row" style="width: 20%;">Operation Team</th>
                                 <td style="white-space: normal;">:
                                     <% for( let i = 0; i < userPropertyData.length; i++ ) { %>
-                                        <% if(userPropertyData[i].userId && userPropertyData[i].userId.position_id == 2) { %>
-                                        <span><%= userPropertyData[i].userId.full_name %> (<%= userPropertyData[i].userId.mobile_no %>) 
+                                        <% if(userPropertyData[i] && userPropertyData[i].position_id == 2) { %>
+                                        <span><%= userPropertyData[i].full_name %> (<%= userPropertyData[i].mobile_no %>) 
                                            ,
                                         </span>
                                         <% } %>
@@ -151,8 +151,8 @@
                                 <th scope="row" style="width: 20%;">Auditor</th>
                                 <td>:
                                     <% for( let i = 0; i < userPropertyData.length; i++ ) { %> 
-                                        <% if(userPropertyData[i].userId && userPropertyData[i].userId.position_id == 3) { %>
-                                        <span><%= userPropertyData[i].userId.full_name %> (<%= userPropertyData[i].userId.mobile_no %>) 
+                                        <% if(userPropertyData[i] && userPropertyData[i].position_id == 3) { %>
+                                        <span><%= userPropertyData[i].full_name %> (<%= userPropertyData[i].mobile_no %>) 
                                            ,
                                         </span>
                                         <% } %>
@@ -163,8 +163,8 @@
                                 <th scope="row" style="width: 20%;">Manager</th>
                                 <td style="white-space: normal;">:
                                     <% for( let i = 0; i < userPropertyData.length; i++ ) { %> 
-                                        <% if(userPropertyData[i].userId && userPropertyData[i].userId.position_id == 4) { %>
-                                        <span><%= userPropertyData[i].userId.full_name %> (<%= userPropertyData[i].userId.mobile_no %>) 
+                                        <% if(userPropertyData[i] && userPropertyData[i].position_id == 4) { %>
+                                        <span><%= userPropertyData[i].full_name %> (<%= userPropertyData[i].mobile_no %>) 
                                             ,
                                         </span>
                                         <% } %>
@@ -175,8 +175,8 @@
                                 <th scope="row" style="width: 20%;">Supervisor</th>
                                 <td style="white-space: normal;">:
                                     <% for( let i = 0; i < userPropertyData.length; i++ ) { %> 
-                                        <% if(userPropertyData[i].userId && userPropertyData[i].userId.position_id == 4) { %>
-                                        <span><%= userPropertyData[i].userId.full_name %> (<%= userPropertyData[i].userId.mobile_no %>) 
+                                        <% if(userPropertyData[i] && userPropertyData[i].position_id == 4) { %>
+                                        <span><%= userPropertyData[i].full_name %> (<%= userPropertyData[i].mobile_no %>) 
                                             .
                                         </span>
                                         <% } %>

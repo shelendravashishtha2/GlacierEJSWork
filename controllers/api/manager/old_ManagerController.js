@@ -13,7 +13,6 @@ const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const SOP = require('../../../models/SOP');
 const SettingRating = require("../../../models/SettingRating");
 const Rating = require("../../../models/Rating");
-const UserProperty = require("../../../models/UserProperty");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 
 exports.ppmTaskDetail = async (req, res) => {
@@ -364,9 +363,7 @@ exports.categoryList = async (req, res) => {
 		// }
 		// let categoryData = await CategoryAssign.aggregate([condition, lookup, unwind, project]);
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
-		let categoryData = await CategoryAssign.find({propertyId: PropertyData._id, managerId: req.user._id})
+		let categoryData = await CategoryAssign.find({propertyId: req.user.property_id, managerId: req.user._id})
 				.populate({path: 'categoryId', model: 'Category_Master', select: ['category_name']});
 
 		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
@@ -395,10 +392,8 @@ exports.categoryChecklist = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData._id,
+			propertyId: req.user.property_id,
 			dueDate: {
 				$gte: moment().startOf('day'),
 				$lte: moment().endOf('day')
@@ -428,10 +423,8 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData._id,
+			propertyId: req.user.property_id,
 			completionStatus: 2
 		}
 		if (req.query.categoryId) {
@@ -462,10 +455,8 @@ exports.categoryFrcList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let PropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: PropertyData._id,
+			propertyId: req.user.property_id,
 			status: 1
 		}
 		if (req.query.categoryId) {

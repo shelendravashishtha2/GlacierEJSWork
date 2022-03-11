@@ -8,14 +8,10 @@ const PpmEquipmentAssetAssign = require("../../../models/PpmEquipmentAssetAssign
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const { convertObjValuesToString, prependToArray } = require("../../../helper/commonHelpers");
 const daysEnum = require("../../../enum/daysEnum");
-const UserProperty = require("../../../models/UserProperty");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id}); //.populate({path: 'propertyId'}).populate({path: 'userId'})
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
-		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: UserPropertyData.propertyId});
+		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: req.user.property_id});
 
 		return res.status(200).send({
 		    "status": true,
@@ -39,11 +35,8 @@ exports.createPpmEquipment = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.create({
-			propertyId: UserPropertyData.propertyId,
+			propertyId: req.user.property_id,
 			ppmEquipmentName: req.body.ppmEquipmentName,
 		})
 
@@ -124,10 +117,7 @@ exports.ppmAssetList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
-		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find({propertyId: UserPropertyData.propertyId, assignPpmEquipmentId: ObjectId(req.body.ppmEquipmentId)});
+		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find({propertyId: req.user.property_id, assignPpmEquipmentId: ObjectId(req.body.ppmEquipmentId)});
 
 		return res.status(200).send({
 		    "status": true,
@@ -158,9 +148,6 @@ exports.createPpmAsset = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
 		let days = prependToArray('',daysArr);
@@ -187,7 +174,7 @@ exports.createPpmAsset = async (req, res) => {
 		}
 
 		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.create({
-			propertyId: UserPropertyData.propertyId,
+			propertyId: req.user.property_id,
 			assignPpmEquipmentId: req.body.ppmEquipmentId,
 			assetName: req.body.assetName,
 			assetLocation: req.body.assetLocation,
@@ -251,9 +238,6 @@ exports.updatePpmAsset = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
 		let days = prependToArray('',daysArr);
@@ -280,7 +264,7 @@ exports.updatePpmAsset = async (req, res) => {
 		}
 
 		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.findOneAndUpdate({_id: ObjectId(req.body.ppmAssetId)},{
-				propertyId: UserPropertyData.propertyId,
+				propertyId: req.user.property_id,
 				assignPpmEquipmentId: req.body.ppmEquipmentId,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,
@@ -342,11 +326,8 @@ exports.ppmTaskList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
-		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
-
 		let findQuery = {
-			propertyId: UserPropertyData.propertyId
+			propertyId: req.user.property_id
 		}
 		if (req.body.EquipmentId) {
 			findQuery.assignPpmEquipmentId = ObjectId(req.body.EquipmentId)
@@ -394,6 +375,30 @@ exports.ppmTaskDetails = async (req, res) => {
 		    "status": true,
             "status_code": "200",
             "message": "PPM task details",
+			data: responseArray
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.ppmEquipmentAssignSupervisor = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			ppmTaskId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)}).populate({path: 'propertyId', select: ['property_name']}).lean();
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
 			data: responseArray
 		});
 	} catch (error) {

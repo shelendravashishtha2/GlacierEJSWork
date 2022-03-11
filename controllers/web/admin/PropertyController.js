@@ -5,7 +5,6 @@ const Joi = require("joi");
 const path = require('path');
 const User = require("../../../models/User");
 const Property = require("../../../models/Property");
-const UserProperty = require('../../../models/UserProperty');
 const PropertyTask = require("../../../models/CategoryAssign");
 const Category = require("../../../models/CategoryMaster");
 const response = require("../../../helper/response");
@@ -483,10 +482,14 @@ exports.propertyView = async (req,res) => {
 		res.locals.session = req.session;
 
 		let propertyData = await Property.find({_id:req.params.id});
-		let userPropertyData = await UserProperty.find({ propertyId: req.params.id}).populate({path: 'userId'}).lean();
+		let userPropertyData = await User.find({ propertyId: req.params.id}).lean();
 		let categoryData = await PropertyTask.find({ propertyId: req.params.id}).populate({path: 'categoryId'}).lean();
 		
-		return res.render('Admin/Properties/view',{'data':PropertyResource(propertyData),'userPropertyData': userPropertyData,'categoryData':categoryData});
+		return res.render('Admin/Properties/view', {
+            data: PropertyResource(propertyData),
+            userPropertyData: userPropertyData,
+            categoryData: categoryData,
+        })
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));

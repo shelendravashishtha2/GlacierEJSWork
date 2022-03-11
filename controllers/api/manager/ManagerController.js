@@ -13,15 +13,11 @@ const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 const SOP = require('../../../models/SOP');
 const SettingRating = require("../../../models/SettingRating");
 const Rating = require("../../../models/Rating");
-const UserProperty = require("../../../models/UserProperty");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 
 exports.categoryList = async (req, res) => {
 	try {
-		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
-		// console.log(userPropertyData);
-
-		let categoryData = await CategoryAssign.find({propertyId: userPropertyData.propertyId, managerId: req.user._id})
+		let categoryData = await CategoryAssign.find({propertyId: req.user.property_id, managerId: req.user._id})
 				.populate({path: 'categoryId', select: ['category_name']});
 
 		categoryData = categoryData.filter(item => item.categoryId != null).map((item) => {
@@ -51,10 +47,8 @@ exports.categoryFrcTodayTaskList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: userPropertyData.propertyId,
+			propertyId: req.user.property_id,
 			dueDate: {
 				$gte: moment().startOf('day'),
 				$lte: moment().endOf('day')
@@ -89,10 +83,8 @@ exports.categoryFrcIncompleteTaskList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: userPropertyData.propertyId,
+			propertyId: req.user.property_id,
 			// completionStatus: {$ne: 2}
 			completionStatus: 3
 		}
@@ -125,10 +117,8 @@ exports.categoryFrcList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
 
-		let userPropertyData = await UserProperty.findOne({userId: req.user._id});
-
 		let findQuery = {
-			propertyId: userPropertyData.propertyId,
+			propertyId: req.user.property_id,
 			assignCategoryId: ObjectId(req.body.categoryId),
 			status: 1
 		}

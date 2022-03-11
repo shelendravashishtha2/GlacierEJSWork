@@ -9,7 +9,6 @@ const User = require("../../../models/User");
 const response = require("../../../helper/response");
 const UserResource = require('../../api/resources/UserResource');
 const Property = require('../../../models/Property');
-const UserProperty = require('../../../models/UserProperty');
 
 // Supervisor add Form Validation
 exports.supervisorAddValidation = async (req, res, next) => {
@@ -190,19 +189,8 @@ exports.userAdd = async (req, res) => {
 		});
 		await registerUser.save();
 
-		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
-		for (let i = 0; i < req.body.property_id.length; i++) {
-			const property_id = req.body.property_id[i];
-			if (registerUser._id && property_id && ObjectId.isValid(property_id) == true) {
-				let UserPropertyData = new UserProperty({
-					userId: registerUser._id,
-					propertyId: property_id,
-				});
-				await UserPropertyData.save();
-			}
-		}
 		req.flash('success_msg', 'User is added!');
-		res.redirect(req.baseUrl+'/users');
+		return res.redirect(req.baseUrl+'/users');
 	} catch (error) {
 		let errorMessage = '';
 		if (error.name == "ValidationError") {
@@ -298,9 +286,13 @@ exports.userEdit = async (req,res) => {
 		res.locals.error = req.session.error ? req.session.error : '';
 		
 		let UserData = await User.findOne({_id: req.params.id});
-		let UserPropertyData = await UserProperty.find({userId: req.params.id});
 		let propertyData = await Property.find();
-		return res.render('Admin/Users/edit',{ data: UserResource(UserData), propertyData: propertyData, UserPropertyData: UserPropertyData });
+
+		return res.render('Admin/Users/edit', {
+            data: UserResource(UserData),
+            propertyData: propertyData,
+            UserPropertyData: UserData.property_id,
+        })
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};
@@ -394,18 +386,6 @@ exports.userUpdate = async (req,res) => {
 		UserData.profile_image = req.body.profile_image;
 		await UserData.save();
 
-		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
-		let deleteOldUserProperty = await UserProperty.deleteMany({ userId: UserData._id });
-		for (let i = 0; i < req.body.property_id.length; i++) {
-			const property_id = req.body.property_id[i];
-			if (UserData._id && property_id && ObjectId.isValid(property_id) == true) {
-				let UserPropertyData = new UserProperty({
-					userId: UserData._id,
-					propertyId: property_id,
-				});
-				await UserPropertyData.save();
-			}
-		}
 		req.flash('success_msg', 'User is updated!');
 		return res.redirect(req.baseUrl+'/users');
 	} catch (error) {
@@ -428,10 +408,9 @@ exports.userView = async (req,res) => {
 		res.locals.title = 'View User';
 		res.locals.session = req.session;
 
-		let UserData = await User.findOne({ _id: req.params.id, position: 5});
-		let UserPropertyData = await UserProperty.find({ userId: req.params.id}).populate({path: 'propertyId'}).lean();
+		let UserData = await User.findOne({ _id: req.params.id, position: 5}).populate({path: 'property_id'}).lean();
 
-		return res.render('Admin/Users/view',{ data: UserResource(UserData), UserPropertyData: UserPropertyData });
+		return res.render('Admin/Users/view',{ data: UserResource(UserData), UserPropertyData: UserData.property_id });
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		req.session.error = {errorMessage: "Something want wrong"};

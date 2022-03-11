@@ -1,6 +1,5 @@
 const User = require("../../models/User");
 const Property = require("../../models/Property");
-const UserProperty = require('../../models/UserProperty');
 const CategoryAssign = require("../../models/CategoryAssign");
 const Category = require("../../models/CategoryMaster");
 const CategoryChecklist = require("../../models/CategoryFrcMaster");
@@ -94,18 +93,6 @@ exports.addUsers = async (req, res) => {
 			property_id: req.body.property_id, // Property list
 		});
 		const registeredData = await registerUser.save();
-
-		req.body.property_id = Array.isArray(req.body.property_id) ? req.body.property_id : [req.body.property_id];
-		for (let i = 0; i < req.body.property_id.length; i++) {
-			const property_id = req.body.property_id[i];
-			if (registerUser._id && property_id && ObjectId.isValid(property_id) == true) {
-				let UserPropertyData = new UserProperty({
-					userId: registerUser._id,
-					propertyId: property_id,
-				});
-				await UserPropertyData.save();
-			}
-		}
 
 		const userDataJson = JSON.parse(JSON.stringify(registeredData));
 		delete userDataJson.password;

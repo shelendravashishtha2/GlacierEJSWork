@@ -15,8 +15,12 @@ const PpmEquipmentAssignSchema = new mongoose.Schema({
 	// },
 	ppmEquipmentName: {
 		type: String,
-		required:true,
+		required: true,
 		trim: true,
+	},
+	supervisorId: {
+		type: mongoose.Schema.Types.ObjectId, ref: User,
+		default: '',
 	},
 
 	status: {
