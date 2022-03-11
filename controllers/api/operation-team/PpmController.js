@@ -75,7 +75,7 @@ exports.updatePpmEquipment = async (req, res) => {
 
 		const updateData = await PpmEquipmentAssign.findOneAndUpdate({_id: req.body.ppmEquipmentId}, 
 			{ppmEquipmentName: req.body.ppmEquipmentName}, 
-			{new: true, runValidators: true});
+			{new:true,runValidators:true});
 
 		return res.status(200).send({
 		    "status": true,
@@ -285,7 +285,7 @@ exports.updatePpmAsset = async (req, res) => {
 				day: day,
 				month: month,
 				date: date,
-			},{new: true, runValidators: true});
+			},{new:true,runValidators:true});
 
 		return res.status(200).send({
 		    "status": true,

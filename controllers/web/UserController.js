@@ -55,7 +55,7 @@ exports.verifyEmailCallback = async (req, res) => {
 		const _id = decrypt(req.params.key, req.params.id);
 		const userData = await User.findOne({ _id: _id });
 		if (userData) {
-			const updateUser = await User.findByIdAndUpdate({_id: _id}, {status: 1}, {new : true} );
+			const updateUser = await User.findByIdAndUpdate({_id: _id}, {status: 1}, {new:true,runValidators:true});
 			return res.redirect('/verified-email-success');
 		} else {
 			return res.render('errors/main',{ code: 404, errorMessage: 'Data Not found'})
@@ -134,7 +134,7 @@ exports.forgotPassword = async (req, res) => {
 				}
 				transporter.close();
 			});
-			await User.findByIdAndUpdate(userData._id, {reset_password_status: 1}, {new : true, runValidators: true} );
+			await User.findByIdAndUpdate(userData._id, {reset_password_status: 1}, {new:true,runValidators:true});
 			return res.send(response.success(200, 'Email Send Successfully', [] ));
 		} else {
 			return res.send(response.error(400, 'Email not found', [] ));
@@ -162,7 +162,7 @@ exports.resetPassword = async (req, res) => {
 		const _id = decrypt(req.params.key, req.params.id);
 		const userData = await User.findOne({ _id: _id });
 		if (userData && userData.reset_password_status == 1) {
-			await User.findByIdAndUpdate(_id, {password: req.body.password, reset_password_status: 0}, {new : true, runValidators: true} );
+			await User.findByIdAndUpdate(_id, {password: req.body.password, reset_password_status: 0}, {new:true,runValidators:true});
 			return res.redirect('/reset-password-success');
 		} else {
 			return res.render('errors/main',{ code: 404, errorMessage: 'Data Not found'})

@@ -236,7 +236,7 @@ exports.updateAssignCategory = async (req, res) => {
 				let assignCategory = await CategoryAssign.findOneAndUpdate({ propertyId: propertyId, categoryId: categoryId[i] }, {
 					operationTeamId: req.body.operationTeamId,
 					deleted: 1
-				}, { new: true, runValidators: true });
+				}, {new:true,runValidators:true});
 
 				let categoryFrc = await CategoryFrcMaster.find({ categoryId: categoryId[i] });
 				let frcAssigns = [];

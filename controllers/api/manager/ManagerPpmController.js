@@ -13,6 +13,7 @@ const UserProperty = require("../../../models/UserProperty");
 exports.ppmEquipmentList = async (req, res) => {
 	try {
 		let UserPropertyData = await UserProperty.findOne({userId: req.user._id}); //.populate({path: 'propertyId'}).populate({path: 'userId'})
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.find({ propertyId: UserPropertyData.propertyId});
 
@@ -31,16 +32,18 @@ exports.ppmEquipmentList = async (req, res) => {
 exports.createPpmEquipment = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required(),
-			ppmEquipmentName: Joi.required(),
+			ppmEquipmentName: Joi.string().required(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
+
 		let PpmEquipmentAssignData = await PpmEquipmentAssign.create({
-			propertyId: req.body.propertyId,
+			propertyId: UserPropertyData.propertyId,
 			ppmEquipmentName: req.body.ppmEquipmentName,
 		})
 
@@ -59,7 +62,6 @@ exports.createPpmEquipment = async (req, res) => {
 exports.updatePpmEquipment = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			// propertyId: Joi.string().min(24).max(24).required(),
 			ppmEquipmentId: Joi.string().min(24).max(24).required(),
 			ppmEquipmentName: Joi.required(),
 		});
@@ -70,7 +72,7 @@ exports.updatePpmEquipment = async (req, res) => {
 
 		const updateData = await PpmEquipmentAssign.findOneAndUpdate({_id: req.body.ppmEquipmentId}, 
 			{ppmEquipmentName: req.body.ppmEquipmentName}, 
-			{new: true, runValidators: true});
+			{new:true,runValidators:true});
 
 		return res.status(200).send({
 		    "status": true,
@@ -115,7 +117,6 @@ exports.ppmEquipmentStatusChange = async (req, res) => {
 exports.ppmAssetList = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required(),
 			ppmEquipmentId: Joi.string().min(24).max(24).required(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
@@ -123,7 +124,10 @@ exports.ppmAssetList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find({propertyId: ObjectId(req.body.propertyId), assignPpmEquipmentId: ObjectId(req.body.ppmEquipmentId)});
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
+
+		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.find({propertyId: UserPropertyData.propertyId, assignPpmEquipmentId: ObjectId(req.body.ppmEquipmentId)});
 
 		return res.status(200).send({
 		    "status": true,
@@ -140,7 +144,6 @@ exports.ppmAssetList = async (req, res) => {
 exports.createPpmAsset = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required(),
 			ppmEquipmentId: Joi.string().min(24).max(24).required(),
 			assetName: Joi.required(),
 			assetLocation: Joi.optional(),
@@ -154,6 +157,9 @@ exports.createPpmAsset = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
+
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
@@ -181,7 +187,7 @@ exports.createPpmAsset = async (req, res) => {
 		}
 
 		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.create({
-			propertyId: req.body.propertyId,
+			propertyId: UserPropertyData.propertyId,
 			assignPpmEquipmentId: req.body.ppmEquipmentId,
 			assetName: req.body.assetName,
 			assetLocation: req.body.assetLocation,
@@ -245,6 +251,9 @@ exports.updatePpmAsset = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
+
 		req.body.day = req.body.day ? req.body.day.charAt(0).toUpperCase() + req.body.day.slice(1) : req.body.day;
 		let daysArr = Object.keys(daysEnum);
 		let days = prependToArray('',daysArr);
@@ -271,7 +280,7 @@ exports.updatePpmAsset = async (req, res) => {
 		}
 
 		let PpmEquipmentAssetAssignData = await PpmEquipmentAssetAssign.findOneAndUpdate({_id: ObjectId(req.body.ppmAssetId)},{
-				propertyId: req.body.propertyId,
+				propertyId: UserPropertyData.propertyId,
 				assignPpmEquipmentId: req.body.ppmEquipmentId,
 				assetName: req.body.assetName,
 				assetLocation: req.body.assetLocation,
@@ -280,7 +289,7 @@ exports.updatePpmAsset = async (req, res) => {
 				day: day,
 				month: month,
 				date: date,
-			},{new: true, runValidators: true});
+			},{new:true,runValidators:true});
 
 		return res.status(200).send({
 		    "status": true,
@@ -325,7 +334,6 @@ exports.ppmAssetStatusChange = async (req, res) => {
 exports.ppmTaskList = async (req, res) => {
 	try {
 		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required(),
 			EquipmentId: Joi.string().min(24).max(24).optional(),
 			Date: Joi.optional(),
 		});
@@ -334,8 +342,11 @@ exports.ppmTaskList = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
+		let UserPropertyData = await UserProperty.findOne({userId: req.user._id});
+		if (!UserPropertyData) { return res.send(response.error(400, 'property not assigned', [])) }
+
 		let findQuery = {
-			propertyId: ObjectId(req.body.propertyId)
+			propertyId: UserPropertyData.propertyId
 		}
 		if (req.body.EquipmentId) {
 			findQuery.assignPpmEquipmentId = ObjectId(req.body.EquipmentId)

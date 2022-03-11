@@ -88,16 +88,16 @@ router.post("/manager/category-frc-incomplete-task-list", auth, ManagerControlle
 router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
 
 router.post("/manager/ppm-equipment-list", auth, ManagerPpmController.ppmEquipmentList); // ppm equipment list after select property
-// router.post("/manager/create-ppm-equipment", auth, ManagerPpmController.createPpmEquipment); // ppm equipment list after select property
-// router.post("/manager/update-ppm-equipment", auth, ManagerPpmController.updatePpmEquipment); // ppm equipment list after select property
-// router.post("/manager/ppm-equipment-status-change", auth, ManagerPpmController.ppmEquipmentStatusChange); // Active - Inactive
-// router.post("/manager/ppm-asset-list", auth, ManagerPpmController.ppmAssetList); // ppm asset list after select equipment
-// router.post("/manager/create-ppm-asset", auth, ManagerPpmController.createPpmAsset); // create ppm asset
-// router.post("/manager/ppm-asset-details", auth, ManagerPpmController.ppmAssetDetails); //view details for edit model
-// router.post("/manager/update-ppm-asset", auth, ManagerPpmController.updatePpmAsset); // update ppm asset
-// router.post("/manager/ppm-asset-status-change", auth, ManagerPpmController.ppmAssetStatusChange); // Active - Inactive
-// router.post("/manager/ppm-task-list", auth, ManagerPpmController.ppmTaskList); //
-// router.post("/manager/ppm-task-details", auth, ManagerPpmController.ppmTaskDetails); //
+router.post("/manager/create-ppm-equipment", auth, ManagerPpmController.createPpmEquipment); // ppm equipment list after select property
+router.post("/manager/update-ppm-equipment", auth, ManagerPpmController.updatePpmEquipment); // ppm equipment list after select property
+router.post("/manager/ppm-equipment-status-change", auth, ManagerPpmController.ppmEquipmentStatusChange); // Active - Inactive
+router.post("/manager/ppm-asset-list", auth, ManagerPpmController.ppmAssetList); // ppm asset list after select equipment
+router.post("/manager/create-ppm-asset", auth, ManagerPpmController.createPpmAsset); // create ppm asset
+router.post("/manager/ppm-asset-details", auth, ManagerPpmController.ppmAssetDetails); //view details for edit model
+router.post("/manager/update-ppm-asset", auth, ManagerPpmController.updatePpmAsset); // update ppm asset
+router.post("/manager/ppm-asset-status-change", auth, ManagerPpmController.ppmAssetStatusChange); // Active - Inactive
+router.post("/manager/ppm-task-list", auth, ManagerPpmController.ppmTaskList); //
+router.post("/manager/ppm-task-details", auth, ManagerPpmController.ppmTaskDetails); //
 // router.post("/manager/ppm-task-submit", auth, ManagerPpmController.ppmTaskDetails); //
 
 // router.post("/manager/assign-task-list", auth, ManagerController.assignTaskList);

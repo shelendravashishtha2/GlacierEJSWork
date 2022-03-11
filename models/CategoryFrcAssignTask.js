@@ -36,7 +36,7 @@ const CategoryFrcAssignTaskSchema = new mongoose.Schema({
 		type: Date,
 		default: '',
 	},
-	percentage:{
+	percentage: {
 		type: Number,
 		default: 0
 	},

@@ -68,7 +68,7 @@ exports.categoryFrcTodayTaskList = async (req, res) => {
 		if (req.query.frequency) {
 			findQuery2.frequency = req.query.frequency
 		}
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {findQuery2}, select: ['checklist_id','checklist_name','type','frequency']});
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: findQuery2, select: ['checklist_id','checklist_name','type','frequency']});
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));

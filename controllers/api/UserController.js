@@ -231,7 +231,7 @@ exports.updateUser = async (req, res) => {0
 		}
 		const _id = req.user._id;
 
-		let updateUser = await User.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true} );
+		let updateUser = await User.findByIdAndUpdate(_id, req.body, {new:true,runValidators:true});
 		updateUser = JSON.parse(JSON.stringify(updateUser));
         updateUser.token = req.user.token;
         
@@ -273,7 +273,7 @@ exports.profileImageUpload = async (req, res) => {
 			});
 			fileName = '/public/images/users/' + fileName;
 			const _id = req.user._id;
-			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new : true, runValidators: true} );
+			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new:true,runValidators:true});
 			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": process.env.APP_URL + userData.profile_image} ));
 		} else {
 			return res.send(response.error(400, 'Please select an image', [] ));
@@ -327,7 +327,7 @@ exports.albumImageUpload = async (req, res) => {
 				});
 				albumImageNameArray.push('/public/uploads/' + fileName);
 			}
-			await User.findByIdAndUpdate(req.user._id, {album_images: albumImageNameArray}, {new : true, runValidators: true} );
+			await User.findByIdAndUpdate(req.user._id, {album_images: albumImageNameArray}, {new:true,runValidators:true});
 			return res.send(response.success(200, 'uploaded album images successfully', []));
 		} else {
 			return res.send(response.error(400, 'Please select an image', [] ));
@@ -365,7 +365,7 @@ exports.albumImageDelete = async (req, res) => {
 					return item.toLowerCase().indexOf(image_name.toLowerCase()) <= 0;
 				}
 			});
-			const updateUser = await User.findByIdAndUpdate(req.user._id, {album_images: filteredAlbumImages}, {new : true, runValidators: true} );
+			const updateUser = await User.findByIdAndUpdate(req.user._id, {album_images: filteredAlbumImages}, {new:true,runValidators:true});
 			return res.send(response.success(200, 'Image Delete successfully', [] ));
 		} else {
 			return res.send(response.error(400, 'Image not exists', []));
@@ -384,7 +384,7 @@ exports.changePassword = async (req, res) => {
 		if (userData) {
 			const isMatch = await bcrypt.compare(req.body.old_password, userData.password);
 			if (isMatch) {
-				const updateUser = await User.findByIdAndUpdate(_id, {password: req.body.new_password}, {new : true, runValidators: true} );
+				const updateUser = await User.findByIdAndUpdate(_id, {password: req.body.new_password}, {new:true,runValidators:true});
 				return res.send(response.success(200, 'Password Change successfully', []));
 			} else {
 				return res.send(response.error(400, 'Currant Password is wrong', []));
@@ -428,7 +428,7 @@ exports.updateLocation = async (req,res) => {
 		const _id = req.user._id;
 		const longitude = parseFloat(req.body.longitude);
 		const latitude = parseFloat(req.body.latitude);
-		const updateUsers = await User.findByIdAndUpdate(_id, { location: { type: "Point", coordinates: [longitude, latitude] } }, {new: true, runValidators: true} );
+		const updateUsers = await User.findByIdAndUpdate(_id, { location: { type: "Point", coordinates: [longitude, latitude] } }, {new:true,runValidators:true});
 
 		const userData = {};
 		userData.location = updateUsers.location;
@@ -558,7 +558,7 @@ exports.activeInactiveStatus = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 		if(req.body.userId){
-			const language = await User.findByIdAndUpdate(req.body.userId, {status: req.body.status}, {new: true, runValidators: true});
+			const language = await User.findByIdAndUpdate(req.body.userId, {status: req.body.status}, {new:true,runValidators:true});
 		}
 		return res.send(response.success(200, 'Status changes successfully', []));
 	} catch (error) {

@@ -503,7 +503,7 @@ exports.updateChecklistDetails = async (req, res) => {
 			day: req.body.day,
 			month: req.body.month,
 			date: req.body.date,
-		}, { new: true });
+		}, {new:true,runValidators:true});
 		
 		req.flash('success_msg', 'Category checklist is updated!');
 		return res.redirect(req.baseUrl+'/master-frc');

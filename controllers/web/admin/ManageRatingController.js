@@ -399,7 +399,7 @@ exports.updateAssignGroups = async (req, res) => {
 			let MngRatingGroupAssignData = await MngRatingGroupAssign.findOneAndUpdate({ propertyId: req.body.propertyId }, {
 				groupIds: req.body.groupId,
 				auditorId: req.body.auditorId
-			});
+			}, {new:true,runValidators:true});
 
 			let assignTopicDelete = await MngRatingTopicAssign.deleteMany({ propertyId: req.body.propertyId }); //delete all property assign topic
 			let assignChecklistDelete = await MngRatingChecklistAssign.deleteMany({ propertyId: req.body.propertyId }); //delete all property assign topic

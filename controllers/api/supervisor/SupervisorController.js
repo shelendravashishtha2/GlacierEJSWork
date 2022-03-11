@@ -60,8 +60,12 @@ exports.categoryChecklist = async (req, res) => {
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
 		}
+		let findQuery2 = {};
+		if (req.query.frequency) {
+			findQuery2.frequency = req.query.frequency
+		}
 		// let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {supervisorId: req.user._id}, select: ['checklist_id','checklist_name','type','frequency']});
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {frequency: req.query.frequency}, select: ['checklist_id','checklist_name','type','frequency']});
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: findQuery2, select: ['checklist_id','checklist_name','type','frequency']});
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
@@ -86,7 +90,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 
 		let findQuery = {
 			propertyId: PropertyData.propertyId,
-			completionStatus: 2
+			completionStatus: 3
 		}
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
