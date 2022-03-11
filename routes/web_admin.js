@@ -158,7 +158,7 @@ router.get('/frc-report', isUserAllowed, ReportController.frcReport);
 router.get('/history', isUserAllowed, HistoryController.index);
 router.post('/history', isUserAllowed, HistoryController.indexFilter);
 router.get('/ppm-history', isUserAllowed, HistoryController.ppmHistory);
-// router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
+router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
 // router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
 
 // Setting 

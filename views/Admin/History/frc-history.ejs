@@ -30,12 +30,12 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form class="row gy-2 gx-3 align-items-center" method="get">
+                <form class="row gy-2 gx-3 align-items-center" method="post" action="<%=APP_URL%>/history">
 					<div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label" for="autoSizingSelect">Report for <span class="text-danger">*</span></label>
-								<select name="reportType" class="form-select" id="autoSizingSelect" required>
+								<select name="historyType" class="form-select" id="autoSizingSelect" required>
 									<option value="1">PPM</option>
 									<option value="2" selected>FRC</option>
 								</select>
@@ -92,32 +92,32 @@
 							<thead>
 							<tr>
 								<th style="text-align: center;">#</th>
+								<th style="text-align: center;">Checklist ID</th>
+								<th style="text-align: center;">Checklist Name</th>
 								<th style="text-align: center;">Category Name</th>
-								<th style="text-align: center;">FRC Id</th>
-								<th style="text-align: center;">FRC Name</th>
-								<th style="text-align: center;">Type</th>
+								<th style="text-align: center;">Type</th> <!-- Form Type-->
 								<th style="text-align: center;">Frequency</th>
-								<th style="text-align: center;">Day</th>
-								<th style="text-align: center;">Date</th>
-								<th style="text-align: center;">Month</th>
-								<th style="text-align: center;">Year</th>
-								<!-- <th style="width: 10%;text-align: center;">Action</th> -->
+								<th style="text-align: center;">Due Date</th>
+								<th style="text-align: center;">Completed By</th>
+								<th style="text-align: center;">Completion Date</th>
+								<th style="text-align: center;">%</th>
+								<th style="text-align: center;">Completion Status</th>
 							</tr>
 							</thead>
 							<tbody>
-								<% for( let i = 0; i < CategoryFrcAssignData?.length; i++ ) { %>
+								<% for( let i = 0; i < CategoryFrcAssignTaskData?.length; i++ ) { %>
 									<tr>
 										<td style="text-align: center;"><%= i+1 %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].assignCategoryId %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].checklist_id %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].checklist_name %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].type %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].frequency %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].day ?? '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].date ?? '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].month ?? '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignData[i].year ?? '--' %></td>
-										<!-- <td style="width: 10%;text-align: center;">Action</td> -->
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.checklist_id %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.checklist_name %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryId.categoryId.category_name %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.type %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.frequency %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].dueDate ? moment(CategoryFrcAssignTaskData[i].dueDate).format('DD-MM-YYYY') : '--' %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionBy !== null ? CategoryFrcAssignTaskData[i].completionBy.full_name : '--' %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionDate ? moment(CategoryFrcAssignTaskData[i].completionDate).format('DD-MM-YYYY') : '--' %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].percentage %></td>
+										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionStatus %></td>
 									</tr>
 								<% } %>
 							</tbody>

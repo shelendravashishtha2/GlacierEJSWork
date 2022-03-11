@@ -4,6 +4,7 @@ const Joi = require("joi");
 const response = require("../../../helper/response");
 const Property = require("../../../models/Property");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
+const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
 
 // index
 exports.index = async (req, res) => {
@@ -144,23 +145,33 @@ exports.frcHistory = async (req, res) => {
 		}
 
 		const PropertyList = await Property.find({status: 1}).sort({property_name: 'asc'});
-
-		const startDate = moment(req.query.startDate, 'DD-MM-YYYY');
-		const endDate   = moment(req.query.endDate, 'DD-MM-YYYY');
-
+		let startDateParts =req.query.startDate.split('-');
+		let endDateParts =req.query.endDate.split('-');
+		let newStartDateParts = startDateParts.map((part)=>{
+			part = parseInt(part);
+			return part;
+		});
+		let newEndDateParts = endDateParts.map((part)=>{
+			part = parseInt(part);
+			return part;
+		});
+		const startDate = new Date(parseInt(newStartDateParts[2]), parseInt(newStartDateParts[1])-1, parseInt(newStartDateParts[0])); 
+		startDate.setDate(startDate.getDate() + 1);
+		const endDate = new Date(parseInt(newEndDateParts[2]), parseInt(newEndDateParts[1])-1, parseInt(newEndDateParts[0])); 
+		endDate.setDate(endDate.getDate() + 1);
+		
 		let findQuery = { 
 			propertyId: req.query.propertyId, 
 			status: 1,
+			// dueDate:{$gte:startDate,$lte: endDate}
 		}
-		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId'}).populate({path: 'assignPpmEquipmentAssetId'});
-
-		// console.log(PpmTaskAssignData);
-		return res.send(response.error(500, 'data', [PpmTaskAssignData]));
+		let CategoryFrcAssignTaskData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryId', populate:{path:'categoryId'}}).populate({path: 'assignCategoryFrcId'}).populate({path:'completionBy'});
+		// return res.send(response.error(500, `data${{dueDate:{$gte:startDate,$lte: endDate}}}`, [CategoryFrcAssignTaskData]));
 
 		return res.render('Admin/History/frc-history', {
 			data: req.query,
 			PropertyList: PropertyList,
-            PpmTaskAssignData: PpmTaskAssignData,
+            CategoryFrcAssignTaskData: CategoryFrcAssignTaskData,
             success: req.flash('success_msg'),
             error: req.flash('error_msg'),
         })
