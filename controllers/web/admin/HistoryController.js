@@ -6,7 +6,7 @@ const response = require("../../../helper/response");
 const Property = require("../../../models/Property");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
-
+var XLSX = require("xlsx");
 // index
 exports.index = async (req, res) => {
 	try {
