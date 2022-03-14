@@ -23,7 +23,9 @@ const { formCron, ppmCron } = require('./controllers/cronController');
 const response = require('./helper/response');
 const { errorLog, consoleLog } = require('./helper/Log');
 
-global.__basedir = __dirname;
+global.__basedir = __dirname.replace(/\\/g, "/");
+// console.log(__basedir);
+// console.log(path.dirname(__filename));
 global.__joiOptions = { errors: { wrap: { label: '' } } }; // remove double quotes in default massage field name
 global.moment = moment; // apply moment for global variable
 app.locals.moment = moment; // apply moment for global ejs view page

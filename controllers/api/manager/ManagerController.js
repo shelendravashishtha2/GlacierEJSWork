@@ -131,7 +131,12 @@ exports.categoryFrcList = async (req, res) => {
 		if (req.body.frequency) {
 			findQuery.frequency = req.body.frequency
 		}
-		let categoryFrcData = await CategoryFrcAssign.find(findQuery);
+		let categoryFrcData = await CategoryFrcAssign.find(findQuery).lean();
+
+		categoryFrcData = categoryFrcData.map(item => {
+			item.percentage = 0;
+			return item;
+		})
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {

@@ -7,7 +7,7 @@ const errorLog = (message, filePath, requestUrl) => { //errorLog('test error', _
 	});
 	fs.appendFile('public/logs/error_logs.txt', `=> ${message}\r\n`, function (err) {
 		if (err) return console.error(err, 'errorLog error');
-		console.error(message);
+		console.error(message, 'errorLog');
 	});
 }
 
@@ -17,7 +17,7 @@ const consoleLog = (message, filePath, requestUrl) => { //consoleLog('test log',
 	});
 	fs.appendFile('public/logs/console_logs.txt', `=> ${message}\r\n`, function (err) {
 		if (err) return console.log(err, 'consoleLog error');
-		console.log(message);
+		console.log(message, 'consoleLog');
 	});
 }
 

@@ -14,6 +14,7 @@ const ManagerController = require('../controllers/api/manager/ManagerController'
 const ManagerPpmController = require('../controllers/api/manager/ManagerPpmController');
 
 const SupervisorController = require('../controllers/api/supervisor/SupervisorController');
+const SupervisorPpmController = require('../controllers/api/supervisor/SupervisorPpmController');
 
 
 // -----------------------------------------------------------------------------------------------------------------------
@@ -130,6 +131,22 @@ router.post("/supervisor/category-list", auth, SupervisorController.categoryList
 router.post("/supervisor/category-frc-today-task-list", auth, SupervisorController.categoryChecklist);
 router.post("/supervisor/category-frc-incomplete-task-list", auth, SupervisorController.incompleteCategoryChecklist);
 router.post("/supervisor/category-frc-list", auth, SupervisorController.categoryFrcList);
+
+router.post("/supervisor/ppm-equipment-list", auth, SupervisorPpmController.ppmEquipmentList); //
+router.post("/supervisor/ppm-equipment-task-list", auth, SupervisorPpmController.ppmEquipmentTaskList); //
+router.post("/supervisor/ppm-equipment-task-submit", auth, SupervisorPpmController.ppmEquipmentTaskSubmit); //
+// router.post("/supervisor/ppm-equipment-list", auth, SupervisorPpmController.ppmEquipmentList); //
+// router.post("/supervisor/create-ppm-equipment", auth, SupervisorPpmController.createPpmEquipment); //
+// router.post("/supervisor/update-ppm-equipment", auth, SupervisorPpmController.updatePpmEquipment); //
+// router.post("/supervisor/ppm-equipment-status-change", auth, SupervisorPpmController.ppmEquipmentStatusChange); //
+// router.post("/supervisor/ppm-asset-list", auth, SupervisorPpmController.ppmAssetList); //
+// router.post("/supervisor/create-ppm-asset", auth, SupervisorPpmController.createPpmAsset); //
+// router.post("/supervisor/ppm-asset-details", auth, SupervisorPpmController.ppmAssetDetails); //
+// router.post("/supervisor/update-ppm-asset", auth, SupervisorPpmController.updatePpmAsset); //
+// router.post("/supervisor/ppm-asset-status-change", auth, SupervisorPpmController.ppmAssetStatusChange); //
+// router.post("/supervisor/ppm-task-list", auth, SupervisorPpmController.ppmTaskList); //
+// router.post("/supervisor/ppm-task-details", auth, SupervisorPpmController.ppmTaskDetails); //
+// // router.post("/supervisor/ppm-task-submit", auth, SupervisorPpmController.ppmTaskDetails); //
 
 // router.post("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
 // router.post("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);
