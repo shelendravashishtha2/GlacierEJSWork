@@ -159,7 +159,7 @@ router.get('/history', isUserAllowed, HistoryController.index);
 router.post('/history', isUserAllowed, HistoryController.indexFilter);
 router.get('/ppm-history', isUserAllowed, HistoryController.ppmHistory);
 router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
-// router.get('/frc-history', isUserAllowed, HistoryController.frcHistory);
+router.get('/rating-history', isUserAllowed, HistoryController.ratingHistory);
 
 // Setting 
 router.get('/setting', isUserAllowed, SettingController.settingList);
