@@ -10,13 +10,22 @@ $(document).ready(function() {
     $('#datatable').DataTable();
 
     //Buttons examples
-    var table = $('#datatable-buttons').DataTable({
-        lengthChange: false,
-        buttons: ['copy', 'excel', 'pdf', 'colvis']
+    $('#datatable-buttons').DataTable({
+        dom: 
+    "<'row'<'col-sm-3'l><'col-sm-6'B><'col-sm-3'f>>" +
+    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+    buttons: [{
+        extend: 'excelHtml5',
+        text: '<i class="fa fa-file-text-o"></i> Export to Excel',
+        titleAttr: 'Export to Excel',
+        title: $('#datatable-buttons').data('report')+" Report",
+        exportOptions: {
+          columns: ':not(:last-child)',
+        }
+      }]
     });
-
-    table.buttons().container()
-        .appendTo('#datatable-buttons_wrapper .col-md-6:eq(0)');
+    
 
     $(".dataTables_length select").addClass('form-select form-select-sm');
 });
