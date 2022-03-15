@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const response = require("../../../helper/response");
 const Joi = require('joi');
+const CategoryFrcAssign = require("../../../models/CategoryFrcAssign");
 Joi.objectId = require('joi-objectid')(Joi);
 
 exports.categoryList = async (req, res) => {
@@ -20,8 +21,13 @@ exports.categoryList = async (req, res) => {
 
 		let categoryData = await CategoryAssign.find({propertyId: req.body.propertyId, operationTeamId: req.user._id})
 				.populate({path: 'categoryId', model: 'Category_Master'});
-
-		categoryData = categoryData.map(function(i) { return i.categoryId; });
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => {
+			let data = {
+				assignCategoryId: item._id,
+				categoryName: item.categoryId.category_name
+			}
+			return data
+		})
 
 		return res.status(200).send({
 		    "status": true,
@@ -43,64 +49,78 @@ exports.categoryChecklist = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
-		let condition = {"$match": {category_id: ObjectId(req.body.categoryId),status:1}};
-		let lookup = {
-        	$lookup: {
-                from: 'forms',
-                let: {
-                    id: "$_id"
-                },
-                pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [{
-                                        $eq: ["$categoryChecklistId", "$$id"]
-                                    },
-                                    {
-                                        $eq: [ObjectId(req.user._id), "$userId"]
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            percentage: 1
-                        }
-                    }
-                ],
-                as: 'percentage',
-            }
-        }
-        let unwind = {
-            $unwind: {
-                path: "$percentage",
-                preserveNullAndEmptyArrays: true
-            }
-        }
-        let project = {
-			$project:{
-				checklist_name:"$checklist_name",
-				//percentage:{ $ifNull: [ "$percentage.percentage", 0 ] }
-			}
+		// let condition = {"$match": {category_id: ObjectId(req.body.categoryId),status:1}};
+		// let lookup = {
+        // 	$lookup: {
+        //         from: 'forms',
+        //         let: {
+        //             id: "$_id"
+        //         },
+        //         pipeline: [{
+        //                 $match: {
+        //                     $expr: {
+        //                         $and: [{
+        //                                 $eq: ["$categoryChecklistId", "$$id"]
+        //                             },
+        //                             {
+        //                                 $eq: [ObjectId(req.user._id), "$userId"]
+        //                             }
+        //                         ]
+        //                     }
+        //                 }
+        //             },
+        //             {
+        //                 $project: {
+        //                     _id:1,
+        //                     percentage: 1
+        //                 }
+        //             }
+        //         ],
+        //         as: 'percentage',
+        //     }
+        // }
+        // let unwind = {
+        //     $unwind: {
+        //         path: "$percentage",
+        //         preserveNullAndEmptyArrays: true
+        //     }
+        // }
+        // let project = {
+		// 	$project:{
+		// 		checklist_name:"$checklist_name",
+		// 		//percentage:{ $ifNull: [ "$percentage.percentage", 0 ] }
+		// 	}
+		// }
+		// let categoryChecklistData = await CategoryChecklist.aggregate([condition/*,lookup,unwind*/,project]);
+		// categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
+		// for(let i=0;i<categoryChecklistData.length;i++){
+		// 	let form = await CategoryFrcAssignTask.findOne({categoryChecklistId:categoryChecklistData[i]._id,userId:req.user._id}).sort({createdAt:-1});
+		// 	if(form){
+		// 		categoryChecklistData[i].percentage = form.percentage;
+		// 	}else{
+		// 		categoryChecklistData[i].percentage = 0;
+		// 	}
+		// }
+
+		let findQuery = {
+			assignCategoryId: ObjectId(req.body.categoryId),
+			status: 1
 		}
-		let categoryChecklistData = await CategoryChecklist.aggregate([condition/*,lookup,unwind*/,project]);
-		categoryChecklistData = JSON.parse(JSON.stringify(categoryChecklistData));
-		for(let i=0;i<categoryChecklistData.length;i++){
-			let form = await CategoryFrcAssignTask.findOne({categoryChecklistId:categoryChecklistData[i]._id,userId:req.user._id}).sort({createdAt:-1});
-			if(form){
-				categoryChecklistData[i].percentage = form.percentage;
-			}else{
-				categoryChecklistData[i].percentage = 0;
-			}
+		if (req.body.frequency) {
+			findQuery.frequency = req.body.frequency
 		}
+		let categoryFrcData = await CategoryFrcAssign.find(findQuery).lean();
+
+		categoryFrcData = categoryFrcData.map(item => {
+			item.percentage = 0;
+			return item;
+		})
 
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
             "message": "Category wise checklist",
-		    data: categoryChecklistData
+		    data: categoryFrcData
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);

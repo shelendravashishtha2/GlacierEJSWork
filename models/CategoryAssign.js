@@ -29,7 +29,6 @@ const CategoryAssignSchema = new mongoose.Schema({
 		type:  [mongoose.Schema.Types.ObjectId], ref: User,
 		default: []
 	},
-
 	
 	status: {
 		type: Number, //0=Inactive, 1=active

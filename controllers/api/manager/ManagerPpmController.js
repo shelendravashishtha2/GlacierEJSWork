@@ -10,6 +10,7 @@ const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const { convertObjValuesToString, prependToArray } = require("../../../helper/commonHelpers");
 const daysEnum = require("../../../enum/daysEnum");
 const User = require("../../../models/User");
+const CategoryAssign = require("../../../models/CategoryAssign");
 
 exports.ppmEquipmentList = async (req, res) => {
 	try {
@@ -385,28 +386,6 @@ exports.ppmTaskDetails = async (req, res) => {
             "status_code": "200",
             "message": "PPM task details",
 			data: responseArray
-		});
-	} catch (error) {
-		errorLog(error, __filename, req.originalUrl);
-		return res.send(response.error(500, 'Something want wrong', []));
-	}
-}
-
-exports.supervisorList = async (req, res) => {
-	try {
-		let supervisorData = await User.find({property_id: req.user.property_id, position_id: 5}).select(["full_name","profile_image","status"]).lean();
-
-		return res.status(200).send({
-		    status: true,
-            status_code: "200",
-            message: "success",
-			urlPath: process.env.APP_URL,
-			data: supervisorData.map((item) => { return {
-				_id: item._id,
-				full_name: item.full_name ? item.full_name : "",
-				profile_image: item.profile_image ? item.profile_image : "",
-				status: item.status ? item.status : 0,
-			}})
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);

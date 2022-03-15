@@ -51,8 +51,8 @@ router.get('/categories', isUserAllowed, CategoriesController.categoryList); //c
 router.post('/change-category-status', isUserAllowed, CategoriesController.changeCategoryStatus); //change category status API
 router.get('/create-categories', isUserAllowed, CategoriesController.categoryCreate); //create category
 router.post("/category-store", isUserAllowed, CategoriesController.categoryAddValidationForm, CategoriesController.categoryAdd); // store category
-router.get('/create-category-checklist/:id', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add 
-router.get('/create-category-checklist', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add 
+router.get('/create-category-checklist', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add
+// router.get('/edit-category-checklist/:id', isUserAllowed, CategoriesController.createChecklist); //create category vise checklist add
 router.post('/store-category-checklist', isUserAllowed, CategoriesController.addChecklistAValidation, CategoriesController.storeChecklist); //store checklist
 router.get('/edit-category-checklist/:id', isUserAllowed, CategoriesController.checklist); //edit category page with view category checklist list page
 router.get('/master-frc', isUserAllowed, CategoriesController.frcChecklist); // FRC Checklist

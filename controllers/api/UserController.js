@@ -127,12 +127,61 @@ exports.supervisorList = async (req,res) => {
 			}
 		}
 		let supervisorList = await User.aggregate([condition,project])
+		
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
 			"message": "Supervisor list",
-			urlPath: process.env.APP_URL,
-		    data: supervisorList
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+		    // data: supervisorList
+		    data: supervisorList.map((item) => { return {
+				_id: item._id,
+				full_name: item.full_name ? item.full_name : "",
+				profile_image: item.profile_image ? item.profile_image : "",
+				status: item.status ? item.status : 0,
+			}})
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.supervisorDetails = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			supervisorId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let supervisorData = await User.findOne({position_id: 5, _id: ObjectId(req.body.supervisorId)}).populate({path: 'property_id', select: ['property_name','wings']}).lean();
+		if (!supervisorData) { return res.send(response.error(400, 'user not found', [])); }
+
+		let categoryData = await CategoryAssign.find({supervisorId: ObjectId(req.body.supervisorId)}).populate({path: 'categoryId'})
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => {
+			let data = {
+				assignCategoryId: item._id,
+				categoryName: item.categoryId.category_name
+			}
+			return data
+		})
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+			data: [{
+				_id: supervisorData._id,
+				full_name: supervisorData.full_name ? supervisorData.full_name : "",
+				profile_image: supervisorData.profile_image ? supervisorData.profile_image : "",
+				status: supervisorData.status ? supervisorData.status : 0,
+				property_id: supervisorData.property_id ? supervisorData.property_id : [],
+				category_list: categoryData,
+			}]
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
@@ -152,12 +201,19 @@ exports.managerList = async (req, res) => {
 			}
 		}
 		let managerList = await User.aggregate([condition,project])
+		
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
 			"message": "Manager list",
-			urlPath: process.env.APP_URL,
-		    data: managerList
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+		    // data: managerList,
+			data: managerList.map((item) => { return {
+				_id: item._id,
+				full_name: item.full_name ? item.full_name : "",
+				profile_image: item.profile_image ? item.profile_image : "",
+				status: item.status ? item.status : 0,
+			}})
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
@@ -165,6 +221,47 @@ exports.managerList = async (req, res) => {
 	}
 }
 
+exports.managerDetails = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			managerId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let managerData = await User.findOne({position_id: 4, _id: ObjectId(req.body.managerId)}).populate({path: 'property_id', select: ['property_name','wings']}).lean();
+		if (!managerData) { return res.send(response.error(400, 'user not found', [])); }
+
+		let categoryData = await CategoryAssign.find({managerId: ObjectId(req.body.managerId)}).populate({path: 'categoryId'})
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => {
+			let data = {
+				assignCategoryId: item._id,
+				categoryName: item.categoryId.category_name
+			}
+			return data
+		})
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+			data: [{
+				_id: managerData._id,
+				full_name: managerData.full_name ? managerData.full_name : "",
+				profile_image: managerData.profile_image ? managerData.profile_image : "",
+				status: managerData.status ? managerData.status : 0,
+				property_id: managerData.property_id ? managerData.property_id : [],
+				category_list: categoryData,
+			}]
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
 
 exports.userProfile = async (req, res) => {
 	try {

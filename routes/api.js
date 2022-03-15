@@ -49,8 +49,10 @@ router.post("/sop-category-detail", auth, SopController.categorySOPDetail);
 
 // --- User Module ---
 router.post("/opt/add-users", auth, UserController.userAddValidation, UserController.addUsers); // supervisor and manager add
-router.post("/opt/supervisor-list", auth, UserController.supervisorList); // supervisor list
 router.post("/opt/manager-list", auth, UserController.managerList); // managers list
+router.post("/opt/manager-details", auth, UserController.managerDetails); // managers details
+router.post("/opt/supervisor-list", auth, UserController.supervisorList); // supervisor list
+router.post("/opt/supervisor-details", auth, UserController.supervisorDetails); // supervisor details
 router.post("/opt/user-detail", auth, UserController.userDetail); // user details
 router.post("/opt/user-status-active-inactive", auth, UserController.activeInactiveStatus); // user active - inactive
 
@@ -88,6 +90,10 @@ router.post("/manager/category-frc-today-task-list", auth, ManagerController.cat
 router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.categoryFrcIncompleteTaskList);
 router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
 router.post("/manager/create-supervisor", auth, ManagerController.createSupervisor);
+router.post("/manager/supervisor-list", auth, ManagerController.supervisorList); //
+router.post("/manager/supervisor-details", auth, ManagerController.supervisorDetails); //
+router.post("/manager/property-details", auth, ManagerController.propertyDetails);
+router.post("/manager/assignment-category", auth, ManagerController.assignmentCategory);
 
 router.post("/manager/ppm-equipment-list", auth, ManagerPpmController.ppmEquipmentList); // ppm equipment list after select property
 router.post("/manager/create-ppm-equipment", auth, ManagerPpmController.createPpmEquipment); // ppm equipment list after select property
@@ -101,7 +107,7 @@ router.post("/manager/ppm-asset-status-change", auth, ManagerPpmController.ppmAs
 router.post("/manager/ppm-task-list", auth, ManagerPpmController.ppmTaskList); //
 router.post("/manager/ppm-task-details", auth, ManagerPpmController.ppmTaskDetails); //
 // router.post("/manager/ppm-task-submit", auth, ManagerPpmController.ppmTaskDetails); //
-router.post("/manager/supervisor-list", auth, ManagerPpmController.supervisorList); //
+
 router.post("/manager/supervisor-ppm-equipment-list", auth, ManagerPpmController.supervisorPpmEquipmentList); //
 router.post("/manager/store-ppm-equipment-assign-supervisor", auth, ManagerPpmController.storePpmEquipmentAssignSupervisor); //
 
@@ -136,18 +142,6 @@ router.post("/supervisor/category-frc-list", auth, SupervisorController.category
 router.post("/supervisor/ppm-equipment-list", auth, SupervisorPpmController.ppmEquipmentList); //
 router.post("/supervisor/ppm-equipment-task-list", auth, SupervisorPpmController.ppmEquipmentTaskList); //
 router.post("/supervisor/ppm-equipment-task-submit", auth, SupervisorPpmController.ppmEquipmentTaskSubmit); //
-// router.post("/supervisor/ppm-equipment-list", auth, SupervisorPpmController.ppmEquipmentList); //
-// router.post("/supervisor/create-ppm-equipment", auth, SupervisorPpmController.createPpmEquipment); //
-// router.post("/supervisor/update-ppm-equipment", auth, SupervisorPpmController.updatePpmEquipment); //
-// router.post("/supervisor/ppm-equipment-status-change", auth, SupervisorPpmController.ppmEquipmentStatusChange); //
-// router.post("/supervisor/ppm-asset-list", auth, SupervisorPpmController.ppmAssetList); //
-// router.post("/supervisor/create-ppm-asset", auth, SupervisorPpmController.createPpmAsset); //
-// router.post("/supervisor/ppm-asset-details", auth, SupervisorPpmController.ppmAssetDetails); //
-// router.post("/supervisor/update-ppm-asset", auth, SupervisorPpmController.updatePpmAsset); //
-// router.post("/supervisor/ppm-asset-status-change", auth, SupervisorPpmController.ppmAssetStatusChange); //
-// router.post("/supervisor/ppm-task-list", auth, SupervisorPpmController.ppmTaskList); //
-// router.post("/supervisor/ppm-task-details", auth, SupervisorPpmController.ppmTaskDetails); //
-// // router.post("/supervisor/ppm-task-submit", auth, SupervisorPpmController.ppmTaskDetails); //
 
 // router.post("/supervisor/assign-task-list", auth, SupervisorController.assignTaskList);
 // router.post("/supervisor/property-wing-list", auth, SupervisorController.propertyWingList);

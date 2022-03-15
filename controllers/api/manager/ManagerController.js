@@ -167,7 +167,7 @@ exports.createSupervisor = async (req, res) => {
 		}
 
 		if (req.files) {
-			let uploadPath = __basedir + '/public/uploads/ppm_files/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			if (req.files.profile_image) {
 				let profile_image = req.files.profile_image;
 				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
@@ -206,6 +206,124 @@ exports.createSupervisor = async (req, res) => {
 		const registeredData = await registerUser.save();
 
 		return res.status(200).send(response.success(200, 'Success', registeredData ));
+	} catch (error) {
+		if (error.name == "ValidationError") {
+			const errorMessage = error.errors[Object.keys(error.errors)[0]]
+			return res.send(response.error(400, errorMessage.message, [] ));
+		} else {
+			errorLog(error, __filename, req.originalUrl);
+			return res.send(response.error(500, 'Something want wrong', [] ));
+		}
+	}
+}
+
+exports.supervisorList = async (req, res) => {
+	try {
+		let supervisorData = await User.find({property_id: req.user.property_id, position_id: 5}).populate({path: 'property_id', select: ['property_name','wings']}).lean();
+		// let categoryData = await CategoryAssign.find({supervisorId: req.user._id})
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+			data: supervisorData.map((item) => { return {
+				_id: item._id,
+				full_name: item.full_name ? item.full_name : "",
+				profile_image: item.profile_image ? item.profile_image : "",
+				status: item.status ? item.status : 0,
+				// property_id: item.property_id ? item.property_id : [],
+				// category_list: [{
+				// 	_id: "61cab7dd09a0e36f4e7bc2c6",
+				// 	category_name: "category 1"
+				// }],
+			}})
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.supervisorDetails = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			supervisorId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+
+		let supervisorData = await User.findOne({position_id: 5, _id: ObjectId(req.body.supervisorId)}).populate({path: 'property_id', select: ['property_name','wings']}).lean();
+		if (!supervisorData) { return res.send(response.error(400, 'user not found', [])); }
+
+		let categoryData = await CategoryAssign.find({supervisorId: ObjectId(req.body.supervisorId)}).populate({path: 'categoryId'})
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => {
+			let data = {
+				assignCategoryId: item._id,
+				categoryName: item.categoryId.category_name
+			}
+			return data
+		})
+
+		return res.status(200).send({
+		    status: true,
+            status_code: "200",
+            message: "success",
+			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
+			data: [{
+				_id: supervisorData._id,
+				full_name: supervisorData.full_name ? supervisorData.full_name : "",
+				profile_image: supervisorData.profile_image ? supervisorData.profile_image : "",
+				status: supervisorData.status ? supervisorData.status : 0,
+				property_id: supervisorData.property_id ? supervisorData.property_id : [],
+				category_list: categoryData,
+			}]
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.propertyDetails = async (req, res) => {
+	try {
+		let propertyData = await Property.findOne({_id: {$in: req.user.property_id}}).lean();
+
+		// categoryFrcData = categoryFrcData.map(item => {
+		// 	item.percentage = 0;
+		// 	return item;
+		// })
+
+		return res.status(200).send(response.success(200, 'Success', propertyData ));
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.assignmentCategory = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			assignCategoryIds: Joi.array().items(Joi.objectId().label('assign category id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+			wingIds: Joi.array().items(Joi.objectId().label('wing id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+			supervisorIds: Joi.array().items(Joi.objectId().label('supervisor id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		let {assignCategoryIds, wingIds, supervisorIds} = req.body
+
+		for (let i = 0; i < assignCategoryIds.length; i++) {
+			let CategoryAssignData = await CategoryAssign.findOneAndUpdate({_id: assignCategoryIds[i]},{
+				wingIds: wingIds,
+				supervisorId: supervisorIds
+			},{new:true,runValidators:true});
+		}
+
+		return res.status(200).send(response.success(200, 'Success', [] ));
 	} catch (error) {
 		if (error.name == "ValidationError") {
 			const errorMessage = error.errors[Object.keys(error.errors)[0]]

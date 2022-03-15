@@ -56,7 +56,7 @@
                         </thead>
                         <tbody>
 							<% for( let i = 0; i < MngRatingTopicAssignData.length; i++ ) { %>
-								<% for( let j = 0; j < MngRatingTopicAssignData[i]?.topicIds?.length; j++ ) { %>
+								<% for( let j = 0; j < MngRatingTopicAssignData[i].topicIds.length; j++ ) { %>
 									<tr>
 										<td class="text-center" style="width: 7%;"><%= j+1 %></td>
 										<td class="text-center"><%= MngRatingTopicAssignData[i].groupId.groupName %></td>

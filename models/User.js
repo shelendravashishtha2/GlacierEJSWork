@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const mongoosePaginate = require('mongoose-paginate-v2');
+const Property = require("./Property");
 
 const userSchema = new mongoose.Schema({
 	email: {
@@ -46,7 +47,7 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 	},
 	property_id: {
-		type: [mongoose.Schema.Types.ObjectId],
+		type: [mongoose.Schema.Types.ObjectId], ref: Property,
 		default:[],
 		trim: true,
 	},

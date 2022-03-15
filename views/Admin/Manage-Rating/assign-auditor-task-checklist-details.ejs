@@ -38,7 +38,7 @@
                             </tr>
                         </thead>
                         <tbody>
-							<% for( let i = 0; i < MngRatingChecklistAssignData?.checklistIds?.length; i++ ) { %>
+							<% for( let i = 0; i < MngRatingChecklistAssignData.checklistIds.length; i++ ) { %>
 								<tr>
 									<td class="text-center" style="width: 7%;"><%= i+1 %></td>
 									<td class="text-center" style="width: 7%;"><%= MngRatingChecklistAssignData.checklistIds[i].checklistTitle %></td>
@@ -67,7 +67,7 @@
 														<label>Remark:-</label>
 													</div>
 													<div class="col-md-9">
-														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData?.remark %>
+														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData.remark %>
 													</div>
 												</div>
 												<div class="row">
@@ -75,7 +75,7 @@
 														<label>Images:-</label>
 													</div>
 													<div class="col-md-9">
-														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData?.attachPhotos %>
+														<%= MngRatingChecklistAssignData.checklistIds[i].MngRatingAssignChecklistPointData.attachPhotos %>
 													</div>
 												</div>
 											</div>

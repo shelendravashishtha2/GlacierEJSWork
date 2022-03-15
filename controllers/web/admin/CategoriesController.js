@@ -13,6 +13,7 @@ const CategoryResource = require('../../api/resources/CategoryResource');
 const daysEnum = require("../../../enum/daysEnum");
 const frequencyEnum = require("../../../enum/frequencyEnum");
 const monthsEnum = require("../../../enum/monthsEnum");
+const CategoryAssign = require("../../../models/CategoryAssign");
 
 // Category List Page
 exports.categoryList = async (req, res) => {
@@ -186,14 +187,10 @@ exports.createChecklist = async (req, res) => {
 		res.locals.title = 'Add Check List Category';
 		res.locals.session = req.session;
 
-		console.log('controller>>>>>',res.locals);
-
 		let setting = await Setting.findOne({});
 		let uniqueId = 0;
 		if (!setting) {
-			let setting = await Setting.create({
-				uniqueId: 1,
-			})
+			await Setting.create({ uniqueId: 1})
 			uniqueId = 1;
 		} else {
 			uniqueId = setting.uniqueId;
@@ -201,7 +198,6 @@ exports.createChecklist = async (req, res) => {
 		uniqueId = uniqueId.toString().padStart(8, "0");
 
 		let condition = { "$match": { status: 1 } };
-
 		let project = {
 			$project: {
 				category_name: 1,
@@ -284,6 +280,23 @@ exports.storeChecklist = async (req, res) => {
 			date: req.body.date ? req.body.date : null,
 		});
 		await CategoryChecklistData.save();
+
+		let CategoryAssignData = await CategoryAssign.find({categoryId: req.body.category_id});
+		let CategoryFrcAssignArray = [];
+		for (let i = 0; i < CategoryAssignData.length; i++) {
+			CategoryFrcAssignArray.push({
+				propertyId: CategoryAssignData[i].propertyId,
+				assignCategoryId: CategoryAssignData[i]._id,
+				checklist_id: req.body.checklist_id,
+				checklist_name: req.body.checklist_name,
+				type: req.body.type,
+				form: [],
+				frequency: req.body.frequency,
+				month: req.body.month,
+				date: req.body.date,
+				day: req.body.day,
+			})
+		}
 
 		return res.redirect(req.baseUrl+'/create-checklist-multi-form/' + CategoryChecklistData._id);
 	} catch (error) {

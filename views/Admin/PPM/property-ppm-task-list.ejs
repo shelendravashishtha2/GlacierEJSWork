@@ -61,10 +61,10 @@
                                 <td class="text-center">
 									<div style="border-radius: 50%; width: 25px; height: 25px; margin: auto; background: <%= assignPpmTaskData[i].riskAssessmentAssetStatusColor ?? 'Green' %>;"></div>
 								</td>
-                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentId?.ppmEquipmentName %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentId.ppmEquipmentName %></td>
                                 <td class="text-center"><%= assignPpmTaskData[i].assetName %></td>
                                 <td class="text-center"><%= assignPpmTaskData[i].assetLocation %></td>
-                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentAssetId?.frequency %></td>
+                                <td class="text-center"><%= assignPpmTaskData[i].assignPpmEquipmentAssetId.frequency %></td>
                                 <td class="text-center"><%= assignPpmTaskData[i].vendorName %></td>
                                 <td class="text-center"><%= moment(assignPpmTaskData[i].dueDate).format('DD-MM-YYYY') %></td>
                                 <td class="text-center" style="width: 7%;">
