@@ -15,6 +15,7 @@ const SOP = require('../../../models/SOP');
 const SettingRating = require("../../../models/SettingRating");
 const Rating = require("../../../models/Rating");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
+const path = require("path");
 
 exports.categoryList = async (req, res) => {
 	try {
@@ -142,5 +143,76 @@ exports.categoryFrcList = async (req, res) => {
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.createSupervisor = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			full_name: Joi.string().min(3).max(150).required(),
+			email: Joi.string().min(6).max(100).required().email(),
+			mobile_no: Joi.string().min(10).max(12).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		const existsUser = await User.findOne({ email: req.body.email, mobile_no: req.body.mobile_no });
+		if(existsUser) {
+			if (existsUser.email == req.body.email) {
+				return res.send(response.error(400, 'email id already exists', [] ));
+			} else if (existsUser.mobile_no == req.body.mobile_no) {
+				return res.send(response.error(400, 'mobile no already exists', [] ));
+			}
+		}
+
+		if (req.files) {
+			let uploadPath = __basedir + '/public/uploads/ppm_files/';
+			if (req.files.profile_image) {
+				let profile_image = req.files.profile_image;
+				if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
+					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+				}
+				if (profile_image.size >= (1024 * 1024 * 50)) { // if getter then 50MB
+					return res.send(response.error(400, 'Image must be less then 50MB', []));
+				}
+				fileName = 'profile-image-' + req.user._id + '-' + Date.now() + path.extname(profile_image.name);
+				const uploadFile = () => {
+					return new Promise((resolve, reject) => { //upload the file, then call the callback with the location of the file
+						profile_image.mv(uploadPath + fileName, function(error) {
+							if (error) {
+								reject(error)
+								return res.send(response.error(400, 'Image uploading failed', []));
+							}
+							resolve('image uploaded successfully')
+						});
+					})
+				}
+				await uploadFile();
+				req.body.profile_image = fileName;
+			}
+		}
+
+		const registerUser = new User({
+			full_name: req.body.full_name,
+			email: req.body.email,
+			mobile_no: req.body.mobile_no,
+            password: '123456',
+            profile_image: req.body.profile_image,
+			position_id: 5, // user type
+			position_type: "Supervisor",
+			property_id: req.user.property_id, // Property list
+		});
+		const registeredData = await registerUser.save();
+
+		return res.status(200).send(response.success(200, 'Success', registeredData ));
+	} catch (error) {
+		if (error.name == "ValidationError") {
+			const errorMessage = error.errors[Object.keys(error.errors)[0]]
+			return res.send(response.error(400, errorMessage.message, [] ));
+		} else {
+			errorLog(error, __filename, req.originalUrl);
+			return res.send(response.error(500, 'Something want wrong', [] ));
+		}
 	}
 }

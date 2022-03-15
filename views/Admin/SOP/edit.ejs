@@ -72,7 +72,7 @@
 									<br>
 									<% data.single_category_files.forEach((element,index1) => { %>
 										<span id="ee<%=index1%>" style="border:1px; border-style:solid; border-radius: 10px; padding: 5px; margin-right: 5px;">
-											<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= element %>" target="_blank" style="color: inherit;"><%= element %></a> 
+											<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= element %>" target="_blank" style="color: inherit;"><%= element %></a> 
 											<i class='bx bx-x-circle text-danger' onclick="removeFile('<%= data._id %>','<%=element%>','','ee<%=index1%>')" style="font-size: 18px; margin-left: 3px;"></i>
 										</span>
 									<% }); %>
@@ -108,7 +108,7 @@
 														<div class="col-md-12 col-12 mt-2">
 															<% element.sub_category_files.forEach((element2,index) => { %>
 																<span id="e<%=index%>" style="border:1px; border-style:solid; border-radius: 8px; padding: 5px; margin-right: 5px;">
-																	<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= element2 %>" target="_blank" style="color: inherit;"><%= element2 %></a> 
+																	<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= element2 %>" target="_blank" style="color: inherit;"><%= element2 %></a> 
 																	<i class='bx bx-x-circle text-danger' onclick="removeFile('<%= data._id %>','<%=element2%>','<%=element._id%>','e<%=index%>')" style="font-size: 18px; margin-left: 3px;"></i>
 																</span>
 															<% }); %>

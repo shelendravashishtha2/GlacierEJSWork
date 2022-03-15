@@ -87,6 +87,7 @@ router.post("/manager/category-list", auth, ManagerController.categoryList);
 router.post("/manager/category-frc-today-task-list", auth, ManagerController.categoryFrcTodayTaskList);
 router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.categoryFrcIncompleteTaskList);
 router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
+router.post("/manager/create-supervisor", auth, ManagerController.createSupervisor);
 
 router.post("/manager/ppm-equipment-list", auth, ManagerPpmController.ppmEquipmentList); // ppm equipment list after select property
 router.post("/manager/create-ppm-equipment", auth, ManagerPpmController.createPpmEquipment); // ppm equipment list after select property

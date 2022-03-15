@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 	},
 	position_type: {
-		type: String,
+		type: String, // Admin, Operation-Team, Auditor, Manager, Supervisor.
 		trim: true,
 	},
 	property_id: {

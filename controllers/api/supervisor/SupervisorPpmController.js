@@ -76,80 +76,108 @@ exports.ppmEquipmentTaskSubmit = async (req, res) => {
 		let schema = Joi.object({
 			ppmTaskId: Joi.string().min(24).max(24).required(),
 			remark: Joi.required(),
+			riskAssessmentStatus: Joi.required(),
+			riskAssessmentAssetStatusColor: Joi.optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 
-		if (req.files && req.files.attachPhotos) {
-			let attachPhotos = req.files.attachPhotos;
-			let uploadPath = __basedir + '/public/uploads/ppm/';
-			let albumImageNameArray = [];
+		if (req.files) {
+			let uploadPath = __basedir + '/public/uploads/ppm_files/';
 			let errorStatus = false;
+			let attachPhotosArray = [];
+			let serviceReportsArray = [];
 
-			attachPhotos = Array.isArray(attachPhotos) ? attachPhotos : [attachPhotos]
-			if (attachPhotos.length > 0) {
-				attachPhotos.forEach(fileData => {
-					if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
-						return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-					}
-					if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
-						return res.send(response.error(400, 'Image must be less then 50MB', []));
-					}
-				});
-
-				// attachPhotos.forEach(fileData => {
-				// 	let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
-				// 	let fileName = 'ppm-task-image-' + req.body.ppmTaskId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
-				// 	console.log(uploadPath + fileName);
-				// 	fileData.mv(uploadPath + fileName, function(error) {
-				// 		if (error) {
-				// 			errorStatus = true;
-				// 			errorLog(error, __filename, req.originalUrl);
-				// 		}
-      			// 		else {
-				// 			console.log("File Uploaded");
-				// 		}
-				// 	});
-				// 	let filePath = '/public/uploads/ppm/' + fileName;
-				// 	albumImageNameArray.push(filePath);
-				// });
-				
-				for (let i = 0; i < attachPhotos.length; i++) {
-					const fileData = attachPhotos[i];
-					let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
-					let fileName = 'ppm-task-image-' + req.body.ppmTaskId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
-					fileData.mv(uploadPath + fileName, function(error) {
-						if (error) {
-							errorStatus = true;
-							errorLog(error, __filename, req.originalUrl);
+			if (req.files.attachPhotos) {
+				let attachPhotos = req.files.attachPhotos;
+				attachPhotos = Array.isArray(attachPhotos) ? attachPhotos : [attachPhotos]
+				if (attachPhotos.length > 0) {
+					attachPhotos.forEach(fileData => {
+						if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
+							return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
 						}
-						else {
-							console.log("File Uploaded");
+						if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
+							return res.send(response.error(400, 'Image must be less then 50MB', []));
 						}
-					});
-					// const original = fileData.name;
-  					// const target = join(uploadPath, fileName);
-					// console.log(original,'original');
-					// console.log(target,'target');
-					// await mv(original, target);
-					// await mv(fileData, uploadPath + fileName)
-					let filePath = '/public/uploads/ppm/' + fileName;
-					albumImageNameArray.push(filePath);
-				}
-				if (errorStatus) {
-					return res.send(response.error(400, 'Image uploading failed', []));
+					});				
+					for (let i = 0; i < attachPhotos.length; i++) {
+						const fileData = attachPhotos[i];
+						let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
+						let fileName = 'ppm-task-image-' + req.body.ppmTaskId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
+						const uploadFile = () => {
+							return new Promise((resolve, reject) => { //upload the file, then call the callback with the location of the file
+								fileData.mv(uploadPath + fileName, function(error) {
+									if (error) {
+										reject(error)
+										return res.send(response.error(400, 'Image uploading failed 1', []));
+									}
+									resolve('image uploaded successfully')
+								});
+							})
+						}
+						await uploadFile();
+						// let filePath = '/public/uploads/ppm_files/' + fileName;
+						let filePath = fileName;
+						attachPhotosArray.push(filePath);
+					}
 				}
 			}
-			// req.body.attachPhotos = albumImageNameArray
-			console.log(albumImageNameArray,'albumImageNameArray');
+			if (req.files.serviceReports) {
+				let serviceReports = req.files.serviceReports;
+				serviceReports = Array.isArray(serviceReports) ? serviceReports : [serviceReports]
+				if (serviceReports.length > 0) {
+					serviceReports.forEach(fileData => {
+						if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
+							return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+						}
+						if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
+							return res.send(response.error(400, 'Image must be less then 50MB', []));
+						}
+					});				
+					for (let i = 0; i < serviceReports.length; i++) {
+						const fileData = serviceReports[i];
+						let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
+						let fileName = 'ppm-task-image-' + req.body.ppmTaskId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
+						const uploadFile = () => {
+							return new Promise((resolve, reject) => { //upload the file, then call the callback with the location of the file
+								fileData.mv(uploadPath + fileName, function(error) {
+									if (error) {
+										reject(error)
+										return res.send(response.error(400, 'Image uploading failed 2', []));
+									}
+									resolve('image uploaded successfully')
+								});
+							})
+						}
+						await uploadFile();
+						// let filePath = '/public/uploads/ppm_files/' + fileName;
+						let filePath = fileName;
+						serviceReportsArray.push(filePath);
+					}
+				}
+			}
+			if (errorStatus) {
+				return res.send(response.error(400, 'Image uploading failed', []));
+			}
+			
+			req.body.attachPhotos = attachPhotosArray
+			console.log(attachPhotosArray,'attachPhotosArray');
+			req.body.serviceReports = serviceReportsArray
+			console.log(serviceReportsArray,'serviceReportsArray');
 		}
 
-		// const updateData = await PpmTaskAssign.findOneAndUpdate({_id: req.body.ppmTaskId}, {
-		// 		remark: req.body.remark,
-		// 		attachPhotos: req.body.attachPhotos,
-		// 	}, {new:true,runValidators:true});
+		const updateData = await PpmTaskAssign.findOneAndUpdate({_id: req.body.ppmTaskId}, {
+				completionDate: new Date(),
+				completionBy: req.user._id,
+				completionStatus: 3, //1=pending, 2=In-progress 3=completed 4=incomplete
+				remark: req.body.remark,
+				attachPhotos: req.body.attachPhotos,
+				serviceReports: req.body.serviceReports,
+				riskAssessmentStatus: req.body.riskAssessmentStatus, //1=No Risk, 2=Asset itself 3=environment
+				riskAssessmentAssetStatusColor: req.body.riskAssessmentAssetStatusColor,
+			}, {new:true,runValidators:true});
 
 		return res.status(200).send({
 		    status: true,

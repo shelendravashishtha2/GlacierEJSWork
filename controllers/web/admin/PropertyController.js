@@ -132,7 +132,7 @@ exports.propertyAdd = async (req, res) => {
 		
 		if (req.files && req.files.property_images) {
 			let property_images = req.files.property_images;
-			let uploadPath = __basedir + '/public/images/property/';
+			let uploadPath = __basedir + '/public/uploads/property_files/';
 
 			property_images = Array.isArray(property_images) ? property_images : [property_images];
 
@@ -153,7 +153,8 @@ exports.propertyAdd = async (req, res) => {
 							return res.send(response.error(400, 'Image uploading failed', []));
 						}
 					});
-					propertyImageNameArray.push('/public/images/property/' + fileName);
+					// propertyImageNameArray.push('/public/uploads/property_files/' + fileName);
+					propertyImageNameArray.push(fileName);
 				});
 			}
 		}else{
@@ -240,7 +241,7 @@ exports.propertyUpdate = async (req,res) => {
 		
 		if (req.files && req.files.property_images) {
 			let property_images = req.files.property_images;
-			let uploadPath = __basedir + '/public/images/property/';
+			let uploadPath = __basedir + '/public/uploads/property_files/';
 
 			property_images = Array.isArray(property_images) ? property_images : [property_images];
 
@@ -261,7 +262,8 @@ exports.propertyUpdate = async (req,res) => {
 							return res.send(response.error(400, 'Image uploading failed', []));
 						}
 					});
-					propertyImageNameArray.push('/public/images/property/' + fileName);
+					// propertyImageNameArray.push('/public/uploads/property_files/' + fileName);
+					propertyImageNameArray.push(fileName);
 				});
 			}
 		}

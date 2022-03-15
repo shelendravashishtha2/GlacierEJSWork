@@ -46,14 +46,18 @@ exports.userAddValidation = async (req, res, next) => {
 // Users add api 
 exports.addUsers = async (req, res) => {
 	try {
-		const existsUser = await User.findOne({ email: req.body.email });
+		const existsUser = await User.findOne({ email: req.body.email, mobile_no: req.body.mobile_no });
 		if(existsUser) {
-			return res.send(response.error(400, 'email id already exists', [] ));
-        }
+			if (existsUser.email == req.body.email) {
+				return res.send(response.error(400, 'email id already exists', [] ));
+			} else if (existsUser.mobile_no == req.body.mobile_no) {
+				return res.send(response.error(400, 'mobile no already exists', [] ));
+			}
+		}
 
         if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			let fileName;
 
 			if (profile_image) {
@@ -69,7 +73,8 @@ exports.addUsers = async (req, res) => {
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				req.body.profile_image = '/public/images/users/' + fileName;
+				// req.body.profile_image = '/public/uploads/user_files/' + fileName;
+				req.body.profile_image = fileName;
 			}
 		}
 
@@ -187,7 +192,7 @@ exports.updateUser = async (req, res) => {0
 
 		if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/uploads/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			let fileName;
 
 			if (profile_image) {
@@ -203,7 +208,7 @@ exports.updateUser = async (req, res) => {0
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				req.body.profile_image = '/public/uploads/' + fileName;
+				req.body.profile_image = fileName;
 			}
 		}
 
@@ -239,7 +244,7 @@ exports.profileImageUpload = async (req, res) => {
 	try {
 		if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 
 			const extensionName = path.extname(profile_image.name);
 			const allowedExtension = ['.png','.jpg','.jpeg'];
@@ -259,7 +264,7 @@ exports.profileImageUpload = async (req, res) => {
 					return res.send(response.error(400, 'Image uploading failed', []));
 				}
 			});
-			fileName = '/public/images/users/' + fileName;
+			// fileName = '/public/uploads/user_files/' + fileName;
 			const _id = req.user._id;
 			let userData = await User.findByIdAndUpdate(_id, {profile_image: fileName}, {new:true,runValidators:true});
 			return res.send(response.success(200, 'uploaded profile image successfully', {"profile_image": process.env.APP_URL + userData.profile_image} ));
@@ -274,94 +279,6 @@ exports.profileImageUpload = async (req, res) => {
 			errorLog(error, __filename, req.originalUrl);
 			return res.send(response.error(500, 'Something want wrong', []));
 		}
-	}
-}
-
-exports.albumImageUpload = async (req, res) => {
-	try {
-		if (req.files && req.files.album_images) {
-			let album_images = req.files.album_images;
-			let uploadPath = __basedir + '/public/uploads/';
-			let albumImageNameArray = req.user.album_images;
-
-			if (Array.isArray(album_images)) {
-				album_images.forEach(album_image => {
-					if (album_image.mimetype !== "image/png" && album_image.mimetype !== "image/jpg" && album_image.mimetype !== "image/jpeg"){
-						return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-					}
-					if (album_image.size >= (1024 * 1024 * 5)) { // if getter then 5MB
-						return res.send(response.error(400, 'Image must be less then 5MB', []));
-					}
-				});
-				album_images.forEach(album_image => {
-					let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
-					fileName = 'album-image-' + Date.now() + randomNumber + path.extname(album_image.name);
-					album_image.mv(uploadPath + fileName, function(err) {
-						if (err){
-							return res.send(response.error(400, 'Image uploading failed', []));
-						}
-					});
-					albumImageNameArray.push('/public/uploads/' + fileName);
-				});
-			} else {
-				if (album_images.mimetype !== "image/png" && album_images.mimetype !== "image/jpg" && album_images.mimetype !== "image/jpeg"){
-					return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-				}
-				fileName = 'album-image-' + Date.now() + path.extname(album_images.name);
-				album_images.mv(uploadPath + fileName, function(err) {
-					if (err){
-						return res.send(response.error(400, 'Image uploading failed', []));
-					}
-				});
-				albumImageNameArray.push('/public/uploads/' + fileName);
-			}
-			await User.findByIdAndUpdate(req.user._id, {album_images: albumImageNameArray}, {new:true,runValidators:true});
-			return res.send(response.success(200, 'uploaded album images successfully', []));
-		} else {
-			return res.send(response.error(400, 'Please select an image', [] ));
-		}
-	} catch (error) {
-		if (error.name == "ValidationError") {
-			const errorMessage = error.errors[Object.keys(error.errors)[0]];
-			return res.send(response.error(400, errorMessage.message, []));
-		} else {
-			errorLog(error, __filename, req.originalUrl);
-			return res.send(response.error(500, 'Something want wrong', []));
-		}
-	}
-}
-
-exports.albumImageDelete = async (req, res) => {
-	try {
-		const userData = await User.findOne({_id: req.user._id});
-		const image_name = req.body.album_image_name;
-		const DIR = "public/uploads";
-
-		let existsAlbumImage = userData.album_images.filter(function(item) {
-			if (item) { // if album_image name exists
-				return item.toLowerCase().indexOf(image_name.toLowerCase()) >= 0;
-			}
-		});
-
-		let fileExists = fs.existsSync(DIR +'/'+ image_name);
-
-		if (existsAlbumImage.length > 0 && fileExists) {	
-			fs.unlinkSync(DIR+'/'+image_name); // delete from directory
-
-			const filteredAlbumImages = userData.album_images.filter(function(item) {
-				if (item) { // album_image array remove deleted image name value
-					return item.toLowerCase().indexOf(image_name.toLowerCase()) <= 0;
-				}
-			});
-			const updateUser = await User.findByIdAndUpdate(req.user._id, {album_images: filteredAlbumImages}, {new:true,runValidators:true});
-			return res.send(response.success(200, 'Image Delete successfully', [] ));
-		} else {
-			return res.send(response.error(400, 'Image not exists', []));
-		}
-		
-	} catch (error) {
-		errorLog(error, __filename, req.originalUrl);
-		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
 
@@ -463,8 +380,8 @@ exports.dashboardSliderImage = async (req,res) => {
 		// }
 		// let supervisorList = await User.aggregate([condition,project])
 
-		let sliderImages = [{'_id':'6176f59d8617dfecff47c259','image':'/public/images/property/property-image-163670891146540.jpg'},
-		{'_id':'6177f11fc350e7eebd3d4222','image':'/public/images/property/property-image-16367089114651.jpg'}];
+		let sliderImages = [{'_id':'6176f59d8617dfecff47c259','image':'/public/uploads/property_files/property-image-163670891146540.jpg'},
+		{'_id':'6177f11fc350e7eebd3d4222','image':'/public/uploads/property_files/property-image-16367089114651.jpg'}];
 		
 		return res.status(200).send({
 			"status": true,

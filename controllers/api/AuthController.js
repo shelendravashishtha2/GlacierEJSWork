@@ -26,7 +26,7 @@ exports.update = async (req, res) => {
 		}
 		if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/uploads/';
+			let uploadPath = __basedir + '/public/uploads/user_files';
 			let fileName;
 
 			if (profile_image) {
@@ -42,7 +42,8 @@ exports.update = async (req, res) => {
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				userData.profile_image = '/public/uploads/' + fileName;
+				// userData.profile_image = '/public/uploads/user_files/' + fileName;
+				userData.profile_image = fileName;
 			}
 		}
 		if(req.body.address && req.body.address != ""){

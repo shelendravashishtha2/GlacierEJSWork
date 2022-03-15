@@ -88,8 +88,8 @@ exports.deleteSopImage = async (req,res) => {
 			}
 			sop.sub_category[index].markModified("sub_category_files");
 		}
-		console.log('./public/images/sop_files/'+req.body.file);
-			fs.unlink('./public/images/sop_files/'+req.body.file, function (error, file) {
+		console.log('./public/uploads/sop_files/'+req.body.file);
+			fs.unlink('./public/uploads/sop_files/'+req.body.file, function (error, file) {
 				
 			})
 		sop.save();
@@ -123,7 +123,7 @@ exports.storeSop = async (req,res) => {
 		let sub_category_array = [];
 
 		if (req.files) {
-			let uploadPath = __basedir + '/public/images/sop_files/';
+			let uploadPath = __basedir + '/public/uploads/sop_files/';
 			
 			if (req.files.single_category_files && req.body.category_level == 1) {
 				let single_category_files = req.files.single_category_files;
@@ -178,7 +178,6 @@ exports.storeSop = async (req,res) => {
 						sub_category_array.push({sub_category_name: sub_category_name, sub_category_files: sub_category_files_array});
 					}
 				}
-				
 			}
 		}
 
@@ -221,7 +220,7 @@ exports.updateSop = async (req,res) => {
 
 		let single_category_files_array = [];
 		let sub_category_array = [];
-		const uploadPath = __basedir + '/public/images/sop_files/';
+		const uploadPath = __basedir + '/public/uploads/sop_files/';
 
 		if (req.body.category_level == 1) { //for category_level= 1
 			if (req.files && req.files.single_category_files) {

@@ -37,7 +37,7 @@ exports.supervisorAdd = async (req, res) => {
 
         if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			let fileName;
 
 			if (profile_image) {
@@ -53,7 +53,7 @@ exports.supervisorAdd = async (req, res) => {
 						return res.send(response.error(400, 'Image uploading failed', []));
 					}
 				});
-				req.body.profile_image = '/public/images/users/' + fileName;
+				req.body.profile_image = fileName;
 			}
 		}
 
@@ -136,7 +136,7 @@ exports.userAdd = async (req, res) => {
 
         if (req.files && req.files.profile_image) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			let fileName;
 
 			if (profile_image.mimetype !== "image/png" && profile_image.mimetype !== "image/jpg" && profile_image.mimetype !== "image/jpeg"){
@@ -157,7 +157,7 @@ exports.userAdd = async (req, res) => {
 					return res.redirect('back');
 				}
 			});
-			req.body.profile_image = '/public/images/users/' + fileName;
+			req.body.profile_image = fileName;
 		} else {
 			// let errMsg = { profile_image: { msg: 'profile image is required' } };
 			// req.session.error = {errMsg: errMsg, inputData: req.body};
@@ -340,7 +340,7 @@ exports.userUpdate = async (req,res) => {
 
         if (req.files) {
 			let profile_image = req.files.profile_image;
-			let uploadPath = __basedir + '/public/images/users/';
+			let uploadPath = __basedir + '/public/uploads/user_files/';
 			let fileName;
 
 			if (profile_image) {
@@ -359,7 +359,7 @@ exports.userUpdate = async (req,res) => {
 						return res.redirect('back');
 					}
 				});
-				req.body.profile_image = '/public/images/users/' + fileName;
+				req.body.profile_image = fileName;
 			}
 		}
 

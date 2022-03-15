@@ -38,7 +38,7 @@ exports.categorySOPDetail = async (req, res) => {
 			status_code: "200",
 			message: "Sop details",
 			level: sopDetail.level,
-		    prePath: process.env.APP_URL+"/public/images/sop_files/",
+		    prePath: process.env.APP_URL+"/public/uploads/sop_files/",
 		    data: [sopDetail]
 		});
 	} catch (error) {

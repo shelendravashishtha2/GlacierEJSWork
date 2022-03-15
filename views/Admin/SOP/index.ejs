@@ -89,7 +89,7 @@
                                     <% if (data[i].level == 1) { %>
 										<% for( let j = 0; j < data[i].single_category_files.length; j++ ) { %>
 											<% if (j > 0) { %>, <% } %>
-											<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data[i].single_category_files[j] %>" target="_blank"><%= data[i].single_category_files[j] %></a>
+											<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= data[i].single_category_files[j] %>" target="_blank"><%= data[i].single_category_files[j] %></a>
 										<% } %>
 										<br>
                                     <% } else if (data[i].level == 2) { %>
@@ -97,7 +97,7 @@
                                             <% if (element.sub_category_name) { %>
 												<% for( let j = 0; j < element.sub_category_files.length; j++ ) { %>
 													<% if (j > 0) { %>, <% } %>
-													<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= element.sub_category_files[j] %>" target="_blank"><%= element.sub_category_files[j] %></a>
+													<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= element.sub_category_files[j] %>" target="_blank"><%= element.sub_category_files[j] %></a>
 												<% } %>
 												<br>
                                             <% } else { %>

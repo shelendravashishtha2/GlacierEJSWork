@@ -28,7 +28,7 @@
 					<% if (data.level == 1) { %>
 						<% for( let j = 0; j < data.single_category_files.length; j++ ) { %>
 							<li> 
-								<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data.single_category_files[j] %>" target="_blank"><span> <%= data.single_category_files[j] %> </span></a> 
+								<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= data.single_category_files[j] %>" target="_blank"><span> <%= data.single_category_files[j] %> </span></a> 
 							</li>
 						<% } %>
 					<% } else if (data.level == 2) { %>
@@ -38,7 +38,7 @@
 								<ul>
 									<% for( let j = 0; j < data.sub_category[i].sub_category_files.length; j++ ) { %>
 										<li> 
-											<a href="<%=process.env.APP_URL%>/public/images/sop_files/<%= data.sub_category[i].sub_category_files[j] %>" target="_blank"> 
+											<a href="<%=process.env.APP_URL%>/public/uploads/sop_files/<%= data.sub_category[i].sub_category_files[j] %>" target="_blank"> 
 												<span> <%= data.sub_category[i].sub_category_files[j] %> </span>
 											</a> 
 										</li>
