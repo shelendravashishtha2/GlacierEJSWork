@@ -12,11 +12,11 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">FRC Report</h4>
+            <h4 class="mb-sm-0 font-size-18">Rating Report</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="<%=APP_URL%>/">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="#">FRC Report</a></li>
+                    <li class="breadcrumb-item"><a href="#">Rating Report</a></li>
                 </ol>
             </div>
         </div>
@@ -89,36 +89,28 @@
             <div class="card-body">
 				<div class="row">
 					<div class="col-12">
-						<table id="datatable-buttons" data-report="FRC" class="table table-bordered dt-responsive nowrap w-100">
+						<table id="datatable-buttons" data-report="Rating" class="table table-bordered dt-responsive nowrap w-100">
 							<thead>
 							<tr>
 								<th style="text-align: center;">#</th>
-								<th style="text-align: center;">Checklist ID</th>
-								<th style="text-align: center;">Checklist Name</th>
-								<th style="text-align: center;">Category Name</th>
-								<th style="text-align: center;">Type</th> <!-- Form Type-->
-								<th style="text-align: center;">Frequency</th>
-								<th style="text-align: center;">Due Date</th>
-								<th style="text-align: center;">Completed By</th>
-								<th style="text-align: center;">Completion Date</th>
-								<th style="text-align: center;">%</th>
-								<th style="text-align: center;">Completion Status</th>
+								<th style="text-align: center;">Auditor</th>
+								<th style="text-align: center;">Group</th>
+								<th style="text-align: center;">Topic</th>
+								<th style="text-align: center;">Weightage</th>
+								<th style="text-align: center;">Point</th>
+								<th style="text-align: center;">Percentage</th>
 							</tr>
 							</thead>
 							<tbody>
-								<% for( let i = 0; i < CategoryFrcAssignTaskData?.length; i++ ) { %>
+								<% for( let i = 0; i < ManageRatingTaskData?.length; i++ ) { %>
 									<tr>
 										<td style="text-align: center;"><%= i+1 %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.checklist_id %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.checklist_name %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryId.categoryId.category_name %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.type %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].assignCategoryFrcId.frequency %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].dueDate ? moment(CategoryFrcAssignTaskData[i].dueDate).format('DD-MM-YYYY') : '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionBy !== null ? CategoryFrcAssignTaskData[i].completionBy.full_name : '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionDate ? moment(CategoryFrcAssignTaskData[i].completionDate).format('DD-MM-YYYY') : '--' %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].percentage %></td>
-										<td style="text-align: center;"><%= CategoryFrcAssignTaskData[i].completionStatus %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].auditorId.full_name %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].assignGroups[0].groupId ? ManageRatingTaskData[i].assignGroups[0].groupId.groupName : '--' %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].assignGroups[0].assignTopics ? ManageRatingTaskData[i].assignGroups[0].assignTopics[0].topicId.topicName : '--' %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].totalWeightage %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].totalPoint %></td>
+										<td style="text-align: center;"><%= ManageRatingTaskData[i].totalPercentage %></td>
 									</tr>
 								<% } %>
 							</tbody>
@@ -146,6 +138,5 @@
 <script src="<%=process.env.APP_URL%>/public/assets/js/pages/datatables.init.js"></script>
 <!-- bootstrap-datepicker -->
 <script src="<%=process.env.APP_URL%>/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-
 
 <%- contentFor('BottomJs') %>
