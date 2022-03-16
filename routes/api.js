@@ -60,9 +60,12 @@ router.post("/opt/user-status-active-inactive", auth, UserController.activeInact
 router.post("/opt/category-list", auth, CategoryController.categoryList);
 router.post("/opt/category-wise-check-list", auth, CategoryController.categoryChecklist);
 router.post("/opt/form-detail", auth, CategoryController.formDetail);
-router.post("/opt/form-submit", auth, CategoryController.formSubmit);
-router.post("/opt/form-submit-detail", auth, CategoryController.getFormSubmittedDetail);
-router.post("/opt/form-list", auth, CategoryController.formList);
+
+router.post("/opt/today-category-frc-list", auth, CategoryController.todayCategoryFrcList);
+router.post("/opt/today-category-frc-task-list", auth, CategoryController.todayCategoryFrcTaskList);
+router.post("/opt/incomplete-category-frc-task-list", auth, CategoryController.incompleteCategoryFrcTaskList);
+router.post("/opt/frc-task-form-details", auth, CategoryController.frcTaskFormDetails);
+router.post("/opt/frc-task-form-submit", auth, CategoryController.frcTaskFormSubmit);
 
 // --- PPM Module ---
 router.post("/opt/ppm-equipment-list", auth, PpmController.ppmEquipmentList); // ppm equipment list after select property
@@ -88,6 +91,9 @@ router.post("/opt/history-detail", auth, HistoryController.historyDetail);
 router.post("/manager/category-list", auth, ManagerController.categoryList);
 router.post("/manager/category-frc-today-task-list", auth, ManagerController.categoryFrcTodayTaskList);
 router.post("/manager/category-frc-incomplete-task-list", auth, ManagerController.categoryFrcIncompleteTaskList);
+router.post("/manager/frc-task-form-details", auth, ManagerController.frcTaskFormDetails);
+router.post("/manager/frc-task-form-submit", auth, ManagerController.frcTaskFormSubmit);
+
 router.post("/manager/category-frc-list", auth, ManagerController.categoryFrcList);
 router.post("/manager/create-supervisor", auth, ManagerController.createSupervisor);
 router.post("/manager/supervisor-list", auth, ManagerController.supervisorList); //
@@ -137,6 +143,8 @@ router.post("/manager/store-ppm-equipment-assign-supervisor", auth, ManagerPpmCo
 router.post("/supervisor/category-list", auth, SupervisorController.categoryList);
 router.post("/supervisor/category-frc-today-task-list", auth, SupervisorController.categoryChecklist);
 router.post("/supervisor/category-frc-incomplete-task-list", auth, SupervisorController.incompleteCategoryChecklist);
+router.post("/supervisor/frc-task-form-details", auth, SupervisorController.frcTaskFormDetails);
+router.post("/supervisor/frc-task-form-submit", auth, SupervisorController.frcTaskFormSubmit);
 router.post("/supervisor/category-frc-list", auth, SupervisorController.categoryFrcList);
 
 router.post("/supervisor/ppm-equipment-list", auth, SupervisorPpmController.ppmEquipmentList); //

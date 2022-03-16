@@ -42,7 +42,7 @@ const CategoryFrcAssignTaskSchema = new mongoose.Schema({
 	},
 	completionStatus: {
 		type: Number, //1=pending, 2=completed, 3=incomplete
-		min: [0,'invalid status'], max: [1,'invalid status'], default: 1
+		min: [1,'invalid status'], max: [3,'invalid status'], default: 1
 	},
 
 	status: {

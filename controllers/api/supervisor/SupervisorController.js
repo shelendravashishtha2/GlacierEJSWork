@@ -88,7 +88,7 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 
 		let findQuery = {
 			propertyId: req.user.property_id,
-			completionStatus: 3
+			completionStatus: {$ne: 2}, // not equal to complete
 		}
 		if (req.query.categoryId) {
 			findQuery.assignCategoryId = ObjectId(req.query.categoryId)
@@ -97,6 +97,10 @@ exports.incompleteCategoryChecklist = async (req, res) => {
 			findQuery.dueDate = {
 				$gte: moment(req.query.date, 'DD-MM-YYYY').startOf('day'),
 				$lte: moment(req.query.date, 'DD-MM-YYYY').endOf('day')
+			}
+		} else {
+			findQuery.dueDate = {
+				$lte: moment().startOf('day'),
 			}
 		}
 		// let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', match: {supervisorId: req.user._id}, select: ['checklist_id','checklist_name','type','frequency']});
@@ -134,6 +138,86 @@ exports.categoryFrcList = async (req, res) => {
 		let categoryFrcData = await CategoryFrcAssign.find(findQuery);
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.frcTaskFormDetails = async (req,res) => {
+	try {
+		let schema = Joi.object({
+			formId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		let { formId } = req.body;
+
+		let findQuery = {
+			_id: ObjectId(formId),
+		}
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).select(['form']).lean(); //.populate({path: 'assignCategoryFrcId', select: ['checklist_id','checklist_name','type','frequency']});
+		categoryFrcData = categoryFrcData.map(item => {
+			let data = {
+				formId: item._id,
+				form: item.form
+			}
+			return data
+		})
+
+		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.frcTaskFormSubmit = async (req,res) => {
+	try {
+		let schema = Joi.object({
+			formId: Joi.string().min(24).max(24).required(),
+			form: Joi.required(),
+		}); 
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		// file storing in the form is pending
+		// ------------------------------------
+
+		let formDetail = await CategoryFrcAssignTask.findOne({_id: req.body.formId})
+		if(!formDetail){
+			return res.send(response.error(400, 'FRC form not found', [] ));
+		}
+		formDetail.form = req.body.form;
+
+		let percentage = 0;
+		let array = ["button","paragraph","header"];
+		let count = 0;
+		let completeCount = 0;
+		for(let i=0;i<req.body.form.length;i++){
+			if(array.indexOf(req.body.form[i].type) == -1){
+				count++;
+				if(req.body.form[i].value && req.body.form[i].value.length > 0){
+					completeCount++;
+				}
+			}
+		}
+		formDetail.percentage = Math.ceil((completeCount * 100)/count);
+		formDetail.completionBy = req.user._id;
+		formDetail.completionDate = new Date();
+		formDetail.completionStatus = 2; //1=pending, 2=completed, 3=incomplete
+		await formDetail.save()
+
+		return res.status(200).send({
+		    "status": true,
+			"status_code": "200",
+			"message": "Checklist form submit",
+		    data: formDetail
+		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));
