@@ -26,26 +26,21 @@ exports.changePasswordValidation = async (req, res, next) => {
 	}
 }
 
-// Supervisor add form Validation
-exports.userAddValidation = async (req, res, next) => {
-	const schema = Joi.object({
-		full_name: Joi.string().min(3).max(150).required(),
-		email: Joi.string().min(6).max(100).required().email(),
-		mobile_no: Joi.string().min(6).max(12).required(),
-		position_id: Joi.string().min(1).max(1).required(),
-		property_id: Joi.string().min(24).max(24).required(),
-	});
-	const validation = schema.validate(req.body, __joiOptions);
-	if (validation.error) {
-		return res.send(response.error(400, validation.error.details[0].message, [] ));
-	} else {
-		next();
-	}
-}
-
 // Users add api 
 exports.addUsers = async (req, res) => {
 	try {
+		const schema = Joi.object({
+			full_name: Joi.string().min(3).max(150).required(),
+			email: Joi.string().min(6).max(100).required().email(),
+			mobile_no: Joi.string().min(6).max(12).required(),
+			position_id: Joi.string().valid('4', '5').required(),
+			property_id: Joi.string().min(24).max(24).required(),
+		});
+		const validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
 		const existsUser = await User.findOne({ email: req.body.email, mobile_no: req.body.mobile_no });
 		if(existsUser) {
 			if (existsUser.email == req.body.email) {
@@ -117,16 +112,21 @@ exports.addUsers = async (req, res) => {
 
 exports.supervisorList = async (req,res) => {
 	try {
-		let userData = await User.findOne({_id:req.user._id});
-		let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:5}};
-		let project = {
-			$project : {
-				"full_name" : "$full_name",
-				"profile_image" : "$profile_image",
-				"status" : "$status",
-			}
+		let schema = Joi.object({
+			propertyId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		let supervisorList = await User.aggregate([condition,project])
+		let {propertyId} = req.body;
+
+		let findQuery = {
+			property_id: propertyId,
+			status: 1,
+			position_id: 5 //supervisor
+		}
+		let supervisorList = await User.find(findQuery)
 		
 		return res.status(200).send({
 		    "status": true,
@@ -191,6 +191,15 @@ exports.supervisorDetails = async (req, res) => {
 
 exports.managerList = async (req, res) => {
 	try {
+		let schema = Joi.object({
+			propertyId: Joi.string().min(24).max(24).required(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		let {propertyId} = req.body;
+
 		let userData = await User.findOne({_id:req.user._id});
 		let condition = {"$match": {property_id: {$in:userData.property_id},status:1,position_id:4}};
 		let project = {
@@ -200,14 +209,20 @@ exports.managerList = async (req, res) => {
 				"status" : "$status",
 			}
 		}
-		let managerList = await User.aggregate([condition,project])
+		// let managerList = await User.aggregate([condition,project])
+
+		let findQuery = {
+			property_id: propertyId,
+			status: 1,
+			position_id: 4 //manager
+		}
+		let managerList = await User.find(findQuery)
 		
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
 			"message": "Manager list",
 			urlPath: process.env.APP_URL + '/public/uploads/user_files/',
-		    // data: managerList,
 			data: managerList.map((item) => { return {
 				_id: item._id,
 				full_name: item.full_name ? item.full_name : "",

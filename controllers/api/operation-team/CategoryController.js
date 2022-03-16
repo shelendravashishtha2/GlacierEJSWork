@@ -379,3 +379,38 @@ exports.frcTaskFormSubmit = async (req,res) => {
 		return res.send(response.error(500, 'Something want wrong', []));
 	}
 }
+
+exports.assignmentCategory = async (req, res) => {
+	try {
+		let schema = Joi.object({
+			propertyId: Joi.string().min(24).max(24).required(),
+			managerIds: Joi.array().items(Joi.objectId().label('assign category id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+			assignCategoryIds: Joi.array().items(Joi.objectId().label('assign category id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+			wingIds: Joi.array().items(Joi.objectId().label('wing id').required().messages({'string.pattern.name': `{{#label}} is invalid`})),
+			supervisorIds: Joi.array().items(Joi.objectId().label('supervisor id').optional().messages({'string.pattern.name': `{{#label}} is invalid`})),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		let { propertyId, managerIds, assignCategoryIds, wingIds, supervisorIds } = req.body;
+
+		for (let i = 0; i < assignCategoryIds.length; i++) {
+			let CategoryAssignData = await CategoryAssign.findOneAndUpdate({_id: assignCategoryIds[i], propertyId: propertyId},{
+				wingIds: wingIds,
+				supervisorId: supervisorIds,
+				managerId: managerIds,
+			},{new:true,runValidators:true});
+		}
+
+		return res.status(200).send(response.success(200, 'Success', [] ));
+	} catch (error) {
+		if (error.name == "ValidationError") {
+			const errorMessage = error.errors[Object.keys(error.errors)[0]]
+			return res.send(response.error(400, errorMessage.message, [] ));
+		} else {
+			errorLog(error, __filename, req.originalUrl);
+			return res.send(response.error(500, 'Something want wrong', [] ));
+		}
+	}
+}
