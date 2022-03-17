@@ -19,7 +19,7 @@ exports.propertyList = async (req, res) => {
 		for(let i=0;i < req.user.property_id.length;i++){
 			propertyIds.push(ObjectId(req.user.property_id[i]));
 		}
-		let condition = {"$match": {_id: {$in:propertyIds}}};
+		let condition = {"$match": {_id: {$in: propertyIds}}};
 		let project = {
 			$project:{
 				property_name:"$property_name",

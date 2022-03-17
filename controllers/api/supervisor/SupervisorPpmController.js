@@ -130,11 +130,11 @@ exports.ppmEquipmentTaskSubmit = async (req, res) => {
 				serviceReports = Array.isArray(serviceReports) ? serviceReports : [serviceReports]
 				if (serviceReports.length > 0) {
 					serviceReports.forEach(fileData => {
-						if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
-							return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
-						}
+						// if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
+						// 	return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+						// }
 						if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
-							return res.send(response.error(400, 'Image must be less then 50MB', []));
+							return res.send(response.error(400, 'File must be less then 50MB', []));
 						}
 					});				
 					for (let i = 0; i < serviceReports.length; i++) {

@@ -20,12 +20,20 @@ const MngRatingAssignChecklistPointSchema = new mongoose.Schema({
 	weightage: {
 		type: Number,
 		min: [0,'invalid weightage'],
-		max: [1,'invalid weightage']
+		max: [1,'invalid weightage'],
+		required: true
 	},
 	point: {
 		type: Number,
 		min: [0,'invalid point'],
 		max: [1,'invalid point'],
+		// default: 0,
+		required: true
+	},
+	percentage: {
+		type: Number,
+		min: [0,'invalid percentage'],
+		max: [100,'invalid percentage'],
 		default: 0
 	},
 	remark: {
@@ -39,7 +47,7 @@ const MngRatingAssignChecklistPointSchema = new mongoose.Schema({
 		type: Number, //0=Inactive, 1=Active
 		min: [0,'invalid status'], max: [1,'invalid status'], default: 1,
 	},
-	createdAt: {type: Date, select: false},
+	createdAt: {type: Date},
 	updatedAt: {type: Date, select: false}
 },{
 	versionKey: false,
