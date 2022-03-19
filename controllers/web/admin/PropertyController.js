@@ -483,10 +483,9 @@ exports.propertyView = async (req,res) => {
 	try {
 		res.locals.title = 'View Property';
 		res.locals.session = req.session;
-
-		let propertyData = await Property.find({_id:req.params.id});
-		let userPropertyData = await User.find({ propertyId: req.params.id}).lean();
-		let categoryData = await PropertyTask.find({ propertyId: req.params.id}).populate({path: 'categoryId'}).lean();
+		let propertyData = await Property.find({_id: ObjectId(req.params.id)});
+		let userPropertyData = await User.find({ propertyId: ObjectId(req.params.id)}).lean();
+		let categoryData = await PropertyTask.find({ propertyId: ObjectId(req.params.id)}).populate({path: 'categoryId'}).lean();
 		
 		return res.render('Admin/Properties/view', {
             data: PropertyResource(propertyData),
