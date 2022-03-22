@@ -90,6 +90,7 @@ exports.formDetail = async (req, res) => {
 		if (!formDetail) {
 			return res.send(response.error(400, "Category Checklist not found", [] ));
 		}
+		
 		return res.status(200).send({
 		    "status": true,
             "status_code": "200",
@@ -112,6 +113,7 @@ exports.getFormSubmittedDetail = async (req, res) => {
 			return res.send(response.error(400, validation.error.details[0].message, [] ));
 		}
 		let formDetail = await CategoryFrcAssignTask.findOne({_id:req.body.formId})
+
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
@@ -161,6 +163,7 @@ exports.formSubmit = async (req, res) => {
 		}
 		formDetail.percentage = Math.ceil((completeCount * 100)/count);
 		await formDetail.save()
+
 		return res.status(200).send({
 		    "status": true,
 			"status_code": "200",
@@ -196,11 +199,10 @@ exports.formList = async (req, res) => {
 	}
 }
 
-exports.todayCategoryFrcList = async (req,res) => {
+exports.todayCategoryList = async (req,res) => {
 	try {
 		let schema = Joi.object({
 			propertyId: Joi.string().min(24).max(24).required(),
-			categoryId: Joi.string().min(24).max(24).required(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
@@ -210,15 +212,71 @@ exports.todayCategoryFrcList = async (req,res) => {
 
 		let findQuery = {
 			propertyId: ObjectId(propertyId),
-			assignCategoryId: ObjectId(categoryId),
+			// assignCategoryId: ObjectId(categoryId),
 			dueDate: {
 				$gte: moment().startOf('day'),
 				$lte: moment().endOf('day')
 			},
-			completionStatus: 1 // Pending
+			completionStatus: 1, // Pending
+			status: 1,
 		}
-		let categoryFrcTaskData = await CategoryFrcAssignTask.find(findQuery).distinct('assignCategoryFrcId');
-		categoryFrcData = await CategoryFrcAssign.find({_id: {$in: categoryFrcTaskData}}).select(['checklist_id','checklist_name']).lean();
+		if (categoryId) {
+			findQuery.assignCategoryId = ObjectId(categoryId);
+		}
+		let categoryIds = await CategoryFrcAssignTask.find(findQuery).distinct('assignCategoryId');
+		let categoryData = await CategoryAssign.find({_id: {$in: categoryIds}, status: 1}).populate({path: 'categoryId', match: {status: 1}}).lean();
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => item.categoryId)
+
+		return res.status(200).send(response.success(200, 'Success', categoryData ));
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
+exports.todayCategoryFrcList = async (req,res) => {
+	try {
+		let schema = Joi.object({
+			propertyId: Joi.string().min(24).max(24).required(),
+			categoryId: Joi.string().min(24).max(24).optional(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, []));
+		}
+		let {propertyId, categoryId} = req.body;
+
+		let findQuery = {
+			propertyId: ObjectId(propertyId),
+			dueDate: {
+				$gte: moment().startOf('day'),
+				$lte: moment().endOf('day')
+			},
+			completionStatus: 1, // Pending
+			status: 1,
+		}
+		if (categoryId) {
+			findQuery.assignCategoryId = ObjectId(categoryId);
+		}
+		let categoryFrcIds = await CategoryFrcAssignTask.find(findQuery).distinct('assignCategoryFrcId');
+		let categoryFrcTaskData = await CategoryFrcAssignTask.find(findQuery);
+		
+		let categoryFrcData = await CategoryFrcAssign.find({_id: {$in: categoryFrcIds}, status: 1}).select('checklist_id checklist_name').populate({path: 'assignCategoryId', match: {status: 1}}).lean();
+
+		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryId).map((item) => {
+			let findIndex = categoryFrcTaskData.findIndex(findItem => String(item._id) == String(findItem.assignCategoryFrcId));
+			if (findIndex != -1) {
+				item.formId = categoryFrcTaskData[findIndex]._id
+				item.percentage = categoryFrcTaskData[findIndex].percentage
+			}
+			return {
+				_id: item._id,
+				checklist_id: item.checklist_id,
+				checklist_name: item.checklist_name,
+				formId: item.formId,
+				percentage: item.percentage
+			}
+		})
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
@@ -250,8 +308,8 @@ exports.todayCategoryFrcTaskList = async (req,res) => {
 			},
 			completionStatus: 1 // Pending
 		}
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', select: ['checklist_id','checklist_name','type','frequency']});
-		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
+		let categoryFrcData = await CategoryFrcAssignTask.findOne(findQuery).populate({path: 'assignCategoryFrcId', select: 'checklist_id checklist_name type frequency'}).lean();
+		// categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));
 	} catch (error) {
@@ -290,7 +348,7 @@ exports.incompleteCategoryFrcTaskList = async (req,res) => {
 				$lte: moment().startOf('day'),
 			}
 		}
-		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', select: ['checklist_id','checklist_name','type','frequency']});
+		let categoryFrcData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryFrcId', select: 'checklist_id checklist_name type frequency'}) //.populate({path: 'assignCategoryId', populate: {path: 'categoryId'}});
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryFrcId != null)
 
 		return res.status(200).send(response.success(200, 'Success', categoryFrcData ));

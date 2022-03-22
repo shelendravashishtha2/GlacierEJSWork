@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const settingSchema = new mongoose.Schema({
+const SettingSchema = new mongoose.Schema({
 	uniqueId: {
 		type: Number
 	}
@@ -10,7 +10,7 @@ const settingSchema = new mongoose.Schema({
 	versionKey: false
 });
 
-settingSchema.plugin(mongoosePaginate);
+SettingSchema.plugin(mongoosePaginate);
 
-const setting = new mongoose.model("setting", settingSchema);
-module.exports = setting;
+const Setting = new mongoose.model("Setting", SettingSchema);
+module.exports = Setting;

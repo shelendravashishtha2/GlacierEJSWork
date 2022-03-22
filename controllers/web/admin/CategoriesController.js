@@ -255,19 +255,13 @@ exports.storeChecklist = async (req, res) => {
 			return res.redirect('back');
 		}
 
-		// let setting = await Setting.findOne({});
-		// let uniqueId = 0;
-		// if (!setting) {
-		// 	let setting = await Setting.create({
-		// 		uniqueId: 1,
-		// 	})
-		// 	uniqueId = 1;
-		// } else {
-		// 	uniqueId = setting.uniqueId;
-		// 	setting.uniqueId = setting.uniqueId + 1;
-		// 	setting.save();
-		// }
-		// uniqueId = uniqueId.toString().padStart(8, "0");
+		let setting = await Setting.findOne({});
+		if (!setting) {
+			await Setting.create({ uniqueId: 1 })
+		} else {
+			setting.uniqueId = setting.uniqueId + 1;
+			setting.save();
+		}
 
 		const CategoryChecklistData = new CategoryFrcMaster({
 			category_id: req.body.category_id,

@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
 	position_id: {
 		type: Number, // 1=Admin, 2=Operation-Team, 3=Auditor 4=Manager 5=Supervisor.
 		min: [1,'invalid user type'],
-    	max: [8,'invalid user type'],
+    	max: [5,'invalid user type'],
 		trim: true,
 	},
 	position_type: {

@@ -49,16 +49,29 @@ exports.ppmEquipmentList = async (req, res) => {
 
 exports.ppmEquipmentTaskList = async (req, res) => {
 	try {
+		let schema = Joi.object({
+			ppmEquipmentId: Joi.string().min(24).max(24).optional(),
+			Date: Joi.optional(),
+		});
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
 		let findQuery = {
-			propertyId: req.user.property_id
+			propertyId: req.user.property_id,
+			completionStatus: {$in: [1,2]}
 		}
-		findQuery.dueDate = {
-			$gte: moment().startOf('day'),
-			$lte: moment().endOf('day')
+		if (req.body.ppmEquipmentId) {
+			findQuery.assignPpmEquipmentId = ObjectId(req.body.ppmEquipmentId)
 		}
-		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId', match: {supervisorId: req.user._id}}).populate({path: 'assignPpmEquipmentAssetId'});
-		PpmTaskAssignData = PpmTaskAssignData.filter(item => item.assignPpmEquipmentId != null); // null populate obj remove
-		PpmTaskAssignData = PpmTaskAssignData.filter(item => item.assignPpmEquipmentAssetId != null); // null populate obj remove
+		if (req.body.Date) {
+			findQuery.dueDate = {
+				$gte: moment(req.body.Date, 'DD-MM-YYYY').startOf('day'),
+				$lte: moment(req.body.Date, 'DD-MM-YYYY').endOf('day')
+			}
+		}
+		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery);
 
 		return res.status(200).send({
 		    "status": true,
@@ -66,6 +79,32 @@ exports.ppmEquipmentTaskList = async (req, res) => {
             "message": "PPM task details",
 			data: PpmTaskAssignData
 		});
+
+		// let schema = Joi.object({
+		// 	ppmEquipmentId: Joi.string().min(24).max(24).required(),
+		// });
+		// let validation = schema.validate(req.body, __joiOptions);
+		// if (validation.error) {
+		// 	return res.send(response.error(400, validation.error.details[0].message, [] ));
+		// }
+
+		// let findQuery = {
+		// 	propertyId: req.user.property_id
+		// }
+		// findQuery.dueDate = {
+		// 	$gte: moment().startOf('day'),
+		// 	$lte: moment().endOf('day')
+		// }
+		// let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId', match: {_id: req.body.ppmEquipmentId, supervisorId: req.user._id}}).populate({path: 'assignPpmEquipmentAssetId'});
+		// PpmTaskAssignData = PpmTaskAssignData.filter(item => item.assignPpmEquipmentId != null); // null populate obj remove
+		// PpmTaskAssignData = PpmTaskAssignData.filter(item => item.assignPpmEquipmentAssetId != null); // null populate obj remove
+
+		// return res.status(200).send({
+		//     "status": true,
+        //     "status_code": "200",
+        //     "message": "PPM task details",
+		// 	data: PpmTaskAssignData
+		// });
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);
 		return res.send(response.error(500, 'Something want wrong', []));

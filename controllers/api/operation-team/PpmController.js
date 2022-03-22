@@ -341,7 +341,8 @@ exports.ppmTaskList = async (req, res) => {
 		}
 
 		let findQuery = {
-			propertyId: ObjectId(req.body.propertyId)
+			propertyId: ObjectId(req.body.propertyId),
+			completionStatus: {$in: [1,2]}
 		}
 		if (req.body.EquipmentId) {
 			findQuery.assignPpmEquipmentId = ObjectId(req.body.EquipmentId)

@@ -338,7 +338,8 @@ exports.ppmTaskList = async (req, res) => {
 		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
 
 		let findQuery = {
-			propertyId: req.user.property_id
+			propertyId: req.user.property_id,
+			completionStatus: {$in: [1,2]}
 		}
 		if (req.body.EquipmentId) {
 			findQuery.assignPpmEquipmentId = ObjectId(req.body.EquipmentId)

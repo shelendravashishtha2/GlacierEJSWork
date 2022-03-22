@@ -20,7 +20,7 @@ const PpmEquipmentAssignSchema = new mongoose.Schema({
 	},
 	supervisorId: {
 		type: mongoose.Schema.Types.ObjectId, ref: User,
-		default: '',
+		default: null,
 	},
 
 	status: {
