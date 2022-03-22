@@ -50,8 +50,7 @@ exports.categoryFrcTodayTaskList = async (req, res) => {
 		if (validation.error) {
 			return res.send(response.error(400, validation.error.details[0].message, []));
 		}
-		// if (!req.user.property_id || req.user.property_id.length <= 0) { return res.send(response.error(400, 'property not assigned', [])) }
-
+		
 		let findQuery = {
 			propertyId: req.user.property_id,
 			dueDate: {
@@ -208,7 +207,13 @@ exports.todayCategoryList = async (req,res) => {
 
 		let categoryIds = await CategoryFrcAssignTask.find(findQuery).distinct('assignCategoryId');
 		let categoryData = await CategoryAssign.find({_id: {$in: categoryIds}, status: 1}).populate({path: 'categoryId', match: {status: 1}}).lean();
-		categoryData = categoryData.filter(item => item.categoryId != null).map(item => item.categoryId)
+		categoryData = categoryData.filter(item => item.categoryId != null).map(item => {
+			return {
+				_id: item._id,
+				category_name: item.categoryId.category_name,
+				status: item.status
+			}
+		})
 
 		return res.status(200).send(response.success(200, 'Success', categoryData ));
 	} catch (error) {
@@ -221,6 +226,7 @@ exports.todayCategoryFrcList = async (req,res) => {
 	try {
 		let schema = Joi.object({
 			categoryId: Joi.string().min(24).max(24).optional(),
+			frequency: Joi.string().optional(),
 		});
 		let validation = schema.validate(req.body, __joiOptions);
 		if (validation.error) {
@@ -243,7 +249,14 @@ exports.todayCategoryFrcList = async (req,res) => {
 		let categoryFrcIds = await CategoryFrcAssignTask.find(findQuery).distinct('assignCategoryFrcId');
 		let categoryFrcTaskData = await CategoryFrcAssignTask.find(findQuery);
 		
-		let categoryFrcData = await CategoryFrcAssign.find({_id: {$in: categoryFrcIds}, status: 1}).select('checklist_id checklist_name').populate({path: 'assignCategoryId', match: {status: 1}}).lean();
+		let findQuery2 = {
+			_id: {$in: categoryFrcIds},
+			status: 1
+		};
+		if (req.body.frequency) {
+			findQuery2.frequency = req.body.frequency;
+		}
+		let categoryFrcData = await CategoryFrcAssign.find(findQuery2).select('checklist_id checklist_name').populate({path: 'assignCategoryId', match: {status: 1}}).lean();
 
 		categoryFrcData = categoryFrcData.filter(item => item.assignCategoryId).map((item) => {
 			let findIndex = categoryFrcTaskData.findIndex(findItem => String(item._id) == String(findItem.assignCategoryFrcId));

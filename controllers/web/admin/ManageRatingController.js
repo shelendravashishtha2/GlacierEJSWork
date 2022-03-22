@@ -14,7 +14,6 @@ const MngRatingTopicAssign = require("../../../models/MngRatingTopicAssign");
 const MngRatingChecklistAssign = require("../../../models/MngRatingChecklistAssign");
 const response = require("../../../helper/response");
 const PropertyResource = require('../../api/resources/PropertyResource');
-const MngRatingTaskAssign = require("../../../models/MngRatingTaskAssign");
 const MngRatingAssignChecklistPoint = require("../../../models/MngRatingAssignChecklistPoint");
 const SettingRating = require("../../../models/SettingRating");
 
@@ -685,71 +684,6 @@ exports.assignGroupList = async (req, res) => {
 			"status": true,
 			allGroupList: allGroupList,
 			assignedGroupList: assignedGroupList,
-		});
-	} catch (error) {
-		errorLog(error, __filename, req.originalUrl);
-		errorMessage = "Something want wrong";
-		req.session.error = { errorMessage: errorMessage, inputData: req.body };
-		return res.redirect('back');
-	}
-}
-
-// assign Rating Task
-exports.assignRatingTask = async (req, res) => {
-	try {
-		let assignPropertyIds = await MngRatingGroupAssign.distinct('propertyId');
-		// assignPropertyIds = assignPropertyIds.map((i) => String(i));
-
-		let data = [];
-		for (let i = 0; i < assignPropertyIds.length; i++) {
-			let assignGroupsData = await MngRatingGroupAssign.findOne({propertyId: assignPropertyIds[i]});
-			let assignTopicsData = await MngRatingTopicAssign.findOne({propertyId: assignPropertyIds[i]});
-			let assignChecklistData = await MngRatingChecklistAssign.findOne({propertyId: assignPropertyIds[i]});
-			
-			let taskObj = new MngRatingTaskAssign();
-			taskObj.propertyId = assignGroupsData.propertyId;
-			taskObj.auditorId = assignGroupsData.auditorId;
-
-			let assignGroupsArray = [];
-			let totalWeightage = 0;
-			for (let j = 0; j < assignGroupsData.groupIds.length; j++) {	
-
-				let assignTopicsArray = []
-				for (let k = 0; k < assignTopicsData.topicIds.length; k++) {
-
-					let assignChecklistsArray = []
-					for (let l = 0; l < assignChecklistData.checklistIds.length; l++) {
-						let checklistData = await MngRatingChecklistMaster.findOne({_id: assignChecklistData.checklistIds[j]})
-						totalWeightage = totalWeightage + checklistData.weightage ? checklistData.weightage : 0
-						assignChecklistsArray.push({
-							checklistId: assignChecklistData.checklistIds[l],
-							weightage: checklistData.weightage ? checklistData.weightage : 0,
-							point: 0
-						})
-					}
-					assignTopicsArray.push({
-						topicId: assignTopicsData.topicIds[k],
-						assignChecklists: assignChecklistsArray
-					})
-				}
-				assignGroupsArray.push({
-					groupId: assignGroupsData.groupIds[j],
-					assignTopics: assignTopicsArray
-				})
-			}
-			taskObj.assignGroups = assignGroupsArray;
-			taskObj.totalWeightage = totalWeightage;
-			taskObj.totalPoint = 0;
-			taskObj.totalPercentage = 0;
-
-			await taskObj.save();
-			data.push(taskObj);
-		}
-
-		return res.status(200).send({
-			"status": true,
-			data: assignPropertyIds,
-			data2: data
 		});
 	} catch (error) {
 		errorLog(error, __filename, req.originalUrl);

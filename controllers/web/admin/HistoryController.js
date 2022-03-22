@@ -6,7 +6,7 @@ const response = require("../../../helper/response");
 const Property = require("../../../models/Property");
 const PpmTaskAssign = require("../../../models/PpmTaskAssign");
 const CategoryFrcAssignTask = require("../../../models/CategoryFrcAssignTask");
-const MngRatingTaskAssign = require("../../../models/MngRatingTaskAssign");
+const MngRatingAssignChecklistPoint = require("../../../models/MngRatingAssignChecklistPoint");
 
 // index
 exports.index = async (req, res) => {
@@ -229,15 +229,18 @@ exports.ratingHistory = async (req, res) => {
 		let findQuery = { 
 			propertyId: req.query.propertyId, 
 			status: 1,
-			// dueDate:{$gte:startDate,$lte: endDate}
+			// dueDate: {$gte:startDate,$lte: endDate}
 		}
 		// let CategoryFrcAssignTaskData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryId', populate:{path:'categoryId'}}).populate({path: 'assignCategoryFrcId'}).populate({path:'completionBy'});
-		let ManageRatingTaskData = await MngRatingTaskAssign.find(findQuery)
-		.populate({path: 'auditorId'})
-		.populate({path:'assignGroups.groupId'})
-		.populate({path:'assignGroups.assignTopics.topicId'})
-		.populate({path:'assignGroups.assignTopics.assignChecklists.checklistId'});
-		// return res.send(response.error(500, `data${{dueDate:{$gte:startDate,$lte: endDate}}}`, [ManageRatingTaskData]));
+		// let ManageRatingTaskData = await MngRatingTaskAssign.find(findQuery)
+		// 	.populate({path: 'auditorId'})
+		// 	.populate({path:'assignGroups.groupId'})
+		// 	.populate({path:'assignGroups.assignTopics.topicId'})
+		// 	.populate({path:'assignGroups.assignTopics.assignChecklists.checklistId'});
+
+		let ManageRatingTaskData = await MngRatingAssignChecklistPoint.find(findQuery)
+			.populate({path: 'auditorId'})
+			.populate({path:'checklistId'});
 
 		return res.render('Admin/History/rating-history', {
 			data: req.query,

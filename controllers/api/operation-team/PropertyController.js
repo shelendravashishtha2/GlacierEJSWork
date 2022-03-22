@@ -54,14 +54,21 @@ exports.propertyList = async (req, res) => {
 
 exports.propertyDetail = async (req, res) => {
 	try {
-		let schema = Joi.object({
-			propertyId: Joi.string().min(24).max(24).required()
-		});
-		let validation = schema.validate(req.body, __joiOptions);
-		if (validation.error) {
-			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		let propertyId = "";
+		if (req.user.position_id == 2) {
+			let schema = Joi.object({
+				propertyId: Joi.string().min(24).max(24).required()
+			});
+			let validation = schema.validate(req.body, __joiOptions);
+			if (validation.error) {
+				return res.send(response.error(400, validation.error.details[0].message, [] ));
+			}
+			propertyId = req.body.propertyId;
+		} else {
+			propertyId = req.user.property_id[0];
 		}
-		let property = await Property.findOne({_id: req.body.propertyId})
+		
+		let property = await Property.findOne({_id: propertyId})
 		if(!property){
 			return res.send(response.error(400, 'Property Not Found', []));
 		}

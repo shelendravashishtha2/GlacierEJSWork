@@ -104,7 +104,6 @@ router.post('/update-topic-checklist-status', isUserAllowed, ManageRatingControl
 router.post('/update-group-name', isUserAllowed, ManageRatingController.updateGroupName); //update group name
 router.post('/update-topic-name', isUserAllowed, ManageRatingController.updateTopicName); //
 router.get('/assign-group-list', isUserAllowed, ManageRatingController.assignGroupList); //
-router.get('/assign-rating-task', isUserAllowed, ManageRatingController.assignRatingTask); // generate rating task
 router.get('/view-group-assign-task', isUserAllowed, ManageRatingController.viewGroupAssignTask); //
 router.get('/view-assign-task-checklist', isUserAllowed, ManageRatingController.viewAssignTaskChecklist); //
 router.get('/store-assign-checklist-point', isUserAllowed, ManageRatingController.storeAssignChecklistPoint); // for testing
