@@ -378,12 +378,16 @@ exports.ppmTaskDetails = async (req, res) => {
 		}
 
 		let PpmTaskAssignData = await PpmTaskAssign.findOne({_id: ObjectId(req.body.ppmTaskId)}).populate({path: 'propertyId', select: ['property_name']}).lean();
+		if (!PpmTaskAssignData) return res.send(response.error(400, 'task not found', []));
 
 		let responseArray = [PpmTaskAssignData].map((obj) => {
-			obj.hasOwnProperty('completionBy') ? '' : obj.completionBy = ''
-			obj.hasOwnProperty('completionDate') ? '' : obj.completionDate = ''
-			obj.hasOwnProperty('riskAssessmentAssetStatusColor') ? '' : obj.riskAssessmentAssetStatusColor = '#4ee020'
-			return convertObjValuesToString(obj)
+			if (obj) {
+				obj.hasOwnProperty('completionBy') ? '' : obj.completionBy = ''
+				obj.hasOwnProperty('completionDate') ? '' : obj.completionDate = ''
+				obj.hasOwnProperty('riskAssessmentAssetStatusColor') ? '' : obj.riskAssessmentAssetStatusColor = '#4ee020'
+				return convertObjValuesToString(obj)
+			}
+			return obj
 		})
 
 		return res.status(200).send({

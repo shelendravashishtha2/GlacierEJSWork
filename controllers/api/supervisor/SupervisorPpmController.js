@@ -705,7 +705,10 @@ exports.frcHistoryCategoryTaskList = async (req, res) => {
 				$lte: moment(endDate, 'DD-MM-YYYY').endOf('day')
 			}
 		}
-		let CategoryFrcAssignTaskData = await CategoryFrcAssignTask.find(findQuery).populate({path: 'assignCategoryId', match: {_id: categoryId, status: 1}, populate: {path: 'categoryId', match: {status: 1}}}).populate({path: 'assignCategoryFrcId', match: {status: 1}, select: '-form'});
+		let CategoryFrcAssignTaskData = await CategoryFrcAssignTask.find(findQuery)
+				.populate({path: 'assignCategoryId', match: {_id: categoryId, status: 1}, populate: {path: 'categoryId', match: {status: 1}}})
+				.populate({path: 'assignCategoryFrcId', match: {status: 1}, select: '-form'})
+				.populate({path: 'completionBy', match: {status: 1}, select: 'full_name'});
 		
 		CategoryFrcAssignTaskData = CategoryFrcAssignTaskData.filter(item => item.assignCategoryId && item.assignCategoryId.categoryId && item.assignCategoryFrcId)
 
@@ -781,7 +784,10 @@ exports.ppmHistoryEquipmentTaskList = async (req, res) => {
 				$lte: moment(endDate, 'DD-MM-YYYY').endOf('day')
 			}
 		}
-		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery).populate({path: 'assignPpmEquipmentId', match: {_id: equipmentId,status: 1}, select: '-supervisorId'}) //.populate({path: 'assignPpmEquipmentAssetId'});
+		let PpmTaskAssignData = await PpmTaskAssign.find(findQuery)
+				.populate({path: 'assignPpmEquipmentId', match: {_id: equipmentId,status: 1}, select: '-supervisorId'})
+				.populate({path: 'completionBy', match: {status: 1}, select: 'full_name'})
+				//.populate({path: 'assignPpmEquipmentAssetId'});
 
 		PpmTaskAssignData = PpmTaskAssignData.filter(item => item.assignPpmEquipmentId);
 

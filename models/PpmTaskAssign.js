@@ -3,6 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const Property = require("./Property");
 const PpmEquipmentAssign = require("./PpmEquipmentAssign");
 const PpmEquipmentAssetAssign = require("./PpmEquipmentAssetAssign");
+const User = require("./User");
 
 const PpmTaskAssignSchema = new mongoose.Schema({
 	propertyId: {
@@ -47,9 +48,8 @@ const PpmTaskAssignSchema = new mongoose.Schema({
 		default: ''
 	},
 	completionBy: {
-		type: String,
-		trim: true,
-		default: ''
+		type:  mongoose.Schema.Types.ObjectId, ref: User,
+		default: null,
 	},
 	completionStatus: {
 		type: Number, //1=pending, 2=In-progress 3=completed 4=incomplete

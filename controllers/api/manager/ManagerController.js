@@ -193,6 +193,113 @@ exports.frcTaskFormSubmit = async (req,res) => {
 	}
 }
 
+exports.frcTaskRemarkSubmit = async (req,res) => {
+	try {
+		let schema = Joi.object({
+			formId: Joi.string().min(24).max(24).required(),
+			remark: Joi.required(),
+		}); 
+		let validation = schema.validate(req.body, __joiOptions);
+		if (validation.error) {
+			return res.send(response.error(400, validation.error.details[0].message, [] ));
+		}
+
+		if (req.files) {
+			let uploadPath = __basedir + '/public/uploads/frc_files/';
+			let attachPhotosArray = [];
+			let serviceReportsArray = [];
+
+			if (req.files.attachPhotos) {
+				let attachPhotos = req.files.attachPhotos;
+				attachPhotos = Array.isArray(attachPhotos) ? attachPhotos : [attachPhotos]
+				if (attachPhotos.length > 0) {
+					attachPhotos.forEach(fileData => {
+						if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
+							return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+						}
+						if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
+							return res.send(response.error(400, 'Image must be less then 50MB', []));
+						}
+					});				
+					for (let i = 0; i < attachPhotos.length; i++) {
+						const fileData = attachPhotos[i];
+						let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
+						let fileName = 'frc-task-' + req.body.formId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
+						const uploadFile = () => {
+							return new Promise((resolve, reject) => { //upload the file, then call the callback with the location of the file
+								fileData.mv(uploadPath + fileName, function(error) {
+									if (error) {
+										reject(error)
+										return res.send(response.error(400, 'Image uploading failed 1', []));
+									}
+									resolve('image uploaded successfully')
+								});
+							})
+						}
+						await uploadFile();
+						let filePath = fileName;
+						attachPhotosArray.push(filePath);
+					}
+				}
+			}
+			if (req.files.serviceReports) {
+				let serviceReports = req.files.serviceReports;
+				serviceReports = Array.isArray(serviceReports) ? serviceReports : [serviceReports]
+				if (serviceReports.length > 0) {
+					serviceReports.forEach(fileData => {
+						// if (fileData.mimetype !== "image/png" && fileData.mimetype !== "image/jpg" && fileData.mimetype !== "image/jpeg"){
+						// 	return res.send(response.error(400, 'File format should be PNG,JPG,JPEG', []));
+						// }
+						if (fileData.size >= (1024 * 1024 * 50)) { // if getter then 50MB
+							return res.send(response.error(400, 'File must be less then 50MB', []));
+						}
+					});				
+					for (let i = 0; i < serviceReports.length; i++) {
+						const fileData = serviceReports[i];
+						let randomNumber = Math.floor(Math.random() * 100) + 1; //0-99 random number
+						let fileName = 'frc-task-' + req.body.formId + '-' + Date.now() + randomNumber + path.extname(fileData.name);
+						const uploadFile = () => {
+							return new Promise((resolve, reject) => { //upload the file, then call the callback with the location of the file
+								fileData.mv(uploadPath + fileName, function(error) {
+									if (error) {
+										reject(error)
+										return res.send(response.error(400, 'Image uploading failed 2', []));
+									}
+									resolve('image uploaded successfully')
+								});
+							})
+						}
+						await uploadFile();
+						let filePath = fileName;
+						serviceReportsArray.push(filePath);
+					}
+				}
+			}
+			
+			req.body.attachPhotos = attachPhotosArray;
+			console.log(attachPhotosArray,'attachPhotosArray');
+			req.body.serviceReports = serviceReportsArray;
+			console.log(serviceReportsArray,'serviceReportsArray');
+		}
+
+		const updateData = await CategoryFrcAssignTask.findOneAndUpdate({_id: req.body.formId}, {
+				remark: req.body.remark,
+				attachPhotos: req.body.attachPhotos,
+				serviceReports: req.body.serviceReports,
+			}, {new:true,runValidators:true});
+
+		return res.status(200).send({
+			status: true,
+			status_code: "200",
+			message: "FRC task remark submitted",
+			data: updateData
+		});
+	} catch (error) {
+		errorLog(error, __filename, req.originalUrl);
+		return res.send(response.error(500, 'Something want wrong', []));
+	}
+}
+
 exports.todayCategoryList = async (req,res) => {
 	try {
 		let findQuery = {

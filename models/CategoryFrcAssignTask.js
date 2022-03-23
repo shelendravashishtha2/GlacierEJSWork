@@ -44,6 +44,16 @@ const CategoryFrcAssignTaskSchema = new mongoose.Schema({
 		type: Number, //1=pending, 2=completed, 3=incomplete
 		min: [1,'invalid status'], max: [3,'invalid status'], default: 1
 	},
+	remark: {
+		type: String,
+		default: ''
+	},
+	attachPhotos: {
+		type: [String]
+	},
+	serviceReports: {
+		type: [String]
+	},
 
 	status: {
 		type: Number, //0=Inactive, 1=Active
